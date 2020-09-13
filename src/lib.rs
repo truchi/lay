@@ -1,7 +1,6 @@
 #[macro_use]
 mod macros;
 
-#[macro_use]
 mod test;
 pub use test::*;
 mod style;
