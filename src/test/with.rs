@@ -1,17 +1,3 @@
-use super::{
-    Background,
-    Blinking,
-    Bordered,
-    Color,
-    Foreground,
-    Inverted,
-    Overlined,
-    Slanted,
-    Striked,
-    Underlined,
-    Weighted,
-};
-
 with_color!(WithForeground WithOptionalForeground Foreground {
     get { [get_foreground get_foreground_mut] }
     set { [foreground foreground_mut] }

@@ -113,37 +113,37 @@ macro_rules! with_color {
     ) => {
         with!("A trait for styles with a `" stringify!($Type) "` field.",
             $Trait {
-                get { $get $get_mut -> $Type }
+                get { $get $get_mut -> $crate::$Type }
                 set {
                     "Sets `" stringify!($Type) "(color)`",
                     [$set $set_mut]
-                    (color: Color)
+                    (color: $crate::Color)
                     { color.into() }
                 }
                 specials {
                     "Sets `" stringify!($Type) "(Color::Rgb { r, g, b })`",
                     [$set_rgb $set_rgb_mut]
                     (r: u8 g: u8 b: u8)
-                    { Color::Rgb { r, g, b }.into() }
+                    { $crate::Color::Rgb { r, g, b }.into() }
                     "Sets `" stringify!($Type) "(Color::AnsiValue(value))`",
                     [$set_ansi $set_ansi_mut]
                     (value: u8)
-                    { Color::AnsiValue(value).into() }
+                    { $crate::Color::AnsiValue(value).into() }
                 }
                 variants { $(
                     "Sets `" stringify!($Type) "(Color::" stringify!($variant) ")`",
                     [$set_variant $set_variant_mut]
-                    { Color::$variant.into() }
+                    { $crate::Color::$variant.into() }
                 )* }
             }
         );
         with!("A trait for styles with an `Option<" stringify!($Type) ">` field.",
             $OptionalTrait {
-                get { $get $get_mut -> Option<$Type> }
+                get { $get $get_mut -> ::std::option::Option<$crate::$Type> }
                 set {
                     "Sets `Some(" stringify!($Type) "(color))`",
                     [$set $set_mut]
-                    (color: Color)
+                    (color: $crate::Color)
                     { Some(color.into()) }
                 }
                 unset { [$unset $unset_mut] }
@@ -151,16 +151,16 @@ macro_rules! with_color {
                     "Sets `Some(" stringify!($Type) "(Color::Rgb { r, g, b }))`",
                     [$set_rgb $set_rgb_mut]
                     (r: u8 g: u8 b: u8)
-                    { Some(Color::Rgb { r, g, b }.into()) }
+                    { Some($crate::Color::Rgb { r, g, b }.into()) }
                     "Sets `Some(" stringify!($Type) "(Color::AnsiValue(value)))`",
                     [$set_ansi $set_ansi_mut]
                     (value: u8)
-                    { Some(Color::AnsiValue(value).into()) }
+                    { Some($crate::Color::AnsiValue(value).into()) }
                 }
                 variants { $(
                     "Sets `Some(" stringify!($Type) "(Color::" stringify!($variant) "))`",
                     [$set_variant $set_variant_mut]
-                    { Some(Color::$variant.into()) }
+                    { Some($crate::Color::$variant.into()) }
                 )* }
             }
         );
@@ -182,34 +182,34 @@ macro_rules! with_attribute {
     ) => {
         with!("A trait for styles with a `" stringify!($Type) "` field.",
             $Trait {
-                get { $get $get_mut -> $Type }
+                get { $get $get_mut -> $crate::$Type }
                 set {
                     "Sets `" stringify!($type) "`",
                     [$set $set_mut]
-                    ($type: $Type)
+                    ($type: $crate::$Type)
                     { $type }
                 }
                 variants { $(
                     "Sets `" stringify!($Type) "::" stringify!($variant) "`",
                     [$set_variant $set_variant_mut]
-                    { <$Type>::$variant }
+                    { <$crate::$Type>::$variant }
                 )* }
             }
         );
         with!("A trait for styles with an `Option<" stringify!($Type) ">` field.",
             $OptionalTrait {
-                get { $get $get_mut -> Option<$Type> }
+                get { $get $get_mut -> ::std::option::Option<$crate::$Type> }
                 set {
                     "Sets `Some(" stringify!($type) ")`",
                     [$set $set_mut]
-                    ($type: $Type)
+                    ($type: $crate::$Type)
                     { Some($type) }
                 }
                 unset { [$unset $unset_mut] }
                 variants { $(
                     "Sets `Some(" stringify!($Type) "::" stringify!($variant) ")`",
                     [$set_variant $set_variant_mut]
-                    { Some(<$Type>::$variant) }
+                    { Some(<$crate::$Type>::$variant) }
                 )* }
             }
         );
