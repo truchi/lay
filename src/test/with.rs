@@ -73,7 +73,7 @@ with_attribute!(WithWeight WithOptionalWeight Weighted weight {
     }
 });
 
-with_attribute!(WithSlant WithOptional Slanted slant {
+with_attribute!(WithSlant WithOptionalSlant Slanted slant {
     get { [get_slant get_slant_mut] }
     set { [slanted slanted_mut] }
     unset { [no_slant no_slant_mut] }

@@ -1,59 +1,47 @@
-macro_rules! attributes {
-    ($(#[$inner:ident $($args:tt)*])? $Name:ident: $($variant:ident($xvariant:ident))* + $reset:ident($xreset:ident)) => {
-        $(#[$inner $($args)*])?
-        #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-        pub enum $Name {
-            $($variant,)*
-            $reset
-        }
-        pub use $Name::*;
-
-        impl ::std::default::Default for $Name {
-            fn default() -> Self {
-                Self::$reset
-            }
-        }
-
-        impl ::std::fmt::Display for $Name {
-            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::result::Result<(), ::std::fmt::Error> {
-                match self {
-                    $($Name::$variant => write!(f, "{}", ::crossterm::style::Attribute::$xvariant),)*
-                    $Name::$reset => write!(f, "{}", ::crossterm::style::Attribute::$xreset)
-                }
-            }
-        }
-    };
-}
-
-attributes!(
+attribute!(
     /// `Weighted` text.
-    Weighted: Bold(Bold) Light(Dim) + ResetWeight(NormalIntensity)
+    Weighted: Bold(Bold) Light(Dim) + ResetWeight(NormalIntensity),
+    NoWeight
 );
-attributes!(
+
+attribute!(
     /// `Slanted` text.
-    Slanted: Italic(Italic) + ResetSlant(NoItalic)
+    Slanted: Italic(Italic) + ResetSlant(NoItalic),
+    NoSlant
 );
-attributes!(
+
+attribute!(
     /// `Blinking` text.
-    Blinking: Slow(SlowBlink) Fast(RapidBlink) + ResetBlink(NoBlink)
+    Blinking: Slow(SlowBlink) Fast(RapidBlink) + ResetBlink(NoBlink),
+    NoBlink
 );
-attributes!(
+
+attribute!(
     /// `Inverted` text.
-    Inverted: Invert(Reverse) + ResetInvert(NoReverse)
+    Inverted: Invert(Reverse) + ResetInvert(NoReverse),
+    NoInvert
 );
-attributes!(
+
+attribute!(
     /// `Striked` text.
-    Striked: Strike(CrossedOut) + ResetStrike(NotCrossedOut)
+    Striked: Strike(CrossedOut) + ResetStrike(NotCrossedOut),
+    NoStrike
 );
-attributes!(
+
+attribute!(
     /// `Underlined` text.
-    Underlined: Underline(Underlined) + ResetUnderline(NoUnderline)
+    Underlined: Underline(Underlined) + ResetUnderline(NoUnderline),
+    NoUnderline
 );
-attributes!(
+
+attribute!(
     /// `Overlined` text.
-    Overlined: Overline(OverLined) + ResetOverline(NotOverLined)
+    Overlined: Overline(OverLined) + ResetOverline(NotOverLined),
+    NoOverline
 );
-attributes!(
+
+attribute!(
     /// `Bordered` text.
-    Bordered: Frame(Framed) Circle(Encircled) + ResetBorder(NotFramedOrEncircled)
+    Bordered: Frame(Framed) Circle(Encircled) + ResetBorder(NotFramedOrEncircled),
+    NoBorder
 );

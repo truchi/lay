@@ -6,3 +6,7 @@ mod doc;
 mod impl_with;
 #[macro_use]
 mod with;
+#[macro_use]
+mod attribute;
+#[macro_use]
+mod color;

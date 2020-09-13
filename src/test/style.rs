@@ -25,6 +25,13 @@ pub struct Style {
     pub border:     Bordered,
 }
 
+pub trait StyleTrait<T> {
+    fn inherit(self, parent: Self) -> Self;
+    fn inherit_mut(&mut self, parent: &Self);
+    fn dedup(self, before: Self) -> Self;
+    fn dedup_mut(&mut self, before: &Self);
+}
+
 impl_with!(Style: style {
     foreground [*]: style.foreground,
     background [/]: style.background,

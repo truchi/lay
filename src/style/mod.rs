@@ -11,3 +11,5 @@ pub use colors::*;
 // pub use style::*;
 // pub use styled::*;
 // pub use styler::*;
+pub use crossterm::style::Color;
+pub use Color::*;
