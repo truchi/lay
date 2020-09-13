@@ -115,11 +115,3 @@ macro_rules! impl_styler_ops {
         }
     };
 }
-
-// struct Styled {
-// _char: char,
-// style: super::Style,
-// }
-//
-// impl_styler!(Styled, field: style);
-// impl_styler_ops!(Styled);
