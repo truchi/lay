@@ -12,7 +12,7 @@ use super::{
 };
 
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
-pub struct Style {
+pub struct Styles {
     pub foreground: Foreground,
     pub background: Background,
     pub weight:     Weighted,
@@ -25,22 +25,49 @@ pub struct Style {
     pub border:     Bordered,
 }
 
-pub trait StyleTrait<T> {
+#[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
+pub struct OptionalStyles {
+    pub foreground: Option<Foreground>,
+    pub background: Option<Background>,
+    pub weight:     Option<Weighted>,
+    pub slant:      Option<Slanted>,
+    pub blink:      Option<Blinking>,
+    pub invert:     Option<Inverted>,
+    pub strike:     Option<Striked>,
+    pub underline:  Option<Underlined>,
+    pub overline:   Option<Overlined>,
+    pub border:     Option<Bordered>,
+}
+
+pub trait Style<T> {
     fn inherit(self, parent: Self) -> Self;
     fn inherit_mut(&mut self, parent: &Self);
     fn dedup(self, before: Self) -> Self;
     fn dedup_mut(&mut self, before: &Self);
 }
 
-impl_with!(Style: style {
-    foreground [*]: style.foreground,
-    background [/]: style.background,
-    weight     [+]: style.weight,
-    slant      [+]: style.slant,
-    blink      [+]: style.blink,
-    invert     [+]: style.invert,
-    strike     [+]: style.strike,
-    underline  [+]: style.underline,
-    overline   [+]: style.overline,
-    border     [+]: style.border,
+impl_with!(Styles: styles {
+    foreground [*]: styles.foreground,
+    background [/]: styles.background,
+    weight     [+]: styles.weight,
+    slant      [+]: styles.slant,
+    blink      [+]: styles.blink,
+    invert     [+]: styles.invert,
+    strike     [+]: styles.strike,
+    underline  [+]: styles.underline,
+    overline   [+]: styles.overline,
+    border     [+]: styles.border,
+});
+
+impl_with!(OptionalStyles: styles {
+    foreground? [*]: styles.foreground,
+    background? [/]: styles.background,
+    weight?     [+]: styles.weight,
+    slant?      [+]: styles.slant,
+    blink?      [+]: styles.blink,
+    invert?     [+]: styles.invert,
+    strike?     [+]: styles.strike,
+    underline?  [+]: styles.underline,
+    overline?   [+]: styles.overline,
+    border?     [+]: styles.border,
 });

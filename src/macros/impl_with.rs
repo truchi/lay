@@ -27,7 +27,7 @@ macro_rules! impl_with {
         // Foreground
         $(impl_with!(impl trait Color $Type $self $foreground, [$($foreground_op)?]
             WithForeground Foreground get_foreground get_foreground_mut foreground foreground_mut);)?
-        $(impl_with!(impl trait? Color $Type $self $optional_foreground [$($optional_foreground_op)?]
+        $(impl_with!(impl trait? Color $Type $self $optional_foreground, [$($optional_foreground_op)?]
            WithOptionalForeground Foreground NoColor get_foreground get_foreground_mut foreground foreground_mut no_foreground no_foreground_mut);)?
 
         // Background
@@ -81,7 +81,7 @@ macro_rules! impl_with {
         // Bordered
         $(impl_with!(impl trait $Type $self $border, [$($border_op)?]
             WithBorder Bordered get_border get_border_mut bordered bordered_mut);)?
-        $(impl_with!(impl trait $Type $self $optional_border, [$($optional_border_op)?]
+        $(impl_with!(impl trait? $Type $self $optional_border, [$($optional_border_op)?]
             WithOptionalBorder Bordered NoBorder get_border get_border_mut bordered bordered_mut no_border no_border_mut);)?
     };
     // Color
@@ -156,14 +156,14 @@ macro_rules! impl_with {
         impl ::std::ops::$Op<$crate::$Attr> for $Type {
             type Output = Self;
 
-            fn $op(self, rhs: $crate::$Attr) -> Self {
+            fn $op(self, _: $crate::$Attr) -> Self {
                 use $crate::$Trait;
                 self.$unset()
             }
         }
 
         impl ::std::ops::$OpAssign<$crate::$Attr> for $Type {
-            fn $op_assign(&mut self, rhs: $crate::$Attr) {
+            fn $op_assign(&mut self, _: $crate::$Attr) {
                 use $crate::$Trait;
                 self.$unset_mut();
             }
