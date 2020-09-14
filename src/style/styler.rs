@@ -148,37 +148,37 @@ styler!(
         }
     }
     attributes {
-        get_weight weighted weighted_mut: Weighted {
+        get_weighted weighted weighted_mut: Weighted {
             bold bold_mut: Bold
             light light_mut: Light
             reset_weight reset_weight_mut: ResetWeight
         }
-        get_slant slanted slanted_mut: Slanted {
+        get_slanted slanted slanted_mut: Slanted {
             italic italic_mut: Italic
             reset_slant reset_slant_mut: ResetSlant
         }
-        get_blink blinking blinking_mut: Blinking {
+        get_blinking blinking blinking_mut: Blinking {
             slow slow_mut: Slow
             fast fast_mut: Fast
             reset_blink reset_blink_mut: ResetBlink
         }
-        get_invert inverted inverted_mut: Inverted {
+        get_inverted inverted inverted_mut: Inverted {
             invert invert_mut: Invert
             reset_invert reset_invert_mut: ResetInvert
         }
-        get_strike striked striked_mut: Striked {
+        get_striked striked striked_mut: Striked {
             strike strike_mut: Strike
             reset_strike reset_strike_mut: ResetStrike
         }
-        get_underline underlined underlined_mut: Underlined {
+        get_underlined underlined underlined_mut: Underlined {
             underline underline_mut: Underline
             reset_underline reset_underline_mut: ResetUnderline
         }
-        get_overline overlined overlined_mut: Overlined {
+        get_overlined overlined overlined_mut: Overlined {
             overline overline_mut: Overline
             reset_overline reset_overline_mut: ResetOverline
         }
-        get_border bordered bordered_mut: Bordered {
+        get_bordered bordered bordered_mut: Bordered {
             frame frame_mut: Frame
             circle circle_mut: Circle
             reset_border reset_border_mut: ResetBorder

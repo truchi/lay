@@ -17,27 +17,27 @@ use std::fmt::{Display, Error, Formatter};
 pub struct Style {
     pub foreground: Foreground,
     pub background: Background,
-    pub weight:     Weighted,
-    pub slant:      Slanted,
-    pub blink:      Blinking,
-    pub invert:     Inverted,
-    pub strike:     Striked,
-    pub underline:  Underlined,
-    pub overline:   Overlined,
-    pub border:     Bordered,
+    pub weighted:   Weighted,
+    pub slanted:    Slanted,
+    pub blinking:   Blinking,
+    pub inverted:   Inverted,
+    pub striked:    Striked,
+    pub underlined: Underlined,
+    pub overlined:  Overlined,
+    pub bordered:   Bordered,
 }
 
 impl_styler!(Style style {
     style.foreground,
     style.background,
-    style.weight,
-    style.slant,
-    style.blink,
-    style.invert,
-    style.strike,
-    style.underline,
-    style.overline,
-    style.border,
+    style.weighted,
+    style.slanted,
+    style.blinking,
+    style.inverted,
+    style.striked,
+    style.underlined,
+    style.overlined,
+    style.bordered,
 });
 
 // impl_styler!(Style);
