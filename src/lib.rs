@@ -1,16 +1,11 @@
 #[macro_use]
 mod macros;
 
-mod test;
-pub use test::*;
+mod layer;
 mod style;
-pub use style::*;
 
-// mod layer;
-// mod style;
-//
-// pub use layer::*;
-// pub use style::*;
+pub use layer::*;
+pub use style::*;
 
 #[cfg(test)]
 mod tests {
