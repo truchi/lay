@@ -28,42 +28,25 @@ impl_styler!(Styled<T: Display,> style {
 });
 impl_styler_ops!(Styled<T: Display,>);
 
-// impl Styled<char> {
-//     /// Whether `Cell` has a visible foreground
-//     pub fn has_foreground(&self) -> bool {
-//         self.content != ' ' && self.style.foreground.is_some()
-//     }
-//
-//     /// Whether `Cell` has a visible background
-//     pub fn has_background(&self) -> bool {
-//         self.style.background.is_some()
-//     }
-//
-//     /// Merges `below` and `above`.
-//     /// When `above` has a background `Color`, all we see is `above`.
-//     /// When above has no background `Color` but a `char` and a foreground
-//     /// `Color`, we see `above` with `below`'s background.
-//     /// Otherwise we see `below`.
-//     pub fn above(&self, above: &Self) -> Self {
-//         if above.has_background() {
-//             // Cannot see through `above`
-//             return *above;
-//         } else if above.has_foreground() {
-//             // See through `above`'s backgroung
-//             let mut above = *above;
-//             above.style.background = self.style.background;
-//
-//             return above;
-//         } else {
-//             // `above` is invisible
-//             *self
-//         }
-//     }
-//
-//     pub fn below(&self, below: &Self) -> Self {
-//         below.above(self)
-//     }
-// }
+impl Styled<char> {
+    /// Superimposes `above` above `self`.
+    /// Returns `above` if its content is not `char::default()`, `self`
+    /// otherwise.
+    pub fn above(&self, above: &Self) -> Self {
+        if above.content == char::default() {
+            *self
+        } else {
+            *above
+        }
+    }
+
+    /// Superimposes `below` below `self`.
+    /// Returns `self` if its content is not `char::default()`, `below`
+    /// otherwise.
+    pub fn below(&self, below: &Self) -> Self {
+        below.above(self)
+    }
+}
 
 impl<T: Display> From<T> for Styled<T> {
     fn from(content: T) -> Self {
