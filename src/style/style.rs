@@ -40,8 +40,7 @@ impl_styler!(Style style {
     style.bordered,
 });
 
-// impl_styler!(Style);
-// impl_styler_ops!(Style);
+impl_styler_ops!(Style);
 
 impl Display for Style {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
@@ -51,7 +50,7 @@ impl Display for Style {
             };
         }
 
-        display!(foreground background weight slant blink invert strike underline overline border);
+        display!(foreground background weighted slanted blinking inverted striked underlined overlined bordered);
         Ok(())
     }
 }

@@ -35,14 +35,14 @@ macro_rules! styler {
                 );
 
                 doc!("Sets `" stringify!($Color) "`",
-                    fn $set_color(self, color: $Color) -> Self {
+                    fn $set_color(mut self, color: $Color) -> Self {
                         self.$set_color_mut(color);
                         self
                     }
                 );
 
                 doc!("Sets `" stringify!($Color) "(Color::Rbg { r, g, b })`",
-                    fn $set_rgb(self, r: u8, g: u8, b: u8) -> Self {
+                    fn $set_rgb(mut self, r: u8, g: u8, b: u8) -> Self {
                         self.$set_rgb_mut(r, g, b);
                         self
                     }
@@ -53,7 +53,7 @@ macro_rules! styler {
                     }
                 );
                 doc!("Sets `" stringify!($Color) "(Color::AnsiValue(value))`",
-                    fn $set_ansi(self, value: u8) -> Self {
+                    fn $set_ansi(mut self, value: u8) -> Self {
                         self.$set_ansi_mut(value);
                         self
                     }
@@ -65,7 +65,7 @@ macro_rules! styler {
                 );
                 $(
                     doc!("Sets `" stringify!($Color) "(Color::" stringify!($color_variant) ")`",
-                        fn $set_color_variant(self) -> Self {
+                        fn $set_color_variant(mut self) -> Self {
                             self.$set_color_variant_mut();
                             self
                         }
@@ -86,7 +86,7 @@ macro_rules! styler {
                 );
 
                 doc!("Sets `" stringify!($Attr) "`",
-                    fn $set_attr(self, attribute: $Attr) -> Self {
+                    fn $set_attr(mut self, attribute: $Attr) -> Self {
                         self.$set_attr_mut(attribute);
                         self
                     }
@@ -94,7 +94,7 @@ macro_rules! styler {
 
                 $(
                     doc!("Sets `" stringify!($Attr) "::" stringify!($attr_variant) "`",
-                        fn $set_attr_variant(self) -> Self {
+                        fn $set_attr_variant(mut self) -> Self {
                             self.$set_attr_variant_mut();
                             self
                         }
