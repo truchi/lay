@@ -1,6 +1,7 @@
 with_color!(WithForeground WithOptionalForeground Foreground {
     get { [get_foreground get_foreground_mut] }
-    set { [foreground foreground_mut] }
+    set { [set_background set_background_mut] }
+    attr { [foreground foreground_mut] }
     unset { [no_foreground no_foreground_mut] }
     rgb { [rgb rgb_mut] }
     ansi { [ansi ansi_mut] }
@@ -25,7 +26,8 @@ with_color!(WithForeground WithOptionalForeground Foreground {
 
 with_color!(WithBackground WithOptionalBackground Background {
     get { [get_background get_background_mut] }
-    set { [background background_mut] }
+    set { [set_background set_background_mut] }
+    attr { [background background_mut] }
     unset { [no_background no_background_mut] }
     rgb { [on_rgb on_rgb_mut] }
     ansi { [on_ansi on_ansi_mut] }

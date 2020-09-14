@@ -1,9 +1,4 @@
-use crossterm::terminal::{Clear, ClearType};
-use lay::*;
-
-struct Style {
-    foreground: Option<Foreground>,
-}
+// use lay::*;
 
 fn main() {
     dbg!(std::mem::size_of::<u8>());

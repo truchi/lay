@@ -41,6 +41,12 @@ macro_rules! with {
             ($set_arg:ident: $SetArgType:ty)
             $set_body:tt
         }
+        attr {
+            $($attr_doc:expr)*,
+            [$attr:ident $attr_mut:ident]
+            ($attr_arg:ident: $AttrArgType:ty)
+            $attr_body:tt
+        }
         $(unset { [$unset:ident $unset_mut:ident] })?
         $(specials { $(
             $($special_doc:expr)*,
@@ -103,6 +109,7 @@ macro_rules! with_color {
         $Type:ident {
             get { [$get:ident $get_mut:ident] }
             set { [$set:ident $set_mut:ident] }
+            attr { [$attr:ident $attr_mut:ident] }
             unset { [$unset:ident $unset_mut:ident] }
             rgb { [$set_rgb:ident $set_rgb_mut:ident] }
             ansi { [$set_ansi:ident $set_ansi_mut:ident] }
@@ -117,6 +124,12 @@ macro_rules! with_color {
                 set {
                     "Sets `" stringify!($Type) "(color)`",
                     [$set $set_mut]
+                    (color: $crate::Color)
+                    { color.into() }
+                }
+                attr {
+                    "Sets `" stringify!($Type) "(color)`",
+                    [$attr $attr_mut]
                     (color: $crate::Color)
                     { color.into() }
                 }
@@ -146,6 +159,12 @@ macro_rules! with_color {
                     (color: $crate::Color)
                     { Some(color.into()) }
                 }
+                attr {
+                    "Sets `" stringify!($Type) "(color)`",
+                    [$attr $attr_mut]
+                    (color: $crate::Color)
+                    { color.into() }
+                }
                 unset { [$unset $unset_mut] }
                 specials {
                     "Sets `Some(" stringify!($Type) "(Color::Rgb { r, g, b }))`",
@@ -167,6 +186,7 @@ macro_rules! with_color {
     };
 }
 
+/*
 macro_rules! with_attribute {
     (
         $Trait:ident
@@ -215,3 +235,4 @@ macro_rules! with_attribute {
         );
     };
 }
+*/

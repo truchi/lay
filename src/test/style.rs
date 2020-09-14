@@ -39,8 +39,32 @@ pub struct OptionalStyles {
     pub border:     Option<Bordered>,
 }
 
-pub trait Style<T> {
-    fn inherit(self, parent: Self) -> Self;
+struct Test {
+    stuff: u8,
+}
+
+trait WithStuff: WithOptionalStuff {
+    fn get_stuff_mut(&mut self) -> &mut u8;
+}
+
+trait WithOptionalStuff {
+    fn get_stuff_mut(&mut self) -> Option<&mut u8>;
+}
+
+impl WithStuff for Test {
+    fn get_stuff_mut(&mut self) -> &mut u8 {
+        &mut self.stuff
+    }
+}
+
+impl WithOptionalStuff for Test {
+    fn get_stuff_mut(&mut self) -> Option<&mut u8> {
+        Some(<Self as WithStuff>::get_stuff_mut(self))
+    }
+}
+
+pub trait Style {
+    fn inherit(self, parent: impl Into<OptionalStyles>) -> Self;
     fn inherit_mut(&mut self, parent: &Self);
     fn dedup(self, before: Self) -> Self;
     fn dedup_mut(&mut self, before: &Self);
