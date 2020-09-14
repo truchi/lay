@@ -9,6 +9,3 @@ color!(
     Background,
     SetBackgroundColor
 );
-
-/// Sets `Option<Foreground>` & `Option<Background>` fields to `None`.
-pub struct NoColor;

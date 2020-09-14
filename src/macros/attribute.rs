@@ -2,8 +2,7 @@ macro_rules! attribute {
     (
         $(#[$inner:ident $($args:tt)*])?
         $Name:ident:
-            $($variant:ident($xvariant:ident))* + $reset:ident($xreset:ident),
-        $NoName:ident
+            $($variant:ident($xvariant:ident))* + $reset:ident($xreset:ident)
     ) => {
         $(#[$inner $($args)*])?
         #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
@@ -27,10 +26,5 @@ macro_rules! attribute {
                 }
             }
         }
-
-        doc!("Sets `Option<" stringify!($Name) ">` fields to `None`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-            pub struct $NoName;
-        );
     };
 }
