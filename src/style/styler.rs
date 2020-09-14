@@ -31,15 +31,20 @@ macro_rules! styler {
                     fn $get_color(&self) -> $Color;
                 );
                 doc!("Sets `" stringify!($Color) "`",
-                    fn $set_color(self, color: $Color) -> Self;
-                );
-                doc!("Sets `" stringify!($Color) "`",
                     fn $set_color_mut(&mut self, color: $Color);
+                );
+
+                doc!("Sets `" stringify!($Color) "`",
+                    fn $set_color(self, color: $Color) -> Self {
+                        self.$set_color_mut(color);
+                        self
+                    }
                 );
 
                 doc!("Sets `" stringify!($Color) "(Color::Rbg { r, g, b })`",
                     fn $set_rgb(self, r: u8, g: u8, b: u8) -> Self {
-                        self.$set_color($Color(Color::Rgb { r, g, b }))
+                        self.$set_rgb_mut(r, g, b);
+                        self
                     }
                 );
                 doc!("Sets `" stringify!($Color) "(Color::Rbg { r, g, b })`",
@@ -49,7 +54,8 @@ macro_rules! styler {
                 );
                 doc!("Sets `" stringify!($Color) "(Color::AnsiValue(value))`",
                     fn $set_ansi(self, value: u8) -> Self {
-                        self.$set_color($Color(Color::AnsiValue(value)))
+                        self.$set_ansi_mut(value);
+                        self
                     }
                 );
                 doc!("Sets `" stringify!($Color) "(Color::AnsiValue(value))`",
@@ -60,7 +66,8 @@ macro_rules! styler {
                 $(
                     doc!("Sets `" stringify!($Color) "(Color::" stringify!($color_variant) ")`",
                         fn $set_color_variant(self) -> Self {
-                            self.$set_color($Color(Color::$color_variant))
+                            self.$set_color_variant_mut();
+                            self
                         }
                     );
                     doc!("Sets `" stringify!($Color) "(Color::" stringify!($color_variant) ")`",
@@ -75,16 +82,21 @@ macro_rules! styler {
                     fn $get_attr(&self) -> $Attr;
                 );
                 doc!("Sets `" stringify!($Attr) "`",
-                    fn $set_attr(self, attribute: $Attr) -> Self;
-                );
-                doc!("Sets `" stringify!($Attr) "`",
                     fn $set_attr_mut(&mut self, attribute: $Attr);
+                );
+
+                doc!("Sets `" stringify!($Attr) "`",
+                    fn $set_attr(self, attribute: $Attr) -> Self {
+                        self.$set_attr_mut(attribute);
+                        self
+                    }
                 );
 
                 $(
                     doc!("Sets `" stringify!($Attr) "::" stringify!($attr_variant) "`",
                         fn $set_attr_variant(self) -> Self {
-                            self.$set_attr(<$Attr>::$attr_variant)
+                            self.$set_attr_variant_mut();
+                            self
                         }
                     );
                     doc!("Sets `" stringify!($Attr) "::" stringify!($attr_variant) "`",

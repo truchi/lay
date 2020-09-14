@@ -1,55 +1,38 @@
 macro_rules! impl_styler {
-    ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
-        impl_styler!($Type $(<$($G $(: $B)?,)+>)?,
-            fields:
-                foreground background weight slant blink invert strike underline overline border
-        );
-    };
-    ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?,
-        field: $field:ident
-    ) => {
-        impl_styler!(impl $Type $(<$($G $(: $B)?,)+>)?,
-            field: $field,
-            fields:
-                foreground background weight slant blink invert strike underline overline border
-        );
-    };
-    ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?,
-        fields:
-            $foreground:ident $background:ident $weight:ident $slant:ident $blink:ident
-            $invert:ident $strike:ident $underline:ident $overline:ident $border:ident
-    ) => {
-        impl_styler!(impl $Type $(<$($G $(: $B)?,)+>)?,
-            fields:
-                $foreground $background $weight $slant $blink $invert $strike $underline $overline $border
-        );
-    };
-    (impl $Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?,
-        $(field: $field:ident,)?
-        fields:
-            $foreground:ident $background:ident $weight:ident $slant:ident $blink:ident
-            $invert:ident $strike:ident $underline:ident $overline:ident $border:ident
-    ) => {
+    ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)? $self:ident {
+        $foreground:expr,
+        $background:expr,
+        $weight:expr,
+        $slant:expr,
+        $blink:expr,
+        $invert:expr,
+        $strike:expr,
+        $underline:expr,
+        $overline:expr,
+        $border:expr,
+    }) => {
         impl $(<$($G $(: $B)?,)+>)? $crate::Styler for $Type $(<$($G,)+>)? {
-            impl_styler!(impl $($field)?: get_foreground get_foreground_mut $foreground Foreground);
-            impl_styler!(impl $($field)?: get_background get_background_mut $background Background);
-            impl_styler!(impl $($field)?: get_weight get_weight_mut $weight Weighted);
-            impl_styler!(impl $($field)?: get_slant get_slant_mut $slant Slanted);
-            impl_styler!(impl $($field)?: get_blink get_blink_mut $blink Blinking);
-            impl_styler!(impl $($field)?: get_invert get_invert_mut $invert Inverted);
-            impl_styler!(impl $($field)?: get_strike get_strike_mut $strike Striked);
-            impl_styler!(impl $($field)?: get_underline get_underline_mut $underline Underlined);
-            impl_styler!(impl $($field)?: get_overline get_overline_mut $overline Overlined);
-            impl_styler!(impl $($field)?: get_border get_border_mut $border Bordered);
+            impl_styler!(impl Foreground $self $foreground, get_foreground foreground_mut);
+            impl_styler!(impl Background $self $background, get_background background_mut);
+            impl_styler!(impl Weighted $self $weight, get_weight weighted_mut);
+            impl_styler!(impl Slanted $self $slant, get_slant slanted_mut);
+            impl_styler!(impl Blinking $self $blink, get_blink blinking_mut);
+            impl_styler!(impl Inverted $self $invert, get_invert inverted_mut);
+            impl_styler!(impl Striked $self $strike, get_strike striked_mut);
+            impl_styler!(impl Underlined $self $underline, get_underline underlined_mut);
+            impl_styler!(impl Overlined $self $overline, get_overline overlined_mut);
+            impl_styler!(impl Bordered $self $border, get_border bordered_mut);
         }
     };
-    (impl $($field:ident)?: $get:ident $get_mut:ident $field2:ident $ReturnType:ident) => {
-        fn $get(&self) -> &::std::option::Option<$crate::$ReturnType> {
-            &self$(.$field)?.$field2
+    (impl $Type:ident $self:ident $field:expr, $get:ident $set_mut:ident) => {
+        fn $get(&self) -> $Type {
+            let $self = self;
+            $field
         }
 
-        fn $get_mut(&mut self) -> &mut ::std::option::Option<$crate::$ReturnType> {
-            &mut self$(.$field)?.$field2
+        fn $set_mut(&mut self, field: $Type) {
+            let $self = self;
+            $field = field;
         }
     };
 }
