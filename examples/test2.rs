@@ -1,7 +1,7 @@
 // use lay::*;
 
 fn main() {
-    dbg!(char::default().is_whitespace());
+    dbg!(char::default());
     dbg!(std::mem::size_of::<u8>());
     dbg!(std::mem::size_of::<Option<u8>>());
     dbg!(std::mem::size_of::<u16>());
