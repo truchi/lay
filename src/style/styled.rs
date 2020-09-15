@@ -26,10 +26,12 @@ impl_styler!(Styled<T: Display,> style {
     style.style.overlined,
     style.style.bordered,
 });
+
 impl_styler_ops!(Styled<T: Display,>);
 
 impl Styled<char> {
     /// Superimposes `above` above `self`.
+    ///
     /// Returns `above` if its content is not `char::default()`, `self`
     /// otherwise.
     pub fn above(&self, above: &Self) -> Self {
@@ -41,6 +43,7 @@ impl Styled<char> {
     }
 
     /// Superimposes `below` below `self`.
+    ///
     /// Returns `self` if its content is not `char::default()`, `below`
     /// otherwise.
     pub fn below(&self, below: &Self) -> Self {

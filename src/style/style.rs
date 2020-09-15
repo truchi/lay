@@ -12,19 +12,19 @@ use super::{
 };
 use std::fmt::{Display, Error, Formatter};
 
-/// `Style`s.
+/// `Option`al `Style`s.
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub struct Style {
-    pub foreground: Foreground,
-    pub background: Background,
-    pub weighted:   Weighted,
-    pub slanted:    Slanted,
-    pub blinking:   Blinking,
-    pub inverted:   Inverted,
-    pub striked:    Striked,
-    pub underlined: Underlined,
-    pub overlined:  Overlined,
-    pub bordered:   Bordered,
+    pub foreground: Option<Foreground>,
+    pub background: Option<Background>,
+    pub weighted:   Option<Weighted>,
+    pub slanted:    Option<Slanted>,
+    pub blinking:   Option<Blinking>,
+    pub inverted:   Option<Inverted>,
+    pub striked:    Option<Striked>,
+    pub underlined: Option<Underlined>,
+    pub overlined:  Option<Overlined>,
+    pub bordered:   Option<Bordered>,
 }
 
 impl_styler!(Style style {
@@ -46,7 +46,9 @@ impl Display for Style {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         macro_rules! display {
             ($($field:ident)*) => {
-                $(write!(f, "{}", self.$field)?;)*
+                $(if let Some(field) = self.$field {
+                    write!(f, "{}", field)?;
+                })*
             };
         }
 

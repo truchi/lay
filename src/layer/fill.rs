@@ -17,7 +17,11 @@ impl Fill {
     }
 }
 
-// impl From<(Cell)>
+impl From<(Cell, u16, u16)> for Fill {
+    fn from((cell, width, height): (Cell, u16, u16)) -> Self {
+        Fill::new(cell, width, height)
+    }
+}
 
 impl Layer for Fill {
     fn width(&self) -> u16 {
@@ -28,7 +32,11 @@ impl Layer for Fill {
         self.height
     }
 
-    fn get(&self, _: u16, _: u16) -> Option<Cell> {
-        Some(self.cell)
+    fn get(&self, x: u16, y: u16) -> Option<Cell> {
+        if x < self.width && y < self.height {
+            Some(self.cell)
+        } else {
+            None
+        }
     }
 }

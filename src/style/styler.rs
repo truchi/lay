@@ -14,92 +14,116 @@ use super::{
 
 macro_rules! styler {
     (colors {
-        $($get_color:ident $set_color:ident $set_color_mut:ident: $Color:ident {
+        $($get_color:ident $set_color:ident $set_color_mut:ident: $Color:ident ($color:ident) {
+            $unset_color:ident $unset_color_mut:ident
             $set_rgb:ident $set_rgb_mut:ident $set_ansi:ident $set_ansi_mut:ident
             $($set_color_variant:ident $set_color_variant_mut:ident: $color_variant:ident)*
         })*
     }
     attributes {
-        $($get_attr:ident $set_attr:ident $set_attr_mut:ident: $Attr:ty {
+        $($get_attr:ident $set_attr:ident $set_attr_mut:ident: $Attr:ident ($attr:ident) {
+            $unset_attr:ident $unset_attr_mut:ident
             $($set_attr_variant:ident $set_attr_variant_mut:ident : $attr_variant:ident)*
         })*
     }) => {
         $(
-            doc!("Gets `" stringify!($Color) "`",
-                fn $get_color(&self) -> $Color;
+            doc!("Gets `Option<" stringify!($Color) ">`",
+                fn $get_color(&self) -> Option<$Color>;
             );
-            doc!("Sets `" stringify!($Color) "`",
-                fn $set_color_mut(&mut self, color: $Color);
+            doc!("Sets `Option<" stringify!($Color) ">`",
+                fn $set_color_mut(&mut self, $color: Option<$Color>);
             );
 
-            doc!("Sets `" stringify!($Color) "`",
-                fn $set_color(mut self, color: $Color) -> Self {
-                    self.$set_color_mut(color);
+            doc!("Sets `Option<" stringify!($Color) ">`",
+                fn $set_color(mut self, $color: Option<$Color>) -> Self {
+                    self.$set_color_mut($color);
                     self
                 }
             );
+            doc!("Sets `None`",
+                fn $unset_color(mut self) -> Self {
+                    self.$set_color_mut(None);
+                    self
+                }
+            );
+            doc!("Sets `None`",
+                fn $unset_color_mut(&mut self) {
+                    self.$set_color_mut(None);
+                }
+            );
 
-            doc!("Sets `" stringify!($Color) "(Color::Rbg { r, g, b })`",
+            doc!("Sets `Some(" stringify!($Color) "(Color::Rbg { r, g, b }))`",
                 fn $set_rgb(mut self, r: u8, g: u8, b: u8) -> Self {
-                    self.$set_rgb_mut(r, g, b);
+                    self.$set_color_mut(Some($Color(Color::Rgb { r, g, b })));
                     self
                 }
             );
-            doc!("Sets `" stringify!($Color) "(Color::Rbg { r, g, b })`",
+            doc!("Sets `Some(" stringify!($Color) "(Color::Rbg { r, g, b }))`",
                 fn $set_rgb_mut(&mut self, r: u8, g: u8, b: u8) {
-                    self.$set_color_mut($Color(Color::Rgb { r, g, b }));
+                    self.$set_color_mut(Some($Color(Color::Rgb { r, g, b })));
                 }
             );
-            doc!("Sets `" stringify!($Color) "(Color::AnsiValue(value))`",
+            doc!("Sets `Some(" stringify!($Color) "(Color::AnsiValue(value)))`",
                 fn $set_ansi(mut self, value: u8) -> Self {
-                    self.$set_ansi_mut(value);
+                    self.$set_color_mut(Some($Color(Color::AnsiValue(value))));
                     self
                 }
             );
-            doc!("Sets `" stringify!($Color) "(Color::AnsiValue(value))`",
+            doc!("Sets `Some(" stringify!($Color) "(Color::AnsiValue(value))))`",
                 fn $set_ansi_mut(&mut self, value: u8) {
-                    self.$set_color_mut($Color(Color::AnsiValue(value)));
+                    self.$set_color_mut(Some($Color(Color::AnsiValue(value))));
                 }
             );
             $(
-                doc!("Sets `" stringify!($Color) "(Color::" stringify!($color_variant) ")`",
+                doc!("Sets `Some(" stringify!($Color) "(Color::" stringify!($color_variant) "))`",
                     fn $set_color_variant(mut self) -> Self {
-                        self.$set_color_variant_mut();
+                        self.$set_color_mut(Some($Color(Color::$color_variant)));
                         self
                     }
                 );
-                doc!("Sets `" stringify!($Color) "(Color::" stringify!($color_variant) ")`",
+                doc!("Sets `Some(" stringify!($Color) "(Color::" stringify!($color_variant) "))`",
                     fn $set_color_variant_mut(&mut self) {
-                        self.$set_color_mut($Color(Color::$color_variant));
+                        self.$set_color_mut(Some($Color(Color::$color_variant)));
                     }
                 );
             )*
         )*
         $(
-            doc!("Gets `" stringify!($Attr) "`",
-                fn $get_attr(&self) -> $Attr;
+            doc!("Gets `Option<" stringify!($Attr) ">`",
+                fn $get_attr(&self) -> Option<$Attr>;
             );
-            doc!("Sets `" stringify!($Attr) "`",
-                fn $set_attr_mut(&mut self, attribute: $Attr);
+            doc!("Sets `Option<" stringify!($Attr) ">`",
+                fn $set_attr_mut(&mut self, $attr: Option<$Attr>);
             );
 
-            doc!("Sets `" stringify!($Attr) "`",
-                fn $set_attr(mut self, attribute: $Attr) -> Self {
-                    self.$set_attr_mut(attribute);
+            doc!("Sets `Option<" stringify!($Attr) ">`",
+                fn $set_attr(mut self, $attr: Option<$Attr>) -> Self {
+                    self.$set_attr_mut($attr);
                     self
+                }
+            );
+            doc!("Sets `None`",
+                fn $unset_attr(mut self) -> Self {
+                    self.$set_attr_mut(None);
+                    self
+                }
+            );
+            doc!("Sets `None`",
+                fn $unset_attr_mut(&mut self) {
+                    self.$set_attr_mut(None);
                 }
             );
 
             $(
-                doc!("Sets `" stringify!($Attr) "::" stringify!($attr_variant) "`",
+                doc!("Sets `Some(" stringify!($Attr) "::" stringify!($attr_variant) ")`",
                     fn $set_attr_variant(mut self) -> Self {
-                        self.$set_attr_variant_mut();
+                        self.$set_attr_mut(Some(<$Attr>::$attr_variant));
                         self
                     }
                 );
-                doc!("Sets `" stringify!($Attr) "::" stringify!($attr_variant) "`",
+                doc!("Sets `Some(" stringify!($Attr) "::" stringify!($attr_variant) ")`",
                     fn $set_attr_variant_mut(&mut self)  {
-                        self.$set_attr_mut(<$Attr>::$attr_variant);
+                        self.$set_attr_mut(Some(<$Attr>::$attr_variant));
                     }
                 );
             )*
@@ -111,7 +135,8 @@ macro_rules! styler {
 pub trait Styler: Sized {
     styler!(
         colors {
-            get_foreground foreground foreground_mut: Foreground {
+            get_foreground foreground foreground_mut: Foreground (foreground) {
+                no_foreground no_foreground_mut
                 rgb rgb_mut ansi ansi_mut
                 white white_mut: White
                 black black_mut: Black
@@ -128,7 +153,8 @@ pub trait Styler: Sized {
                 cyan cyan_mut: Cyan
                 dark_cyan dark_cyan_mut: DarkCyan
             }
-            get_background background background_mut: Background {
+            get_background background background_mut: Background (background) {
+                no_background no_background_mut
                 on_rgb on_rgb_mut on_ansi on_ansi_mut
                 on_white on_white_mut: White
                 on_black on_black_mut: Black
@@ -147,37 +173,45 @@ pub trait Styler: Sized {
             }
         }
         attributes {
-            get_weighted weighted weighted_mut: Weighted {
+            get_weighted weighted weighted_mut: Weighted (weight) {
+                no_weight no_weight_mut
                 bold bold_mut: Bold
                 light light_mut: Light
                 reset_weight reset_weight_mut: ResetWeight
             }
-            get_slanted slanted slanted_mut: Slanted {
+            get_slanted slanted slanted_mut: Slanted (slant) {
+                no_slant no_slant_mut
                 italic italic_mut: Italic
                 reset_slant reset_slant_mut: ResetSlant
             }
-            get_blinking blinking blinking_mut: Blinking {
+            get_blinking blinking blinking_mut: Blinking (blink) {
+                no_blink no_blink_mut
                 slow slow_mut: Slow
                 fast fast_mut: Fast
                 reset_blink reset_blink_mut: ResetBlink
             }
-            get_inverted inverted inverted_mut: Inverted {
+            get_inverted inverted inverted_mut: Inverted (invert) {
+                no_invert no_invert_mut
                 invert invert_mut: Invert
                 reset_invert reset_invert_mut: ResetInvert
             }
-            get_striked striked striked_mut: Striked {
+            get_striked striked striked_mut: Striked (strike) {
+                no_strike no_strike_mut
                 strike strike_mut: Strike
                 reset_strike reset_strike_mut: ResetStrike
             }
-            get_underlined underlined underlined_mut: Underlined {
+            get_underlined underlined underlined_mut: Underlined (underline) {
+                no_underline no_underline_mut
                 underline underline_mut: Underline
                 reset_underline reset_underline_mut: ResetUnderline
             }
-            get_overlined overlined overlined_mut: Overlined {
+            get_overlined overlined overlined_mut: Overlined (overline) {
+                no_overline no_overline_mut
                 overline overline_mut: Overline
                 reset_overline reset_overline_mut: ResetOverline
             }
-            get_bordered bordered bordered_mut: Bordered {
+            get_bordered bordered bordered_mut: Bordered (border) {
+                no_border no_border_mut
                 frame frame_mut: Frame
                 circle circle_mut: Circle
                 reset_border reset_border_mut: ResetBorder

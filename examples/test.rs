@@ -10,8 +10,12 @@ fn main() {
 
     let mut canvas = Canvas::new(30, 30);
     canvas.above(&(Styled::from('A') * Red / Green + Bold + Underline), 2, 2);
-    canvas.below(&(Fill::new(Styled::from(' ') / Yellow, 20, 10)), 1, 1);
-    canvas.above(&(Fill::new(Styled::from('a') * Red / Black, 2, 1)), 5, 5);
+    canvas.below(
+        &(Fill::new(Cell::from(char::default()) / Yellow, 20, 10)),
+        1,
+        1,
+    );
+    canvas.above(&(Fill::new(Cell::from('a') * Red / Black, 2, 2)), 5, 5);
     canvas.above(&(Styled::from("LOL") * Red / Magenta + Bold), 3, 0);
     // dbg!(canvas);
     let render = Render {
@@ -32,5 +36,4 @@ fn main() {
 
     println!("{}", Clear(ClearType::All));
     println!("{}", render2);
-    dbg!(char::default());
 }

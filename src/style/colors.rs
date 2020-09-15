@@ -2,10 +2,15 @@ use crossterm::style::{Color, SetBackgroundColor, SetForegroundColor};
 use std::fmt::{Display, Error, Formatter};
 
 macro_rules! color {
-    ($(#[$inner:ident $($args:tt)*])? $Name:ident, $fmt:ident) => {
+    ($(#[$inner:ident $($args:tt)*])? $Name:ident $NoName:ident, $fmt:ident) => {
         $(#[$inner $($args)*])?
         #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
         pub struct $Name(pub Color);
+
+        doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
+            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+            pub struct $NoName;
+        );
 
         impl From<Color> for $Name {
             fn from(color: Color) -> Self {
@@ -35,12 +40,16 @@ macro_rules! color {
 
 color!(
     /// A `Foreground` `Color`.
-    Foreground,
+    Foreground NoForeground,
     SetForegroundColor
 );
 
 color!(
     /// A `Background` `Color`.
-    Background,
+    Background NoBackground,
     SetBackgroundColor
 );
+
+/// Sets `Option<Foreground>` & `Option<Background>` to `None`.
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+pub struct NoColor;

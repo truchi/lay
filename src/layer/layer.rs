@@ -68,29 +68,30 @@ impl LayerMut for Cell {
 }
 
 macro_rules! layer_str {
-    ($StrType:ty) => {
-        impl Layer for Styled<$StrType> {
-            fn width(&self) -> u16 {
-                self.content.len() as u16
-            }
+    ($($StrType:ty,)*) => {
+        $(
+            impl Layer for Styled<$StrType> {
+                fn width(&self) -> u16 {
+                    self.content.len() as u16
+                }
 
-            fn height(&self) -> u16 {
-                1
-            }
+                fn height(&self) -> u16 {
+                    1
+                }
 
-            fn get(&self, x: u16, y: u16) -> Option<Cell> {
-                if y == 0 {
-                    self.content
-                        .chars()
-                        .nth(x as usize)
-                        .map(|c| (c, self.style).into())
-                } else {
-                    None
+                fn get(&self, x: u16, y: u16) -> Option<Cell> {
+                    if y == 0 {
+                        self.content
+                            .chars()
+                            .nth(x as usize)
+                            .map(|c| (c, self.style).into())
+                    } else {
+                        None
+                    }
                 }
             }
-        }
+        )*
     };
 }
 
-layer_str!(String);
-layer_str!(&str);
+layer_str!(String, &str,);

@@ -11,7 +11,7 @@ impl Canvas {
     pub fn new(width: u16, height: u16) -> Self {
         let size = width * height;
         let mut cells = Vec::with_capacity(usize::from(size));
-        cells.resize(usize::from(size), ' '.into());
+        cells.resize(usize::from(size), char::default().into());
 
         Self {
             cells,
