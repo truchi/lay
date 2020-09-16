@@ -1,5 +1,4 @@
-use super::Styled;
-use crate::Cell;
+use super::{Cell, Styled};
 
 pub trait Layer {
     fn width(&self) -> u16;
@@ -36,34 +35,6 @@ fn merge<T: LayerMut + ?Sized, U: Layer>(
                     *cell_a = f(cell_a, &cell_b);
                 }
             }
-        }
-    }
-}
-
-impl Layer for Cell {
-    fn width(&self) -> u16 {
-        1
-    }
-
-    fn height(&self) -> u16 {
-        1
-    }
-
-    fn get(&self, x: u16, y: u16) -> Option<Cell> {
-        if x == 0 && y == 0 {
-            Some(*self)
-        } else {
-            None
-        }
-    }
-}
-
-impl LayerMut for Cell {
-    fn get_mut(&mut self, x: u16, y: u16) -> Option<&mut Cell> {
-        if x == 0 && y == 0 {
-            Some(self)
-        } else {
-            None
         }
     }
 }

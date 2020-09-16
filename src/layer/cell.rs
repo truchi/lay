@@ -1,4 +1,4 @@
-use super::Styled;
+use super::{Layer, LayerMut, Styled};
 
 /// `Styled<char>`.
 ///
@@ -25,5 +25,33 @@ impl Cell {
     /// Superimposes `below` below `self`.
     pub fn below(&self, below: &Self) -> Self {
         below.above(self)
+    }
+}
+
+impl Layer for Cell {
+    fn width(&self) -> u16 {
+        1
+    }
+
+    fn height(&self) -> u16 {
+        1
+    }
+
+    fn get(&self, x: u16, y: u16) -> Option<Cell> {
+        if x == 0 && y == 0 {
+            Some(*self)
+        } else {
+            None
+        }
+    }
+}
+
+impl LayerMut for Cell {
+    fn get_mut(&mut self, x: u16, y: u16) -> Option<&mut Cell> {
+        if x == 0 && y == 0 {
+            Some(self)
+        } else {
+            None
+        }
     }
 }
