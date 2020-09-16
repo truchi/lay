@@ -1,25 +1,30 @@
-use super::Styled;
+use super::{Style, Styled};
 
 /// `Styled<char>`.
 ///
 /// A `Cell` conceptually has 2 layers:
-/// - a *foreground*: `char`, `Option<Foreground>` and other `Option`al text
-///   attributes (e.g. `Weighted`),
+/// - a *foreground*: `Option<char>`, `Option<Foreground>` and other `Option`al
+///   text attributes (e.g. `Weighted`),
 /// - a *background*: `Option<Background>`.
 ///
 /// With regards to colors, `None` denotes transparency.  
 /// With regards to content, `char::default()` (NUL) is the only char to denotes
 /// transparency. Hence, `' '` is a visible blank.
-pub type Cell = Styled<Option<char>>;
+pub type Cell = Styled<Option<char>, Style>;
 
 /// See [`Cell`](type.Cell.html).
 impl Cell {
-    /// Whether `Cell` has a visible foreground.
-    pub fn has_foreground(&self) -> bool {
-        self.content != char::default() && self.style.foreground.is_some()
+    /// Whether this `Cell` has a `Some(char)`.
+    pub fn has_content(&self) -> bool {
+        self.content.is_some()
     }
 
-    /// Whether `Cell` has a visible background.
+    /// Whether this `Cell` has a `Some(Foreground)`.
+    pub fn has_foreground(&self) -> bool {
+        self.style.foreground.is_some()
+    }
+
+    /// Whether this `Cell` has a `Some(Background)`.
     pub fn has_background(&self) -> bool {
         self.style.background.is_some()
     }
@@ -31,6 +36,19 @@ impl Cell {
     /// `below`'s background.  
     /// Otherwise we see `below`.
     pub fn above(&self, above: &Self) -> Self {
+        if above.has_content() {
+            if above.has_background() {
+                *above
+            } else {
+                let mut above = *above;
+                above.style.background = self.style.background;
+
+                above
+            }
+        } else {
+            *self
+        }
+        /*
         if above.has_background() {
             // Cannot see through `above`
             return *above;
@@ -44,6 +62,7 @@ impl Cell {
             // `above` is invisible
             *self
         }
+        */
     }
 
     /// Superimposes `below` below `self`.
