@@ -8,6 +8,7 @@ use super::{
     Overlined,
     Slanted,
     Striked,
+    Style,
     Underlined,
     Weighted,
 };
@@ -158,6 +159,16 @@ macro_rules! styler {
         fn dedup_mut<T: Styler>(&mut self, before: &T) {
             $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
             $(self.$set_attr_mut (dedup(self.$get_attr() , before.$get_attr() ));)*
+        }
+
+        /// Sets `Some` fields to their reset variant.
+        fn reset(self) -> Self {
+            self.and(&Style::RESET)
+        }
+
+        /// Sets `Some` fields to their reset variant.
+        fn reset_mut(&mut self) {
+            self.and_mut(&Style::RESET);
         }
 
         /// Formats the CSIs of `self` when `Some`.

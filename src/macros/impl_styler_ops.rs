@@ -35,6 +35,15 @@ macro_rules! impl_styler_ops {
             BitXor(bitxor xor) BitXorAssign(bitxor_assign xor_mut));
         impl_styler_ops!(impl $Type $(<$($G $(: $B)?,)+>)?
             Rem(rem dedup) RemAssign(rem_assign dedup_mut));
+
+
+        impl $(<$($G $(: $B)?,)+>)? ::std::ops::Not for $Type $(<$($G,)+>)? {
+            type Output = Self;
+
+            fn not(self) -> Self {
+                <Self as $crate::Styler>::reset(self)
+            }
+        }
     };
     (
         impl

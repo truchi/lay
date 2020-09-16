@@ -2,6 +2,7 @@ use super::{
     Background,
     Blinking,
     Bordered,
+    Color,
     Foreground,
     Inverted,
     Overlined,
@@ -26,6 +27,22 @@ pub struct Style {
     pub underlined: Option<Underlined>,
     pub overlined:  Option<Overlined>,
     pub bordered:   Option<Bordered>,
+}
+
+impl Style {
+    /// A `Style` with fields set to their reset variant.
+    pub const RESET: Self = Self {
+        foreground: Some(Foreground(Color::Reset)),
+        background: Some(Background(Color::Reset)),
+        weighted:   Some(Weighted::ResetWeight),
+        slanted:    Some(Slanted::ResetSlant),
+        blinking:   Some(Blinking::ResetBlink),
+        inverted:   Some(Inverted::ResetInvert),
+        striked:    Some(Striked::ResetStrike),
+        underlined: Some(Underlined::ResetUnderline),
+        overlined:  Some(Overlined::ResetOverline),
+        bordered:   Some(Bordered::ResetBorder),
+    };
 }
 
 impl Styler for Style {

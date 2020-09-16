@@ -31,6 +31,12 @@ impl<T: Display> Styler for Styled<T> {
 
 impl_styler_ops!(Styled<T: Display,>);
 
+impl<T: Display> From<T> for Styled<T> {
+    fn from(content: T) -> Self {
+        Self::new(content, Style::default())
+    }
+}
+
 impl<T: Display> From<(T, Style)> for Styled<T> {
     fn from((content, style): (T, Style)) -> Self {
         Self::new(content, style)
@@ -39,12 +45,6 @@ impl<T: Display> From<(T, Style)> for Styled<T> {
 
 impl<T: Display> Display for Styled<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(
-            f,
-            "{}{}{}",
-            self.style,
-            self.content,
-            self.style & Style::default()
-        )
+        write!(f, "{}{}{}", self.style, self.content, !self.style)
     }
 }
