@@ -9,8 +9,19 @@ pub struct Styled<T: Display> {
 }
 
 impl<T: Display> Styled<T> {
+    /// Retuns a new `Styled` with `content` and `style`.
     pub fn new(content: T, style: Style) -> Self {
         Self { content, style }
+    }
+
+    /// Whether this `Cell` has a `Some(Foreground)`.
+    pub fn has_foreground(&self) -> bool {
+        self.style.foreground.is_some()
+    }
+
+    /// Whether this `Cell` has a `Some(Background)`.
+    pub fn has_background(&self) -> bool {
+        self.style.background.is_some()
     }
 }
 

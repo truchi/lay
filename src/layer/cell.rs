@@ -8,16 +8,6 @@ pub type Cell = Styled<char>;
 
 /// See [`Cell`](type.Cell.html).
 impl Cell {
-    /// Whether this `Cell` has a `Some(Foreground)`.
-    pub fn has_foreground(&self) -> bool {
-        self.style.foreground.is_some()
-    }
-
-    /// Whether this `Cell` has a `Some(Background)`.
-    pub fn has_background(&self) -> bool {
-        self.style.background.is_some()
-    }
-
     /// Superimposes `above` above `self`.
     pub fn above(&self, above: &Self) -> Self {
         if above.has_background() {

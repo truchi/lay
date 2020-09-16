@@ -1,13 +1,13 @@
 use crate::Styled;
 
-mod canvas;
-mod fill;
+// mod canvas;
+// mod fill;
+mod cell;
 mod layer;
-mod render;
+// mod render;
 
-pub use canvas::*;
-pub use fill::*;
+// pub use canvas::*;
+// pub use fill::*;
 pub use layer::*;
-pub use render::*;
-
-pub type Cell = Styled<char>;
+// pub use render::*;
+pub use cell::*;
