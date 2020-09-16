@@ -1,19 +1,13 @@
 use super::Styled;
 
-/// `Styled<Option<char>>`.
+/// `Styled<char>`.
 ///
-/// `Cell`s without `char` are invisible.  
-/// `Cell`s with `char` without `Foreground` have transparent foreground.  
-/// `Cell`s with `char` without `Background` have transparent background.
-pub type Cell = Styled<Option<char>>;
+/// `Cell`s without `Foreground` have transparent foreground.  
+/// `Cell`s without `Background` have transparent background.
+pub type Cell = Styled<char>;
 
 /// See [`Cell`](type.Cell.html).
 impl Cell {
-    /// Whether this `Cell` has a `Some(char)`.
-    pub fn has_content(&self) -> bool {
-        self.content.is_some()
-    }
-
     /// Whether this `Cell` has a `Some(Foreground)`.
     pub fn has_foreground(&self) -> bool {
         self.style.foreground.is_some()
@@ -26,15 +20,13 @@ impl Cell {
 
     /// Superimposes `above` above `self`.
     pub fn above(&self, above: &Self) -> Self {
-        if above.has_content() {
-            if above.has_background() {
-                *above
-            } else {
-                let mut above = *above;
-                above.style.background = self.style.background;
+        if above.has_background() {
+            *above
+        } else if above.has_foreground() {
+            let mut above = *above;
+            above.style.background = self.style.background;
 
-                above
-            }
+            above
         } else {
             *self
         }

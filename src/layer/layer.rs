@@ -1,4 +1,5 @@
-use super::{Cell, Styled};
+use super::Styled;
+use crate::Cell;
 
 pub trait Layer {
     fn width(&self) -> u16;
