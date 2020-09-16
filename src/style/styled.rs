@@ -33,7 +33,7 @@ impl<T: Display> Display for Styled<T> {
             "{}{}{}",
             self.style,
             self.content,
-            self.style.and(&Style::default())
+            self.style & Style::default()
         )
     }
 }

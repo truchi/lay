@@ -26,6 +26,15 @@ macro_rules! impl_styler_ops {
             Add(add) AddAssign(add_assign) Overlined(overlined_mut) NoOverline rhs { rhs });
         impl_styler_ops!(impl $Type $(<$($G $(: $B)?,)+>)?
             Add(add) AddAssign(add_assign) Bordered(bordered_mut) NoBorder rhs { rhs });
+
+        impl_styler_ops!(impl $Type $(<$($G $(: $B)?,)+>)?
+            BitAnd(bitand and) BitAndAssign(bitand_assign and_mut));
+        impl_styler_ops!(impl $Type $(<$($G $(: $B)?,)+>)?
+            BitOr(bitor or) BitOrAssign(bitor_assign or_mut));
+        impl_styler_ops!(impl $Type $(<$($G $(: $B)?,)+>)?
+            BitXor(bitxor xor) BitXorAssign(bitxor_assign xor_mut));
+        impl_styler_ops!(impl $Type $(<$($G $(: $B)?,)+>)?
+            Rem(rem dedup) RemAssign(rem_assign dedup_mut));
     };
     (
         impl
@@ -60,6 +69,25 @@ macro_rules! impl_styler_ops {
         impl $(<$($G $(: $B)?,)+>)? ::std::ops::$OpsAssign<$crate::$NoRhs> for $Type $(<$($G,)+>)? {
             fn $ops_assign(&mut self, _: $crate::$NoRhs) {
                 <Self as $crate::Styler>::$set_mut(self, None);
+            }
+        }
+    };
+    (
+        impl
+            $Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?
+            $Ops:ident($ops:ident $set:ident) $OpsAssign:ident($ops_assign:ident $set_mut:ident)
+    ) => {
+        impl $(<$($G $(: $B)?,)+>)? ::std::ops::$Ops<$crate::Style> for $Type $(<$($G,)+>)? {
+            type Output = Self;
+
+            fn $ops(self, style: $crate::Style) -> Self {
+                <Self as $crate::Styler>::$set(self, &style)
+            }
+        }
+
+        impl $(<$($G $(: $B)?,)+>)? ::std::ops::$OpsAssign<$crate::Style> for $Type $(<$($G,)+>)? {
+            fn $ops_assign(&mut self, style: $crate::Style) {
+                <Self as $crate::Styler>::$set_mut(self, &style);
             }
         }
     };

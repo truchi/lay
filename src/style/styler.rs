@@ -147,7 +147,7 @@ macro_rules! styler {
 
         /// Unsets fields if the value is identical to the corresponding one in
         /// `before`.
-        fn dedup<T: Styler>(mut self, before: &Self) -> Self {
+        fn dedup<T: Styler>(mut self, before: &T) -> Self {
             $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
             $(self.$set_attr_mut (dedup(self.$get_attr() , before.$get_attr() ));)*
             self
@@ -155,7 +155,7 @@ macro_rules! styler {
 
         /// Unsets fields if the value is identical to the corresponding one in
         /// `before`.
-        fn dedup_mut<T: Styler>(&mut self, before: &Self) {
+        fn dedup_mut<T: Styler>(&mut self, before: &T) {
             $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
             $(self.$set_attr_mut (dedup(self.$get_attr() , before.$get_attr() ));)*
         }
