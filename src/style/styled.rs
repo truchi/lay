@@ -14,12 +14,12 @@ impl<T: Display> Styled<T> {
         Self { content, style }
     }
 
-    /// Whether this `Cell` has a `Some(Foreground)`.
+    /// Whether this `Styled` has a `Some(Foreground)`.
     pub fn has_foreground(&self) -> bool {
         self.style.foreground.is_some()
     }
 
-    /// Whether this `Cell` has a `Some(Background)`.
+    /// Whether this `Styled` has a `Some(Background)`.
     pub fn has_background(&self) -> bool {
         self.style.background.is_some()
     }
