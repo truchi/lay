@@ -7,6 +7,7 @@ use super::{
     Overlined,
     Slanted,
     Striked,
+    Styler,
     Underlined,
     Weighted,
 };
@@ -27,32 +28,26 @@ pub struct Style {
     pub bordered:   Option<Bordered>,
 }
 
-impl_styler!(Style style {
-    style.foreground,
-    style.background,
-    style.weighted,
-    style.slanted,
-    style.blinking,
-    style.inverted,
-    style.striked,
-    style.underlined,
-    style.overlined,
-    style.bordered,
-});
+impl Styler for Style {
+    impl_styler!(style {
+        style.foreground,
+        style.background,
+        style.weighted,
+        style.slanted,
+        style.blinking,
+        style.inverted,
+        style.striked,
+        style.underlined,
+        style.overlined,
+        style.bordered,
+    });
+}
 
 impl_styler_ops!(Style);
 
 impl Display for Style {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        macro_rules! display {
-            ($($field:ident)*) => {
-                $(if let Some(field) = self.$field {
-                    write!(f, "{}", field)?;
-                })*
-            };
-        }
-
-        display!(foreground background weighted slanted blinking inverted striked underlined overlined bordered);
+        <Style as Styler>::fmt(self, f)?;
         Ok(())
     }
 }

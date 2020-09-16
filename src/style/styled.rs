@@ -3,46 +3,35 @@ use std::fmt::{Display, Error, Formatter};
 
 /// `Display`able `Style`d content.
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
-pub struct Styled<T, U: Styler = Style> {
+pub struct Styled<T, U> {
     pub content: T,
     pub style:   U,
 }
 
-impl<T, U: Styler> Styled<T, U> {
+impl<T, U> Styled<T, U> {
     pub fn new(content: T, style: U) -> Self {
         Self { content, style }
     }
 }
 
-impl_styler!(Styled<T, U: Styler,> style {
-    style.style.foreground,
-    style.style.background,
-    style.style.weighted,
-    style.style.slanted,
-    style.style.blinking,
-    style.style.inverted,
-    style.style.striked,
-    style.style.underlined,
-    style.style.overlined,
-    style.style.bordered,
-});
-
-// impl_styler_ops!(Styled<T,>);
-
-impl<T> From<T> for Styled<T> {
-    fn from(content: T) -> Self {
-        Self::new(content, Default::default())
-    }
+impl<T, U: Styler> Styler for Styled<T, U> {
+    impl_styler!(style => style.style);
 }
 
-impl<T> From<(T, Style)> for Styled<T> {
-    fn from((content, style): (T, Style)) -> Self {
+impl_styler_ops!(Styled<T, U: Styler,>);
+
+impl<T, U> From<(T, U)> for Styled<T, U> {
+    fn from((content, style): (T, U)) -> Self {
         Self::new(content, style)
     }
 }
 
-impl<T: Display> Display for Styled<T> {
+impl<T: Display, U: Styler + Clone> Display for Styled<T, U> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}{}{}", self.style, self.content, Style::default()) // TODO
+        self.style.fmt(f)?;
+        self.content.fmt(f)?;
+        self.style.clone().and(&Style::default()).fmt(f)?;
+
+        Ok(())
     }
 }

@@ -11,6 +11,7 @@ use super::{
     Underlined,
     Weighted,
 };
+use std::fmt::{Display, Error, Formatter};
 
 macro_rules! styler {
     (colors {
@@ -128,7 +129,75 @@ macro_rules! styler {
                 );
             )*
         )*
+
+        styler!(impl op and $($get_color $set_color_mut)* $($get_attr $set_attr_mut)*:
+            "Sets `None` if the field is `None`, otherwise sets `other`.", and
+            "Sets `None` if the field is `None`, otherwise sets `other`.", and_mut
+        );
+
+        styler!(impl op or $($get_color $set_color_mut)* $($get_attr $set_attr_mut)*:
+            "Sets the field if it contains a value, otherwise sets `other`.", or
+            "Sets the field if it contains a value, otherwise sets `other`.", or_mut
+        );
+
+        styler!(impl op xor $($get_color $set_color_mut)* $($get_attr $set_attr_mut)*:
+            "Sets `Some` if exactly one of `self`, `other` is `Some`, otherwise sets `None`.", xor
+            "Sets `Some` if exactly one of `self`, `other` is `Some`, otherwise sets `None`.", xor_mut
+        );
+
+        /// Unsets fields if the value is identical to the corresponding one in
+        /// `before`.
+        fn dedup<T: Styler>(mut self, before: &Self) -> Self {
+            $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
+            $(self.$set_attr_mut (dedup(self.$get_attr() , before.$get_attr() ));)*
+            self
+        }
+
+        /// Unsets fields if the value is identical to the corresponding one in
+        /// `before`.
+        fn dedup_mut<T: Styler>(&mut self, before: &Self) {
+            $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
+            $(self.$set_attr_mut (dedup(self.$get_attr() , before.$get_attr() ));)*
+        }
+
+        /// Formats the CSIs of `self` when `Some`.
+        fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+            $(fmt(self.$get_color(), f)?;)*
+            $(fmt(self.$get_attr() , f)?;)*
+            Ok(())
+        }
     };
+    (impl op $op:ident $($get:ident $set_mut:ident)*: $($fn_doc:expr)*, $fn:ident $($fn_mut_doc:expr)*, $fn_mut:ident) => {
+        doc!($($fn_doc)*,
+            fn $fn<T: Styler>(mut self, other: &T) -> Self {
+                $(self.$set_mut(self.$get().$op(other.$get()));)*
+                $(self.$set_mut(self.$get().$op(other.$get()));)*
+                self
+            }
+        );
+        doc!($($fn_mut_doc)*,
+            fn $fn_mut<T: Styler>(&mut self, other: &T) {
+                $(self.$set_mut(self.$get().$op(other.$get()));)*
+                $(self.$set_mut(self.$get().$op(other.$get()));)*
+            }
+        );
+    }
+}
+
+/// Dedup helper.
+fn dedup<T: PartialEq>(a: Option<T>, before: Option<T>) -> Option<T> {
+    match (&a, &before) {
+        (Some(a), Some(before)) if a == before => None,
+        _ => a,
+    }
+}
+
+/// Fmt helper.
+fn fmt<T: Display>(t: Option<T>, f: &mut Formatter) -> Result<(), Error> {
+    if let Some(t) = t {
+        write!(f, "{}", t)?;
+    }
+    Ok(())
 }
 
 /// A trait for styled types.
