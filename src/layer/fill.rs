@@ -1,4 +1,5 @@
 use super::{Cell, Layer};
+use crate::Styler;
 
 #[derive(Debug)]
 pub struct Fill {
@@ -8,7 +9,8 @@ pub struct Fill {
 }
 
 impl Fill {
-    pub fn new(cell: Cell, width: u16, height: u16) -> Self {
+    pub fn new<T: Into<Cell>>(cell: T, width: u16, height: u16) -> Self {
+        let cell = cell.into();
         Self {
             cell,
             width,
@@ -17,8 +19,14 @@ impl Fill {
     }
 }
 
-impl From<(Cell, u16, u16)> for Fill {
-    fn from((cell, width, height): (Cell, u16, u16)) -> Self {
+impl Styler for Fill {
+    impl_styler!(fill => fill.cell);
+}
+
+impl_styler_ops!(Fill);
+
+impl<T: Into<Cell>> From<(T, u16, u16)> for Fill {
+    fn from((cell, width, height): (T, u16, u16)) -> Self {
         Fill::new(cell, width, height)
     }
 }
