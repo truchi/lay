@@ -1,13 +1,13 @@
 use crate::Styled;
 
-// mod canvas;
-// mod fill;
+mod canvas;
 mod cell;
+mod fill;
 mod layer;
-// mod render;
+mod render;
 
-// pub use canvas::*;
-// pub use fill::*;
-pub use layer::*;
-// pub use render::*;
+pub use canvas::*;
 pub use cell::*;
+pub use fill::*;
+pub use layer::*;
+pub use render::*;
