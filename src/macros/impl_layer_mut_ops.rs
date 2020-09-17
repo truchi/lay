@@ -1,21 +1,23 @@
 macro_rules! impl_layer_mut_ops {
-    ($Type:ident) => {
-        impl_layer_mut_ops!(impl $Type Shl(shl) ShlAssign(shl_assign) below);
-        impl_layer_mut_ops!(impl $Type Shr(shr) ShrAssign(shr_assign) above);
+    ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
+        impl_layer_mut_ops!(impl $Type $(<$($G $(: $B)?,)+>)? Shl(shl) ShlAssign(shl_assign) below);
+        impl_layer_mut_ops!(impl $Type $(<$($G $(: $B)?,)+>)? Shr(shr) ShrAssign(shr_assign) above);
     };
-    (impl $Type:ident $Op:ident($op:ident) $OpAssign:ident($op_assign:ident) $fn:ident) => {
-        impl<T: $crate::Layer> ::std::ops::$Op<(T, u16, u16)> for $Type {
+    (impl $Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?
+        $Op:ident($op:ident) $OpAssign:ident($op_assign:ident) $fn:ident
+    ) => {
+        impl<__Rhs: $crate::Layer $(, $($G $(: $B)?)+)?> ::std::ops::$Op<(__Rhs, u16, u16)> for $Type $(<$($G,)+>)? {
             type Output = Self;
 
-            fn $op(mut self, (layer, x, y): (T, u16, u16)) -> Self {
-                <$Type as $crate::LayerMut>::$fn(&mut self, &layer, x, y);
+            fn $op(mut self, (layer, x, y): (__Rhs, u16, u16)) -> Self {
+                <$Type $(<$($G,)+>)? as $crate::LayerMut>::$fn(&mut self, &layer, x, y);
                 self
             }
         }
 
-        impl<T: $crate::Layer> ::std::ops::$OpAssign<(T, u16, u16)> for $Type {
-            fn $op_assign(&mut self, (layer, x, y): (T, u16, u16)) {
-                <$Type as $crate::LayerMut>::$fn(self, &layer, x, y);
+        impl<__Rhs: $crate::Layer $(, $($G $(: $B)?)+)?> ::std::ops::$OpAssign<(__Rhs, u16, u16)> for $Type $(<$($G,)+>)? {
+            fn $op_assign(&mut self, (layer, x, y): (__Rhs, u16, u16)) {
+                <$Type $(<$($G,)+>)? as $crate::LayerMut>::$fn(self, &layer, x, y);
             }
         }
     };

@@ -31,6 +31,8 @@ impl<T: LayerMut> LayerMut for Render<T> {
     }
 }
 
+impl_layer_mut_ops!(Render<T: LayerMut,>);
+
 impl<T: Layer> Display for Render<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         for line in 0..self.height.min(self.height()) {

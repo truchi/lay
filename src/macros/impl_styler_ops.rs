@@ -1,5 +1,5 @@
 macro_rules! impl_styler_ops {
-    ($Type:ident $(< $($G:ident $(: $B:tt)?,)+ >)?) => {
+    ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
         impl_styler_ops!(impl $Type $(<$($G $(: $B)?,)+>)?
             Mul(mul) MulAssign(mul_assign) Color(foreground_mut) NoColor rhs { $crate::Foreground(rhs) });
         impl_styler_ops!(impl $Type $(<$($G $(: $B)?,)+>)?
