@@ -30,6 +30,19 @@ pub struct Style {
 }
 
 impl Style {
+    /// A `Style` with fields set to `None`.
+    pub const EMPTY: Self = Self {
+        foreground: None,
+        background: None,
+        weighted:   None,
+        slanted:    None,
+        blinking:   None,
+        inverted:   None,
+        striked:    None,
+        underlined: None,
+        overlined:  None,
+        bordered:   None,
+    };
     /// A `Style` with fields set to their reset variant.
     pub const RESET: Self = Self {
         foreground: Some(Foreground(Color::Reset)),

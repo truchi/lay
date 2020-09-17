@@ -11,6 +11,7 @@ pub struct Fill {
 impl Fill {
     pub fn new<T: Into<Cell>>(cell: T, width: u16, height: u16) -> Self {
         let cell = cell.into();
+
         Self {
             cell,
             width,
@@ -40,11 +41,7 @@ impl Layer for Fill {
         self.height
     }
 
-    fn get(&self, x: u16, y: u16) -> Option<Cell> {
-        if x < self.width && y < self.height {
-            Some(self.cell)
-        } else {
-            None
-        }
+    fn get_unchecked(&self, _: u16, _: u16) -> Cell {
+        self.cell
     }
 }

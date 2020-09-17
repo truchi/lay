@@ -1,5 +1,3 @@
-use crate::Styled;
-
 mod canvas;
 mod cell;
 mod fill;

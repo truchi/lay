@@ -1,4 +1,5 @@
-use super::{Layer, LayerMut, Styled};
+use super::{Layer, LayerMut};
+use crate::{Style, Styled};
 
 /// `Styled<char>`.
 ///
@@ -8,6 +9,11 @@ pub type Cell = Styled<char>;
 
 /// See [`Cell`](type.Cell.html).
 impl Cell {
+    pub const EMPTY: Cell = Cell {
+        content: ' ',
+        style:   Style::EMPTY,
+    };
+
     /// Superimposes `above` above `self`.
     pub fn above(&self, above: &Self) -> Self {
         if above.has_background() {
@@ -37,21 +43,15 @@ impl Layer for Cell {
         1
     }
 
-    fn get(&self, x: u16, y: u16) -> Option<Cell> {
-        if x == 0 && y == 0 {
-            Some(*self)
-        } else {
-            None
-        }
+    fn get_unchecked(&self, _: u16, _: u16) -> Cell {
+        *self
     }
 }
 
 impl LayerMut for Cell {
-    fn get_mut(&mut self, x: u16, y: u16) -> Option<&mut Cell> {
-        if x == 0 && y == 0 {
-            Some(self)
-        } else {
-            None
-        }
+    fn get_mut_unchecked(&mut self, _: u16, _: u16) -> &mut Cell {
+        self
     }
 }
+
+impl_layer_mut_ops!(Cell);

@@ -20,8 +20,8 @@ impl<'a, T: Layer> Layer for Render<'a, T> {
         self.layer.height()
     }
 
-    fn get(&self, x: u16, y: u16) -> Option<Cell> {
-        self.layer.get(x, y)
+    fn get_unchecked(&self, x: u16, y: u16) -> Cell {
+        self.layer.get_unchecked(x, y)
     }
 }
 

@@ -11,7 +11,7 @@ impl Canvas {
     pub fn new(width: u16, height: u16) -> Self {
         let size = width * height;
         let mut cells = Vec::with_capacity(usize::from(size));
-        cells.resize(usize::from(size), ' '.into());
+        cells.resize(usize::from(size), Cell::EMPTY);
 
         Self {
             cells,
@@ -30,16 +30,20 @@ impl Layer for Canvas {
         self.height
     }
 
-    fn get(&self, x: u16, y: u16) -> Option<Cell> {
+    fn get_unchecked(&self, x: u16, y: u16) -> Cell {
         self.cells
             .get(usize::from(x) + usize::from(y) * usize::from(self.width))
             .copied()
+            .unwrap()
     }
 }
 
 impl LayerMut for Canvas {
-    fn get_mut(&mut self, x: u16, y: u16) -> Option<&mut Cell> {
+    fn get_mut_unchecked(&mut self, x: u16, y: u16) -> &mut Cell {
         self.cells
             .get_mut(usize::from(x) + usize::from(y) * usize::from(self.width))
+            .unwrap()
     }
 }
+
+impl_layer_mut_ops!(Canvas);
