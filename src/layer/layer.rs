@@ -57,30 +57,54 @@ fn merge<T: LayerMut + ?Sized, U: Layer>(
     }
 }
 
-macro_rules! layer_str {
-    ($($StrType:ty,)*) => {
-        $(
-            impl Layer for Styled<$StrType> {
-                fn width(&self) -> u16 {
-                    self.content.len() as u16
-                }
-
-                fn height(&self) -> u16 {
-                    1
-                }
-
-                fn get_unchecked(&self, x: u16, _: u16) -> Cell {
-                    Cell::new(
-                        self.content
-                            .chars()
-                            .nth(x as usize)
-                            .unwrap(),
-                        self.style,
-                    )
-                }
+macro_rules! layer_ref {
+    ($($Type:ty)*) => {
+        $(impl<T: Layer> Layer for $Type {
+            fn width(&self) -> u16 {
+                <T as Layer>::width(self)
             }
-        )*
+
+            fn height(&self) -> u16 {
+                <T as Layer>::height(self)
+            }
+
+            fn get_unchecked(&self, x: u16, y: u16) -> Cell {
+                <T as Layer>::get_unchecked(self, x, y)
+            }
+        })*
     };
 }
 
-layer_str!(String, &str,);
+layer_ref!(&T &mut T);
+
+impl<T: LayerMut> LayerMut for &mut T {
+    fn get_mut_unchecked(&mut self, x: u16, y: u16) -> &mut Cell {
+        <T as LayerMut>::get_mut_unchecked(self, x, y)
+    }
+}
+
+macro_rules! layer_str {
+    ($($StrType:ty)*) => {
+        $(impl Layer for Styled<$StrType> {
+            fn width(&self) -> u16 {
+                self.content.len() as u16
+            }
+
+            fn height(&self) -> u16 {
+                1
+            }
+
+            fn get_unchecked(&self, x: u16, _: u16) -> Cell {
+                Cell::new(
+                    self.content
+                        .chars()
+                        .nth(x as usize)
+                        .unwrap(),
+                    self.style,
+                )
+            }
+        })*
+    };
+}
+
+layer_str!(&str String);

@@ -3,15 +3,15 @@ use crossterm::cursor::MoveTo;
 use std::fmt::{Display, Error, Formatter};
 
 #[derive(Debug)]
-pub struct Render<'a, T: Layer> {
-    pub layer:  &'a T,
+pub struct Render<T: Layer> {
+    pub layer:  T,
     pub width:  u16,
     pub height: u16,
     pub x:      u16,
     pub y:      u16,
 }
 
-impl<'a, T: Layer> Layer for Render<'a, T> {
+impl<T: Layer> Layer for Render<T> {
     fn width(&self) -> u16 {
         self.layer.width()
     }
@@ -25,7 +25,7 @@ impl<'a, T: Layer> Layer for Render<'a, T> {
     }
 }
 
-impl<'a, T: Layer> Display for Render<'a, T> {
+impl<T: Layer> Display for Render<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         for line in 0..self.height.min(self.height()) {
             write!(f, "{}", MoveTo(self.x, self.y + line))?;

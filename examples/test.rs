@@ -9,13 +9,14 @@ fn main() {
     // );
 
     let mut canvas = Canvas::new(30, 30);
-    canvas >>= (&(Cell::from('A') * Red / Green + Bold + Underline), 2, 2);
-    canvas <<= (&(Fill::from((' ', 20, 10)) / Yellow), 1, 1);
-    canvas >>= (&(Fill::from(('a', 2, 2)) * Red / Black), 5, 5);
-    canvas >>= (&(Styled::from("LOL") * Red / Magenta + Bold), 3, 0);
+    canvas >>= ((Cell::from('A') * Red / Green + Bold + Underline), 2, 2);
+    canvas <<= ((Fill::from((' ', 20, 10)) / Yellow), 1, 1);
+    canvas >>= ((Fill::from(('a', 2, 2)) * Red / Black), 5, 5);
+    canvas >>= (&mut (Fill::from(('b', 2, 2)) * Green / Red), 7, 7);
+    canvas >>= ((Styled::from("LOL") * Red / Magenta + Bold), 3, 0);
     // dbg!(canvas);
     let render = Render {
-        layer:  &canvas,
+        layer:  canvas,
         width:  0,
         height: 0,
         x:      0,
