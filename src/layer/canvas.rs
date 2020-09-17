@@ -21,6 +21,12 @@ impl Canvas {
     }
 }
 
+impl From<(u16, u16)> for Canvas {
+    fn from((width, height): (u16, u16)) -> Self {
+        Self::new(width, height)
+    }
+}
+
 impl Layer for Canvas {
     fn width(&self) -> u16 {
         self.width

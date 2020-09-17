@@ -1,4 +1,4 @@
-use super::{Cell, Layer};
+use super::{Cell, Layer, LayerMut};
 use crossterm::cursor::MoveTo;
 use std::fmt::{Display, Error, Formatter};
 
@@ -22,6 +22,12 @@ impl<T: Layer> Layer for Render<T> {
 
     fn get_unchecked(&self, x: u16, y: u16) -> Cell {
         self.layer.get_unchecked(x, y)
+    }
+}
+
+impl<T: LayerMut> LayerMut for Render<T> {
+    fn get_mut_unchecked(&mut self, x: u16, y: u16) -> &mut Cell {
+        self.layer.get_mut_unchecked(x, y)
     }
 }
 

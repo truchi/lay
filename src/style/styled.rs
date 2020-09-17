@@ -33,7 +33,7 @@ impl_styler_ops!(Styled<T: Display,>);
 
 impl<T: Display> From<T> for Styled<T> {
     fn from(content: T) -> Self {
-        Self::new(content, Style::default())
+        Self::new(content, Style::EMPTY)
     }
 }
 
