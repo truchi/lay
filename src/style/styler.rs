@@ -83,7 +83,7 @@ macro_rules! styler {
             }
         }
 
-        /// A trait for optional styled types.
+        /// A trait for `Option`al styled types.
         pub trait OptionalStyler: Sized {
             $(
                 styler!(impl Base "`Option<" stringify!($Color) ">`",
