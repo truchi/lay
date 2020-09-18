@@ -29,121 +29,55 @@ macro_rules! styler {
         })*
     }) => {
         $(
-            doc!("Gets `Option<" stringify!($Color) ">`",
-                fn $get_color(&self) -> Option<$Color>;
+            styler!(impl Base "`Option<" stringify!($Color) ">`",
+                $get_color $set_color $set_color_mut
+                Option<$Color>: ($color)
             );
-            doc!("Sets `Option<" stringify!($Color) ">`",
-                fn $set_color_mut(&mut self, $color: Option<$Color>);
-            );
-
-            doc!("Sets `Option<" stringify!($Color) ">`",
-                fn $set_color(mut self, $color: Option<$Color>) -> Self {
-                    self.$set_color_mut($color);
-                    self
-                }
-            );
-            doc!("Sets `None`",
-                fn $unset_color(mut self) -> Self {
-                    self.$set_color_mut(None);
-                    self
-                }
-            );
-            doc!("Sets `None`",
-                fn $unset_color_mut(&mut self) {
-                    self.$set_color_mut(None);
-                }
+            styler!(impl Set "`None`",
+                $unset_color $unset_color_mut [$set_color_mut]
+                () None
             );
 
-            doc!("Sets `Some(" stringify!($Color) "(Color::Rbg { r, g, b }))`",
-                fn $set_rgb(mut self, r: u8, g: u8, b: u8) -> Self {
-                    self.$set_color_mut(Some($Color(Color::Rgb { r, g, b })));
-                    self
-                }
+            styler!(impl Set "`Some(" stringify!($Color) "(Color::Rbg { r, g, b }))`",
+                $set_rgb $set_rgb_mut [$set_color_mut]
+                (r: u8, g: u8, b: u8,) Some($Color(Color::Rgb { r, g, b }))
             );
-            doc!("Sets `Some(" stringify!($Color) "(Color::Rbg { r, g, b }))`",
-                fn $set_rgb_mut(&mut self, r: u8, g: u8, b: u8) {
-                    self.$set_color_mut(Some($Color(Color::Rgb { r, g, b })));
-                }
+            styler!(impl Set "`Some(" stringify!($Color) "(Color::AnsiValue(value)))`",
+                $set_ansi $set_ansi_mut [$set_color_mut]
+                (value: u8,) Some($Color(Color::AnsiValue(value)))
             );
-            doc!("Sets `Some(" stringify!($Color) "(Color::AnsiValue(value)))`",
-                fn $set_ansi(mut self, value: u8) -> Self {
-                    self.$set_color_mut(Some($Color(Color::AnsiValue(value))));
-                    self
-                }
-            );
-            doc!("Sets `Some(" stringify!($Color) "(Color::AnsiValue(value))))`",
-                fn $set_ansi_mut(&mut self, value: u8) {
-                    self.$set_color_mut(Some($Color(Color::AnsiValue(value))));
-                }
-            );
-            $(
-                doc!("Sets `Some(" stringify!($Color) "(Color::" stringify!($color_variant) "))`",
-                    fn $set_color_variant(mut self) -> Self {
-                        self.$set_color_mut(Some($Color(Color::$color_variant)));
-                        self
-                    }
-                );
-                doc!("Sets `Some(" stringify!($Color) "(Color::" stringify!($color_variant) "))`",
-                    fn $set_color_variant_mut(&mut self) {
-                        self.$set_color_mut(Some($Color(Color::$color_variant)));
-                    }
-                );
-            )*
+
+            $(styler!(impl Set "`Some(" stringify!($Color) "(Color::" stringify!($color_variant) "))`",
+                $set_color_variant $set_color_variant_mut [$set_color_mut]
+                () Some($Color(Color::$color_variant))
+            );)*
         )*
         $(
-            doc!("Gets `Option<" stringify!($Attr) ">`",
-                fn $get_attr(&self) -> Option<$Attr>;
+            styler!(impl Base "`Option<" stringify!($Attr) ">`",
+                $get_attr $set_attr $set_attr_mut
+                Option<$Attr>: ($attr)
             );
-            doc!("Sets `Option<" stringify!($Attr) ">`",
-                fn $set_attr_mut(&mut self, $attr: Option<$Attr>);
-            );
-
-            doc!("Sets `Option<" stringify!($Attr) ">`",
-                fn $set_attr(mut self, $attr: Option<$Attr>) -> Self {
-                    self.$set_attr_mut($attr);
-                    self
-                }
-            );
-            doc!("Sets `None`",
-                fn $unset_attr(mut self) -> Self {
-                    self.$set_attr_mut(None);
-                    self
-                }
-            );
-            doc!("Sets `None`",
-                fn $unset_attr_mut(&mut self) {
-                    self.$set_attr_mut(None);
-                }
+            styler!(impl Set "`None`",
+                $unset_attr $unset_attr_mut [$set_attr_mut]
+                () None
             );
 
-            $(
-                doc!("Sets `Some(" stringify!($Attr) "::" stringify!($attr_variant) ")`",
-                    fn $set_attr_variant(mut self) -> Self {
-                        self.$set_attr_mut(Some(<$Attr>::$attr_variant));
-                        self
-                    }
-                );
-                doc!("Sets `Some(" stringify!($Attr) "::" stringify!($attr_variant) ")`",
-                    fn $set_attr_variant_mut(&mut self)  {
-                        self.$set_attr_mut(Some(<$Attr>::$attr_variant));
-                    }
-                );
-            )*
+            $(styler!(impl Set "`Some(" stringify!($Attr) "::" stringify!($attr_variant) ")`",
+                $set_attr_variant $set_attr_variant_mut [$set_attr_mut]
+                () Some(<$Attr>::$attr_variant)
+            );)*
         )*
 
-        styler!(impl op and $($get_color $set_color_mut)* $($get_attr $set_attr_mut)*:
-            "Sets `None` if the field is `None`, otherwise sets `other`.", and
-            "Sets `None` if the field is `None`, otherwise sets `other`.", and_mut
+        styler!(impl op and "Sets `None` if the field is `None`, otherwise sets `other`.",
+            and and_mut [$($get_color $set_color_mut)* $($get_attr $set_attr_mut)*]
         );
 
-        styler!(impl op or $($get_color $set_color_mut)* $($get_attr $set_attr_mut)*:
-            "Sets the field if it contains a value, otherwise sets `other`.", or
-            "Sets the field if it contains a value, otherwise sets `other`.", or_mut
+        styler!(impl op or "Sets the field if it contains a value, otherwise sets `other`.",
+            or or_mut [$($get_color $set_color_mut)* $($get_attr $set_attr_mut)*]
         );
 
-        styler!(impl op xor $($get_color $set_color_mut)* $($get_attr $set_attr_mut)*:
-            "Sets `Some` if exactly one of `self`, `other` is `Some`, otherwise sets `None`.", xor
-            "Sets `Some` if exactly one of `self`, `other` is `Some`, otherwise sets `None`.", xor_mut
+        styler!(impl op xor "Sets `Some` if exactly one of `self`, `other` is `Some`, otherwise sets `None`.",
+            xor xor_mut [$($get_color $set_color_mut)* $($get_attr $set_attr_mut)*]
         );
 
         /// Unsets fields if the value is identical to the corresponding one in
@@ -178,15 +112,51 @@ macro_rules! styler {
             Ok(())
         }
     };
-    (impl op $op:ident $($get:ident $set_mut:ident)*: $($fn_doc:expr)*, $fn:ident $($fn_mut_doc:expr)*, $fn_mut:ident) => {
-        doc!($($fn_doc)*,
+    (impl Base
+        $($doc:expr)*,
+        $get:ident $set:ident $set_mut:ident
+        $Type:ty: ($arg:ident)
+    ) => {
+        doc!("Gets " $($doc)*,
+            fn $get(&self) -> $Type;
+        );
+        doc!("Sets " $($doc)*,
+            fn $set_mut(&mut self, $arg: $Type);
+        );
+        doc!("Sets " $($doc)*,
+            fn $set(mut self, $arg: $Type) -> Self {
+                self.$set_mut($arg);
+                self
+            }
+        );
+    };
+    (impl Set
+        $($doc:expr)*,
+        $fn:ident $fn_mut:ident [$set_mut:ident]
+        ($($arg:ident: $ArgType:ident,)*)
+        $body:expr
+    ) => {
+        doc!("Sets " $($doc)*,
+            fn $fn(mut self $(, $arg: $ArgType)*) -> Self {
+                self.$set_mut($body);
+                self
+            }
+        );
+        doc!("Sets " $($doc)*,
+            fn $fn_mut(&mut self $(, $arg: $ArgType)*) {
+                self.$set_mut($body);
+            }
+        );
+    };
+    (impl op $op:ident $($doc:expr)*, $fn:ident $fn_mut:ident [$($get:ident $set_mut:ident)*]) => {
+        doc!($($doc)*,
             fn $fn<T: Styler>(mut self, other: &T) -> Self {
                 $(self.$set_mut(self.$get().$op(other.$get()));)*
                 $(self.$set_mut(self.$get().$op(other.$get()));)*
                 self
             }
         );
-        doc!($($fn_mut_doc)*,
+        doc!($($doc)*,
             fn $fn_mut<T: Styler>(&mut self, other: &T) {
                 $(self.$set_mut(self.$get().$op(other.$get()));)*
                 $(self.$set_mut(self.$get().$op(other.$get()));)*
