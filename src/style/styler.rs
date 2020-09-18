@@ -29,6 +29,61 @@ macro_rules! styler {
         })*
     }) => {
         /// A trait for styled types.
+        pub trait Styler: Sized {
+            $(
+                styler!(impl Base "`" stringify!($Color) "`",
+                    $get_color $set_color $set_color_mut
+                    $Color: ($color)
+                );
+
+                styler!(impl Set "`" stringify!($Color) "(Color::Rbg { r, g, b })`",
+                    $set_rgb $set_rgb_mut [$set_color_mut]
+                    (r: u8, g: u8, b: u8,) $Color(Color::Rgb { r, g, b })
+                );
+                styler!(impl Set "`" stringify!($Color) "(Color::AnsiValue(value))`",
+                    $set_ansi $set_ansi_mut [$set_color_mut]
+                    (value: u8,) $Color(Color::AnsiValue(value))
+                );
+
+                $(styler!(impl Set "`" stringify!($Color) "(Color::" stringify!($color_variant) ")`",
+                    $set_color_variant $set_color_variant_mut [$set_color_mut]
+                    () $Color(Color::$color_variant)
+                );)*
+            )*
+            $(
+                styler!(impl Base "`" stringify!($Attr) "`",
+                    $get_attr $set_attr $set_attr_mut
+                    $Attr: ($attr)
+                );
+
+                $(styler!(impl Set "`" stringify!($Attr) "::" stringify!($attr_variant) "`",
+                    $set_attr_variant $set_attr_variant_mut [$set_attr_mut]
+                    () <$Attr>::$attr_variant
+                );)*
+            )*
+
+            /// Sets fields to their reset variant.
+            fn reset(self) -> Self {
+                self
+                    $(.$set_color(Default::default()))*
+                    $(.$set_attr (Default::default()))*
+           }
+
+            /// Sets fields to their reset variant.
+            fn reset_mut(&mut self) {
+                $(self.$set_color_mut(Default::default());)*
+                $(self.$set_attr_mut (Default::default());)*
+            }
+
+            /// Formats the CSIs of `self`.
+            fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                $(self.$get_color().fmt(f)?;)*
+                $(self.$get_attr() .fmt(f)?;)*
+                Ok(())
+            }
+        }
+
+        /// A trait for optional styled types.
         pub trait OptionalStyler: Sized {
             $(
                 styler!(impl Base "`Option<" stringify!($Color) ">`",
@@ -107,8 +162,8 @@ macro_rules! styler {
 
             /// Formats the CSIs of `self` when `Some`.
             fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-                $(fmt(self.$get_color(), f)?;)*
-                $(fmt(self.$get_attr() , f)?;)*
+                $(if let Some(t) = self.$get_color() { t.fmt(f)?; })*
+                $(if let Some(t) = self.$get_attr()  { t.fmt(f)?; })*
                 Ok(())
             }
         }
@@ -172,14 +227,6 @@ fn dedup<T: PartialEq>(a: Option<T>, before: Option<T>) -> Option<T> {
         (Some(a), Some(before)) if a == before => None,
         _ => a,
     }
-}
-
-/// Fmt helper.
-fn fmt<T: Display>(t: Option<T>, f: &mut Formatter) -> Result<(), Error> {
-    if let Some(t) = t {
-        write!(f, "{}", t)?;
-    }
-    Ok(())
 }
 
 styler!(
