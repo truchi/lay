@@ -1,16 +1,16 @@
-use super::{Style, Styler};
+use super::{OptionalStyle, OptionalStyler};
 use std::fmt::{Display, Error, Formatter};
 
 /// `Display`able `Style`d content.
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub struct Styled<T: Display> {
     pub content: T,
-    pub style:   Style,
+    pub style:   OptionalStyle,
 }
 
 impl<T: Display> Styled<T> {
     /// Retuns a new `Styled` with `content` and `style`.
-    pub fn new(content: T, style: Style) -> Self {
+    pub fn new(content: T, style: OptionalStyle) -> Self {
         Self { content, style }
     }
 
@@ -25,7 +25,7 @@ impl<T: Display> Styled<T> {
     }
 }
 
-impl<T: Display> Styler for Styled<T> {
+impl<T: Display> OptionalStyler for Styled<T> {
     impl_styler!(style => style.style);
 }
 
@@ -33,12 +33,12 @@ impl_styler_ops!(Styled<T: Display,>);
 
 impl<T: Display> From<T> for Styled<T> {
     fn from(content: T) -> Self {
-        Self::new(content, Style::EMPTY)
+        Self::new(content, OptionalStyle::EMPTY)
     }
 }
 
-impl<T: Display> From<(T, Style)> for Styled<T> {
-    fn from((content, style): (T, Style)) -> Self {
+impl<T: Display> From<(T, OptionalStyle)> for Styled<T> {
+    fn from((content, style): (T, OptionalStyle)) -> Self {
         Self::new(content, style)
     }
 }

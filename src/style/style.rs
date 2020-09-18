@@ -5,10 +5,10 @@ use super::{
     Color,
     Foreground,
     Inverted,
+    OptionalStyler,
     Overlined,
     Slanted,
     Striked,
-    Styler,
     Underlined,
     Weighted,
 };
@@ -16,7 +16,7 @@ use std::fmt::{Display, Error, Formatter};
 
 /// `Option`al `Style`s.
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
-pub struct Style {
+pub struct OptionalStyle {
     pub foreground: Option<Foreground>,
     pub background: Option<Background>,
     pub weighted:   Option<Weighted>,
@@ -29,7 +29,7 @@ pub struct Style {
     pub bordered:   Option<Bordered>,
 }
 
-impl Style {
+impl OptionalStyle {
     /// A `Style` with fields set to `None`.
     pub const EMPTY: Self = Self {
         foreground: None,
@@ -58,7 +58,7 @@ impl Style {
     };
 }
 
-impl Styler for Style {
+impl OptionalStyler for OptionalStyle {
     impl_styler!(style {
         style.foreground,
         style.background,
@@ -73,10 +73,10 @@ impl Styler for Style {
     });
 }
 
-impl_styler_ops!(Style);
+impl_styler_ops!(OptionalStyle);
 
-impl Display for Style {
+impl Display for OptionalStyle {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <Style as Styler>::fmt(self, f)
+        <OptionalStyle as OptionalStyler>::fmt(self, f)
     }
 }

@@ -41,7 +41,7 @@ macro_rules! impl_styler_ops {
             type Output = Self;
 
             fn not(self) -> Self {
-                <Self as $crate::Styler>::reset(self)
+                <Self as $crate::OptionalStyler>::reset(self)
             }
         }
     };
@@ -55,14 +55,14 @@ macro_rules! impl_styler_ops {
             type Output = Self;
 
             fn $ops(mut self, $rhs: $crate::$Rhs) -> Self {
-                <Self as $crate::Styler>::$set_mut(&mut self, Some($body));
+                <Self as $crate::OptionalStyler>::$set_mut(&mut self, Some($body));
                 self
             }
         }
 
         impl $(<$($G $(: $B)?,)+>)? ::std::ops::$OpsAssign<$crate::$Rhs> for $Type $(<$($G,)+>)? {
             fn $ops_assign(&mut self, $rhs: $crate::$Rhs) {
-                <Self as $crate::Styler>::$set_mut(self, Some($body));
+                <Self as $crate::OptionalStyler>::$set_mut(self, Some($body));
             }
         }
 
@@ -70,14 +70,14 @@ macro_rules! impl_styler_ops {
             type Output = Self;
 
             fn $ops(mut self, _: $crate::$NoRhs) -> Self {
-                <Self as $crate::Styler>::$set_mut(&mut self, None);
+                <Self as $crate::OptionalStyler>::$set_mut(&mut self, None);
                 self
             }
         }
 
         impl $(<$($G $(: $B)?,)+>)? ::std::ops::$OpsAssign<$crate::$NoRhs> for $Type $(<$($G,)+>)? {
             fn $ops_assign(&mut self, _: $crate::$NoRhs) {
-                <Self as $crate::Styler>::$set_mut(self, None);
+                <Self as $crate::OptionalStyler>::$set_mut(self, None);
             }
         }
     };
@@ -86,17 +86,17 @@ macro_rules! impl_styler_ops {
             $Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?
             $Ops:ident($ops:ident $set:ident) $OpsAssign:ident($ops_assign:ident $set_mut:ident)
     ) => {
-        impl $(<$($G $(: $B)?,)+>)? ::std::ops::$Ops<$crate::Style> for $Type $(<$($G,)+>)? {
+        impl $(<$($G $(: $B)?,)+>)? ::std::ops::$Ops<$crate::OptionalStyle> for $Type $(<$($G,)+>)? {
             type Output = Self;
 
-            fn $ops(self, style: $crate::Style) -> Self {
-                <Self as $crate::Styler>::$set(self, &style)
+            fn $ops(self, style: $crate::OptionalStyle) -> Self {
+                <Self as $crate::OptionalStyler>::$set(self, &style)
             }
         }
 
-        impl $(<$($G $(: $B)?,)+>)? ::std::ops::$OpsAssign<$crate::Style> for $Type $(<$($G,)+>)? {
-            fn $ops_assign(&mut self, style: $crate::Style) {
-                <Self as $crate::Styler>::$set_mut(self, &style);
+        impl $(<$($G $(: $B)?,)+>)? ::std::ops::$OpsAssign<$crate::OptionalStyle> for $Type $(<$($G,)+>)? {
+            fn $ops_assign(&mut self, style: $crate::OptionalStyle) {
+                <Self as $crate::OptionalStyler>::$set_mut(self, &style);
             }
         }
     };
