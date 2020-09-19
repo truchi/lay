@@ -1,9 +1,29 @@
 macro_rules! impl_styler_ops {
+    ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
+        impl_styler_ops!(impl $Type as Styler
+            <$($($G $(: $B)?,)+)?> [*] foreground_mut (foreground: Color) $crate::Foreground(foreground);
+            <$($($G $(: $B)?,)+)?> [/] background_mut (background: Color) $crate::Background(background);
+
+            <$($($G $(: $B)?,)+)?> [+] foreground_mut (foreground: Foreground) foreground;
+            <$($($G $(: $B)?,)+)?> [+] background_mut (background: Background) background;
+
+            <$($($G $(: $B)?,)+)?> [+] weighted_mut   (weighted: Weighted) weighted;
+            <$($($G $(: $B)?,)+)?> [+] slanted_mut    (slanted: Slanted) slanted;
+            <$($($G $(: $B)?,)+)?> [+] blinking_mut   (blinking: Blinking) blinking;
+            <$($($G $(: $B)?,)+)?> [+] inverted_mut   (inverted: Inverted) inverted;
+            <$($($G $(: $B)?,)+)?> [+] striked_mut    (striked: Striked) striked;
+            <$($($G $(: $B)?,)+)?> [+] underlined_mut (underlined: Underlined) underlined;
+            <$($($G $(: $B)?,)+)?> [+] overlined_mut  (overlined: Overlined) overlined;
+            <$($($G $(: $B)?,)+)?> [+] bordered_mut   (bordered: Bordered) bordered;
+
+            <$($($G $(: $B)?,)+)?> [!] reset_mut;
+        );
+    };
     ([Option] $Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
         impl_styler_ops!(impl $Type as OptionalStyler
-            <$($($G $(: $B)?,)+)?> [*] foreground_mut (rhs: Color) Some($crate::Foreground(rhs));
+            <$($($G $(: $B)?,)+)?> [*] foreground_mut (foreground: Color) Some($crate::Foreground(foreground));
             <$($($G $(: $B)?,)+)?> [*] foreground_mut (_: NoColor) None;
-            <$($($G $(: $B)?,)+)?> [/] background_mut (rhs: Color) Some($crate::Background(rhs));
+            <$($($G $(: $B)?,)+)?> [/] background_mut (background: Color) Some($crate::Background(background));
             <$($($G $(: $B)?,)+)?> [/] background_mut (_: NoColor) None;
 
             <$($($G $(: $B)?,)+)?> [+] foreground_mut (foreground: Foreground) Some(foreground);

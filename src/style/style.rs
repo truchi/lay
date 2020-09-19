@@ -67,7 +67,7 @@ style!(
     bordered Bordered: Bordered::ResetBorder,
 );
 
-// impl_styler_ops!(Style);
+impl_styler_ops!(Style);
 
 impl OptionalStyle {
     /// An `OptionalStyle` with fields set to `None`.
