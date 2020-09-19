@@ -269,44 +269,44 @@ styler!(
         }
     }
     attributes {
-        get_weighted weighted weighted_mut: Weighted (weight) {
+        get_weighted weighted weighted_mut: Weighted (weighted) {
             no_weight no_weight_mut
             bold bold_mut: Bold
             light light_mut: Light
             reset_weight reset_weight_mut: ResetWeight
         }
-        get_slanted slanted slanted_mut: Slanted (slant) {
+        get_slanted slanted slanted_mut: Slanted (slanted) {
             no_slant no_slant_mut
             italic italic_mut: Italic
             reset_slant reset_slant_mut: ResetSlant
         }
-        get_blinking blinking blinking_mut: Blinking (blink) {
+        get_blinking blinking blinking_mut: Blinking (blinking) {
             no_blink no_blink_mut
             slow slow_mut: Slow
             fast fast_mut: Fast
             reset_blink reset_blink_mut: ResetBlink
         }
-        get_inverted inverted inverted_mut: Inverted (invert) {
+        get_inverted inverted inverted_mut: Inverted (inverted) {
             no_invert no_invert_mut
             invert invert_mut: Invert
             reset_invert reset_invert_mut: ResetInvert
         }
-        get_striked striked striked_mut: Striked (strike) {
+        get_striked striked striked_mut: Striked (striked) {
             no_strike no_strike_mut
             strike strike_mut: Strike
             reset_strike reset_strike_mut: ResetStrike
         }
-        get_underlined underlined underlined_mut: Underlined (underline) {
+        get_underlined underlined underlined_mut: Underlined (underlined) {
             no_underline no_underline_mut
             underline underline_mut: Underline
             reset_underline reset_underline_mut: ResetUnderline
         }
-        get_overlined overlined overlined_mut: Overlined (overline) {
+        get_overlined overlined overlined_mut: Overlined (overlined) {
             no_overline no_overline_mut
             overline overline_mut: Overline
             reset_overline reset_overline_mut: ResetOverline
         }
-        get_bordered bordered bordered_mut: Bordered (border) {
+        get_bordered bordered bordered_mut: Bordered (bordered) {
             no_border no_border_mut
             frame frame_mut: Frame
             circle circle_mut: Circle

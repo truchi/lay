@@ -3,18 +3,16 @@ macro_rules! impl_styler_ops {
         impl_styler_ops!(impl $Type as Styler
             <$($($G $(: $B)?,)+)?> [*] foreground_mut (foreground: Color) $crate::Foreground(foreground);
             <$($($G $(: $B)?,)+)?> [/] background_mut (background: Color) $crate::Background(background);
-
             <$($($G $(: $B)?,)+)?> [+] foreground_mut (foreground: Foreground) foreground;
             <$($($G $(: $B)?,)+)?> [+] background_mut (background: Background) background;
-
-            <$($($G $(: $B)?,)+)?> [+] weighted_mut   (weighted: Weighted) weighted;
-            <$($($G $(: $B)?,)+)?> [+] slanted_mut    (slanted: Slanted) slanted;
-            <$($($G $(: $B)?,)+)?> [+] blinking_mut   (blinking: Blinking) blinking;
-            <$($($G $(: $B)?,)+)?> [+] inverted_mut   (inverted: Inverted) inverted;
-            <$($($G $(: $B)?,)+)?> [+] striked_mut    (striked: Striked) striked;
+            <$($($G $(: $B)?,)+)?> [+] weighted_mut   (weighted  : Weighted  ) weighted;
+            <$($($G $(: $B)?,)+)?> [+] slanted_mut    (slanted   : Slanted   ) slanted;
+            <$($($G $(: $B)?,)+)?> [+] blinking_mut   (blinking  : Blinking  ) blinking;
+            <$($($G $(: $B)?,)+)?> [+] inverted_mut   (inverted  : Inverted  ) inverted;
+            <$($($G $(: $B)?,)+)?> [+] striked_mut    (striked   : Striked   ) striked;
             <$($($G $(: $B)?,)+)?> [+] underlined_mut (underlined: Underlined) underlined;
-            <$($($G $(: $B)?,)+)?> [+] overlined_mut  (overlined: Overlined) overlined;
-            <$($($G $(: $B)?,)+)?> [+] bordered_mut   (bordered: Bordered) bordered;
+            <$($($G $(: $B)?,)+)?> [+] overlined_mut  (overlined : Overlined ) overlined;
+            <$($($G $(: $B)?,)+)?> [+] bordered_mut   (bordered  : Bordered  ) bordered;
 
             <$($($G $(: $B)?,)+)?> [!] reset_mut;
         );
@@ -22,38 +20,37 @@ macro_rules! impl_styler_ops {
     ([Option] $Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
         impl_styler_ops!(impl $Type as OptionalStyler
             <$($($G $(: $B)?,)+)?> [*] foreground_mut (foreground: Color) Some($crate::Foreground(foreground));
-            <$($($G $(: $B)?,)+)?> [*] foreground_mut (_: NoColor) None;
             <$($($G $(: $B)?,)+)?> [/] background_mut (background: Color) Some($crate::Background(background));
-            <$($($G $(: $B)?,)+)?> [/] background_mut (_: NoColor) None;
-
             <$($($G $(: $B)?,)+)?> [+] foreground_mut (foreground: Foreground) Some(foreground);
-            <$($($G $(: $B)?,)+)?> [+] foreground_mut (_: NoForeground) None;
             <$($($G $(: $B)?,)+)?> [+] background_mut (background: Background) Some(background);
-            <$($($G $(: $B)?,)+)?> [+] background_mut (_: NoBackground) None;
-
-            <$($($G $(: $B)?,)+)?> [+] weighted_mut   (weighted: Weighted) Some(weighted);
-            <$($($G $(: $B)?,)+)?> [+] weighted_mut   (_: NoWeight) None;
-            <$($($G $(: $B)?,)+)?> [+] slanted_mut    (slanted: Slanted) Some(slanted);
-            <$($($G $(: $B)?,)+)?> [+] slanted_mut    (_: NoSlant) None;
-            <$($($G $(: $B)?,)+)?> [+] blinking_mut   (blinking: Blinking) Some(blinking);
-            <$($($G $(: $B)?,)+)?> [+] blinking_mut   (_: NoBlink) None;
-            <$($($G $(: $B)?,)+)?> [+] inverted_mut   (inverted: Inverted) Some(inverted);
-            <$($($G $(: $B)?,)+)?> [+] inverted_mut   (_: NoInvert) None;
-            <$($($G $(: $B)?,)+)?> [+] striked_mut    (striked: Striked) Some(striked);
-            <$($($G $(: $B)?,)+)?> [+] striked_mut    (_: NoStrike) None;
+            <$($($G $(: $B)?,)+)?> [+] weighted_mut   (weighted  : Weighted  ) Some(weighted);
+            <$($($G $(: $B)?,)+)?> [+] slanted_mut    (slanted   : Slanted   ) Some(slanted);
+            <$($($G $(: $B)?,)+)?> [+] blinking_mut   (blinking  : Blinking  ) Some(blinking);
+            <$($($G $(: $B)?,)+)?> [+] inverted_mut   (inverted  : Inverted  ) Some(inverted);
+            <$($($G $(: $B)?,)+)?> [+] striked_mut    (striked   : Striked   ) Some(striked);
             <$($($G $(: $B)?,)+)?> [+] underlined_mut (underlined: Underlined) Some(underlined);
-            <$($($G $(: $B)?,)+)?> [+] underlined_mut (_: NoUnderline) None;
-            <$($($G $(: $B)?,)+)?> [+] overlined_mut  (overlined: Overlined) Some(overlined);
-            <$($($G $(: $B)?,)+)?> [+] overlined_mut  (_: NoOverline) None;
-            <$($($G $(: $B)?,)+)?> [+] bordered_mut   (bordered: Bordered) Some(bordered);
-            <$($($G $(: $B)?,)+)?> [+] bordered_mut   (_: NoBorder) None;
+            <$($($G $(: $B)?,)+)?> [+] overlined_mut  (overlined : Overlined ) Some(overlined);
+            <$($($G $(: $B)?,)+)?> [+] bordered_mut   (bordered  : Bordered  ) Some(bordered);
+
+            <$($($G $(: $B)?,)+)?> [!] reset_mut;
+
+            <$($($G $(: $B)?,)+)?> [*] foreground_mut (_: NoColor) None;
+            <$($($G $(: $B)?,)+)?> [/] background_mut (_: NoColor) None;
+            <$($($G $(: $B)?,)+)?> [+] foreground_mut (_: NoForeground) None;
+            <$($($G $(: $B)?,)+)?> [+] background_mut (_: NoBackground) None;
+            <$($($G $(: $B)?,)+)?> [+] weighted_mut   (_: NoWeight    ) None;
+            <$($($G $(: $B)?,)+)?> [+] slanted_mut    (_: NoSlant     ) None;
+            <$($($G $(: $B)?,)+)?> [+] blinking_mut   (_: NoBlink     ) None;
+            <$($($G $(: $B)?,)+)?> [+] inverted_mut   (_: NoInvert    ) None;
+            <$($($G $(: $B)?,)+)?> [+] striked_mut    (_: NoStrike    ) None;
+            <$($($G $(: $B)?,)+)?> [+] underlined_mut (_: NoUnderline ) None;
+            <$($($G $(: $B)?,)+)?> [+] overlined_mut  (_: NoOverline  ) None;
+            <$($($G $(: $B)?,)+)?> [+] bordered_mut   (_: NoBorder    ) None;
 
             <$($($G $(: $B)?,)+)?> [&] or_mut    (style: <Rhs: OptionalStyler>) &style;
             <$($($G $(: $B)?,)+)?> [|] or_mut    (style: <Rhs: OptionalStyler>) &style;
             <$($($G $(: $B)?,)+)?> [^] xor_mut   (style: <Rhs: OptionalStyler>) &style;
             <$($($G $(: $B)?,)+)?> [%] dedup_mut (style: <Rhs: OptionalStyler>) &style;
-
-            <$($($G $(: $B)?,)+)?> [!] reset_mut;
         );
     };
     (impl $Type:ident as $As:ident

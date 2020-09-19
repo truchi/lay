@@ -46,6 +46,8 @@ macro_rules! style {
             impl_styler!($([$Option])? style { $(style.$field,)* });
         }
 
+        impl_styler_ops!($([$Option])? $Type);
+
         impl Display for $Type {
             fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
                 <$Type as $Trait>::fmt(self, f)
@@ -67,8 +69,6 @@ style!(
     bordered Bordered: Bordered::ResetBorder,
 );
 
-impl_styler_ops!(Style);
-
 impl OptionalStyle {
     /// An `OptionalStyle` with fields set to `None`.
     pub const EMPTY: Self = Self {
@@ -84,5 +84,3 @@ impl OptionalStyle {
         bordered:   None,
     };
 }
-
-impl_styler_ops!([Option] OptionalStyle);
