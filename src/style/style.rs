@@ -85,4 +85,4 @@ impl OptionalStyle {
     };
 }
 
-// impl_styler_ops!(OptionalStyle);
+impl_styler_ops!([Option] OptionalStyle);
