@@ -107,4 +107,5 @@ macro_rules! layer_str {
     };
 }
 
+// TODO impl Layer for char?
 layer_str!(&str String);

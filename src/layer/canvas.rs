@@ -9,9 +9,13 @@ pub struct Canvas {
 
 impl Canvas {
     pub fn new(width: u16, height: u16) -> Self {
+        Self::with_cell(Cell::EMPTY, width, height)
+    }
+
+    pub fn with_cell(cell: Cell, width: u16, height: u16) -> Self {
         let size = width * height;
         let mut cells = Vec::with_capacity(usize::from(size));
-        cells.resize(usize::from(size), Cell::EMPTY);
+        cells.resize(usize::from(size), cell);
 
         Self {
             cells,

@@ -15,21 +15,9 @@ fn main() {
     canvas >>= (&mut (Fill::from(('b', 2, 2)) * Green / Red), 7, 7);
     canvas >>= ((Styled::from("LOL") * Red / Magenta + Bold), 3, 0);
     // dbg!(canvas);
-    let render = Render {
-        layer:  canvas,
-        width:  0,
-        height: 0,
-        x:      0,
-        y:      0,
-    };
+    let render = Render::new(canvas, 0, 0);
     // dbg!(render);
-    let render2 = Render {
-        layer:  &render,
-        width:  30,
-        height: 30,
-        x:      0,
-        y:      0,
-    };
+    let render2 = Render::new(&render, 10, 10);
 
     println!("{}", Clear(ClearType::All));
     println!("{}", render2);
