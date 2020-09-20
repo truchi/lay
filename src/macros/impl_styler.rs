@@ -1,5 +1,5 @@
 macro_rules! impl_styler {
-    ($([$Option:ident])? $self:ident {
+    ($self:ident {
         $foreground:expr,
         $background:expr,
         $weight:expr,
@@ -11,7 +11,7 @@ macro_rules! impl_styler {
         $overline:expr,
         $border:expr,
     }) => {
-        impl_styler!(impl $([$Option])? field $self {
+        impl_styler!(impl field $self {
             $foreground,
             $background,
             $weight,
@@ -24,8 +24,8 @@ macro_rules! impl_styler {
             $border,
         });
     };
-    ($([$Option:ident])? $self:ident => $style:expr) => {
-        impl_styler!(impl $([$Option])? method $self {
+    ($self:ident => $style:expr) => {
+        impl_styler!(impl method $self {
             $style,
             $style,
             $style,
@@ -38,7 +38,7 @@ macro_rules! impl_styler {
             $style,
         });
     };
-    (impl $([$Option:ident])? $mode:ident $self:ident {
+    (impl $mode:ident $self:ident {
         $foreground:expr,
         $background:expr,
         $weight:expr,
@@ -50,43 +50,37 @@ macro_rules! impl_styler {
         $overline:expr,
         $border:expr,
     }) => {
-        impl_styler!(impl [$($Option)? $mode] Foreground get_foreground foreground_mut $self $foreground);
-        impl_styler!(impl [$($Option)? $mode] Background get_background background_mut $self $background);
-        impl_styler!(impl [$($Option)? $mode] Weighted get_weighted weighted_mut $self $weight);
-        impl_styler!(impl [$($Option)? $mode] Slanted get_slanted slanted_mut $self $slant);
-        impl_styler!(impl [$($Option)? $mode] Blinking get_blinking blinking_mut $self $blink);
-        impl_styler!(impl [$($Option)? $mode] Inverted get_inverted inverted_mut $self $invert);
-        impl_styler!(impl [$($Option)? $mode] Striked get_striked striked_mut $self $strike);
-        impl_styler!(impl [$($Option)? $mode] Underlined get_underlined underlined_mut $self $underline);
-        impl_styler!(impl [$($Option)? $mode] Overlined get_overlined overlined_mut $self $overline);
-        impl_styler!(impl [$($Option)? $mode] Bordered get_bordered bordered_mut $self $border);
+        impl_styler!(impl $mode Foreground get_foreground foreground_mut $self $foreground);
+        impl_styler!(impl $mode Background get_background background_mut $self $background);
+        impl_styler!(impl $mode Weighted get_weighted weighted_mut $self $weight);
+        impl_styler!(impl $mode Slanted get_slanted slanted_mut $self $slant);
+        impl_styler!(impl $mode Blinking get_blinking blinking_mut $self $blink);
+        impl_styler!(impl $mode Inverted get_inverted inverted_mut $self $invert);
+        impl_styler!(impl $mode Striked get_striked striked_mut $self $strike);
+        impl_styler!(impl $mode Underlined get_underlined underlined_mut $self $underline);
+        impl_styler!(impl $mode Overlined get_overlined overlined_mut $self $overline);
+        impl_styler!(impl $mode Bordered get_bordered bordered_mut $self $border);
     };
-    (impl [Option field] $Type:ident $get:ident $set_mut:ident $self:ident $field:expr) => {
-        impl_styler!(impl ::std::option::Option<$crate::$Type>, $get $set_mut
-            $self arg { $field }, { $field = arg; });
-    };
-    (impl [Option method] $Type:ident $get:ident $set_mut:ident $self:ident $field:expr) => {
-        impl_styler!(impl ::std::option::Option<$crate::$Type>, $get $set_mut
-            $self arg { $field.$get() }, { $field.$set_mut(arg); });
-    };
-    (impl [field] $Type:ident $get:ident $set_mut:ident $self:ident $field:expr) => {
-        impl_styler!(impl $crate::$Type, $get $set_mut
-            $self arg { $field }, { $field = arg; });
-    };
-    (impl [method] $Type:ident $get:ident $set_mut:ident $self:ident $field:expr) => {
-        impl_styler!(impl $crate::$Type, $get $set_mut
-            $self arg { $field.$get() }, { $field.$set_mut(arg); });
-    };
-    (impl $Type:ty, $get:ident $set_mut:ident $self:ident $arg:ident $get_body:expr, $set_body:expr) => {
-        fn $get(&self) -> $Type {
+    (impl field $Type:ident $get:ident $set_mut:ident $self:ident $field:expr) => {
+        fn $get(&self) -> ::std::option::Option<$crate::$Type> {
             let $self = self;
-            $get_body
+            $field
         }
 
-        fn $set_mut(&mut self, $arg: $Type) {
+        fn $set_mut(&mut self, arg: ::std::option::Option<$crate::$Type>) {
             let $self = self;
-            $set_body
+            $field = arg;
+        }
+    };
+    (impl method $Type:ident $get:ident $set_mut:ident $self:ident $field:expr) => {
+        fn $get(&self) -> ::std::option::Option<$crate::$Type> {
+            let $self = self;
+            $field.$get()
         }
 
+        fn $set_mut(&mut self, arg: ::std::option::Option<$crate::$Type>) {
+            let $self = self;
+            $field.$set_mut(arg);
+        }
     };
 }

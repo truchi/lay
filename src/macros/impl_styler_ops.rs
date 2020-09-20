@@ -1,24 +1,6 @@
 macro_rules! impl_styler_ops {
     ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
-        impl_styler_ops!(impl $Type as Styler
-            <$($($G $(: $B)?,)+)?> [*] foreground_mut (foreground: Color) $crate::Foreground(foreground);
-            <$($($G $(: $B)?,)+)?> [/] background_mut (background: Color) $crate::Background(background);
-            <$($($G $(: $B)?,)+)?> [+] foreground_mut (foreground: Foreground) foreground;
-            <$($($G $(: $B)?,)+)?> [+] background_mut (background: Background) background;
-            <$($($G $(: $B)?,)+)?> [+] weighted_mut   (weighted  : Weighted  ) weighted;
-            <$($($G $(: $B)?,)+)?> [+] slanted_mut    (slanted   : Slanted   ) slanted;
-            <$($($G $(: $B)?,)+)?> [+] blinking_mut   (blinking  : Blinking  ) blinking;
-            <$($($G $(: $B)?,)+)?> [+] inverted_mut   (inverted  : Inverted  ) inverted;
-            <$($($G $(: $B)?,)+)?> [+] striked_mut    (striked   : Striked   ) striked;
-            <$($($G $(: $B)?,)+)?> [+] underlined_mut (underlined: Underlined) underlined;
-            <$($($G $(: $B)?,)+)?> [+] overlined_mut  (overlined : Overlined ) overlined;
-            <$($($G $(: $B)?,)+)?> [+] bordered_mut   (bordered  : Bordered  ) bordered;
-
-            <$($($G $(: $B)?,)+)?> [!] reset_mut;
-        );
-    };
-    ([Option] $Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
-        impl_styler_ops!(impl $Type as OptionalStyler
+        impl_styler_ops!(impl $Type
             <$($($G $(: $B)?,)+)?> [*] foreground_mut (foreground: Color) Some($crate::Foreground(foreground));
             <$($($G $(: $B)?,)+)?> [/] background_mut (background: Color) Some($crate::Background(background));
             <$($($G $(: $B)?,)+)?> [+] foreground_mut (foreground: Foreground) Some(foreground);
@@ -31,8 +13,6 @@ macro_rules! impl_styler_ops {
             <$($($G $(: $B)?,)+)?> [+] underlined_mut (underlined: Underlined) Some(underlined);
             <$($($G $(: $B)?,)+)?> [+] overlined_mut  (overlined : Overlined ) Some(overlined);
             <$($($G $(: $B)?,)+)?> [+] bordered_mut   (bordered  : Bordered  ) Some(bordered);
-
-            <$($($G $(: $B)?,)+)?> [!] reset_mut;
 
             <$($($G $(: $B)?,)+)?> [*] foreground_mut (_: NoColor) None;
             <$($($G $(: $B)?,)+)?> [/] background_mut (_: NoColor) None;
@@ -47,23 +27,24 @@ macro_rules! impl_styler_ops {
             <$($($G $(: $B)?,)+)?> [+] overlined_mut  (_: NoOverline  ) None;
             <$($($G $(: $B)?,)+)?> [+] bordered_mut   (_: NoBorder    ) None;
 
-            <$($($G $(: $B)?,)+)?> [&] or_mut    (style: <Rhs: OptionalStyler>) &style;
-            <$($($G $(: $B)?,)+)?> [|] or_mut    (style: <Rhs: OptionalStyler>) &style;
-            <$($($G $(: $B)?,)+)?> [^] xor_mut   (style: <Rhs: OptionalStyler>) &style;
-            <$($($G $(: $B)?,)+)?> [%] dedup_mut (style: <Rhs: OptionalStyler>) &style;
+            <$($($G $(: $B)?,)+)?> [&] or_mut    (style: <Rhs: Styler>) &style;
+            <$($($G $(: $B)?,)+)?> [|] or_mut    (style: <Rhs: Styler>) &style;
+            <$($($G $(: $B)?,)+)?> [^] xor_mut   (style: <Rhs: Styler>) &style;
+            <$($($G $(: $B)?,)+)?> [%] dedup_mut (style: <Rhs: Styler>) &style;
+            <$($($G $(: $B)?,)+)?> [!] reset_mut;
         );
     };
-    (impl $Type:ident as $As:ident
+    (impl $Type:ident
         $(
             <$($G:ident $(: $B:tt)?,)*> [$op:tt] $fn:ident
             $(($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr)?;
         )*
     ) => {
-        $(impl_styler_ops!(impl op [$op] $Type as $As <$($G $(: $B)?,)*> $fn
+        $(impl_styler_ops!(impl op [$op] $Type <$($G $(: $B)?,)*> $fn
             $(($rhs: $($Rhs)? $(<$GenericRhs: $RhsBound>)?) $body)?
         );)*
     };
-    (impl trait $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl trait $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         $Ops:ident($ops:ident) $OpsAssign:ident($ops_assign:ident)
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
@@ -72,7 +53,7 @@ macro_rules! impl_styler_ops {
             type Output = Self;
 
             fn $ops(mut self, $rhs: $($crate::$Rhs)? $($GenericRhs)?) -> Self {
-                <Self as $crate::$As>::$fn(&mut self, $body);
+                <Self as $crate::Styler>::$fn(&mut self, $body);
                 self
             }
         }
@@ -80,72 +61,72 @@ macro_rules! impl_styler_ops {
         impl<$($GenericRhs: $crate::$RhsBound,)? $($($G: $B,)?)*>
             ::std::ops::$OpsAssign<$($crate::$Rhs)? $($GenericRhs)?> for $Type<$($G,)*> {
             fn $ops_assign(&mut self, $rhs: $($crate::$Rhs)? $($GenericRhs)?) {
-                <Self as $crate::$As>::$fn(self, $body);
+                <Self as $crate::Styler>::$fn(self, $body);
             }
         }
     };
-    (impl trait unary $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl trait unary $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         $Ops:ident($ops:ident)
     ) => {
         impl<$($($G: $B,)?)*> ::std::ops::$Ops for $Type<$($G,)*> {
             type Output = Self;
 
             fn $ops(mut self) -> Self {
-                <Self as $crate::$As>::$fn(&mut self);
+                <Self as $crate::Styler>::$fn(&mut self);
                 self
             }
         }
     };
-    (impl op [+] $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl op [+] $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
-        impl_styler_ops!(impl trait $Type as $As <$($G $(: $B)?,)*> $fn
+        impl_styler_ops!(impl trait $Type <$($G $(: $B)?,)*> $fn
             Add(add) AddAssign(add_assign)
             ($rhs: $($Rhs)? $(<$GenericRhs: $RhsBound>)?) $body);
     };
-    (impl op [*] $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl op [*] $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
-        impl_styler_ops!(impl trait $Type as $As <$($G $(: $B)?,)*> $fn
+        impl_styler_ops!(impl trait $Type <$($G $(: $B)?,)*> $fn
             Mul(mul) MulAssign(mul_assign)
             ($rhs: $($Rhs)? $(<$GenericRhs: $RhsBound>)?) $body);
     };
-    (impl op [/] $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl op [/] $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
-        impl_styler_ops!(impl trait $Type as $As <$($G $(: $B)?,)*> $fn
+        impl_styler_ops!(impl trait $Type <$($G $(: $B)?,)*> $fn
             Div(div) DivAssign(div_assign)
             ($rhs: $($Rhs)? $(<$GenericRhs: $RhsBound>)?) $body);
     };
-    (impl op [&] $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl op [&] $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
-        impl_styler_ops!(impl trait $Type as $As <$($G $(: $B)?,)*> $fn
+        impl_styler_ops!(impl trait $Type <$($G $(: $B)?,)*> $fn
             BitAnd(bitand) BitAndAssign(bitand_assign)
             ($rhs: $($Rhs)? $(<$GenericRhs: $RhsBound>)?) $body);
     };
-    (impl op [|] $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl op [|] $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
-        impl_styler_ops!(impl trait $Type as $As <$($G $(: $B)?,)*> $fn
+        impl_styler_ops!(impl trait $Type <$($G $(: $B)?,)*> $fn
             BitOr(bitor) BitOrAssign(bitor_assign)
             ($rhs: $($Rhs)? $(<$GenericRhs: $RhsBound>)?) $body);
     };
-    (impl op [^] $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl op [^] $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
-        impl_styler_ops!(impl trait $Type as $As <$($G $(: $B)?,)*> $fn
+        impl_styler_ops!(impl trait $Type <$($G $(: $B)?,)*> $fn
             BitXor(bitxor) BitXorAssign(bitxor_assign)
             ($rhs: $($Rhs)? $(<$GenericRhs: $RhsBound>)?) $body);
     };
-    (impl op [%] $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
+    (impl op [%] $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
-        impl_styler_ops!(impl trait $Type as $As <$($G $(: $B)?,)*> $fn
+        impl_styler_ops!(impl trait $Type <$($G $(: $B)?,)*> $fn
             Rem(rem) RemAssign(rem_assign)
             ($rhs: $($Rhs)? $(<$GenericRhs: $RhsBound>)?) $body);
     };
-    (impl op [!] $Type:ident as $As:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident) => {
-        impl_styler_ops!(impl trait unary $Type as $As <$($G $(: $B)?,)*> $fn Not(not));
+    (impl op [!] $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident) => {
+        impl_styler_ops!(impl trait unary $Type <$($G $(: $B)?,)*> $fn Not(not));
     };
 }
