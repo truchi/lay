@@ -16,9 +16,9 @@ impl Cell {
 
     /// Superimposes `above` above `self`.
     pub fn above(&self, above: &Self) -> Self {
-        if above.has_background() {
+        if above.style.background.is_some() {
             *above
-        } else if above.has_foreground() {
+        } else if above.style.foreground.is_some() {
             let mut above = *above;
             above.style.background = self.style.background;
 

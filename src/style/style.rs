@@ -17,16 +17,16 @@ use std::fmt::{Display, Error, Formatter};
 /// `Style`s.
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub struct Style {
-    foreground: Option<Foreground>,
-    background: Option<Background>,
-    weighted:   Option<Weighted>,
-    slanted:    Option<Slanted>,
-    blinking:   Option<Blinking>,
-    inverted:   Option<Inverted>,
-    striked:    Option<Striked>,
-    underlined: Option<Underlined>,
-    overlined:  Option<Overlined>,
-    bordered:   Option<Bordered>,
+    pub foreground: Option<Foreground>,
+    pub background: Option<Background>,
+    pub weighted:   Option<Weighted>,
+    pub slanted:    Option<Slanted>,
+    pub blinking:   Option<Blinking>,
+    pub inverted:   Option<Inverted>,
+    pub striked:    Option<Striked>,
+    pub underlined: Option<Underlined>,
+    pub overlined:  Option<Overlined>,
+    pub bordered:   Option<Bordered>,
 }
 
 impl Style {
