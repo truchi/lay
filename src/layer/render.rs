@@ -2,6 +2,7 @@ use super::{Cell, Layer, LayerMut};
 use crossterm::cursor::MoveTo;
 use std::fmt::{Display, Error, Formatter};
 
+/// A `Display`able `Layer`.
 #[derive(Debug)]
 pub struct Render<T: Layer> {
     layer: T,

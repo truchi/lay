@@ -1,5 +1,6 @@
 use super::{Cell, Layer, LayerMut};
 
+/// A rectangle of `Cell`s.
 #[derive(Eq, PartialEq, Default, Debug)]
 pub struct Canvas {
     cells:  Vec<Cell>,

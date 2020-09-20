@@ -1,6 +1,7 @@
 use super::Cell;
 use crate::Styled;
 
+/// A trait for layers.
 pub trait Layer {
     fn width(&self) -> u16;
     fn height(&self) -> u16;
@@ -15,6 +16,7 @@ pub trait Layer {
     }
 }
 
+/// A trait for mutable layers.
 pub trait LayerMut: Layer {
     fn get_mut_unchecked(&mut self, x: u16, y: u16) -> &mut Cell;
 

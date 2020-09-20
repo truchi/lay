@@ -1,6 +1,7 @@
 use super::{Cell, Layer};
 use crate::Styler;
 
+/// A rectangle filled by a unique `Cell`.
 #[derive(Debug)]
 pub struct Fill {
     pub cell:   Cell,

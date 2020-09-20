@@ -1,3 +1,5 @@
+//! Layering utilities.
+
 mod canvas;
 mod cell;
 mod fill;

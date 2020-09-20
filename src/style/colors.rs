@@ -1,5 +1,8 @@
-use crossterm::style::{Color, SetBackgroundColor, SetForegroundColor};
+use crossterm::style::{SetBackgroundColor, SetForegroundColor};
 use std::fmt::{Display, Error, Formatter};
+
+pub use crossterm::style::Color;
+pub use Color::*;
 
 macro_rules! color {
     ($(#[$inner:ident $($args:tt)*])? $Name:ident $NoName:ident, $fmt:ident) => {
