@@ -84,7 +84,7 @@ macro_rules! styler {
             /// `before`.
             fn dedup<T: Styler>(mut self, before: &T) -> Self {
                 $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
-                $(self.$set_attr_mut (dedup(self.$get_attr() , before.$get_attr() ));)*
+                $(self.$set_attr_mut (dedup(self.$get_attr(), before.$get_attr()));)*
                 self
             }
 
@@ -92,7 +92,7 @@ macro_rules! styler {
             /// `before`.
             fn dedup_mut<T: Styler>(&mut self, before: &T) {
                 $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
-                $(self.$set_attr_mut (dedup(self.$get_attr() , before.$get_attr() ));)*
+                $(self.$set_attr_mut (dedup(self.$get_attr(), before.$get_attr()));)*
             }
 
             /// Sets `Some` fields to their reset variant.
@@ -108,7 +108,7 @@ macro_rules! styler {
             /// Formats the CSIs of `self` when `Some`.
             fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
                 $(if let Some(t) = self.$get_color() { t.fmt(f)?; })*
-                $(if let Some(t) = self.$get_attr()  { t.fmt(f)?; })*
+                $(if let Some(t) = self.$get_attr() { t.fmt(f)?; })*
                 Ok(())
             }
         }
