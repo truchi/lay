@@ -23,7 +23,7 @@ impl<T: Display> From<(T, Style)> for Styled<T> {
 
 impl<T: Display> From<T> for Styled<T> {
     fn from(content: T) -> Self {
-        Self::new(content, Style::EMPTY)
+        Self::new(content, Style::default())
     }
 }
 

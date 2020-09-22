@@ -53,6 +53,6 @@ color!(
     SetBackgroundColor
 );
 
-/// Sets `Option<Foreground>` & `Option<Background>` to `None`.
+/// Sets `Option<Foreground>` or `Option<Background>` to `None`.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct NoColor;

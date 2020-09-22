@@ -9,11 +9,6 @@ pub type Cell = Styled<char>;
 
 /// See [`Cell`](type.Cell.html).
 impl Cell {
-    pub const EMPTY: Cell = Cell {
-        content: ' ',
-        style:   Style::EMPTY,
-    };
-
     /// Superimposes `above` above `self`.
     pub fn above(&self, above: &Self) -> Self {
         if above.style.background.is_some() {

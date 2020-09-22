@@ -10,7 +10,7 @@ pub struct Canvas {
 
 impl Canvas {
     pub fn new(width: u16, height: u16) -> Self {
-        Self::with_cell(Cell::EMPTY, width, height)
+        Self::with_cell(Cell::default(), width, height)
     }
 
     pub fn with_cell(cell: Cell, width: u16, height: u16) -> Self {
