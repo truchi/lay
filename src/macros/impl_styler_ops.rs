@@ -48,7 +48,7 @@ macro_rules! impl_styler_ops {
         $Ops:ident($ops:ident) $OpsAssign:ident($ops_assign:ident)
         ($rhs:tt: $($Rhs:ident)? $(<$GenericRhs:ident: $RhsBound:ident>)?) $body:expr
     ) => {
-        impl<$($GenericRhs: $crate::$RhsBound,)? $($($G: $B,)?)*>
+        impl<$($GenericRhs: $crate::$RhsBound,)? $($G $(: $B,)?)*>
             ::std::ops::$Ops<$($crate::$Rhs)? $($GenericRhs)?> for $Type<$($G,)*> {
             type Output = Self;
 
@@ -58,7 +58,7 @@ macro_rules! impl_styler_ops {
             }
         }
 
-        impl<$($GenericRhs: $crate::$RhsBound,)? $($($G: $B,)?)*>
+        impl<$($GenericRhs: $crate::$RhsBound,)? $($G $(: $B,)?)*>
             ::std::ops::$OpsAssign<$($crate::$Rhs)? $($GenericRhs)?> for $Type<$($G,)*> {
             fn $ops_assign(&mut self, $rhs: $($crate::$Rhs)? $($GenericRhs)?) {
                 <Self as $crate::Styler>::$fn(self, $body);
@@ -68,7 +68,7 @@ macro_rules! impl_styler_ops {
     (impl trait unary $Type:ident <$($G:ident $(: $B:tt)?,)*> $fn:ident
         $Ops:ident($ops:ident)
     ) => {
-        impl<$($($G: $B,)?)*> ::std::ops::$Ops for $Type<$($G,)*> {
+        impl<$($G $(: $B,)?)*> ::std::ops::$Ops for $Type<$($G,)*> {
             type Output = Self;
 
             fn $ops(mut self) -> Self {
