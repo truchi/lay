@@ -14,9 +14,7 @@ fn main() {
     canvas >>= ((Fill::from(('a', 2, 2)) * Red / Black), 5, 5);
     canvas >>= (&mut (Fill::from(('b', 2, 2)) * Green / Red), 7, 7);
     canvas >>= ((Styled::from("LOL") * Red / Magenta + Bold), 3, 0);
-    // dbg!(canvas);
     let render = Render::new(canvas, 0, 0);
-    // dbg!(render);
     let render2 = Render::new(&render, 10, 10);
 
     println!("{}", Clear(ClearType::All));

@@ -1,15 +1,27 @@
-use crossterm::terminal::{size, Clear, ClearType};
+use crossterm::{
+    cursor::{position, MoveTo},
+    terminal::size,
+};
 use lay::*;
+use std::{thread::sleep, time::Duration};
 
 fn main() {
-    println!(":{}: {}", '\u{2003}', "EM");
-    println!(":{}: {}", '\u{3000}', "IDEOGRAPHIC");
-    println!(":🦀:");
-    println!(":{}: {}", '\u{2007}', "FIGURE");
-    println!(":{}: {}", '\u{2002}', "EN");
-    println!(":{}: {}", '\u{2008}', "PUNCTUATION");
-    println!(":{}: {}", '\u{2004}', "3 PER EM");
-    println!(":{}: {}", '\u{2005}', "4 PER EM");
-    println!(":{}: {}", '\u{2006}', "6 PER EM");
-    println!(":{}: {}", ' ', "NORMAL");
+    let (width, _) = size().unwrap();
+    let width = width / 2;
+    let (_, y) = position().unwrap();
+
+    let background = Cell::from('💧') / Blue;
+    let crab = Cell::from('🦀') * Reset;
+    let mut canvas = Canvas::with_cell(background, width, 1);
+
+    loop {
+        let mut prev = width - 1;
+        for i in 0..width {
+            canvas >>= (&background, prev, 0);
+            canvas >>= (&crab, i, 0);
+            prev = i;
+            println!("{}{}", Render::new(&canvas, 0, y), MoveTo(0, y - 1));
+            sleep(Duration::from_millis(100));
+        }
+    }
 }
