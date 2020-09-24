@@ -21,17 +21,13 @@ impl Fill {
     }
 }
 
-impl Styler for Fill {
-    impl_styler!(fill => fill.cell);
-}
-
-impl_styler_ops!(Fill);
-
 impl<T: Into<Cell>> From<(T, u16, u16)> for Fill {
     fn from((cell, width, height): (T, u16, u16)) -> Self {
         Fill::new(cell, width, height)
     }
 }
+
+impl_styler!((fill: Fill) => fill.cell);
 
 impl_layer!(Fill [fill, x, y] {
     Layer { fill.width } { fill.height } { fill.cell }

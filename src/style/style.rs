@@ -45,22 +45,18 @@ impl Style {
     };
 }
 
-impl Styler for Style {
-    impl_styler!(style {
-        style.foreground,
-        style.background,
-        style.weighted,
-        style.slanted,
-        style.blinking,
-        style.inverted,
-        style.striked,
-        style.underlined,
-        style.overlined,
-        style.bordered,
-    });
-}
-
-impl_styler_ops!(Style);
+impl_styler!((style: Style) {
+    style.foreground,
+    style.background,
+    style.weighted,
+    style.slanted,
+    style.blinking,
+    style.inverted,
+    style.striked,
+    style.underlined,
+    style.overlined,
+    style.bordered,
+});
 
 impl Display for Style {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {

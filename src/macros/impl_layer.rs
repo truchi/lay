@@ -8,7 +8,7 @@ macro_rules! impl_layer {
             $(+ $Ops:ident $(<$($G5:ident $(: $($B5:path)+)?,)+>)?)?
         }
     ) => {
-        $(impl $(<$($G1 $(: $($B1 +)+ )?,)+>)? $crate::Layer for $Type {
+        $(impl $(<$($G1 $(: $($B1+)+)?,)+>)? $crate::Layer for $Type {
             #[allow(unused)]
             fn width(&self) -> u16 {
                 let $self = self;
@@ -28,7 +28,7 @@ macro_rules! impl_layer {
             }
         })?
 
-        $(impl $(<$($G2 $(: $($B2 +)+)?,)+>)? ::std::ops::Index<(u16, u16)> for $Type {
+        $(impl $(<$($G2 $(: $($B2+)+)?,)+>)? ::std::ops::Index<(u16, u16)> for $Type {
             type Output = $crate::Cell;
 
             #[allow(unused)]
@@ -38,7 +38,7 @@ macro_rules! impl_layer {
             }
         })?
 
-        $(impl $(<$($G3 $(: $($B3 +)+ )?,)+>)? $crate::LayerMut for $Type {
+        $(impl $(<$($G3 $(: $($B3+)+)?,)+>)? $crate::LayerMut for $Type {
             #[allow(unused)]
             fn get_mut_unchecked(&mut self, $x: u16, $y: u16) -> &mut $crate::Cell {
                 let $self = self;
@@ -46,7 +46,7 @@ macro_rules! impl_layer {
             }
         })?
 
-        $(impl $(<$($G4 $(: $($B4 +)+ )?,)+>)? ::std::ops::IndexMut<(u16, u16)> for $Type {
+        $(impl $(<$($G4 $(: $($B4+)+)?,)+>)? ::std::ops::IndexMut<(u16, u16)> for $Type {
             #[allow(unused)]
             fn index_mut(&mut self, ($x, $y): (u16, u16)) -> &mut $crate::Cell {
                 let $self = self;
@@ -55,14 +55,14 @@ macro_rules! impl_layer {
         })?
 
         $(
-            impl_layer!(impl $Ops $(<$($G5 $(: $($B5)+ )?,)+>)? / $Type: Shl(shl) ShlAssign(shl_assign) below_mut);
-            impl_layer!(impl $Ops $(<$($G5 $(: $($B5)+ )?,)+>)? / $Type: Shr(shr) ShrAssign(shr_assign) above_mut);
+            impl_layer!(impl $Ops $(<$($G5 $(: $($B5)+)?,)+>)? / $Type: Shl(shl) ShlAssign(shl_assign) below_mut);
+            impl_layer!(impl $Ops $(<$($G5 $(: $($B5)+)?,)+>)? / $Type: Shr(shr) ShrAssign(shr_assign) above_mut);
         )?
     };
     (impl Ops $(<$($G:ident $(: $($B:path)+)?,)+>)? / $Type:ty:
         $Op:ident($op:ident) $OpAssign:ident($op_assign:ident) $fn:ident
     ) => {
-        impl<Layer: $crate::Layer $(, $($G $(: $($B +)+ )?,)+)?> ::std::ops::$Op<(Layer, u16, u16)> for $Type {
+        impl<$($($G $(: $($B+)+)?,)+)? Layer: $crate::Layer> ::std::ops::$Op<(Layer, u16, u16)> for $Type {
             type Output = Self;
 
             fn $op(mut self, (layer, x, y): (Layer, u16, u16)) -> Self {
@@ -71,7 +71,7 @@ macro_rules! impl_layer {
             }
         }
 
-        impl<Layer: $crate::Layer $(, $($G $(: $($B +)+ )?,)+)?> ::std::ops::$OpAssign<(Layer, u16, u16)> for $Type {
+        impl<$($($G $(: $($B+)+)?,)+)? Layer: $crate::Layer> ::std::ops::$OpAssign<(Layer, u16, u16)> for $Type {
             fn $op_assign(&mut self, (layer, x, y): (Layer, u16, u16)) {
                 <$Type as $crate::LayerMut>::$fn(self, &layer, x, y);
             }
