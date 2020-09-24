@@ -1,9 +1,9 @@
 macro_rules! impl_layer_mut_ops {
-    ($Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?) => {
+    ($Type:ident $(<$($G:ident $(: $B:path)?,)+>)?) => {
         impl_layer_mut_ops!(impl $Type $(<$($G $(: $B)?,)+>)? Shl(shl) ShlAssign(shl_assign) below);
         impl_layer_mut_ops!(impl $Type $(<$($G $(: $B)?,)+>)? Shr(shr) ShrAssign(shr_assign) above);
     };
-    (impl $Type:ident $(<$($G:ident $(: $B:tt)?,)+>)?
+    (impl $Type:ident $(<$($G:ident $(: $B:path)?,)+>)?
         $Op:ident($op:ident) $OpAssign:ident($op_assign:ident) $fn:ident
     ) => {
         impl<__Rhs: $crate::Layer $(, $($G $(: $B)?)+)?> ::std::ops::$Op<(__Rhs, u16, u16)> for $Type $(<$($G,)+>)? {
