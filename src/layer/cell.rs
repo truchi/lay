@@ -1,4 +1,3 @@
-use super::{Layer, LayerMut};
 use crate::{Styled, Styler};
 
 /// `Styled<char>`.
@@ -24,24 +23,11 @@ impl Cell {
     }
 }
 
-impl Layer for Cell {
-    fn width(&self) -> u16 {
-        1
-    }
-
-    fn height(&self) -> u16 {
-        1
-    }
-
-    fn get_unchecked(&self, _: u16, _: u16) -> Cell {
-        *self
-    }
-}
-
-impl LayerMut for Cell {
-    fn get_mut_unchecked(&mut self, _: u16, _: u16) -> &mut Cell {
-        self
-    }
-}
+impl_layer!(Cell [cell, x, y] {
+    Layer { 1 } { 1 } { *cell }
+    Index { cell }
+    LayerMut { cell }
+    IndexMut { cell }
+});
 
 impl_layer_mut_ops!(Cell);

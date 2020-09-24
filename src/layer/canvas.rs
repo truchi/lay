@@ -1,4 +1,4 @@
-use super::{Cell, Layer, LayerMut};
+use super::Cell;
 
 /// A rectangle of `Cell`s.
 #[derive(Eq, PartialEq, Default, Debug)]
@@ -32,29 +32,19 @@ impl From<(u16, u16)> for Canvas {
     }
 }
 
-impl Layer for Canvas {
-    fn width(&self) -> u16 {
-        self.width
-    }
-
-    fn height(&self) -> u16 {
-        self.height
-    }
-
-    fn get_unchecked(&self, x: u16, y: u16) -> Cell {
-        self.cells
-            .get(usize::from(x) + usize::from(y) * usize::from(self.width))
-            .copied()
+impl_layer!(Canvas [canvas, x, y] {
+    Layer { canvas.width } { canvas.height } { canvas[(x, y)] }
+    Index {
+        canvas.cells
+            .get(usize::from(x) + usize::from(y) * usize::from(canvas.width))
             .unwrap()
     }
-}
-
-impl LayerMut for Canvas {
-    fn get_mut_unchecked(&mut self, x: u16, y: u16) -> &mut Cell {
-        self.cells
-            .get_mut(usize::from(x) + usize::from(y) * usize::from(self.width))
+    LayerMut { &mut canvas[(x, y)] }
+    IndexMut {
+        canvas.cells
+            .get_mut(usize::from(x) + usize::from(y) * usize::from(canvas.width))
             .unwrap()
     }
-}
+});
 
 impl_layer_mut_ops!(Canvas);

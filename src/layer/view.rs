@@ -1,4 +1,5 @@
 use super::{Cell, Layer, LayerMut};
+use std::ops::{Index, IndexMut};
 
 /// A rectangle `View` into a `Layer`.
 #[derive(Debug)]
@@ -44,24 +45,15 @@ impl<T: Layer> From<T> for View<T> {
     }
 }
 
-impl<T: Layer> Layer for View<T> {
-    fn width(&self) -> u16 {
-        self.width
+impl_layer!(View<T> [view, x, y] {
+    Layer <T: Layer,> { view.width } { view.height } {
+        view.layer.get_unchecked(view.x + x, view.y + y)
     }
-
-    fn height(&self) -> u16 {
-        self.height
+    Index <T: Layer Index<(u16, u16), Output = Cell>,> { &view.layer[(x, y)] }
+    LayerMut <T: LayerMut,> {
+        view.layer.get_mut_unchecked(view.x + x, view.y + y)
     }
-
-    fn get_unchecked(&self, x: u16, y: u16) -> Cell {
-        self.layer.get_unchecked(self.x + x, self.y + y)
-    }
-}
-
-impl<T: LayerMut> LayerMut for View<T> {
-    fn get_mut_unchecked(&mut self, x: u16, y: u16) -> &mut Cell {
-        self.layer.get_mut_unchecked(self.x + x, self.y + y)
-    }
-}
+    IndexMut <T: Layer IndexMut<(u16, u16), Output = Cell>,> { &mut view.layer[(x, y)] }
+});
 
 impl_layer_mut_ops!(View<T: LayerMut,>);

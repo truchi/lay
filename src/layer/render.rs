@@ -1,6 +1,9 @@
 use super::{Cell, Layer, LayerMut};
 use crossterm::cursor::MoveTo;
-use std::fmt::{Display, Error, Formatter};
+use std::{
+    fmt::{Display, Error, Formatter},
+    ops::{Index, IndexMut},
+};
 
 /// A `Display`able `Layer`.
 #[derive(Debug)]
@@ -28,25 +31,16 @@ impl<T: Layer> From<T> for Render<T> {
     }
 }
 
-impl<T: Layer> Layer for Render<T> {
-    fn width(&self) -> u16 {
-        self.layer.width()
+impl_layer!(Render<T> [render, x, y] {
+    Layer <T: Layer,> { render.layer.width() } { render.layer.height() } {
+        render.layer.get_unchecked(x, y)
     }
-
-    fn height(&self) -> u16 {
-        self.layer.height()
+    Index <T: Layer Index<(u16, u16), Output = Cell>,> { &render.layer[(x, y)] }
+    LayerMut <T: LayerMut,> {
+        render.layer.get_mut_unchecked(x, y)
     }
-
-    fn get_unchecked(&self, x: u16, y: u16) -> Cell {
-        self.layer.get_unchecked(x, y)
-    }
-}
-
-impl<T: LayerMut> LayerMut for Render<T> {
-    fn get_mut_unchecked(&mut self, x: u16, y: u16) -> &mut Cell {
-        self.layer.get_mut_unchecked(x, y)
-    }
-}
+    IndexMut <T: Layer IndexMut<(u16, u16), Output = Cell>,> { &mut render.layer[(x, y)] }
+});
 
 impl_layer_mut_ops!(Render<T: LayerMut,>);
 

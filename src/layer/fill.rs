@@ -33,16 +33,7 @@ impl<T: Into<Cell>> From<(T, u16, u16)> for Fill {
     }
 }
 
-impl Layer for Fill {
-    fn width(&self) -> u16 {
-        self.width
-    }
-
-    fn height(&self) -> u16 {
-        self.height
-    }
-
-    fn get_unchecked(&self, _: u16, _: u16) -> Cell {
-        self.cell
-    }
-}
+impl_layer!(Fill [fill, x, y] {
+    Layer { fill.width } { fill.height } { fill.cell }
+    Index { &fill.cell }
+});
