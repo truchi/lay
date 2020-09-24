@@ -13,6 +13,15 @@ impl<T: Display> Styled<T> {
     pub fn new(content: T, style: Style) -> Self {
         Self { content, style }
     }
+
+    pub fn content(mut self, content: T) -> Self {
+        self.content_mut(content);
+        self
+    }
+
+    pub fn content_mut(&mut self, content: T) {
+        self.content = content;
+    }
 }
 
 impl<T: Display> From<(T, Style)> for Styled<T> {

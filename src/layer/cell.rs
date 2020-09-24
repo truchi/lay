@@ -1,25 +1,20 @@
 use super::{Layer, LayerMut};
-use crate::{Style, Styled};
+use crate::{Styled, Styler};
 
 /// `Styled<char>`.
 ///
-/// `Cell`s without `Foreground` have transparent foreground.  
-/// `Cell`s without `Background` have transparent background.
+/// When merging, `char::default()` (`'\u{0}'`, NUL char) denotes transparency,
+/// though it will render as `' '` in layers.
 pub type Cell = Styled<char>;
 
 /// See [`Cell`](type.Cell.html).
 impl Cell {
     /// Superimposes `above` above `self`.
     pub fn above(&self, above: &Self) -> Self {
-        if above.style.background.is_some() {
-            *above
-        } else if above.style.foreground.is_some() {
-            let mut above = *above;
-            above.style.background = self.style.background;
-
-            above
-        } else {
+        if above.content == char::default() {
             *self
+        } else {
+            above.or(self)
         }
     }
 
