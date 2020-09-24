@@ -40,9 +40,8 @@ impl_layer!(Render<T> [render, x, y] {
         render.layer.get_mut_unchecked(x, y)
     }
     IndexMut <T: Layer IndexMut<(u16, u16), Output = Cell>,> { &mut render.layer[(x, y)] }
+    + Ops <T: LayerMut,>
 });
-
-impl_layer_mut_ops!(Render<T: LayerMut,>);
 
 impl<T: Layer> Display for Render<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {

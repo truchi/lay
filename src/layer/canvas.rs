@@ -45,6 +45,5 @@ impl_layer!(Canvas [canvas, x, y] {
             .get_mut(usize::from(x) + usize::from(y) * usize::from(canvas.width))
             .unwrap()
     }
+    + Ops
 });
-
-impl_layer_mut_ops!(Canvas);

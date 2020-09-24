@@ -1,4 +1,4 @@
-use super::{Cell, Layer};
+use super::Cell;
 use crate::Styler;
 
 /// A rectangle filled by a unique `Cell`.

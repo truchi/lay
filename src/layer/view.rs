@@ -54,6 +54,5 @@ impl_layer!(View<T> [view, x, y] {
         view.layer.get_mut_unchecked(view.x + x, view.y + y)
     }
     IndexMut <T: Layer IndexMut<(u16, u16), Output = Cell>,> { &mut view.layer[(x, y)] }
+    + Ops <T: LayerMut,>
 });
-
-impl_layer_mut_ops!(View<T: LayerMut,>);

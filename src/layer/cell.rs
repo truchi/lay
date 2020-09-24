@@ -28,6 +28,5 @@ impl_layer!(Cell [cell, x, y] {
     Index { cell }
     LayerMut { cell }
     IndexMut { cell }
+    + Ops
 });
-
-impl_layer_mut_ops!(Cell);
