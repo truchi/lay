@@ -55,8 +55,8 @@ macro_rules! impl_layer {
         })?
 
         $(
-            impl_layer!(impl $Ops $(<$($G5 $(: $($B5)+ )?,)+>)? / $Type: Shl(shl) ShlAssign(shl_assign) below);
-            impl_layer!(impl $Ops $(<$($G5 $(: $($B5)+ )?,)+>)? / $Type: Shr(shr) ShrAssign(shr_assign) above);
+            impl_layer!(impl $Ops $(<$($G5 $(: $($B5)+ )?,)+>)? / $Type: Shl(shl) ShlAssign(shl_assign) below_mut);
+            impl_layer!(impl $Ops $(<$($G5 $(: $($B5)+ )?,)+>)? / $Type: Shr(shr) ShrAssign(shr_assign) above_mut);
         )?
     };
     (impl Ops $(<$($G:ident $(: $($B:path)+)?,)+>)? / $Type:ty:

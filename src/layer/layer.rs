@@ -28,11 +28,27 @@ pub trait LayerMut: Layer {
         }
     }
 
-    fn above<T: Layer>(&mut self, above: &T, x: u16, y: u16) {
+    fn above<T: Layer>(mut self, above: &T, x: u16, y: u16) -> Self
+    where
+        Self: Sized,
+    {
+        merge(&mut self, above, x, y, Cell::above);
+        self
+    }
+
+    fn above_mut<T: Layer>(&mut self, above: &T, x: u16, y: u16) {
         merge(self, above, x, y, Cell::above)
     }
 
-    fn below<T: Layer>(&mut self, below: &T, x: u16, y: u16) {
+    fn below<T: Layer>(mut self, below: &T, x: u16, y: u16) -> Self
+    where
+        Self: Sized,
+    {
+        merge(&mut self, below, x, y, Cell::below);
+        self
+    }
+
+    fn below_mut<T: Layer>(&mut self, below: &T, x: u16, y: u16) {
         merge(self, below, x, y, Cell::below)
     }
 }
@@ -43,7 +59,7 @@ fn merge<T: LayerMut + ?Sized, U: Layer>(
     b: &U,
     x: u16,
     y: u16,
-    f: fn(&Cell, &Cell) -> Cell,
+    f: fn(Cell, Cell) -> Cell,
 ) {
     let x2 = a.width().min(x + b.width());
     let y2 = a.height().min(y + b.height());
@@ -52,7 +68,7 @@ fn merge<T: LayerMut + ?Sized, U: Layer>(
         for line in y..y2 {
             if let Ok(cell_a) = a.get_mut(row, line) {
                 if let Ok(cell_b) = b.get(row - x, line - y) {
-                    *cell_a = f(cell_a, &cell_b);
+                    *cell_a = f(*cell_a, cell_b);
                 }
             }
         }
