@@ -26,6 +26,30 @@ pub enum Color {
     Reset,
 }
 
+/// Returns `Color::Rgb(r, g, b)`.
+impl From<(u8, u8, u8)> for Color {
+    /// Returns `Color::Rgb(r, g, b)`.
+    fn from((r, g, b): (u8, u8, u8)) -> Self {
+        Self::Rgb(r, g, b)
+    }
+}
+
+/// Returns `Color::Ansi(ansi)`.
+impl From<u8> for Color {
+    /// Returns `Color::Ansi(ansi)`.
+    fn from(ansi: u8) -> Self {
+        Self::Ansi(ansi)
+    }
+}
+
+/// Returns `Color::Reset`.
+impl Default for Color {
+    /// Returns `Color::Reset`.
+    fn default() -> Self {
+        Self::Reset
+    }
+}
+
 macro_rules! color {
     ($($(#[$inner:ident $($args:tt)*])? $Name:ident $NoName:ident ($str:literal $reset:literal))*) => {
         $(
@@ -34,29 +58,52 @@ macro_rules! color {
             pub struct $Name(pub Color);
 
             doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
-                #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-                pub struct $NoName;
-            );
+            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+            pub struct $NoName;);
 
+            doc!("Returns `" stringify!($Name) "(color)`.",
             impl From<Color> for $Name {
+                doc!("Returns `" stringify!($Name) "(color)`.",
                 fn from(color: Color) -> Self {
                     Self(color)
-                }
-            }
+                });
+            });
 
+            doc!("Returns `" stringify!($Name) "(Color::Rgb(r, g, b))`.",
+            impl From<(u8, u8, u8)> for $Name {
+                doc!("Returns `" stringify!($Name) "(Color::Rgb(r, g, b))`.",
+                fn from((r, g, b): (u8, u8, u8)) -> Self {
+                    Self(Color::Rgb(r, g, b))
+                });
+            });
+
+            doc!("Returns `" stringify!($Name) "(Color::Ansi(ansi))`.",
+            impl From<u8> for $Name {
+                doc!("Returns `" stringify!($Name) "(Color::Ansi(ansi))`.",
+                fn from(ansi: u8) -> Self {
+                    Self(Color::Ansi(ansi))
+                });
+            });
+
+            /// Returns the inner `Color`.
             impl From<$Name> for Color {
+                /// Returns the inner `Color`.
                 fn from($Name(color): $Name) -> Self {
                     color
                 }
             }
 
+            doc!("Returns `" stringify!($Name) "(Color::Reset)`.",
             impl Default for $Name {
+                doc!("Returns `" stringify!($Name) "(Color::Reset)`.",
                 fn default() -> Self {
                     Self(Color::Reset)
-                }
-            }
+                });
+            });
 
+            /// Prints the corresponding CSI to the terminal.
             impl Display for $Name {
+                /// Prints the corresponding CSI to the terminal.
                 fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
                     let color = self.0;
 
@@ -107,3 +154,23 @@ color!(
 /// Sets `Option<Foreground>` or `Option<Background>` to `None`.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct NoColor;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn from_and_default() {
+        assert_eq!(Color::from((1, 2, 3)), Color::Rgb(1, 2, 3));
+        assert_eq!(Color::from(1), Color::Ansi(1));
+        assert_eq!(Color::default(), Color::Reset);
+
+        assert_eq!(Color::from(Foreground(Blue)), Blue);
+        assert_eq!(Color::from(Background(Red)), Red);
+        assert_eq!(Foreground::from(Green), Foreground(Green));
+        assert_eq!(Background::from(Magenta), Background(Magenta));
+        assert_eq!(Foreground::default(), Foreground(Reset));
+        assert_eq!(Background::default(), Background(Reset));
+    }
+}

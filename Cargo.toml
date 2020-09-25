@@ -8,3 +8,4 @@ edition = "2018"
 
 [dev-dependencies]
 crossterm = "0.17"
+pretty_assertions = "0.6"
