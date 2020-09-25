@@ -1,88 +1,64 @@
-use crossterm::style::Attribute;
 use std::fmt::{Display, Error, Formatter};
 
 macro_rules! attribute {
-    (
+    ($(
         $(#[$inner:ident $($args:tt)*])?
         $Name:ident:
-            $($variant:ident($xvariant:ident))* + $reset:ident($xreset:ident),
+            $($variant:ident($str:literal))* + $reset:ident($reset_str:literal),
         $NoName:ident
-    ) => {
-        pub use $Name::*;
+    )*) => {
+        $(
+            pub use $Name::*;
 
-        $(#[$inner $($args)*])?
-        #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-        pub enum $Name {
-            $($variant,)*
-            $reset
-        }
-
-        impl Default for $Name {
-            fn default() -> Self {
-                Self::$reset
+            $(#[$inner $($args)*])?
+            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+            pub enum $Name {
+                $($variant,)*
+                $reset
             }
-        }
 
-        impl Display for $Name {
-            fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-                match self {
-                    $($Name::$variant => write!(f, "{}", Attribute::$xvariant),)*
-                    $Name::$reset => write!(f, "{}", Attribute::$xreset)
+            impl Default for $Name {
+                fn default() -> Self {
+                    Self::$reset
                 }
             }
-        }
 
-        doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-            pub struct $NoName;
-        );
+            impl Display for $Name {
+                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                    f.write_str("\x1B[")?;
+
+                    match self {
+                        $($Name::$variant => f.write_str($str),)*
+                        $Name::$reset => f.write_str($reset_str)
+                    }?;
+
+                    f.write_str("m")
+                }
+            }
+
+            doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
+                #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+                pub struct $NoName;
+            );
+        )*
     };
 }
 
 attribute!(
     /// `Weighted` text.
-    Weighted: Bold(Bold) Light(Dim) + ResetWeight(NormalIntensity),
-    NoWeight
-);
-
-attribute!(
+    Weighted: Bold("1") Light("2") + ResetWeight("22"), NoWeight
     /// `Slanted` text.
-    Slanted: Italic(Italic) + ResetSlant(NoItalic),
-    NoSlant
-);
-
-attribute!(
+    Slanted: Italic("3") + ResetSlant("23"), NoSlant
     /// `Blinking` text.
-    Blinking: Slow(SlowBlink) Fast(RapidBlink) + ResetBlink(NoBlink),
-    NoBlink
-);
-
-attribute!(
+    Blinking: Slow("5") Fast("6") + ResetBlink("25"), NoBlink
     /// `Inverted` text.
-    Inverted: Invert(Reverse) + ResetInvert(NoReverse),
-    NoInvert
-);
-
-attribute!(
+    Inverted: Invert("7") + ResetInvert("27"), NoInvert
     /// `Striked` text.
-    Striked: Strike(CrossedOut) + ResetStrike(NotCrossedOut),
-    NoStrike
-);
-
-attribute!(
+    Striked: Strike("9") + ResetStrike("29"), NoStrike
     /// `Underlined` text.
-    Underlined: Underline(Underlined) + ResetUnderline(NoUnderline),
-    NoUnderline
-);
-
-attribute!(
+    Underlined: Underline("4") + ResetUnderline("24"), NoUnderline
     /// `Overlined` text.
-    Overlined: Overline(OverLined) + ResetOverline(NotOverLined),
-    NoOverline
-);
-
-attribute!(
+    Overlined: Overline("53") + ResetOverline("55"), NoOverline
     /// `Bordered` text.
-    Bordered: Frame(Framed) Circle(Encircled) + ResetBorder(NotFramedOrEncircled),
-    NoBorder
+    Bordered: Frame("51") Circle("52") + ResetBorder("54"), NoBorder
 );

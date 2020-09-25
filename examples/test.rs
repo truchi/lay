@@ -9,7 +9,11 @@ fn main() {
     // );
 
     let mut canvas = Canvas::new(30, 30);
-    canvas >>= ((Cell::from('A') * Red / Green + Bold + Underline), 2, 2);
+    canvas >>= (
+        (Cell::from('A') * Red / Green + Bold + Underline + Italic + Slow),
+        2,
+        2,
+    );
     canvas <<= ((Fill::from((' ', 20, 10)) / Yellow), 1, 1);
     canvas >>= ((Fill::from(('a', 2, 2)) * Red / Black), 5, 5);
     canvas >>= (&mut (Fill::from(('b', 2, 2)) * Green / Red), 7, 7);
