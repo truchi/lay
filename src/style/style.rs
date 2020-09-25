@@ -58,6 +58,29 @@ impl_styler!((style: Style) {
     style.bordered,
 });
 
+macro_rules! style {
+    ($(($attr:ident : $Attr:ty),)*) => {
+        $(impl From<$Attr> for Style {
+            fn from($attr: $Attr) -> Self {
+                Self::default() + $attr
+            }
+        })*
+    };
+}
+
+style!(
+    (foreground: Foreground),
+    (background: Background),
+    (weighted: Weighted),
+    (slanted: Slanted),
+    (blinking: Blinking),
+    (inverted: Inverted),
+    (striked: Striked),
+    (underlined: Underlined),
+    (overlined: Overlined),
+    (bordered: Bordered),
+);
+
 impl Display for Style {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         <Style as Styler>::fmt(self, f)

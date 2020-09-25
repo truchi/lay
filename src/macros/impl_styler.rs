@@ -110,6 +110,7 @@ macro_rules! impl_styler {
             <$($($G $(: $($B)+)?,)+)?> [+] underlined_mut (underlined: Underlined) Some(underlined);
             <$($($G $(: $($B)+)?,)+)?> [+] overlined_mut  (overlined : Overlined ) Some(overlined);
             <$($($G $(: $($B)+)?,)+)?> [+] bordered_mut   (bordered  : Bordered  ) Some(bordered);
+
             <$($($G $(: $($B)+)?,)+)?> [*] foreground_mut (_: NoColor) None;
             <$($($G $(: $($B)+)?,)+)?> [/] background_mut (_: NoColor) None;
             <$($($G $(: $($B)+)?,)+)?> [+] foreground_mut (_: NoForeground) None;
@@ -122,6 +123,7 @@ macro_rules! impl_styler {
             <$($($G $(: $($B)+)?,)+)?> [+] underlined_mut (_: NoUnderline ) None;
             <$($($G $(: $($B)+)?,)+)?> [+] overlined_mut  (_: NoOverline  ) None;
             <$($($G $(: $($B)+)?,)+)?> [+] bordered_mut   (_: NoBorder    ) None;
+
             <$($($G $(: $($B)+)?,)+)?> [&] or_mut    (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [|] or_mut    (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [^] xor_mut   (style: <Styler: Styler>) &style;
