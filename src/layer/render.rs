@@ -1,5 +1,4 @@
 use super::{Cell, Layer, LayerMut};
-use crossterm::cursor::MoveTo;
 use std::{
     fmt::{Display, Error, Formatter},
     ops::{Index, IndexMut},
@@ -46,7 +45,7 @@ impl_layer!(Render<T> [render, x, y] {
 impl<T: Layer> Display for Render<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         for line in 0..self.height() {
-            write!(f, "{}", MoveTo(self.x, self.y + line))?;
+            move_to(f, self.x, self.y + line)?;
 
             for row in 0..self.width() {
                 write!(f, "{}", self.get(row, line).unwrap())?;
@@ -55,4 +54,9 @@ impl<T: Layer> Display for Render<T> {
 
         Ok(())
     }
+}
+
+/// Moves cursor to `(x, y)` (starts at `(0, 0)`).
+fn move_to(f: &mut Formatter, x: u16, y: u16) -> Result<(), Error> {
+    write!(f, "{}", format_args!("\x1B[{};{}H", y + 1, x + 1))
 }

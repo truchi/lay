@@ -1,6 +1,4 @@
 //! Styling utilities.
-//!
-//! A convenient wrapper around `crossterm::style`.
 
 mod attributes;
 mod colors;
