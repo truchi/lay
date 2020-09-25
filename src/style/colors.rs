@@ -21,8 +21,8 @@ pub enum Color {
     DarkCyan,
     White,
     Grey,
-    Rgb { r: u8, g: u8, b: u8 },
-    AnsiValue(u8),
+    Rgb(u8, u8, u8),
+    Ansi(u8),
     Reset,
 }
 
@@ -84,8 +84,8 @@ macro_rules! color {
                             Color::DarkCyan => f.write_str("5;6"),
                             Color::White => f.write_str("5;15"),
                             Color::Grey => f.write_str("5;7"),
-                            Color::Rgb { r, g, b } => write!(f, "2;{};{};{}", r, g, b),
-                            Color::AnsiValue(value) => write!(f, "5;{}", value),
+                            Color::Rgb(r, g, b) => write!(f, "2;{};{};{}", r, g, b),
+                            Color::Ansi(ansi) => write!(f, "5;{}", ansi),
                             _ => Ok(()) // NOTE: unreachable
                         }?;
                     }

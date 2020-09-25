@@ -40,13 +40,13 @@ macro_rules! styler {
                     () None
                 );
 
-                styler!(impl Set "`Some(" stringify!($Color) "(Color::Rbg { r, g, b }))`",
+                styler!(impl Set "`Some(" stringify!($Color) "(Color::Rbg(r, g, b)))`",
                     $set_rgb $set_rgb_mut [$set_color_mut]
-                    (r: u8, g: u8, b: u8,) Some($Color(Color::Rgb { r, g, b }))
+                    (r: u8, g: u8, b: u8,) Some($Color(Color::Rgb(r, g, b)))
                 );
                 styler!(impl Set "`Some(" stringify!($Color) "(Color::AnsiValue(value)))`",
                     $set_ansi $set_ansi_mut [$set_color_mut]
-                    (value: u8,) Some($Color(Color::AnsiValue(value)))
+                    (ansi: u8,) Some($Color(Color::Ansi(ansi)))
                 );
 
                 $(styler!(impl Set "`Some(" stringify!($Color) "(Color::" stringify!($color_variant) "))`",
