@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! impl_layer {
     (
         $Type:ty [$self:ident, $x:ident, $y:ident] {

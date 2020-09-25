@@ -1,4 +1,4 @@
-use super::{Style, Styler};
+use super::Style;
 use std::fmt::{Display, Error, Formatter};
 
 /// `Display`able `Style`d content.

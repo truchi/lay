@@ -1,3 +1,4 @@
+#[macro_export]
 macro_rules! impl_styler {
     ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Type:ty) {
         $foreground:expr,
