@@ -8,13 +8,14 @@ macro_rules! attribute {
             $($variant:ident($xvariant:ident))* + $reset:ident($xreset:ident),
         $NoName:ident
     ) => {
+        pub use $Name::*;
+
         $(#[$inner $($args)*])?
         #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
         pub enum $Name {
             $($variant,)*
             $reset
         }
-        pub use $Name::*;
 
         impl Default for $Name {
             fn default() -> Self {
