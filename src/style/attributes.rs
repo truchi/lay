@@ -1,20 +1,13 @@
-use std::fmt::{Display, Error, Formatter};
-
-macro_rules! attribute {
+macro_rules! attributes {
     ($(
-        $(#[$inner:ident $($args:tt)*])*
+        $(#[$meta:meta])*
         $Name:ident:
-            $($variant:ident($str:literal))* + $reset:ident($reset_str:literal),
-        $NoName:ident
+            $($variant:ident($str:literal))* + $reset:ident($reset_str:literal)
     )*) => {
         $(
-            doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct $NoName;);
-
             pub use $Name::*;
 
-            $(#[$inner $($args)*])*
+            $(#[$meta])*
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
             pub enum $Name {
                 $($variant,)*
@@ -46,57 +39,6 @@ macro_rules! attribute {
         )*
     };
 }
-
-attribute!(
-    /// `Weighted` text (`Bold`, `Light`, `ResetBold`).
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `ResetWeight`, the weight unsetting CSI.
-    Weighted: Bold("1") Light("2") + ResetWeight("22"), NoWeight
-    /// `Slanted` text (`Italic`, `ResetSlant`).
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `ResetSlant`, the slant unsetting CSI.
-    Slanted: Italic("3") + ResetSlant("23"), NoSlant
-    /// `Blinking` text (`Slow`, `Fast`, `ResetBlink`).
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `ResetBlink`, the blink unsetting CSI.
-    Blinking: Slow("5") Fast("6") + ResetBlink("25"), NoBlink
-    /// `Inverted` text (`Invert`, `ResetInvert`).
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `ResetInvert`, the invert unsetting CSI.
-    Inverted: Invert("7") + ResetInvert("27"), NoInvert
-    /// `Striked` text (`Strike`, `ResetStrike`).
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `ResetStrike`, the strike unsetting CSI.
-    Striked: Strike("9") + ResetStrike("29"), NoStrike
-    /// `Underlined` text (`Underline`, `ResetUnderline`).
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `ResetUnderline`, the underline unsetting CSI.
-    Underlined: Underline("4") + ResetUnderline("24"), NoUnderline
-    /// `Overlined` text (`Overline`, `ResetOverline`).
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `ResetOverline`, the overline unsetting CSI.
-    Overlined: Overline("53") + ResetOverline("55"), NoOverline
-    /// `Bordered` text (`Frame`, `Circle`, `ResetBorder`).
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `ResetBorder`, the border unsetting CSI.
-    Bordered: Frame("51") Circle("52") + ResetBorder("54"), NoBorder
-);
 
 #[cfg(test)]
 mod tests {

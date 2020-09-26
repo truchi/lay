@@ -90,14 +90,291 @@
 //! [style]: struct.Style.html
 //! [impl_styler]: ../macro.impl_styler.html
 
+#[macro_use]
 mod attributes;
+#[macro_use]
 mod colors;
-mod style;
-mod styled;
+// mod style;
+// mod styled;
 mod styler;
 
 pub use attributes::*;
 pub use colors::*;
-pub use style::*;
-pub use styled::*;
+// pub use style::*;
+// pub use styled::*;
 pub use styler::*;
+
+use std::{
+    fmt::{Display, Error, Formatter},
+    ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign},
+};
+
+macro_rules! styler {
+    (Colors {$(
+        $(#[$meta_color:meta])*
+        $Color:ident($color:ident) $NoColor:ident [$IdxColor:ident] ($str_color:literal $str_reset_color:literal)
+        $OpColor:ident($op_color:ident) $OpAssignColor:ident($op_assign_color:ident) {
+            $get_color:ident $get_mut_color:ident
+            $set_color:ident $set_mut_color:ident
+            $unset_color:ident $unset_mut_color:ident
+            $reset_color:ident: $set_reset_color:ident $set_reset_mut_color:ident
+            $($variant_color:ident: $set_variant_color:ident $set_variant_mut_color:ident)*
+        }
+    )*}
+    Attributes {$(
+        $(#[$meta_attr:meta])*
+        $Attr:ident($attr:ident) $NoAttr:ident [$IdxAttr:ident]
+        $OpAttr:ident($op_attr:ident) $OpAssignAttr:ident($op_assign_attr:ident) {
+            $get_attr:ident $get_mut_attr:ident
+            $set_attr:ident $set_mut_attr:ident
+            $unset_attr:ident $unset_mut_attr:ident
+            $reset_attr:ident($str_reset_attr:literal): $set_reset_attr:ident $set_reset_mut_attr:ident
+            $($variant_attr:ident($str_attr:literal): $set_variant_attr:ident $set_variant_mut_attr:ident)*
+        }
+    )*}) => {
+        colors!($(
+            $(#[$meta_color])*
+            $Color ($str_color $str_reset_color)
+        )*);
+
+        attributes!($(
+            $(#[$meta_attr])*
+            $Attr: $($variant_attr($str_attr))* + $reset_attr($str_reset_attr)
+        )*);
+
+        styler!(styler
+            $(
+                $Color($color) $NoColor [$IdxColor]
+                $OpColor($op_color) $OpAssignColor($op_assign_color) {
+                    $get_color $get_mut_color
+                    $set_color $set_mut_color
+                    $unset_color $unset_mut_color
+                    $reset_color: $set_reset_color $set_reset_mut_color
+                    $($variant_color: $set_variant_color $set_variant_mut_color)*
+                }
+            )*
+            $(
+                $Attr($attr) $NoAttr [$IdxAttr]
+                $OpAttr($op_attr) $OpAssignAttr($op_assign_attr) {
+                    $get_attr $get_mut_attr
+                    $set_attr $set_mut_attr
+                    $unset_attr $unset_mut_attr
+                    $reset_attr: $set_reset_attr $set_reset_mut_attr
+                    $($variant_attr: $set_variant_attr $set_variant_mut_attr)*
+                }
+            )*
+        );
+    };
+    (styler $(
+        $Self:ident($self:ident) $No:ident [$Idx:ident]
+        $Op:ident($op:ident) $OpAssign:ident($op_assign:ident) {
+            $get:ident $get_mut:ident
+            $set:ident $set_mut:ident
+            $unset:ident $unset_mut:ident
+            $reset:ident: $set_reset:ident $set_reset_mut:ident
+            $($variant:ident: $set_variant:ident $set_variant_mut:ident)*
+        }
+    )*) => {
+        $(
+            doc!("Gets `Option<" stringify!($Self) ">`.",
+            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
+            pub struct $Idx;);
+
+            doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
+            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
+            pub struct $No;);
+        )*
+
+        /// A trait for styled types.
+        pub trait Styler: Sized
+            $(+ Index<$Idx, Output = Option<$Self>>)*
+            $(+ $Op<$Self, Output = Self>)*
+        {
+            $(
+                doc!("Gets `Option<" stringify!($Self) ">`.",
+                fn $get(self) -> Option<$Self> { self[$Idx] });
+
+                doc!("Sets `Option<" stringify!($Self) ">`.",
+                fn $set(self, $self: impl Into<$Self>) -> Self {
+                    let $self = $self.into();
+                    self.$op($self)
+                });
+            )*
+        }
+
+        /// A trait for mutable styled types.
+        pub trait StylerMut: Styler
+            $(+ IndexMut<$Idx>)*
+            $(+ $OpAssign<$Self>)*
+        {
+            $(
+                doc!("Gets `&mut Option<" stringify!($Self) ">`.",
+                fn $get_mut(&mut self) -> &mut Option<$Self> { &mut self[$Idx] });
+
+                doc!("Sets `Option<" stringify!($Self) ">` mutably.",
+                fn $set_mut(&mut self, $self: impl Into<$Self>) {
+                    let $self = $self.into();
+                    self.$op_assign($self);
+                });
+            )*
+        }
+    };
+}
+
+styler!(
+    Colors {
+        /// A `Foreground` `Color`.
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `Foreground(Color::Reset)`, user's default terminal foreground color.
+        Foreground(foreground) NoForeground [Fg] ("38;" "39")
+        Mul(mul) MulAssign(mul_assign) {
+            get_foreground get_foreground_mut
+            foreground foreground_mut
+            no_foreground no_foreground_mut
+                Reset: reset reset_mut
+                White: white white_mut
+                Black: black black_mut
+                Red: red red_mut
+                DarkRed: dark_red dark_red_mut
+                Green: green green_mut
+                DarkGreen: dark_green dark_green_mut
+                Yellow: yellow yellow_mut
+                DarkYellow: dark_yellow dark_yellow_mut
+                Blue: blue blue_mut
+                DarkBlue: dark_blue dark_blue_mut
+                Magenta: magenta magenta_mut
+                DarkMagenta: dark_magenta dark_magenta_mut
+                Cyan: cyan cyan_mut
+                DarkCyan: dark_cyan dark_cyan_mut
+        }
+        /// A `Background` `Color`.
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `Background(Color::Reset)`, user's default terminal background color.
+        Background(background) NoBackground [Bg] ("48;" "49")
+        Div(div) DivAssign(div_assign) {
+            get_background get_background_mut
+            background background_mut
+            no_background no_background_mut
+                Reset: on_reset on_reset_mut
+                White: on_white on_white_mut
+                Black: on_black on_black_mut
+                Red: on_red on_red_mut
+                DarkRed: on_dark_red on_dark_red_mut
+                Green: on_green on_green_mut
+                DarkGreen: on_dark_green on_dark_green_mut
+                Yellow: on_yellow on_yellow_mut
+                DarkYellow: on_dark_yellow on_dark_yellow_mut
+                Blue: on_blue on_blue_mut
+                DarkBlue: on_dark_blue on_dark_blue_mut
+                Magenta: on_magenta on_magenta_mut
+                DarkMagenta: on_dark_magenta on_dark_magenta_mut
+                Cyan: on_cyan on_cyan_mut
+                DarkCyan: on_dark_cyan on_dark_cyan_mut
+        }
+    }
+    Attributes {
+        /// `Weighted` text (`Bold`, `Light`, `ResetBold`).
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `ResetWeight`, the weight unsetting CSI.
+        Weighted(weighted) NoWeight [Wgt] Add(add) AddAssign(add_assign) {
+            get_weighted get_weighted_mut
+            weighted weighted_mut
+            no_weight no_weight_mut
+                ResetWeight("22"): reset_weight reset_weight_mut
+                Bold("1"): bold bold_mut
+                Light("2"): light light_mut
+        }
+        /// `Slanted` text (`Italic`, `ResetSlant`).
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `ResetSlant`, the slant unsetting CSI.
+        Slanted(slanted) NoSlant [Slt] Add(add) AddAssign(add_assign) {
+            get_slanted get_slanted_mut
+            slanted slanted_mut
+            no_slant no_slant_mut
+                ResetSlant("23"): reset_slant reset_slant_mut
+                Italic("3"): italic italic_mut
+        }
+        /// `Blinking` text (`Slow`, `Fast`, `ResetBlink`).
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `ResetBlink`, the blink unsetting CSI.
+        Blinking(blinking) NoBlink [Blk] Add(add) AddAssign(add_assign) {
+            get_blinking get_blinking_mut
+            blinking blinking_mut
+            no_blink no_blink_mut
+                ResetBlink("25"): reset_blink reset_blink_mut
+                Slow("5"): slow slow_mut
+                Fast("6"): fast fast_mut
+        }
+        /// `Inverted` text (`Invert`, `ResetInvert`).
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `ResetInvert`, the invert unsetting CSI.
+        Inverted(inverted) NoInvert [Inv] Add(add) AddAssign(add_assign) {
+            get_inverted get_inverted_mut
+            inverted inverted_mut
+            no_invert no_invert_mut
+                ResetInvert("27"): reset_invert reset_invert_mut
+                Invert("7"): invert invert_mut
+        }
+        /// `Striked` text (`Strike`, `ResetStrike`).
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `ResetStrike`, the strike unsetting CSI.
+        Striked(striked) NoStrike [Stk] Add(add) AddAssign(add_assign) {
+            get_striked get_striked_mut
+            striked striked_mut
+            no_strike no_strike_mut
+                ResetStrike("29"): reset_strike reset_strike_mut
+                Strike("9"): strike strike_mut
+        }
+        /// `Underlined` text (`Underline`, `ResetUnderline`).
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `ResetUnderline`, the underline unsetting CSI.
+        Underlined(underlined) NoUnderline [Udl] Add(add) AddAssign(add_assign) {
+            get_underlined get_underlined_mut
+            underlined underlined_mut
+            no_underline no_underline_mut
+                ResetUnderline("24"): reset_underline reset_underline_mut
+                Underline("4"): underline underline_mut
+        }
+        /// `Overlined` text (`Overline`, `ResetOverline`).
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `ResetOverline`, the overline unsetting CSI.
+        Overlined(overlined) NoOverline [Ovl] Add(add) AddAssign(add_assign) {
+            get_overlined get_overlined_mut
+            overlined overlined_mut
+            no_overline no_overline_mut
+                ResetOverline("55"): reset_overline reset_overline_mut
+                Overline("53"): overline overline_mut
+        }
+        /// `Bordered` text (`Frame`, `Circle`, `ResetBorder`).
+        ///
+        /// Prints the corresponding CSI to the terminal when `Display`ed.
+        ///
+        /// `Default`s to `ResetBorder`, the border unsetting CSI.
+        Bordered(bordered) NoBorder [Brd] Add(add) AddAssign(add_assign) {
+            get_bordered get_bordered_mut
+            bordered bordered_mut
+            no_border no_border_mut
+                ResetBorder("54"): reset_border reset_border_mut
+                Frame("51"): frame frame_mut
+                Circle("52"): circle circle_mut
+        }
+    }
+);

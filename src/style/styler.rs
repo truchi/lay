@@ -8,7 +8,6 @@ use super::{
     Overlined,
     Slanted,
     Striked,
-    Style,
     Underlined,
     Weighted,
 };
@@ -29,7 +28,7 @@ macro_rules! styler {
         })*
     }) => {
         /// A trait for styled types.
-        pub trait Styler: Sized {
+        pub trait Styler2: Sized {
             $(
                 styler!(impl Base "`Option<" stringify!($Color) ">`",
                     $get_color $set_color $set_color_mut
@@ -82,7 +81,7 @@ macro_rules! styler {
 
             /// Unsets fields if the value is identical to the corresponding one in
             /// `before`.
-            fn dedup<T: Styler>(mut self, before: &T) -> Self {
+            fn dedup<T: Styler2>(mut self, before: &T) -> Self {
                 $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
                 $(self.$set_attr_mut (dedup(self.$get_attr(), before.$get_attr()));)*
                 self
@@ -90,20 +89,20 @@ macro_rules! styler {
 
             /// Unsets fields if the value is identical to the corresponding one in
             /// `before`.
-            fn dedup_mut<T: Styler>(&mut self, before: &T) {
+            fn dedup_mut<T: Styler2>(&mut self, before: &T) {
                 $(self.$set_color_mut(dedup(self.$get_color(), before.$get_color()));)*
                 $(self.$set_attr_mut (dedup(self.$get_attr(), before.$get_attr()));)*
             }
 
-            /// Sets `Some` fields to their reset variant.
-            fn reset(self) -> Self {
-                self.and(&Style::RESET)
-            }
-
-            /// Sets `Some` fields to their reset variant.
-            fn reset_mut(&mut self) {
-                self.and_mut(&Style::RESET);
-            }
+           // /// Sets `Some` fields to their reset variant.
+           // fn reset(self) -> Self {
+           //     self.and(&Style::RESET)
+           // }
+           //
+           // /// Sets `Some` fields to their reset variant.
+           // fn reset_mut(&mut self) {
+           //     self.and_mut(&Style::RESET);
+           // }
 
             /// Formats the CSIs of `self` when `Some`.
             fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
@@ -151,14 +150,14 @@ macro_rules! styler {
     };
     (impl op $op:ident $($doc:expr)*, $fn:ident $fn_mut:ident [$($get:ident $set_mut:ident)*]) => {
         doc!($($doc)*,
-            fn $fn<T: Styler>(mut self, other: &T) -> Self {
+            fn $fn<T: Styler2>(mut self, other: &T) -> Self {
                 $(self.$set_mut(self.$get().$op(other.$get()));)*
                 $(self.$set_mut(self.$get().$op(other.$get()));)*
                 self
             }
         );
         doc!($($doc)*,
-            fn $fn_mut<T: Styler>(&mut self, other: &T) {
+            fn $fn_mut<T: Styler2>(&mut self, other: &T) {
                 $(self.$set_mut(self.$get().$op(other.$get()));)*
                 $(self.$set_mut(self.$get().$op(other.$get()));)*
             }

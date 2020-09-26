@@ -1,4 +1,4 @@
-use std::fmt::{Display, Error, Formatter};
+use super::{Background, Foreground};
 
 pub use Color::*;
 
@@ -58,14 +58,30 @@ impl From<u8> for Color {
     }
 }
 
-macro_rules! color {
-    ($($(#[$inner:ident $($args:tt)*])* $Name:ident $NoName:ident ($str:literal $reset:literal))*) => {
-        $(
-            doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct $NoName;);
+/// Returns `Foreground(color)`.
+impl From<Background> for Foreground {
+    /// Returns `Foreground(color)`.
+    fn from(Background(color): Background) -> Self {
+        Self(color)
+    }
+}
 
-            $(#[$inner $($args)*])*
+/// Returns `Background(color)`.
+impl From<Foreground> for Background {
+    /// Returns `Background(color)`.
+    fn from(Foreground(color): Foreground) -> Self {
+        Self(color)
+    }
+}
+
+/// Sets `Option<Foreground>` or `Option<Background>` to `None`.
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+pub struct NoColor;
+
+macro_rules! colors {
+    ($($(#[$meta:meta])* $Name:ident ($str:literal $reset_str:literal))*) => {
+        $(
+            $(#[$meta])*
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
             pub struct $Name(pub Color);
 
@@ -118,7 +134,7 @@ macro_rules! color {
                     f.write_str("\x1B[")?;
 
                     if color == Color::Reset {
-                        f.write_str($reset)?;
+                        f.write_str($reset_str)?;
                     } else {
                         f.write_str($str)?;
 
@@ -151,41 +167,6 @@ macro_rules! color {
         )*
     };
 }
-
-color!(
-    /// A `Foreground` `Color`.
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `Foreground(Color::Reset)`, user's default terminal foreground color.
-    Foreground NoForeground ("38;" "39")
-    /// A `Background` `Color`.
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `Background(Color::Reset)`, user's default terminal background color.
-    Background NoBackground ("48;" "49")
-);
-
-/// Returns `Foreground(color)`.
-impl From<Background> for Foreground {
-    /// Returns `Foreground(color)`.
-    fn from(Background(color): Background) -> Self {
-        Self(color)
-    }
-}
-
-/// Returns `Background(color)`.
-impl From<Foreground> for Background {
-    /// Returns `Background(color)`.
-    fn from(Foreground(color): Foreground) -> Self {
-        Self(color)
-    }
-}
-
-/// Sets `Option<Foreground>` or `Option<Background>` to `None`.
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub struct NoColor;
 
 #[cfg(test)]
 mod tests {
