@@ -48,25 +48,27 @@
 //! [`Layer`][layer] trait, which enable merging of layers, i.e. rectangle of
 //! [`Cell`][cell]s.
 //!
-//! See and [`layer`][mod_layer] for details.
+//! TODO
+//!
+//! See the [`layer`][mod_layer] module for details.
 //!
 //! ## Examples
 //!
-//! See [`examples`][gh_examples] for examples.
+//! See the [`examples`][gh_examples] folder for examples.
 //!
 //! [mod_style]: style/index.html
+//! [foreground]: style/struct.Foreground.html
+//! [background]: style/struct.Background.html
+//! [color]: style/enum.Color.html
+//! [weighted]: style/enum.Weighted.html
+//! [styler]: style/trait.Styler.html
+//! [style]: style/struct.Style.html
+//! [styled]: style/struct.Styled.html
 //! [mod_layer]: layer/index.html
-//! [gh_examples]: https://github.com/truchi/lay/tree/master/examples
-//! [foreground]: struct.Foreground.html
-//! [background]: struct.Background.html
-//! [color]: enum.Color.html
-//! [weighted]: enum.Weighted.html
-//! [styler]: trait.Styler.html
-//! [style]: struct.Style.html
-//! [styled]: struct.Styled.html
+//! [layer]: layer/rait.Layer.html
+//! [cell]: layer/type.Cell.html
 //! [impl_styler]: macro.impl_styler.html
-//! [layer]: trait.Layer.html
-//! [cell]: type.Cell.html
+//! [gh_examples]: https://github.com/truchi/lay/tree/master/examples
 
 #[macro_use]
 mod macros;

@@ -3,6 +3,12 @@ use std::fmt::{Display, Error, Formatter};
 pub use Color::*;
 
 /// A `Color`.
+///
+/// To be used with [`Foreground`][foreground] and [`Background`][background] (a
+/// `Color` on its own does not `impl Display`). Defaults to `Reset`.
+///
+/// [foreground]: struct.Foreground.html
+/// [background]: struct.Background.html
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Color {
     Black,
@@ -26,6 +32,14 @@ pub enum Color {
     Reset,
 }
 
+/// Returns `Color::Reset`.
+impl Default for Color {
+    /// Returns `Color::Reset`.
+    fn default() -> Self {
+        Self::Reset
+    }
+}
+
 /// Returns `Color::Rgb(r, g, b)`.
 impl From<(u8, u8, u8)> for Color {
     /// Returns `Color::Rgb(r, g, b)`.
@@ -42,24 +56,24 @@ impl From<u8> for Color {
     }
 }
 
-/// Returns `Color::Reset`.
-impl Default for Color {
-    /// Returns `Color::Reset`.
-    fn default() -> Self {
-        Self::Reset
-    }
-}
-
 macro_rules! color {
-    ($($(#[$inner:ident $($args:tt)*])? $Name:ident $NoName:ident ($str:literal $reset:literal))*) => {
+    ($($(#[$inner:ident $($args:tt)*])* $Name:ident $NoName:ident ($str:literal $reset:literal))*) => {
         $(
-            $(#[$inner $($args)*])?
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-            pub struct $Name(pub Color);
-
             doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
             pub struct $NoName;);
+
+            $(#[$inner $($args)*])*
+            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+            pub struct $Name(pub Color);
+
+            doc!("Returns `" stringify!($Name) "(Color::Reset)`.",
+            impl Default for $Name {
+                doc!("Returns `" stringify!($Name) "(Color::Reset)`.",
+                fn default() -> Self {
+                    Self(Color::Reset)
+                });
+            });
 
             doc!("Returns `" stringify!($Name) "(color)`.",
             impl From<Color> for $Name {
@@ -92,14 +106,6 @@ macro_rules! color {
                     color
                 }
             }
-
-            doc!("Returns `" stringify!($Name) "(Color::Reset)`.",
-            impl Default for $Name {
-                doc!("Returns `" stringify!($Name) "(Color::Reset)`.",
-                fn default() -> Self {
-                    Self(Color::Reset)
-                });
-            });
 
             /// Prints the corresponding CSI to the terminal.
             impl Display for $Name {
@@ -146,10 +152,30 @@ macro_rules! color {
 
 color!(
     /// A `Foreground` `Color`.
+    ///
+    /// Prints the corresponding CSI to the terminal when `Display`ed.
     Foreground NoForeground ("38;" "39")
     /// A `Background` `Color`.
+    ///
+    /// Prints the corresponding CSI to the terminal when `Display`ed.
     Background NoBackground ("48;" "49")
 );
+
+/// Returns `Foreground(color)`.
+impl From<Background> for Foreground {
+    /// Returns `Foreground(color)`.
+    fn from(Background(color): Background) -> Self {
+        Self(color)
+    }
+}
+
+/// Returns `Background(color)`.
+impl From<Foreground> for Background {
+    /// Returns `Background(color)`.
+    fn from(Foreground(color): Foreground) -> Self {
+        Self(color)
+    }
+}
 
 /// Sets `Option<Foreground>` or `Option<Background>` to `None`.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
@@ -162,15 +188,27 @@ mod tests {
 
     #[test]
     fn from_and_default() {
-        assert_eq!(Color::from((1, 2, 3)), Color::Rgb(1, 2, 3));
-        assert_eq!(Color::from(1), Color::Ansi(1));
-        assert_eq!(Color::default(), Color::Reset);
+        // Color defaults to Reset
+        assert_eq!(Color::default(), Reset);
 
-        assert_eq!(Color::from(Foreground(Blue)), Blue);
-        assert_eq!(Color::from(Background(Red)), Red);
-        assert_eq!(Foreground::from(Green), Foreground(Green));
-        assert_eq!(Background::from(Magenta), Background(Magenta));
+        // (u8, u8, u8) -> Rgb(u8, u8, u8)
+        assert_eq!(Color::from((1, 2, 3)), Rgb(1, 2, 3));
+
+        // u8 -> Ansi(u8)
+        assert_eq!(Color::from(1), Ansi(1));
+
+        // Foreground/Background default to Foreground/Background(Reset)
         assert_eq!(Foreground::default(), Foreground(Reset));
         assert_eq!(Background::default(), Background(Reset));
+
+        // Foreground/Background <-> Color
+        assert_eq!(Color::from(Foreground(Blue)), Blue);
+        assert_eq!(Foreground::from(Green), Foreground(Green));
+        assert_eq!(Color::from(Background(Red)), Red);
+        assert_eq!(Background::from(Magenta), Background(Magenta));
+
+        // Foreground <-> Background
+        assert_eq!(Foreground::from(Background(Black)), Foreground(Black));
+        assert_eq!(Background::from(Foreground(White)), Background(White));
     }
 }
