@@ -97,3 +97,22 @@ attribute!(
     /// `Default`s to `ResetBorder`, the border unsetting CSI.
     Bordered: Frame("51") Circle("52") + ResetBorder("54"), NoBorder
 );
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn default() {
+        assert_eq!(Weighted::default(), ResetWeight);
+        assert_eq!(Slanted::default(), ResetSlant);
+        assert_eq!(Blinking::default(), ResetBlink);
+        assert_eq!(Inverted::default(), ResetInvert);
+        assert_eq!(Striked::default(), ResetStrike);
+        assert_eq!(Underlined::default(), ResetUnderline);
+        assert_eq!(Overlined::default(), ResetOverline);
+        assert_eq!(Bordered::default(), ResetBorder);
+    }
+}
