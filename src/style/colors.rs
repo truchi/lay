@@ -5,7 +5,9 @@ pub use Color::*;
 /// A `Color`.
 ///
 /// To be used with [`Foreground`][foreground] and [`Background`][background] (a
-/// `Color` on its own does not `impl Display`). Defaults to `Reset`.
+/// `Color` on its own does not `impl Display`).
+///
+/// Defaults to `Reset`.
 ///
 /// [foreground]: struct.Foreground.html
 /// [background]: struct.Background.html
@@ -60,7 +62,7 @@ macro_rules! color {
     ($($(#[$inner:ident $($args:tt)*])* $Name:ident $NoName:ident ($str:literal $reset:literal))*) => {
         $(
             doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct $NoName;);
 
             $(#[$inner $($args)*])*
@@ -154,10 +156,14 @@ color!(
     /// A `Foreground` `Color`.
     ///
     /// Prints the corresponding CSI to the terminal when `Display`ed.
+    ///
+    /// `Default`s to `Foreground(Color::Reset)`, user's default terminal foreground color.
     Foreground NoForeground ("38;" "39")
     /// A `Background` `Color`.
     ///
     /// Prints the corresponding CSI to the terminal when `Display`ed.
+    ///
+    /// `Default`s to `Background(Color::Reset)`, user's default terminal background color.
     Background NoBackground ("48;" "49")
 );
 

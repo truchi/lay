@@ -37,7 +37,7 @@ macro_rules! attribute {
             }
 
             doc!("Sets `Option<" stringify!($Name) ">` to `None`.",
-                #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+                #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
                 pub struct $NoName;
             );
         )*
