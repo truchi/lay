@@ -36,7 +36,7 @@
 //! }
 //! ```
 //!
-//! # The `Styler` trait, `Style` and `Styled<T>`
+//! # Styling
 //!
 //! (We will refer to both colors and attributes as "attributes".)
 //!
@@ -46,9 +46,9 @@
 //!
 //! ## `Styler`
 //!
-//! The [`Styler`][styler] defines getters and setters for types with `Option`al
-//! attributes, provides lots of convenient methods for a few required
-//! methods and enables styling operations overloads. It can be easily
+//! The [`Styler`][styler] trait defines getters and setters for types with
+//! `Option`al attributes, provides lots of convenient methods for a few
+//! required methods and enables styling operations overloads. It can be easily
 //! implemented with the [`impl_styler`][impl_styler] macro.
 //!
 //! ```
@@ -56,26 +56,25 @@
 //!
 //! // NOTE: Style implements Styler, see below
 //!
-//! fn make_style(style: Style) -> Style {
-//!     style.bold().or(&style.black().on_white())
-//! }
-//!
 //! fn main() {
 //!     // A red foreground
-//!     let style = Style::default() * Red;
+//!     let style = Style::default().red();
+//!     // Both are equivalent
+//!     let new_style = style.bold().or(&style.black().on_white());
+//!     let new_style = style + Bold | style * Black / White;
+//!     // Both are equivalent
+//!     let reset = new_style.reset();
+//!     let reset = !new_style;
 //!
-//!     assert_eq!(
-//!         make_style(style),
-//!         // red foreground, white background, bold
-//!         style * Red / White + Bold
-//!     );
+//!     assert_eq!(new_style, style * Red / White + Bold);
+//!     assert_eq!(reset, style * Reset / Reset + ResetWeight);
 //! }
 //! ```
 //!
 //! # `Style`
 //!
 //! The [`Style`][style] struct is the most simple implementation of `Styler`
-//! you can think of.
+//! you can think of: it has a field for each attribute wrapped in an `Option`.
 //!
 //! [foreground]: struct.Foreground.html
 //! [background]: struct.Background.html

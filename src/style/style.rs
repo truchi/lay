@@ -15,6 +15,12 @@ use super::{
 use std::fmt::{Display, Error, Formatter};
 
 /// `Style`s.
+///
+/// A straightforward implementation of `Styler`.
+///
+/// `Display`s the corresponding CSIs to the terminal.
+///
+/// `Default`s as an empty `Style` (all fields set to `None`).
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub struct Style {
     pub foreground: Option<Foreground>,
