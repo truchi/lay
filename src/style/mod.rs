@@ -96,6 +96,7 @@ mod attributes;
 mod colors;
 // mod style;
 // mod styled;
+#[macro_use]
 mod styler;
 
 pub use attributes::*;
@@ -109,29 +110,35 @@ use std::{
     ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign},
 };
 
-macro_rules! styler {
-    (Colors {$(
-        $(#[$meta_color:meta])*
-        $Color:ident($color:ident) $NoColor:ident [$IdxColor:ident] ($str_color:literal $str_reset_color:literal)
-        $OpColor:ident($op_color:ident) $OpAssignColor:ident($op_assign_color:ident) {
-            $get_color:ident $get_mut_color:ident
-            $set_color:ident $set_mut_color:ident
-            $unset_color:ident $unset_mut_color:ident
-            $reset_color:ident: $set_reset_color:ident $set_reset_mut_color:ident
-            $($variant_color:ident: $set_variant_color:ident $set_variant_mut_color:ident)*
-        }
-    )*}
-    Attributes {$(
-        $(#[$meta_attr:meta])*
-        $Attr:ident($attr:ident) $NoAttr:ident [$IdxAttr:ident]
-        $OpAttr:ident($op_attr:ident) $OpAssignAttr:ident($op_assign_attr:ident) {
-            $get_attr:ident $get_mut_attr:ident
-            $set_attr:ident $set_mut_attr:ident
-            $unset_attr:ident $unset_mut_attr:ident
-            $reset_attr:ident($str_reset_attr:literal): $set_reset_attr:ident $set_reset_mut_attr:ident
-            $($variant_attr:ident($str_attr:literal): $set_variant_attr:ident $set_variant_mut_attr:ident)*
-        }
-    )*}) => {
+macro_rules! style {
+    (
+        $(#[$meta_styler:meta])*
+        $Styler:ident
+        $(#[$meta_styler_mut:meta])*
+        $StylerMut:ident
+        Colors { $(
+            $(#[$meta_color:meta])*
+            $Color:ident($color:ident) $NoColor:ident [$IdxColor:ident] ($str_color:literal $str_reset_color:literal)
+            $OpColor:ident($op_color:ident) $OpAssignColor:ident($op_assign_color:ident) {
+                $get_color:ident $get_mut_color:ident
+                $set_color:ident $set_mut_color:ident
+                $unset_color:ident $unset_mut_color:ident
+                $reset_color:ident: $set_reset_color:ident $set_reset_mut_color:ident
+                $($variant_color:ident: $set_variant_color:ident $set_variant_mut_color:ident)*
+            }
+        )* }
+        Attributes { $(
+            $(#[$meta_attr:meta])*
+            $Attr:ident($attr:ident) $NoAttr:ident [$IdxAttr:ident]
+            $OpAttr:ident($op_attr:ident) $OpAssignAttr:ident($op_assign_attr:ident) {
+                $get_attr:ident $get_mut_attr:ident
+                $set_attr:ident $set_mut_attr:ident
+                $unset_attr:ident $unset_mut_attr:ident
+                $reset_attr:ident($str_reset_attr:literal): $set_reset_attr:ident $set_reset_mut_attr:ident
+                $($variant_attr:ident($str_attr:literal): $set_variant_attr:ident $set_variant_mut_attr:ident)*
+            }
+        )* }
+    ) => {
         colors!($(
             $(#[$meta_color])*
             $Color ($str_color $str_reset_color)
@@ -142,8 +149,12 @@ macro_rules! styler {
             $Attr: $($variant_attr($str_attr))* + $reset_attr($str_reset_attr)
         )*);
 
-        styler!(styler
-            $(
+        styler!(
+            $(#[$meta_styler])*
+            $Styler
+            $(#[$meta_styler_mut])*
+            $StylerMut
+            Colors { $(
                 $Color($color) $NoColor [$IdxColor]
                 $OpColor($op_color) $OpAssignColor($op_assign_color) {
                     $get_color $get_mut_color
@@ -152,8 +163,8 @@ macro_rules! styler {
                     $reset_color: $set_reset_color $set_reset_mut_color
                     $($variant_color: $set_variant_color $set_variant_mut_color)*
                 }
-            )*
-            $(
+            )* }
+            Attributes { $(
                 $Attr($attr) $NoAttr [$IdxAttr]
                 $OpAttr($op_attr) $OpAssignAttr($op_assign_attr) {
                     $get_attr $get_mut_attr
@@ -162,66 +173,16 @@ macro_rules! styler {
                     $reset_attr: $set_reset_attr $set_reset_mut_attr
                     $($variant_attr: $set_variant_attr $set_variant_mut_attr)*
                 }
-            )*
+            )* }
         );
-    };
-    (styler $(
-        $Self:ident($self:ident) $No:ident [$Idx:ident]
-        $Op:ident($op:ident) $OpAssign:ident($op_assign:ident) {
-            $get:ident $get_mut:ident
-            $set:ident $set_mut:ident
-            $unset:ident $unset_mut:ident
-            $reset:ident: $set_reset:ident $set_reset_mut:ident
-            $($variant:ident: $set_variant:ident $set_variant_mut:ident)*
-        }
-    )*) => {
-        $(
-            doc!("Gets `Option<" stringify!($Self) ">`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct $Idx;);
-
-            doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct $No;);
-        )*
-
-        /// A trait for styled types.
-        pub trait Styler: Sized
-            $(+ Index<$Idx, Output = Option<$Self>>)*
-            $(+ $Op<$Self, Output = Self>)*
-        {
-            $(
-                doc!("Gets `Option<" stringify!($Self) ">`.",
-                fn $get(self) -> Option<$Self> { self[$Idx] });
-
-                doc!("Sets `Option<" stringify!($Self) ">`.",
-                fn $set(self, $self: impl Into<$Self>) -> Self {
-                    let $self = $self.into();
-                    self.$op($self)
-                });
-            )*
-        }
-
-        /// A trait for mutable styled types.
-        pub trait StylerMut: Styler
-            $(+ IndexMut<$Idx>)*
-            $(+ $OpAssign<$Self>)*
-        {
-            $(
-                doc!("Gets `&mut Option<" stringify!($Self) ">`.",
-                fn $get_mut(&mut self) -> &mut Option<$Self> { &mut self[$Idx] });
-
-                doc!("Sets `Option<" stringify!($Self) ">` mutably.",
-                fn $set_mut(&mut self, $self: impl Into<$Self>) {
-                    let $self = $self.into();
-                    self.$op_assign($self);
-                });
-            )*
-        }
     };
 }
 
-styler!(
+style!(
+    /// A trait for styled types.
+    Styler
+    /// A trait for mutable styled types.
+    StylerMut
     Colors {
         /// A `Foreground` `Color`.
         ///
