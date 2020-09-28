@@ -315,71 +315,112 @@ macro_rules! styler {
         styler!(impl [No, Idx] $($Color $NoColor $IdxColor)* $($Attr $NoAttr $IdxAttr)*);
 
         $(#[$meta_styler])*
-        pub trait $Styler: Sized
-            $(
-                + Index<$IdxColor, Output = Option<$Color>>
-                + $OpColor<Color, Output = Self>
-                + $OpColor<$NoColor, Output = Self>
-            )*
-            $(
-                + Index<$IdxAttr, Output = Option<$Attr>>
-                + $OpAttr<$Attr, Output = Self>
-                + $OpAttr<$NoAttr, Output = Self>
-            )*
-            {
-                $(styler!(impl [get] $Color($color) $IdxColor $get_color);)*
-                $(styler!(impl [get] $Attr ($attr)  $IdxAttr  $get_attr);)*
-                $(styler!(impl [set] $Color($color) $NoColor $set_color $op_color($color.0));)*
-                $(styler!(impl [set] $Attr ($attr)  $NoAttr  $set_attr  $op_attr($attr));)*
-                $(styler!(impl [unset] $Color($color) $NoColor $unset_color $op_color);)*
-                $(styler!(impl [unset] $Attr ($attr)  $NoAttr  $unset_attr  $op_attr);)*
-                $(styler!(impl [variant]
-                    $(stringify!($Color) "(Color::" stringify!($variant_color) ")",
-                        $variant_color $set_variant_color $op_color(Color::$variant_color))*
-                    stringify!($Color) "(Color::" stringify!($reset_color) ")",
-                        $reset_color $set_reset_color $op_color(Color::$reset_color)
-                );)*
-                $(styler!(impl [variant]
-                    $(stringify!($Attr) "::" stringify!($variant_attr),
-                        $variant_attr $set_variant_attr $op_attr($Attr::$variant_attr))*
-                    stringify!($Attr) "::" stringify!($reset_attr),
-                        $reset_attr $set_reset_attr $op_attr($Attr::$reset_attr)
-                );)*
-            }
+        pub trait $Styler<'a, T> where
+            T: 'a + $Styler<'a, T>,
+            Self: Sized,
+            $(Self: Index<$IdxColor, Output = Option<$Color>>,)*
+            $(Self: Index<$IdxAttr, Output = Option<$Attr>>,)*
+            $(Self: $OpColor<$NoColor, Output = Self>,)*
+            $(Self: $OpAttr<$NoAttr, Output = Self>,)*
+            $(Self: $OpColor<Color, Output = Self>,)*
+            $(Self: $OpAttr<$Attr, Output = Self>,)*
+            Self: BitAnd<&'a T, Output = Self>,
+            Self: BitOr<&'a T, Output = Self>,
+            Self: BitXor<&'a T, Output = Self>,
+            Self: Rem<&'a T, Output = Self>,
+            Self: Not<Output = Self>,
+        {
+            $(styler!(impl [get] $Color($color) $IdxColor $get_color);)*
+            $(styler!(impl [get] $Attr ($attr)  $IdxAttr  $get_attr);)*
+
+            $(styler!(impl [unset] $Color($color) $unset_color $op_color($NoColor));)*
+            $(styler!(impl [unset] $Attr ($attr)  $unset_attr  $op_attr ($NoAttr));)*
+
+            $(styler!(impl [set] $Color($color) $set_color $op_color($color.0, $NoColor));)*
+            $(styler!(impl [set] $Attr ($attr)  $set_attr  $op_attr ($attr,    $NoAttr));)*
+
+            $(styler!(impl [variant]
+                $(stringify!($Color) "(Color::" stringify!($variant_color) ")",
+                    $set_variant_color $op_color(Color::$variant_color))*
+                stringify!($Color) "(Color::" stringify!($reset_color) ")",
+                    $set_reset_color $op_color(Color::$reset_color)
+            );)*
+            $(styler!(impl [variant]
+                $(stringify!($Attr) "::" stringify!($variant_attr),
+                    $set_variant_attr $op_attr($Attr::$variant_attr))*
+                stringify!($Attr) "::" stringify!($reset_attr),
+                    $set_reset_attr $op_attr($Attr::$reset_attr)
+            );)*
+
+            styler!(impl [op and] and $($get_color $set_color)* $($get_attr $set_attr)*);
+            styler!(impl [op or ] or  $($get_color $set_color)* $($get_attr $set_attr)*);
+            styler!(impl [op xor] xor $($get_color $set_color)* $($get_attr $set_attr)*);
+
+            styler!(impl [op rem] dedup
+                $($get_color $op_color($NoColor))*
+                $($get_attr  $op_attr($NoAttr))*
+            );
+
+            styler!(impl [op not] reset
+                $($get_color $op_color(Color::$reset_color))*
+                $($get_attr  $op_attr ($Attr::$reset_attr))*
+            );
+        }
 
         $(#[$meta_styler_mut])*
-        pub trait $StylerMut: $Styler
-            $(
-                + IndexMut<$IdxColor>
-                + $OpAssignColor<Color> // TODO: * (u8, u8, u8), * u8? Into<Color>?
-                + $OpAssignColor<$NoColor>
-            )*
-            $(
-                + IndexMut<$IdxAttr>
-                + $OpAssignAttr<$Attr>
-                + $OpAssignAttr<$NoAttr>
-            )*
-            {
-                $(styler!(impl [get mut] $Color($color) $IdxColor $get_mut_color);)*
-                $(styler!(impl [get mut] $Attr ($attr)  $IdxAttr  $get_mut_attr);)*
-                $(styler!(impl [set mut] $Color($color) $NoColor $set_mut_color $op_assign_color($color.0));)*
-                $(styler!(impl [set mut] $Attr ($attr)  $NoAttr  $set_mut_attr  $op_assign_attr($attr));)*
-                $(styler!(impl [unset mut] $Color($color) $NoColor $unset_mut_color $op_assign_color);)*
-                $(styler!(impl [unset mut] $Attr ($attr)  $NoAttr  $unset_mut_attr  $op_assign_attr);)*
-                $(styler!(impl [variant mut]
-                    $(stringify!($Color) "(Color::" stringify!($variant_color) ")",
-                        $variant_color $set_variant_mut_color $op_assign_color(Color::$variant_color))*
-                    stringify!($Color) "(Color::" stringify!($reset_color) ")",
-                        $reset_color $set_reset_mut_color $op_assign_color(Color::$reset_color)
-                );)*
-                $(styler!(impl [variant mut]
-                    $(stringify!($Attr) "::" stringify!($variant_attr),
-                        $variant_attr $set_variant_mut_attr $op_assign_attr($Attr::$variant_attr))*
-                    stringify!($Attr) "::" stringify!($reset_attr),
-                        $reset_attr $set_reset_mut_attr $op_assign_attr($Attr::$reset_attr)
-                );)*
-            }
+        pub trait $StylerMut<'a, T> where
+            T: 'a + $Styler<'a, T>,
+            Self: 'a + $Styler<'a, T>,
+            $(Self: IndexMut<$IdxColor>,)*
+            $(Self: IndexMut<$IdxAttr>,)*
+            $(Self: $OpAssignColor<$NoColor>,)*
+            $(Self: $OpAssignAttr<$NoAttr>,)*
+            $(Self: $OpAssignColor<Color>,)*
+            $(Self: $OpAssignAttr<$Attr>,)*
+            Self: BitAndAssign<&'a T>,
+            Self: BitOrAssign<&'a T>,
+            Self: BitXorAssign<&'a T>,
+            Self: RemAssign<&'a T>,
+            &'a mut Self: Not<Output = ()>,
+        {
+            $(styler!(impl [get mut] $Color($color) $IdxColor $get_mut_color);)*
+            $(styler!(impl [get mut] $Attr ($attr)  $IdxAttr  $get_mut_attr);)*
+
+            $(styler!(impl [unset mut] $Color($color) $unset_mut_color $op_assign_color($NoColor));)*
+            $(styler!(impl [unset mut] $Attr ($attr)  $unset_mut_attr  $op_assign_attr ($NoAttr));)*
+
+            $(styler!(impl [set mut] $Color($color) $set_mut_color $op_assign_color($color.0, $NoColor));)*
+            $(styler!(impl [set mut] $Attr ($attr)  $set_mut_attr  $op_assign_attr ($attr,    $NoAttr));)*
+
+            $(styler!(impl [variant mut]
+                $(stringify!($Color) "(Color::" stringify!($variant_color) ")",
+                    $set_variant_mut_color $op_assign_color(Color::$variant_color))*
+                stringify!($Color) "(Color::" stringify!($reset_color) ")",
+                    $set_reset_mut_color $op_assign_color(Color::$reset_color)
+            );)*
+            $(styler!(impl [variant mut]
+                $(stringify!($Attr) "::" stringify!($variant_attr),
+                    $set_variant_mut_attr $op_assign_attr($Attr::$variant_attr))*
+                stringify!($Attr) "::" stringify!($reset_attr),
+                    $set_reset_mut_attr $op_assign_attr($Attr::$reset_attr)
+            );)*
+
+            styler!(impl [op and mut] and   $($get_color $set_mut_color)*   $($get_attr $set_mut_attr)*);
+            styler!(impl [op or  mut] or    $($get_color $set_mut_color)*   $($get_attr $set_mut_attr)*);
+            styler!(impl [op xor mut] xor   $($get_color $set_mut_color)*   $($get_attr $set_mut_attr)*);
+
+            styler!(impl [op rem mut] dedup
+                $($get_color $op_assign_color($NoColor))*
+                $($get_attr  $op_assign_attr ($NoAttr))*
+            );
+
+            styler!(impl [op not mut] reset_mut
+                $($get_color $op_assign_color(Color::$reset_color))*
+                $($get_attr  $op_assign_attr ($Attr::$reset_attr))*
+            );
+        }
     };
+
     (impl [No, Idx] $($Self:ident $No:ident $Idx:ident)*) => {
         $(
             doc!("Gets `Option<" stringify!($Self) ">`.",
@@ -391,9 +432,10 @@ macro_rules! styler {
             pub struct $No;);
         )*
     };
+
     (impl [get] $Self:ident($self:ident) $Idx:ident $get:ident) => {
         doc!("Gets `Option<" stringify!($Self) ">`.",
-        fn $get(self) -> Option<$Self> {
+        fn $get(&self) -> Option<$Self> {
             self[$Idx]
         });
     };
@@ -403,7 +445,8 @@ macro_rules! styler {
             &mut self[$Idx]
         });
     };
-    (impl [set] $Self:ident($self:ident) $No:ident $set:ident $op:ident($body:expr)) => {
+
+    (impl [set] $Self:ident($self:ident) $set:ident $op:ident($body:expr, $No:ident)) => {
         doc!("Sets `Option<" stringify!($Self) ">`.",
         fn $set(self, $self: impl Into<Option<$Self>>) -> Self {
             let $self = $self.into();
@@ -415,7 +458,7 @@ macro_rules! styler {
             }
         });
     };
-    (impl [set mut] $Self:ident($self:ident) $No:ident $set_mut:ident $op_assign:ident($body:expr)) => {
+    (impl [set mut] $Self:ident($self:ident) $set_mut:ident $op_assign:ident($body:expr, $No:ident)) => {
         doc!("Sets `Option<" stringify!($Self) ">` mutably.",
         fn $set_mut(&mut self, $self: impl Into<Option<$Self>>) {
             let $self = $self.into();
@@ -427,28 +470,83 @@ macro_rules! styler {
             }
         });
     };
-    (impl [unset] $Self:ident($self:ident) $No:ident $unset:ident $op:ident) => {
+
+    (impl [unset] $Self:ident($self:ident) $unset:ident $op:ident($No:ident)) => {
         doc!("Sets " stringify!($self) " to `None`.",
         fn $unset(self) -> Self {
             self.$op($No)
         });
     };
-    (impl [unset mut] $Self:ident($self:ident) $No:ident $unset_mut:ident $op_assign:ident) => {
+    (impl [unset mut] $Self:ident($self:ident) $unset_mut:ident $op_assign:ident($No:ident)) => {
         doc!("Sets " stringify!($self) " to `None` mutably.",
         fn $unset_mut(&mut self) {
             self.$op_assign($No);
         });
     };
-    (impl [variant] $($($doc:expr)*, $variant:ident $set_variant:ident $op:ident($body:expr))*) => {
+
+    (impl [variant] $($($doc:expr)*, $set_variant:ident $op:ident($body:expr))*) => {
         $(doc!("Sets `Some(" $($doc)* ")`.",
         fn $set_variant(self) -> Self {
             self.$op($body)
         });)*
     };
-    (impl [variant mut] $($($doc:expr)*, $variant:ident $set_variant_mut:ident $op_assign:ident($body:expr))*) => {
+    (impl [variant mut] $($($doc:expr)*, $set_variant_mut:ident $op_assign:ident($body:expr))*) => {
         $(doc!("Sets `Some(" $($doc)* ")` mutably.",
         fn $set_variant_mut(&mut self) {
             self.$op_assign($body);
         });)*
+    };
+
+    (impl [op rem] $fn:ident $($get:ident $op:ident($No:ident))*) => {
+        /// Dedups (`None`s if identical) fields.
+        fn $fn(mut self, before: &T) -> Self {
+            $(if self.$get() == before.$get() {
+                self = self.$op($No);
+            })*
+            self
+        }
+    };
+    (impl [op rem mut] $fn_mut:ident $($get:ident $op_assign:ident($No:ident))*) => {
+        /// Dedups (`None`s if identical) fields mutably.
+        fn $fn_mut(&mut self, before: &T) {
+            $(if self.$get() == before.$get() {
+                self.$op_assign($No);
+            })*
+        }
+    };
+
+    (impl [op not] $fn:ident $($get:ident $op:ident($body:expr))*) => {
+        /// Resets (sets to reset value/variant) fields which are `Some`.
+        fn $fn(mut self) -> Self {
+            $(if let Some(_) = self.$get() {
+                self = self.$op($body);
+            })*
+            self
+        }
+    };
+    (impl [op not mut] $fn_mut:ident $($get:ident $op_assign:ident($body:expr))*) => {
+        /// Resets (sets to reset value/variant) fields which are `Some` mutably.
+        fn $fn_mut(&mut self) {
+            $(if let Some(_) = self.$get() {
+                self.$op_assign($body);
+            })*
+        }
+    };
+
+    (impl [op $op:ident] $fn:ident $($get:ident $set:ident)*) => {
+        doc!("`Option::" stringify!($op) "` fields.",
+            fn $op(mut self, other: &'a T) -> Self {
+                $(let x = self.$get().$op(other.$get());
+                self = self.$set(x);)*
+                self
+            }
+        );
+    };
+    (impl [op $op:ident mut] $fn_mut:ident $($get:ident $set_mut:ident)*) => {
+        doc!("`Option::" stringify!($op) "` fields mutably.",
+            fn $fn_mut(&mut self, other: &T) {
+                $(self.$set_mut(self.$get().$op(other.$get()));)*
+            }
+        );
     };
 }

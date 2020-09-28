@@ -107,7 +107,25 @@ pub use styler::*;
 
 use std::{
     fmt::{Display, Error, Formatter},
-    ops::{Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign},
+    ops::{
+        Add,
+        AddAssign,
+        BitAnd,
+        BitAndAssign,
+        BitOr,
+        BitOrAssign,
+        BitXor,
+        BitXorAssign,
+        Div,
+        DivAssign,
+        Index,
+        IndexMut,
+        Mul,
+        MulAssign,
+        Not,
+        Rem,
+        RemAssign,
+    },
 };
 
 macro_rules! style {
@@ -194,7 +212,7 @@ style!(
             get_foreground get_foreground_mut
             foreground foreground_mut
             no_foreground no_foreground_mut
-                Reset: reset reset_mut
+                Reset: fg_reset fg_reset_mut
                 White: white white_mut
                 Black: black black_mut
                 Red: red red_mut
