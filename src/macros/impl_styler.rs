@@ -97,39 +97,26 @@ macro_rules! impl_styler {
     // Ops
     // ===
     (impl ops $Type:ty: $(<$($G:ident $(: $($B:path)+)?,)+>)?) => {
-        impl_styler!(impl $Type:
-            <$($($G $(: $($B)+)?,)+)?> [*] foreground_mut (foreground: Color) Some($crate::Foreground(foreground));
-            <$($($G $(: $($B)+)?,)+)?> [/] background_mut (background: Color) Some($crate::Background(background));
-            <$($($G $(: $($B)+)?,)+)?> [+] foreground_mut (foreground: Foreground) Some(foreground);
-            <$($($G $(: $($B)+)?,)+)?> [+] background_mut (background: Background) Some(background);
-            <$($($G $(: $($B)+)?,)+)?> [+] weighted_mut   (weighted  : Weighted  ) Some(weighted);
-            <$($($G $(: $($B)+)?,)+)?> [+] slanted_mut    (slanted   : Slanted   ) Some(slanted);
-            <$($($G $(: $($B)+)?,)+)?> [+] blinking_mut   (blinking  : Blinking  ) Some(blinking);
-            <$($($G $(: $($B)+)?,)+)?> [+] inverted_mut   (inverted  : Inverted  ) Some(inverted);
-            <$($($G $(: $($B)+)?,)+)?> [+] striked_mut    (striked   : Striked   ) Some(striked);
-            <$($($G $(: $($B)+)?,)+)?> [+] underlined_mut (underlined: Underlined) Some(underlined);
-            <$($($G $(: $($B)+)?,)+)?> [+] overlined_mut  (overlined : Overlined ) Some(overlined);
-            <$($($G $(: $($B)+)?,)+)?> [+] bordered_mut   (bordered  : Bordered  ) Some(bordered);
-
-            <$($($G $(: $($B)+)?,)+)?> [*] foreground_mut (_: NoColor) None;
-            <$($($G $(: $($B)+)?,)+)?> [/] background_mut (_: NoColor) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] foreground_mut (_: NoForeground) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] background_mut (_: NoBackground) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] weighted_mut   (_: NoWeight    ) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] slanted_mut    (_: NoSlant     ) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] blinking_mut   (_: NoBlink     ) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] inverted_mut   (_: NoInvert    ) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] striked_mut    (_: NoStrike    ) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] underlined_mut (_: NoUnderline ) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] overlined_mut  (_: NoOverline  ) None;
-            <$($($G $(: $($B)+)?,)+)?> [+] bordered_mut   (_: NoBorder    ) None;
-
+        impl_styler!(impl ops $Type {
+            <$($($G $(: $($B)+)?,)+)?> [*] foreground_mut (foreground: Color      NoColor     ) Some($crate::Foreground(foreground));
+            <$($($G $(: $($B)+)?,)+)?> [/] background_mut (background: Color      NoColor     ) Some($crate::Background(background));
+            <$($($G $(: $($B)+)?,)+)?> [+] foreground_mut (foreground: Foreground NoForeground) Some(foreground);
+            <$($($G $(: $($B)+)?,)+)?> [+] background_mut (background: Background NoBackground) Some(background);
+            <$($($G $(: $($B)+)?,)+)?> [+] weighted_mut   (weighted  : Weighted   NoWeight    ) Some(weighted);
+            <$($($G $(: $($B)+)?,)+)?> [+] slanted_mut    (slanted   : Slanted    NoSlant     ) Some(slanted);
+            <$($($G $(: $($B)+)?,)+)?> [+] blinking_mut   (blinking  : Blinking   NoBlink     ) Some(blinking);
+            <$($($G $(: $($B)+)?,)+)?> [+] inverted_mut   (inverted  : Inverted   NoInvert    ) Some(inverted);
+            <$($($G $(: $($B)+)?,)+)?> [+] striked_mut    (striked   : Striked    NoStrike    ) Some(striked);
+            <$($($G $(: $($B)+)?,)+)?> [+] underlined_mut (underlined: Underlined NoUnderline ) Some(underlined);
+            <$($($G $(: $($B)+)?,)+)?> [+] overlined_mut  (overlined : Overlined  NoOverline  ) Some(overlined);
+            <$($($G $(: $($B)+)?,)+)?> [+] bordered_mut   (bordered  : Bordered   NoBorder    ) Some(bordered);
+        } {
             <$($($G $(: $($B)+)?,)+)?> [&] or_mut    (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [|] or_mut    (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [^] xor_mut   (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [%] dedup_mut (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [!] reset_mut;
-        );
+        });
     };
 
     (impl trait $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
@@ -166,13 +153,16 @@ macro_rules! impl_styler {
         }
     };
 
-    (impl $Type:ty: $(
-        <$($G:ident $(: $($B:path)+)?,)*> [$op:tt] $fn:ident
-        $(($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr)?;
-    )*) => {
-        $(impl_styler!(impl op [$op] $Type: <$($G $(: $($B)+ )?,)*> $fn
-            $(($rhs: $($Rhs)? $(<$GRhs: $BRhs>)?) $body)?
-        );)*
+    (impl ops $Type:ty { $(
+        <$($G1:ident $(: $($B1:path)+)?,)*> [$op1:tt] $fn1:ident
+        ($rhs1:tt: $Rhs:ident $NoRhs:ident) $body1:expr;
+    )* } { $(
+        <$($G2:ident $(: $($B2:path)+)?,)*> [$op2:tt] $fn2:ident
+        $(($rhs2:tt: <$GRhs:ident: $BRhs:ident>) $body2:expr)?;
+    )* }) => {
+        $(impl_styler!(impl op [$op1] $Type: <$($G1 $(: $($B1)+ )?,)*> $fn1 ($rhs1:   $Rhs) $body1);)*
+        $(impl_styler!(impl op [$op1] $Type: <$($G1 $(: $($B1)+ )?,)*> $fn1 (_    : $NoRhs) None);)*
+        $(impl_styler!(impl op [$op2] $Type: <$($G2 $(: $($B2)+ )?,)*> $fn2 $(($rhs2: <$GRhs: $BRhs>) $body2)?);)*
     };
 
     (impl op [+] $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
