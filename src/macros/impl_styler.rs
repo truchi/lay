@@ -76,9 +76,9 @@ macro_rules! impl_styler {
             $field
         }
 
-        fn $set_mut(&mut self, arg: ::std::option::Option<$crate::$Attr>) {
+        fn $set_mut(&mut self, arg: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) {
             let $self = self;
-            $field = arg;
+            $field = arg.into();
         }
     };
     (impl method $Attr:ident $get:ident $set_mut:ident $self:ident $field:expr) => {
@@ -87,7 +87,7 @@ macro_rules! impl_styler {
             $field.$get()
         }
 
-        fn $set_mut(&mut self, arg: ::std::option::Option<$crate::$Attr>) {
+        fn $set_mut(&mut self, arg: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) {
             let $self = self;
             $field.$set_mut(arg);
         }

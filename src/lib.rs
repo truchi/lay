@@ -73,8 +73,8 @@
 #[macro_use]
 mod macros;
 
-// pub mod layer;
+pub mod layer;
 pub mod style;
 
-// pub use layer::*;
+pub use layer::*;
 pub use style::*;
