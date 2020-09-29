@@ -94,39 +94,18 @@
 mod attributes;
 #[macro_use]
 mod colors;
-mod style;
-mod styled;
+// mod style;
+// mod styled;
 #[macro_use]
 mod styler;
 
 pub use attributes::*;
 pub use colors::*;
-pub use style::*;
-pub use styled::*;
+// pub use style::*;
+// pub use styled::*;
 pub use styler::*;
 
-use std::{
-    fmt::{Display, Error, Formatter},
-    ops::{
-        Add,
-        AddAssign,
-        BitAnd,
-        BitAndAssign,
-        BitOr,
-        BitOrAssign,
-        BitXor,
-        BitXorAssign,
-        Div,
-        DivAssign,
-        Index,
-        IndexMut,
-        Mul,
-        MulAssign,
-        Not,
-        Rem,
-        RemAssign,
-    },
-};
+use std::fmt::{Display, Error, Formatter};
 
 macro_rules! style {
     (
@@ -136,8 +115,7 @@ macro_rules! style {
         $StylerMut:ident
         Colors { $(
             $(#[$meta_color:meta])*
-            $Color:ident($color:ident) $NoColor:ident [$IdxColor:ident] ($str_color:literal $str_reset_color:literal)
-            $OpColor:ident($op_color:ident) $OpAssignColor:ident($op_assign_color:ident) {
+            $Color:ident($color:ident) $NoColor:ident ($str_color:literal $str_reset_color:literal) {
                 $get_color:ident $get_mut_color:ident
                 $set_color:ident $set_mut_color:ident
                 $unset_color:ident $unset_mut_color:ident
@@ -147,8 +125,7 @@ macro_rules! style {
         )* }
         Attributes { $(
             $(#[$meta_attr:meta])*
-            $Attr:ident($attr:ident) $NoAttr:ident [$IdxAttr:ident]
-            $OpAttr:ident($op_attr:ident) $OpAssignAttr:ident($op_assign_attr:ident) {
+            $Attr:ident($attr:ident) $NoAttr:ident {
                 $get_attr:ident $get_mut_attr:ident
                 $set_attr:ident $set_mut_attr:ident
                 $unset_attr:ident $unset_mut_attr:ident
@@ -173,8 +150,7 @@ macro_rules! style {
             $(#[$meta_styler_mut])*
             $StylerMut
             Colors { $(
-                $Color($color) $NoColor [$IdxColor]
-                $OpColor($op_color) $OpAssignColor($op_assign_color) {
+                $Color($color) $NoColor {
                     $get_color $get_mut_color
                     $set_color $set_mut_color
                     $unset_color $unset_mut_color
@@ -183,8 +159,7 @@ macro_rules! style {
                 }
             )* }
             Attributes { $(
-                $Attr($attr) $NoAttr [$IdxAttr]
-                $OpAttr($op_attr) $OpAssignAttr($op_assign_attr) {
+                $Attr($attr) $NoAttr {
                     $get_attr $get_mut_attr
                     $set_attr $set_mut_attr
                     $unset_attr $unset_mut_attr
@@ -207,8 +182,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `Foreground(Color::Reset)`, user's default terminal foreground color.
-        Foreground(foreground) NoForeground [Fg] ("38;" "39")
-        Mul(mul) MulAssign(mul_assign) {
+        Foreground(foreground) NoForeground ("38;" "39") {
             get_foreground get_foreground_mut
             foreground foreground_mut
             no_foreground no_foreground_mut
@@ -233,8 +207,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `Background(Color::Reset)`, user's default terminal background color.
-        Background(background) NoBackground [Bg] ("48;" "49")
-        Div(div) DivAssign(div_assign) {
+        Background(background) NoBackground ("48;" "49") {
             get_background get_background_mut
             background background_mut
             no_background no_background_mut
@@ -261,7 +234,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetWeight`, the weight unsetting CSI.
-        Weighted(weighted) NoWeight [Wgt] Add(add) AddAssign(add_assign) {
+        Weighted(weighted) NoWeight {
             get_weighted get_weighted_mut
             weighted weighted_mut
             no_weight no_weight_mut
@@ -274,7 +247,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetSlant`, the slant unsetting CSI.
-        Slanted(slanted) NoSlant [Slt] Add(add) AddAssign(add_assign) {
+        Slanted(slanted) NoSlant {
             get_slanted get_slanted_mut
             slanted slanted_mut
             no_slant no_slant_mut
@@ -286,7 +259,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetBlink`, the blink unsetting CSI.
-        Blinking(blinking) NoBlink [Blk] Add(add) AddAssign(add_assign) {
+        Blinking(blinking) NoBlink {
             get_blinking get_blinking_mut
             blinking blinking_mut
             no_blink no_blink_mut
@@ -299,7 +272,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetInvert`, the invert unsetting CSI.
-        Inverted(inverted) NoInvert [Inv] Add(add) AddAssign(add_assign) {
+        Inverted(inverted) NoInvert {
             get_inverted get_inverted_mut
             inverted inverted_mut
             no_invert no_invert_mut
@@ -311,7 +284,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetStrike`, the strike unsetting CSI.
-        Striked(striked) NoStrike [Stk] Add(add) AddAssign(add_assign) {
+        Striked(striked) NoStrike {
             get_striked get_striked_mut
             striked striked_mut
             no_strike no_strike_mut
@@ -323,7 +296,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetUnderline`, the underline unsetting CSI.
-        Underlined(underlined) NoUnderline [Udl] Add(add) AddAssign(add_assign) {
+        Underlined(underlined) NoUnderline {
             get_underlined get_underlined_mut
             underlined underlined_mut
             no_underline no_underline_mut
@@ -335,7 +308,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetOverline`, the overline unsetting CSI.
-        Overlined(overlined) NoOverline [Ovl] Add(add) AddAssign(add_assign) {
+        Overlined(overlined) NoOverline {
             get_overlined get_overlined_mut
             overlined overlined_mut
             no_overline no_overline_mut
@@ -347,7 +320,7 @@ style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetBorder`, the border unsetting CSI.
-        Bordered(bordered) NoBorder [Brd] Add(add) AddAssign(add_assign) {
+        Bordered(bordered) NoBorder {
             get_bordered get_bordered_mut
             bordered bordered_mut
             no_border no_border_mut

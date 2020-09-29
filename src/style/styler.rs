@@ -5,8 +5,7 @@ macro_rules! styler {
         $(#[$meta_styler_mut:meta])*
         $StylerMut:ident
         Colors { $(
-            $Color:ident($color:ident) $NoColor:ident [$IdxColor:ident]
-            $OpColor:ident($op_color:ident) $OpAssignColor:ident($op_assign_color:ident) {
+            $Color:ident($color:ident) $NoColor:ident {
                 $get_color:ident $get_mut_color:ident
                 $set_color:ident $set_mut_color:ident
                 $unset_color:ident $unset_mut_color:ident
@@ -15,8 +14,7 @@ macro_rules! styler {
             }
         )* }
         Attributes { $(
-            $Attr:ident($attr:ident) $NoAttr:ident [$IdxAttr:ident]
-            $OpAttr:ident($op_attr:ident) $OpAssignAttr:ident($op_assign_attr:ident) {
+            $Attr:ident($attr:ident) $NoAttr:ident {
                 $get_attr:ident $get_mut_attr:ident
                 $set_attr:ident $set_mut_attr:ident
                 $unset_attr:ident $unset_mut_attr:ident
@@ -25,16 +23,16 @@ macro_rules! styler {
             }
         )* }
     ) => {
-        styler!(impl [No, Idx] $($Color $NoColor $IdxColor)* $($Attr $NoAttr $IdxAttr)*);
+        styler!(impl [No] $($Color $NoColor)* $($Attr $NoAttr)*);
 
         $(#[$meta_styler])*
         pub trait $Styler: Sized {
             $(
-                styler!(impl [get]     $Color($color) $IdxColor $get_color);
+                styler!(impl [get]     $Color($color) $get_color);
                 styler!(impl [set mut] $Color($color) $set_mut_color);
             )*
             $(
-                styler!(impl [get]     $Attr($attr) $IdxAttr $get_attr);
+                styler!(impl [get]     $Attr($attr) $get_attr);
                 styler!(impl [set mut] $Attr($attr) $set_mut_attr);
             )*
 
@@ -75,19 +73,15 @@ macro_rules! styler {
         }
     };
 
-    (impl [No, Idx] $($Self:ident $No:ident $Idx:ident)*) => {
+    (impl [No] $($Self:ident $No:ident)*) => {
         $(
-            doc!("Gets `Option<" stringify!($Self) ">`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct $Idx;);
-
             doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct $No;);
         )*
     };
 
-    (impl [get] $Self:ident($self:ident) $Idx:ident $get:ident) => {
+    (impl [get] $Self:ident($self:ident) $get:ident) => {
         doc!("Gets `Option<" stringify!($Self) ">`.",
         fn $get(&self) -> Option<$Self>;);
     };
