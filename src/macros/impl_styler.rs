@@ -128,7 +128,7 @@ macro_rules! impl_styler {
             type Output = Self;
 
             fn $ops(mut self, $rhs: $($crate::$Rhs)? $($GRhs)?) -> Self {
-                <Self as $crate::Styler>::$fn(&mut self, $body);
+                $crate::Styler::$fn(&mut self, $body);
                 self
             }
         }
@@ -136,7 +136,7 @@ macro_rules! impl_styler {
         impl<$($G $(: $($B+)+,)?)* $($GRhs: $crate::$BRhs)?>
             ::std::ops::$OpsAssign<$($crate::$Rhs)? $($GRhs)?> for $Type {
             fn $ops_assign(&mut self, $rhs: $($crate::$Rhs)? $($GRhs)?) {
-                <Self as $crate::Styler>::$fn(self, $body);
+                $crate::Styler::$fn(self, $body);
             }
         }
     };
@@ -147,7 +147,7 @@ macro_rules! impl_styler {
             type Output = Self;
 
             fn $ops(mut self) -> Self {
-                <Self as $crate::Styler>::$fn(&mut self);
+                $crate::Styler::$fn(&mut self);
                 self
             }
         }

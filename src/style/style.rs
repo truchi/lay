@@ -89,6 +89,6 @@ style!(
 
 impl Display for Style {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <Style as Styler>::fmt(self, f)
+        Styler::fmt(self, f)
     }
 }
