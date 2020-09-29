@@ -111,7 +111,7 @@ macro_rules! impl_styler {
             <$($($G $(: $($B)+)?,)+)?> [+] overlined_mut  (overlined : Overlined  NoOverline  ) Some(overlined);
             <$($($G $(: $($B)+)?,)+)?> [+] bordered_mut   (bordered  : Bordered   NoBorder    ) Some(bordered);
         } {
-            <$($($G $(: $($B)+)?,)+)?> [&] or_mut    (style: <Styler: Styler>) &style;
+            <$($($G $(: $($B)+)?,)+)?> [&] and_mut   (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [|] or_mut    (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [^] xor_mut   (style: <Styler: Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [%] dedup_mut (style: <Styler: Styler>) &style;
