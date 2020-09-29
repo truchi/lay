@@ -97,6 +97,7 @@ macro_rules! impl_styler {
     // Ops
     // ===
     (impl ops $Type:ty: $(<$($G:ident $(: $($B:path)+)?,)+>)?) => {
+        /*
         impl_styler!(impl ops $Type {
             <$($($G $(: $($B)+)?,)+)?> [*] foreground_mut (foreground: Color      NoColor     ) Some($crate::Foreground(foreground));
             <$($($G $(: $($B)+)?,)+)?> [/] background_mut (background: Color      NoColor     ) Some($crate::Background(background));
@@ -111,31 +112,32 @@ macro_rules! impl_styler {
             <$($($G $(: $($B)+)?,)+)?> [+] overlined_mut  (overlined : Overlined  NoOverline  ) Some(overlined);
             <$($($G $(: $($B)+)?,)+)?> [+] bordered_mut   (bordered  : Bordered   NoBorder    ) Some(bordered);
         } {
-            <$($($G $(: $($B)+)?,)+)?> [&] and_mut   (style: <Styler: Styler>) &style;
-            <$($($G $(: $($B)+)?,)+)?> [|] or_mut    (style: <Styler: Styler>) &style;
-            <$($($G $(: $($B)+)?,)+)?> [^] xor_mut   (style: <Styler: Styler>) &style;
-            <$($($G $(: $($B)+)?,)+)?> [%] dedup_mut (style: <Styler: Styler>) &style;
+            <$($($G $(: $($B)+)?,)+)?> [&] and_mut   (style: <Styler: $crate::Styler>) &style;
+            <$($($G $(: $($B)+)?,)+)?> [|] or_mut    (style: <Styler: $crate::Styler>) &style;
+            <$($($G $(: $($B)+)?,)+)?> [^] xor_mut   (style: <Styler: $crate::Styler>) &style;
+            <$($($G $(: $($B)+)?,)+)?> [%] dedup_mut (style: <Styler: $crate::Styler>) &style;
             <$($($G $(: $($B)+)?,)+)?> [!] reset_mut;
         });
+        */
     };
 
     (impl trait $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
         $Ops:ident($ops:ident) $OpsAssign:ident($ops_assign:ident)
-        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr
+        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:path>)?) $body:expr
     ) => {
-        impl<$($G $(: $($B+)+,)?)* $($GRhs: $crate::$BRhs)?>
-            ::std::ops::$Ops<$($crate::$Rhs)? $($GRhs)?> for $Type {
+        impl<$($G $(: $($B+)+,)?)* $($GRhs: $BRhs)?>
+            ::std::ops::$Ops<$($Rhs)? $($GRhs)?> for $Type {
             type Output = Self;
 
-            fn $ops(mut self, $rhs: $($crate::$Rhs)? $($GRhs)?) -> Self {
+            fn $ops(mut self, $rhs: $($Rhs)? $($GRhs)?) -> Self {
                 $crate::Styler::$fn(&mut self, $body);
                 self
             }
         }
 
-        impl<$($G $(: $($B+)+,)?)* $($GRhs: $crate::$BRhs)?>
-            ::std::ops::$OpsAssign<$($crate::$Rhs)? $($GRhs)?> for $Type {
-            fn $ops_assign(&mut self, $rhs: $($crate::$Rhs)? $($GRhs)?) {
+        impl<$($G $(: $($B+)+,)?)* $($GRhs: $BRhs)?>
+            ::std::ops::$OpsAssign<$($Rhs)? $($GRhs)?> for $Type {
+            fn $ops_assign(&mut self, $rhs: $($Rhs)? $($GRhs)?) {
                 $crate::Styler::$fn(self, $body);
             }
         }
@@ -158,7 +160,7 @@ macro_rules! impl_styler {
         ($rhs1:tt: $Rhs:ident $NoRhs:ident) $body1:expr;
     )* } { $(
         <$($G2:ident $(: $($B2:path)+)?,)*> [$op2:tt] $fn2:ident
-        $(($rhs2:tt: <$GRhs:ident: $BRhs:ident>) $body2:expr)?;
+        $(($rhs2:tt: <$GRhs:ident: $BRhs:path>) $body2:expr)?;
     )* }) => {
         $(impl_styler!(impl op [$op1] $Type: <$($G1 $(: $($B1)+ )?,)*> $fn1 ($rhs1:   $Rhs) $body1);)*
         $(impl_styler!(impl op [$op1] $Type: <$($G1 $(: $($B1)+ )?,)*> $fn1 (_    : $NoRhs) None);)*
@@ -166,49 +168,49 @@ macro_rules! impl_styler {
     };
 
     (impl op [+] $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
-        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr
+        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:path>)?) $body:expr
     ) => {
         impl_styler!(impl trait $Type: <$($G $(: $($B)+)?,)*> $fn
             Add(add) AddAssign(add_assign)
             ($rhs: $($Rhs)? $(<$GRhs: $BRhs>)?) $body);
     };
     (impl op [*] $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
-        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr
+        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:path>)?) $body:expr
     ) => {
         impl_styler!(impl trait $Type: <$($G $(: $($B)+)?,)*> $fn
             Mul(mul) MulAssign(mul_assign)
             ($rhs: $($Rhs)? $(<$GRhs: $BRhs>)?) $body);
     };
     (impl op [/] $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
-        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr
+        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:path>)?) $body:expr
     ) => {
         impl_styler!(impl trait $Type: <$($G $(: $($B)+)?,)*> $fn
             Div(div) DivAssign(div_assign)
             ($rhs: $($Rhs)? $(<$GRhs: $BRhs>)?) $body);
     };
     (impl op [&] $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
-        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr
+        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:path>)?) $body:expr
     ) => {
         impl_styler!(impl trait $Type: <$($G $(: $($B)+)?,)*> $fn
             BitAnd(bitand) BitAndAssign(bitand_assign)
             ($rhs: $($Rhs)? $(<$GRhs: $BRhs>)?) $body);
     };
     (impl op [|] $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
-        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr
+        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:path>)?) $body:expr
     ) => {
         impl_styler!(impl trait $Type: <$($G $(: $($B)+)?,)*> $fn
             BitOr(bitor) BitOrAssign(bitor_assign)
             ($rhs: $($Rhs)? $(<$GRhs: $BRhs>)?) $body);
     };
     (impl op [^] $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
-        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr
+        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:path>)?) $body:expr
     ) => {
         impl_styler!(impl trait $Type: <$($G $(: $($B)+)?,)*> $fn
             BitXor(bitxor) BitXorAssign(bitxor_assign)
             ($rhs: $($Rhs)? $(<$GRhs: $BRhs>)?) $body);
     };
     (impl op [%] $Type:ty: <$($G:ident $(: $($B:path)+)?,)*> $fn:ident
-        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:ident>)?) $body:expr
+        ($rhs:tt: $($Rhs:ident)? $(<$GRhs:ident: $BRhs:path>)?) $body:expr
     ) => {
         impl_styler!(impl trait $Type: <$($G $(: $($B)+)?,)*> $fn
             Rem(rem) RemAssign(rem_assign)
