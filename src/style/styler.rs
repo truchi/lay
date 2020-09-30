@@ -276,3 +276,51 @@ macro_rules! styler {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn conversion() {
+        assert_eq!(<Reset as Into<Color>>::into(Reset), ResetColor);
+
+        macro_rules! conversion {
+            (
+                Colors {
+                    $($Color:ident $reset_color:ident,)*
+                }
+                Attributes {
+                    $($Attr:ident $reset_attr:ident,)*
+                }
+            ) => {
+                $(
+                    assert_eq!(<Reset as Into<$Color>>::into(Reset), $Color($reset_color));
+                    assert_eq!(<Reset as Into<Option<$Color>>>::into(Reset), Some($Color($reset_color)));
+                )*
+                $(
+                    assert_eq!(<Reset as Into<$Attr>>::into(Reset), $reset_attr);
+                    assert_eq!(<Reset as Into<Option<$Attr>>>::into(Reset), Some($reset_attr));
+                )*
+            };
+        }
+
+        conversion!(
+            Colors {
+                Foreground ResetColor,
+                Background ResetColor,
+            }
+            Attributes {
+                Weight ResetWeight,
+                Slant ResetSlant,
+                Blink ResetBlink,
+                Invert ResetInvert,
+                Strike ResetStrike,
+                Underline ResetUnderline,
+                Overline ResetOverline,
+                Border ResetBorder,
+            }
+        );
+    }
+}
