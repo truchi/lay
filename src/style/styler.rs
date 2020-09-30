@@ -30,16 +30,9 @@ macro_rules! styler {
         $(#[$meta_styler])*
         pub trait $Styler: Sized {
             $(
-                styler!(impl [get]     $Color($color) $get_color);
+                styler!(impl [get] $Color($color) $get_color);
                 styler!(impl [set mut] $Color($color) $set_mut_color);
-            )*
-            $(
-                styler!(impl [get]     $Attr($attr) $get_attr);
-                styler!(impl [set mut] $Attr($attr) $set_mut_attr);
-            )*
-
-            $(
-                styler!(impl [set]   $Color($color) $set_color $set_mut_color);
+                styler!(impl [set] $Color($color) $set_color $set_mut_color);
                 styler!(impl [unset] $Color($color) $unset_color $unset_mut_color $set_mut_color);
                 $(styler!(impl [variant]
                     stringify!($Color) "(Color::" stringify!($variant_color) ")",
@@ -53,7 +46,9 @@ macro_rules! styler {
                 );
             )*
             $(
-                styler!(impl [set]   $Attr($attr) $set_attr $set_mut_attr);
+                styler!(impl [get] $Attr($attr) $get_attr);
+                styler!(impl [set mut] $Attr($attr) $set_mut_attr);
+                styler!(impl [set] $Attr($attr) $set_attr $set_mut_attr);
                 styler!(impl [unset] $Attr($attr) $unset_attr $unset_mut_attr $set_mut_attr);
                 $(styler!(impl [variant]
                     stringify!($Attr) "::" stringify!($variant_attr),
