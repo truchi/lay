@@ -36,10 +36,10 @@ pub struct Style {
 }
 
 impl Style {
-    /// A `Style` with fields set to their reset variant.
+    /// A `Style` with fields set to their reset value.
     pub const RESET: Self = Self {
-        foreground: Some(Foreground(Color::Reset)),
-        background: Some(Background(Color::Reset)),
+        foreground: Some(Foreground(Color::ResetColor)),
+        background: Some(Background(Color::ResetColor)),
         weighted:   Some(Weighted::ResetWeight),
         slanted:    Some(Slanted::ResetSlant),
         blinking:   Some(Blinking::ResetBlink),

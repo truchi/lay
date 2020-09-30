@@ -11,7 +11,7 @@ fn main() {
     let (_, y) = position().unwrap();
 
     let background = Cell::from('💧') / Blue;
-    let crab = Cell::from('🦀') * Reset;
+    let crab = Cell::from('🦀') * ResetColor;
     let mut canvas = Canvas::with_cell(background, width, 1);
 
     loop {

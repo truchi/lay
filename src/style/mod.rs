@@ -30,7 +30,7 @@
 //!         "{}Hello, {}world{}!{}",
 //!         Bold,
 //!         Foreground(Red),
-//!         Foreground(Reset),
+//!         Foreground(ResetColor),
 //!         ResetWeight
 //!     );
 //! }
@@ -67,7 +67,7 @@
 //!     let reset = !new_style;
 //!
 //!     assert_eq!(new_style, style * Red / White + Bold);
-//!     assert_eq!(reset, style * Reset / Reset + ResetWeight);
+//!     assert_eq!(reset, style * ResetColor / ResetColor + ResetWeight);
 //! }
 //! ```
 //!
@@ -185,12 +185,12 @@ style!(
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
-        /// `Default`s to `Foreground(Color::Reset)`, user's default terminal foreground color.
+        /// `Default`s to `Foreground(Color::ResetColor)`, user's default terminal foreground color.
         Foreground(foreground) NoForeground ("38;" "39") {
             get_foreground get_foreground_mut
             foreground foreground_mut
             no_foreground no_foreground_mut
-                Reset: fg_reset fg_reset_mut
+                ResetColor: fg_reset fg_reset_mut
                 Rgb: rgb rgb_mut
                 Ansi: ansi ansi_mut
                 White: white white_mut
@@ -212,12 +212,12 @@ style!(
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
-        /// `Default`s to `Background(Color::Reset)`, user's default terminal background color.
+        /// `Default`s to `Background(Color::ResetColor)`, user's default terminal background color.
         Background(background) NoBackground ("48;" "49") {
             get_background get_background_mut
             background background_mut
             no_background no_background_mut
-                Reset: on_reset on_reset_mut
+                ResetColor: on_reset on_reset_mut
                 Rgb: on_rgb on_rgb_mut
                 Ansi: on_ansi on_ansi_mut
                 White: on_white on_white_mut

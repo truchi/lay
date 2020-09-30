@@ -5,7 +5,7 @@ fn main() {
         "{}Hello, {}world{}!{}",
         Bold,
         Foreground(Red),
-        Foreground(Reset),
+        Foreground(ResetColor),
         ResetWeight
     );
 

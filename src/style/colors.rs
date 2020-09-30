@@ -7,7 +7,7 @@ pub use Color::*;
 /// To be used with [`Foreground`][foreground] and [`Background`][background] (a
 /// `Color` on its own does not `impl Display`).
 ///
-/// Defaults to `Reset`.
+/// Defaults to `ResetColor`.
 ///
 /// [foreground]: struct.Foreground.html
 /// [background]: struct.Background.html
@@ -31,14 +31,14 @@ pub enum Color {
     Grey,
     Rgb(u8, u8, u8),
     Ansi(u8),
-    Reset,
+    ResetColor,
 }
 
-/// Returns `Color::Reset`.
+/// Returns `Color::ResetColor`.
 impl Default for Color {
-    /// Returns `Color::Reset`.
+    /// Returns `Color::ResetColor`.
     fn default() -> Self {
-        Self::Reset
+        Self::ResetColor
     }
 }
 
@@ -69,11 +69,11 @@ macro_rules! colors {
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
             pub struct $Name(pub Color);
 
-            doc!("Returns `" stringify!($Name) "(Color::Reset)`.",
+            doc!("Returns `" stringify!($Name) "(Color::ResetColor)`.",
             impl Default for $Name {
-                doc!("Returns `" stringify!($Name) "(Color::Reset)`.",
+                doc!("Returns `" stringify!($Name) "(Color::ResetColor)`.",
                 fn default() -> Self {
-                    Self(Color::Reset)
+                    Self(Color::ResetColor)
                 });
             });
 
@@ -109,7 +109,7 @@ macro_rules! colors {
 
                     f.write_str("\x1B[")?;
 
-                    if color == Color::Reset {
+                    if color == Color::ResetColor {
                         f.write_str($reset_str)?;
                     } else {
                         f.write_str($str)?;
@@ -151,8 +151,8 @@ mod tests {
 
     #[test]
     fn from_and_default() {
-        // Color defaults to Reset
-        assert_eq!(Color::default(), Reset);
+        // Color defaults to ResetColor
+        assert_eq!(Color::default(), ResetColor);
 
         // (u8, u8, u8) -> Rgb(u8, u8, u8)
         assert_eq!(Color::from((1, 2, 3)), Rgb(1, 2, 3));
@@ -160,9 +160,9 @@ mod tests {
         // u8 -> Ansi(u8)
         assert_eq!(Color::from(1), Ansi(1));
 
-        // Foreground/Background default to Foreground/Background(Reset)
-        assert_eq!(Foreground::default(), Foreground(Reset));
-        assert_eq!(Background::default(), Background(Reset));
+        // Foreground/Background default to Foreground/Background(ResetColor)
+        assert_eq!(Foreground::default(), Foreground(ResetColor));
+        assert_eq!(Background::default(), Background(ResetColor));
 
         // Foreground/Background <-> Color
         assert_eq!(Color::from(Foreground(Blue)), Blue);
