@@ -1,9 +1,5 @@
 macro_rules! styler {
     (
-        $(#[$meta_styler:meta])*
-        $Styler:ident
-        $(#[$meta_styler_mut:meta])*
-        $StylerMut:ident
         Colors { $(
             $Color:ident($color:ident) $NoColor:ident {
                 $get_color:ident $get_mut_color:ident
@@ -27,8 +23,8 @@ macro_rules! styler {
     ) => {
         styler!(impl [No] $($Color $NoColor)* $($Attr $NoAttr)*);
 
-        $(#[$meta_styler])*
-        pub trait $Styler: Sized {
+        /// A trait for styled types.
+        pub trait Styler: Sized {
             $(
                 styler!(impl [get] $Color($color) $get_color);
                 styler!(impl [set mut] $Color($color) $set_mut_color);
@@ -60,10 +56,10 @@ macro_rules! styler {
                 );
             )*
 
-            styler!(impl [op]    $Styler and and_mut $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            styler!(impl [op]    $Styler or  or_mut  $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            styler!(impl [op]    $Styler xor xor_mut $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            styler!(impl [dedup] $Styler             $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
+            styler!(impl [op]    and and_mut $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
+            styler!(impl [op]    or  or_mut  $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
+            styler!(impl [op]    xor xor_mut $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
+            styler!(impl [dedup]             $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
             styler!(impl [reset]
                 $($get_color $set_mut_color($Color(Color::$reset_color)))*
                 $($get_attr  $set_mut_attr(($Attr::$reset_attr)))*
@@ -158,22 +154,22 @@ macro_rules! styler {
         });
     };
 
-    (impl [op] $Styler:ident $fn:ident $fn_mut:ident $($get:ident $set_mut:ident)*) => {
+    (impl [op] $fn:ident $fn_mut:ident $($get:ident $set_mut:ident)*) => {
         doc!("`Option::" stringify!($fn) "` fields.",
-        fn $fn<T: $Styler>(mut self, other: &T) -> Self {
+        fn $fn(mut self, other: &impl Styler) -> Self {
             $(self.$set_mut(self.$get().$fn(other.$get()));)*
             self
         });
 
         doc!("`Option::" stringify!($fn) "` fields mutably.",
-        fn $fn_mut<T: $Styler>(&mut self, other: &T) {
+        fn $fn_mut(&mut self, other: &impl Styler) {
             $(self.$set_mut(self.$get().$fn(other.$get()));)*
         });
     };
 
-    (impl [dedup] $Styler:ident $($get:ident $set_mut:ident)*) => {
+    (impl [dedup] $($get:ident $set_mut:ident)*) => {
         /// Dedups (`None`s if identicals) fields.
-        fn dedup<T: $Styler>(mut self, before: &T) -> Self {
+        fn dedup(mut self, before: &impl Styler) -> Self {
             $(if self.$get() == before.$get() {
                 self.$set_mut(None);
             })*
@@ -181,7 +177,7 @@ macro_rules! styler {
         }
 
         /// Dedups (`None`s if identicals) fields mutably.
-        fn dedup_mut<T: $Styler>(&mut self, before: &T) {
+        fn dedup_mut(&mut self, before: &impl Styler) {
             $(if self.$get() == before.$get() {
                 self.$set_mut(None);
             })*

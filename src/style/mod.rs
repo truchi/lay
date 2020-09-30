@@ -109,10 +109,6 @@ use std::fmt::{Display, Error, Formatter};
 
 macro_rules! style {
     (
-        $(#[$meta_styler:meta])*
-        $Styler:ident
-        $(#[$meta_styler_mut:meta])*
-        $StylerMut:ident
         Colors { $(
             $(#[$meta_color:meta])*
             $Color:ident($color:ident) $NoColor:ident ($str_color:literal $str_reset_color:literal) {
@@ -147,10 +143,6 @@ macro_rules! style {
         )*);
 
         styler!(
-            $(#[$meta_styler])*
-            $Styler
-            $(#[$meta_styler_mut])*
-            $StylerMut
             Colors { $(
                 $Color($color) $NoColor {
                     $get_color $get_mut_color
@@ -176,10 +168,6 @@ macro_rules! style {
 }
 
 style!(
-    /// A trait for styled types.
-    Styler
-    /// A trait for mutable styled types.
-    StylerMut
     Colors {
         /// A `Foreground` `Color`.
         ///
