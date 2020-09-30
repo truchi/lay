@@ -94,6 +94,7 @@
 mod attributes;
 #[macro_use]
 mod colors;
+#[macro_use]
 mod style;
 // mod styled;
 #[macro_use]
@@ -107,7 +108,7 @@ pub use styler::*;
 
 use std::fmt::{Display, Error, Formatter};
 
-macro_rules! style {
+macro_rules! mod_style {
     (
         Colors { $(
             $(#[$meta_color:meta])*
@@ -142,6 +143,11 @@ macro_rules! style {
             $Attr: $($variant_attr($str_attr))* + $reset_attr($str_reset_attr)
         )*);
 
+        style!(
+            $(($color: $Color, $Color(Color::$reset_color)))*
+            $(($attr: $Attr, $Attr::$reset_attr))*
+        );
+
         styler!(
             Colors { $(
                 $Color($color) $NoColor {
@@ -167,7 +173,7 @@ macro_rules! style {
     };
 }
 
-style!(
+mod_style!(
     Colors {
         /// A `Foreground` `Color`.
         ///
