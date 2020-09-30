@@ -42,19 +42,18 @@ macro_rules! attributes {
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
     use pretty_assertions::assert_eq;
 
     #[test]
     fn default() {
-        assert_eq!(Weighted::default(), ResetWeight);
-        assert_eq!(Slanted::default(), ResetSlant);
-        assert_eq!(Blinking::default(), ResetBlink);
-        assert_eq!(Inverted::default(), ResetInvert);
-        assert_eq!(Striked::default(), ResetStrike);
-        assert_eq!(Underlined::default(), ResetUnderline);
-        assert_eq!(Overlined::default(), ResetOverline);
-        assert_eq!(Bordered::default(), ResetBorder);
+        assert_eq!(Weight::default(), ResetWeight);
+        assert_eq!(Slant::default(), ResetSlant);
+        assert_eq!(Blink::default(), ResetBlink);
+        assert_eq!(Invert::default(), ResetInvert);
+        assert_eq!(Strike::default(), ResetStrike);
+        assert_eq!(Underline::default(), ResetUnderline);
+        assert_eq!(Overline::default(), ResetOverline);
+        assert_eq!(Border::default(), ResetBorder);
     }
 }

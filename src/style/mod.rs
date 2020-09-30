@@ -9,14 +9,14 @@
 //!   - [`Foreground`][foreground]: `Foreground(Color)`
 //!   - [`Background`][background]: `Background(Color)`
 //! - Attributes (enums):
-//!   - [`Weighted`][weighted]: `Bold`, `Light`, `ResetWeight`
-//!   - [`Slanted`][slanted]: `Italic`, `ResetSlant`
-//!   - [`Blinking`][blinking]: `Slow`, `Fast`, `ResetBlink`
-//!   - [`Inverted`][inverted]: `Invert`, `ResetInvert`
-//!   - [`Striked`][striked]: `Strike`, `ResetStrike`
-//!   - [`Underlined`][underlined]: `Underline`, `ResetUnderline`
-//!   - [`Overlined`][overlined]: `Overline`, `ResetOverline`
-//!   - [`Bordered`][bordered]: `Frame`, `Circle`, `ResetBorder`
+//!   - [`Weight`][weight]: `Bold`, `Light`, `ResetWeight`
+//!   - [`Slant`][slant]: `Italic`, `ResetSlant`
+//!   - [`Blink`][blink]: `Slow`, `Fast`, `ResetBlink`
+//!   - [`Invert`][invert]: `Inverted`, `ResetInvert`
+//!   - [`Strike`][strike]: `Striked`, `ResetStrike`
+//!   - [`Underline`][underline]: `Underlined`, `ResetUnderline`
+//!   - [`Overline`][overline]: `Overlined`, `ResetOverline`
+//!   - [`Border`][border]: `Frame`, `Circle`, `ResetBorder`
 //!
 //! All those types `Default` to their reset value/variant: colors default to
 //! the user's terminal default foreground/background color, attributes default
@@ -78,14 +78,14 @@
 //!
 //! [foreground]: struct.Foreground.html
 //! [background]: struct.Background.html
-//! [weighted]: enum.Weighted.html
-//! [slanted]: enum.Slanted.html
-//! [blinking]: enum.Blinking.html
-//! [inverted]: enum.Inverted.html
-//! [striked]: enum.Striked.html
-//! [underlined]: enum.Underlined.html
-//! [overlined]: enum.Overlined.html
-//! [bordered]: enum.Bordered.html
+//! [weight]: enum.Weight.html
+//! [slant]: enum.Slant.html
+//! [blink]: enum.Blink.html
+//! [invert]: enum.Invert.html
+//! [strike]: enum.Strike.html
+//! [underline]: enum.Underline.html
+//! [overline]: enum.Overline.html
+//! [border]: enum.Border.html
 //! [styler]: trait.Styler.html
 //! [style]: struct.Style.html
 //! [impl_styler]: ../macro.impl_styler.html
@@ -231,100 +231,100 @@ mod_style!(
         }
     }
     Attributes {
-        /// `Weighted` text (`Bold`, `Light`, `ResetBold`).
+        /// `Weight` text (`Bold`, `Light`, `ResetBold`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetWeight`, the weight unsetting CSI.
-        Weighted(weighted) NoWeight {
-            get_weighted get_weighted_mut
-            weighted weighted_mut
+        Weight(weight) NoWeight {
+            get_weight get_weight_mut
+            weight weight_mut
             no_weight no_weight_mut
                 ResetWeight("22"): reset_weight reset_weight_mut
                 Bold("1"): bold bold_mut
                 Light("2"): light light_mut
         }
-        /// `Slanted` text (`Italic`, `ResetSlant`).
+        /// `Slant` text (`Italic`, `ResetSlant`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetSlant`, the slant unsetting CSI.
-        Slanted(slanted) NoSlant {
-            get_slanted get_slanted_mut
-            slanted slanted_mut
+        Slant(slant) NoSlant {
+            get_slant get_slant_mut
+            slant slant_mut
             no_slant no_slant_mut
                 ResetSlant("23"): reset_slant reset_slant_mut
                 Italic("3"): italic italic_mut
         }
-        /// `Blinking` text (`Slow`, `Fast`, `ResetBlink`).
+        /// `Blink` text (`Slow`, `Fast`, `ResetBlink`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetBlink`, the blink unsetting CSI.
-        Blinking(blinking) NoBlink {
-            get_blinking get_blinking_mut
-            blinking blinking_mut
+        Blink(blink) NoBlink {
+            get_blink get_blink_mut
+            blink blink_mut
             no_blink no_blink_mut
                 ResetBlink("25"): reset_blink reset_blink_mut
                 Slow("5"): slow slow_mut
                 Fast("6"): fast fast_mut
         }
-        /// `Inverted` text (`Invert`, `ResetInvert`).
+        /// `Invert` text (`Inverted`, `ResetInvert`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetInvert`, the invert unsetting CSI.
-        Inverted(inverted) NoInvert {
-            get_inverted get_inverted_mut
-            inverted inverted_mut
+        Invert(invert) NoInvert {
+            get_invert get_invert_mut
+            invert invert_mut
             no_invert no_invert_mut
                 ResetInvert("27"): reset_invert reset_invert_mut
-                Invert("7"): invert invert_mut
+                Inverted("7"): inverted inverted_mut
         }
-        /// `Striked` text (`Strike`, `ResetStrike`).
+        /// `Strik` text (`Striked`, `ResetStrike`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetStrike`, the strike unsetting CSI.
-        Striked(striked) NoStrike {
-            get_striked get_striked_mut
-            striked striked_mut
+        Strike(strike) NoStrike {
+            get_strike get_strike_mut
+            strike strike_mut
             no_strike no_strike_mut
                 ResetStrike("29"): reset_strike reset_strike_mut
-                Strike("9"): strike strike_mut
+                Striked("9"): striked striked_mut
         }
-        /// `Underlined` text (`Underline`, `ResetUnderline`).
+        /// `Underline` text (`Underlined`, `ResetUnderline`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetUnderline`, the underline unsetting CSI.
-        Underlined(underlined) NoUnderline {
-            get_underlined get_underlined_mut
-            underlined underlined_mut
+        Underline(underline) NoUnderline {
+            get_underline get_underline_mut
+            underline underline_mut
             no_underline no_underline_mut
                 ResetUnderline("24"): reset_underline reset_underline_mut
-                Underline("4"): underline underline_mut
+                Underlined("4"): underlined underlined_mut
         }
-        /// `Overlined` text (`Overline`, `ResetOverline`).
+        /// `Overlined` text (`Overlined`, `ResetOverline`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetOverline`, the overline unsetting CSI.
-        Overlined(overlined) NoOverline {
-            get_overlined get_overlined_mut
-            overlined overlined_mut
+        Overline(overline) NoOverline {
+            get_overline get_overlined_mut
+            overline overline_mut
             no_overline no_overline_mut
                 ResetOverline("55"): reset_overline reset_overline_mut
-                Overline("53"): overline overline_mut
+                Overlined("53"): overlined overlined_mut
         }
-        /// `Bordered` text (`Frame`, `Circle`, `ResetBorder`).
+        /// `Border` text (`Frame`, `Circle`, `ResetBorder`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetBorder`, the border unsetting CSI.
-        Bordered(bordered) NoBorder {
-            get_bordered get_bordered_mut
-            bordered bordered_mut
+        Border(border) NoBorder {
+            get_border get_border_mut
+            border border_mut
             no_border no_border_mut
                 ResetBorder("54"): reset_border reset_border_mut
                 Frame("51"): frame frame_mut

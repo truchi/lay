@@ -59,14 +59,14 @@ macro_rules! impl_styler {
             impl_styler!(impl [mode:$mode] $self {
                 Foreground get_foreground foreground_mut $foreground
                 Background get_background background_mut $background
-                Weighted   get_weighted   weighted_mut   $weight
-                Slanted    get_slanted    slanted_mut    $slant
-                Blinking   get_blinking   blinking_mut   $blink
-                Inverted   get_inverted   inverted_mut   $invert
-                Striked    get_striked    striked_mut    $strike
-                Underlined get_underlined underlined_mut $underline
-                Overlined  get_overlined  overlined_mut  $overline
-                Bordered   get_bordered   bordered_mut   $border
+                Weight     get_weight     weight_mut     $weight
+                Slant      get_slant      slant_mut      $slant
+                Blink      get_blink      blink_mut      $blink
+                Invert     get_invert     invert_mut     $invert
+                Strike     get_strike     strike_mut     $strike
+                Underline  get_underline  underline_mut  $underline
+                Overline   get_overline   overline_mut   $overline
+                Border     get_border     border_mut     $border
             });
         }
 
@@ -114,21 +114,21 @@ macro_rules! impl_styler {
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
                 background_mut(background: Background NoBackground) background,
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                weighted_mut(weighted: Weighted NoWeight) weighted,
+                weight_mut(weight: Weight NoWeight) weight,
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                slanted_mut(slanted: Slanted NoSlant) slanted,
+                slant_mut(slant: Slant NoSlant) slant,
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                blinking_mut(blinking: Blinking NoBlink) blinking,
+                blink_mut(blink: Blink NoBlink) blink,
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                inverted_mut(inverted: Inverted NoInvert) inverted,
+                invert_mut(invert: Invert NoInvert) invert,
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                striked_mut(striked: Striked NoStrike) striked,
+                strike_mut(strike: Strike NoStrike) strike,
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                underlined_mut(underlined: Underlined NoUnderline) underlined,
+                underline_mut(underline: Underline NoUnderline) underline,
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                overlined_mut(overlined: Overlined NoOverline) overlined,
+                overline_mut(overline: Overline NoOverline) overline,
             <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                bordered_mut(bordered: Bordered NoBorder) bordered,
+                border_mut(border: Border NoBorder) border,
         });
         impl_styler!(impl [ops:bit] $Type {
             <$($($G $(: $($B)+)?,)+)?> BitAnd(bitand) BitAndAssign(bitand_assign) and_mut,

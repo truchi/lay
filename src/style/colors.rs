@@ -154,12 +154,6 @@ mod tests {
         // Color defaults to ResetColor
         assert_eq!(Color::default(), ResetColor);
 
-        // (u8, u8, u8) -> Rgb(u8, u8, u8)
-        assert_eq!(Color::from((1, 2, 3)), Rgb(1, 2, 3));
-
-        // u8 -> Ansi(u8)
-        assert_eq!(Color::from(1), Ansi(1));
-
         // Foreground/Background default to Foreground/Background(ResetColor)
         assert_eq!(Foreground::default(), Foreground(ResetColor));
         assert_eq!(Background::default(), Background(ResetColor));

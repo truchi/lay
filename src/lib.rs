@@ -9,7 +9,7 @@
 //!
 //! The [`style`][mod_style] module exports the basic types
 //! ([`Foreground`][foreground], [`Background`][background], [`Color`][color],
-//! [`Weighted`][weighted], ...) you will need to manipulate terminal control
+//! [`Weight`][weight], ...) you will need to manipulate terminal control
 //! sequences at a rather low level.
 //!
 //! ```
@@ -60,7 +60,7 @@
 //! [foreground]: style/struct.Foreground.html
 //! [background]: style/struct.Background.html
 //! [color]: style/enum.Color.html
-//! [weighted]: style/enum.Weighted.html
+//! [weight]: style/enum.Weight.html
 //! [styler]: style/trait.Styler.html
 //! [style]: style/struct.Style.html
 //! [styled]: style/struct.Styled.html

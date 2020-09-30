@@ -10,7 +10,7 @@ fn main() {
 
     let mut canvas = Canvas::new(30, 30);
     canvas >>= (
-        (Cell::from('A') * Red / Green + Bold + Underline + Italic + Slow),
+        (Cell::from('A') * Red / Green + Bold + Underlined + Italic + Slow),
         2,
         2,
     );
