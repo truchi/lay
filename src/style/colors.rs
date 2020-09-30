@@ -150,19 +150,28 @@ mod tests {
     use pretty_assertions::assert_eq;
 
     #[test]
-    fn from_and_default() {
+    fn default() {
         // Color defaults to ResetColor
         assert_eq!(Color::default(), ResetColor);
 
         // Foreground/Background default to Foreground/Background(ResetColor)
         assert_eq!(Foreground::default(), Foreground(ResetColor));
         assert_eq!(Background::default(), Background(ResetColor));
+    }
 
+    #[test]
+    fn conversion() {
         // Foreground/Background <-> Color
         assert_eq!(Color::from(Foreground(Blue)), Blue);
         assert_eq!(Foreground::from(Green), Foreground(Green));
         assert_eq!(Color::from(Background(Red)), Red);
         assert_eq!(Background::from(Magenta), Background(Magenta));
+
+        // Color -> Option<Foreground/Background>
+        let foreground: Option<Foreground> = Magenta.into();
+        assert_eq!(foreground, Some(Foreground(Magenta)));
+        let background: Option<Background> = Magenta.into();
+        assert_eq!(background, Some(Background(Magenta)));
 
         // Foreground <-> Background
         assert_eq!(Foreground::from(Background(Black)), Foreground(Black));

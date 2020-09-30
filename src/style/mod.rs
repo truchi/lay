@@ -61,7 +61,7 @@
 //!     let style = Style::default().red();
 //!     // Both are equivalent
 //!     let new_style = style.bold().or(&style.black().on_white());
-//!     let new_style = style + Bold | style * Black / White;
+//!     let new_style = style + Bold | &(style * Black / White);
 //!     // Both are equivalent
 //!     let reset = new_style.reset();
 //!     let reset = !new_style;
@@ -96,14 +96,14 @@ mod attributes;
 mod colors;
 #[macro_use]
 mod style;
-// mod styled;
+mod styled;
 #[macro_use]
 mod styler;
 
 pub use attributes::*;
 pub use colors::*;
 pub use style::*;
-// pub use styled::*;
+pub use styled::*;
 pub use styler::*;
 
 use std::fmt::{Display, Error, Formatter};

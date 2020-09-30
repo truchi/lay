@@ -17,7 +17,7 @@
 //!
 //! fn main() {
 //!     // Greet the world in red
-//!     println!("Hello, {}world{}!", Foreground(Red), Foreground(Reset));
+//!     println!("Hello, {}world{}!", Foreground(Red), Foreground(ResetColor));
 //! }
 //! ```
 //!
@@ -73,8 +73,8 @@
 #[macro_use]
 mod macros;
 
-// pub mod layer;
+pub mod layer;
 pub mod style;
 
-// pub use layer::*;
+pub use layer::*;
 pub use style::*;

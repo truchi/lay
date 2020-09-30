@@ -42,7 +42,7 @@ macro_rules! attributes {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::*;
     use pretty_assertions::assert_eq;
 
     #[test]
