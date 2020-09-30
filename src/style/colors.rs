@@ -93,11 +93,13 @@ macro_rules! colors {
                 }
             }
 
+            doc!("Returns `Some(" stringify!($Name) "(color))`.",
             impl Into<Option<$Name>> for Color {
+                doc!("Returns `Some(" stringify!($Name) "(color))`.",
                 fn into(self) -> Option<$Name> {
                     Some($Name(self))
-                }
-            }
+                });
+            });
 
             /// Prints the corresponding CSI to the terminal.
             impl Display for $Name {

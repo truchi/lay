@@ -78,6 +78,15 @@ macro_rules! styler {
             doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct $No;);
+
+
+            doc!("Returns `None`.",
+            impl Into<Option<$Self>> for $No {
+                doc!("Returns `None`.",
+                fn into(self) -> Option<$Self> {
+                    None
+                });
+            });
         )*
     };
 
