@@ -110,6 +110,8 @@ use std::fmt::{Display, Error, Formatter};
 
 macro_rules! mod_style {
     (
+        $(#[$meta_reset:meta])*
+        $Reset:ident
         Colors { $(
             $(#[$meta_color:meta])*
             $Color:ident($color:ident) $NoColor:ident ($str_color:literal $str_reset_color:literal) {
@@ -149,6 +151,8 @@ macro_rules! mod_style {
         );
 
         styler!(
+            $(#[$meta_reset])*
+            $Reset
             Colors { $(
                 $Color($color) $NoColor {
                     $get_color $get_mut_color
@@ -174,6 +178,8 @@ macro_rules! mod_style {
 }
 
 mod_style!(
+    /// `Reset`s all terminal attributes.
+    Reset
     Colors {
         /// A `Foreground` `Color`.
         ///

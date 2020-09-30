@@ -1,5 +1,7 @@
 macro_rules! styler {
     (
+        $(#[$meta_reset:meta])*
+        $Reset:ident
         Colors { $(
             $Color:ident($color:ident) $NoColor:ident {
                 $get_color:ident $get_mut_color:ident
@@ -22,6 +24,10 @@ macro_rules! styler {
         )* }
     ) => {
         styler!(impl [No] $($Color $NoColor)* $($Attr $NoAttr)*);
+        styler!(impl [Reset] $(#[$meta_reset])* $Reset
+            Colors { $($Color $reset_color)* }
+            Attributes { $($Attr $reset_attr)* }
+        );
 
         /// A trait for styled types.
         pub trait Styler: Sized {
@@ -83,6 +89,67 @@ macro_rules! styler {
                 });
             });
         )*
+    };
+
+    (impl [Reset] $(#[$meta_reset:meta])* $Reset:ident
+        Colors { $($Color:ident $reset_color:ident)* }
+        Attributes { $($Attr:ident $reset_attr:ident)* }
+    ) => {
+        $(#[$meta_reset])*
+        #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
+        pub struct $Reset;
+
+        /// Prints the "Reset"/"Normal" csi to the terminal.
+        impl Display for $Reset {
+            /// Prints the "Reset"/"Normal" csi to the terminal.
+            fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                f.write_str("\x1B[0m")
+            }
+        }
+
+        styler!(impl [Reset Into Color] $Reset $($reset_color)*);
+
+        $(
+            doc!("Returns `" stringify!($Color) "(Color::" stringify!($reset_color) ")`.",
+            impl Into<$Color> for $Reset {
+                doc!("Returns `" stringify!($Color) "(Color::" stringify!($reset_color) ")`.",
+                fn into(self) -> $Color {
+                    $Color(Color::$reset_color)
+                });
+            });
+            doc!("Returns `Some(" stringify!($Color) "(Color::" stringify!($reset_color) "))`.",
+            impl Into<Option<$Color>> for $Reset {
+                doc!("Returns `Some(" stringify!($Color) "(Color::" stringify!($reset_color) "))`.",
+                fn into(self) -> Option<$Color> {
+                    Some($Color(Color::$reset_color))
+                });
+            });
+        )*
+        $(
+            doc!("Returns `" stringify!($Attr) "::" stringify!($reset_attr) "`.",
+            impl Into<$Attr> for $Reset {
+                doc!("Returns `" stringify!($Attr) "::" stringify!($reset_attr) "`.",
+                fn into(self) -> $Attr {
+                    $Attr::$reset_attr
+                });
+            });
+            doc!("Returns `Some(" stringify!($Attr) "::" stringify!($reset_attr) ")`.",
+            impl Into<Option<$Attr>> for $Reset {
+                doc!("Returns `Some(" stringify!($Attr) "::" stringify!($reset_attr) ")`.",
+                fn into(self) -> Option<$Attr> {
+                    Some($Attr::$reset_attr)
+                });
+            });
+        )*
+    };
+    (impl [Reset Into Color] $Reset:ident $reset_color:ident $($_:ident)+) => {
+        doc!("Returns `Color::" stringify!($reset_color) "`.",
+        impl Into<Color> for $Reset {
+            doc!("Returns `Color::" stringify!($reset_color) "`.",
+            fn into(self) -> Color {
+                Color::$reset_color
+            });
+        });
     };
 
     (impl [get] $Self:ident($self:ident) $get:ident) => {
