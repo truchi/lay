@@ -9,6 +9,8 @@ macro_rules! styler {
                 $get_color:ident $get_mut_color:ident
                 $set_color:ident $set_mut_color:ident
                 $unset_color:ident $unset_mut_color:ident
+                Rgb: $set_rgb:ident $set_rgb_mut:ident
+                Ansi: $set_ansi:ident $set_ansi_mut:ident
                 $reset_color:ident: $set_reset_color:ident $set_reset_mut_color:ident
                 $($variant_color:ident: $set_variant_color:ident $set_variant_mut_color:ident)*
             }
@@ -43,6 +45,8 @@ macro_rules! styler {
                     stringify!($Color) "(Color::" stringify!($variant_color) ")",
                     $set_variant_color $set_variant_mut_color $set_mut_color($Color(Color::$variant_color))
                 );)*
+                styler!(impl [rgb] $set_rgb $set_rgb_mut $set_mut_color($Color));
+                styler!(impl [ansi] $set_ansi $set_ansi_mut $set_mut_color($Color));
                 styler!(impl [variant]
                     stringify!($Color) "(Color::" stringify!($reset_color) ")",
                     $set_reset_color $set_reset_mut_color $set_mut_color($Color(Color::$reset_color))
@@ -130,6 +134,32 @@ macro_rules! styler {
         doc!("Sets `Some(" $($doc)* ")` mutably.",
         fn $set_variant_mut(&mut self) {
             self.$set_mut(Some($body));
+        });
+    };
+
+    (impl [rgb] $set_rgb:ident $set_rgb_mut:ident $set_mut:ident($Self:ident)) => {
+        doc!("Sets `Some(" stringify!($Self) "(Color::Rgb(r, g, b)))`.",
+        fn $set_rgb(mut self, r: u8, g: u8, b: u8) -> Self {
+            self.$set_mut(Some($Self(Color::Rgb(r, g, b))));
+            self
+        });
+
+        doc!("Sets `Some(" stringify!($Self) "(Color::Rgb(r, g, b)))` mutably.",
+        fn $set_rgb_mut(&mut self, r: u8, g: u8, b: u8) {
+            self.$set_mut(Some($Self(Color::Rgb(r, g, b))));
+        });
+    };
+
+    (impl [ansi] $set_ansi:ident $set_ansi_mut:ident $set_mut:ident($Self:ident)) => {
+        doc!("Sets `Some(" stringify!($Self) "(Color::Ansi(ansi)))`.",
+        fn $set_ansi(mut self, ansi: u8) -> Self {
+            self.$set_mut(Some($Self(Color::Ansi(ansi))));
+            self
+        });
+
+        doc!("Sets `Some(" stringify!($Self) "(Color::Ansi(ansi)))` mutably.",
+        fn $set_ansi_mut(&mut self, ansi: u8) {
+            self.$set_mut(Some($Self(Color::Ansi(ansi))));
         });
     };
 

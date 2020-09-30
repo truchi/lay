@@ -120,6 +120,8 @@ macro_rules! style {
                 $set_color:ident $set_mut_color:ident
                 $unset_color:ident $unset_mut_color:ident
                 $reset_color:ident: $set_reset_color:ident $set_reset_mut_color:ident
+                Rgb: $set_rgb:ident $set_rgb_mut:ident
+                Ansi: $set_ansi:ident $set_ansi_mut:ident
                 $($variant_color:ident: $set_variant_color:ident $set_variant_mut_color:ident)*
             }
         )* }
@@ -154,6 +156,8 @@ macro_rules! style {
                     $get_color $get_mut_color
                     $set_color $set_mut_color
                     $unset_color $unset_mut_color
+                    Rgb: $set_rgb $set_rgb_mut
+                    Ansi: $set_ansi $set_ansi_mut
                     $reset_color: $set_reset_color $set_reset_mut_color
                     $($variant_color: $set_variant_color $set_variant_mut_color)*
                 }
@@ -187,6 +191,8 @@ style!(
             foreground foreground_mut
             no_foreground no_foreground_mut
                 Reset: fg_reset fg_reset_mut
+                Rgb: rgb rgb_mut
+                Ansi: ansi ansi_mut
                 White: white white_mut
                 Black: black black_mut
                 Red: red red_mut
@@ -212,6 +218,8 @@ style!(
             background background_mut
             no_background no_background_mut
                 Reset: on_reset on_reset_mut
+                Rgb: on_rgb on_rgb_mut
+                Ansi: on_ansi on_ansi_mut
                 White: on_white on_white_mut
                 Black: on_black on_black_mut
                 Red: on_red on_red_mut
