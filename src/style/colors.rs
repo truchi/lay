@@ -42,22 +42,6 @@ impl Default for Color {
     }
 }
 
-/// Returns `Color::Rgb(r, g, b)`.
-impl From<(u8, u8, u8)> for Color {
-    /// Returns `Color::Rgb(r, g, b)`.
-    fn from((r, g, b): (u8, u8, u8)) -> Self {
-        Self::Rgb(r, g, b)
-    }
-}
-
-/// Returns `Color::Ansi(ansi)`.
-impl From<u8> for Color {
-    /// Returns `Color::Ansi(ansi)`.
-    fn from(ansi: u8) -> Self {
-        Self::Ansi(ansi)
-    }
-}
-
 /// Returns `Foreground(color)`.
 impl From<Background> for Foreground {
     /// Returns `Foreground(color)`.
@@ -101,27 +85,17 @@ macro_rules! colors {
                 });
             });
 
-            doc!("Returns `" stringify!($Name) "(Color::Rgb(r, g, b))`.",
-            impl From<(u8, u8, u8)> for $Name {
-                doc!("Returns `" stringify!($Name) "(Color::Rgb(r, g, b))`.",
-                fn from((r, g, b): (u8, u8, u8)) -> Self {
-                    Self(Color::Rgb(r, g, b))
-                });
-            });
-
-            doc!("Returns `" stringify!($Name) "(Color::Ansi(ansi))`.",
-            impl From<u8> for $Name {
-                doc!("Returns `" stringify!($Name) "(Color::Ansi(ansi))`.",
-                fn from(ansi: u8) -> Self {
-                    Self(Color::Ansi(ansi))
-                });
-            });
-
             /// Returns the inner `Color`.
             impl From<$Name> for Color {
                 /// Returns the inner `Color`.
                 fn from($Name(color): $Name) -> Self {
                     color
+                }
+            }
+
+            impl Into<Option<$Name>> for Color {
+                fn into(self) -> Option<$Name> {
+                    Some($Name(self))
                 }
             }
 

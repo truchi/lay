@@ -94,14 +94,14 @@
 mod attributes;
 #[macro_use]
 mod colors;
-// mod style;
+mod style;
 // mod styled;
 #[macro_use]
 mod styler;
 
 pub use attributes::*;
 pub use colors::*;
-// pub use style::*;
+pub use style::*;
 // pub use styled::*;
 pub use styler::*;
 
