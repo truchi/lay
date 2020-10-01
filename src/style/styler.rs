@@ -2,6 +2,8 @@ macro_rules! styler {
     (
         $(#[$meta_reset:meta])*
         $Reset:ident
+        $(#[$meta_no_both:meta])*
+        $NoBoth:ident
         Colors { $(
             $Color:ident($color:ident) $NoColor:ident {
                 $get_color:ident
@@ -23,10 +25,9 @@ macro_rules! styler {
             }
         )* }
     ) => {
-        styler!(impl [No] $($Color $NoColor)* $($Attr $NoAttr)*);
-        styler!(impl [Reset] $(#[$meta_reset])* $Reset
-            Colors { $($Color $reset_color)* }
-            Attributes { $($Attr $reset_attr)* }
+        styler!(impl [Unit] $(#[$meta_reset])* $Reset $(#[$meta_no_both])* $NoBoth
+            Colors { $($Color $NoColor $reset_color)* }
+            Attributes { $($Attr $NoAttr $reset_attr)* }
         );
 
         /// A trait for styled types.
@@ -74,26 +75,10 @@ macro_rules! styler {
         }
     };
 
-    (impl [No] $($Self:ident $No:ident)*) => {
-        $(
-            $crate::doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct $No;);
 
-
-            $crate::doc!("Returns `None`.",
-            impl Into<Option<$Self>> for $No {
-                $crate::doc!("Returns `None`.",
-                fn into(self) -> Option<$Self> {
-                    None
-                });
-            });
-        )*
-    };
-
-    (impl [Reset] $(#[$meta_reset:meta])* $Reset:ident
-        Colors { $($Color:ident $reset_color:ident)* }
-        Attributes { $($Attr:ident $reset_attr:ident)* }
+    (impl [Unit] $(#[$meta_reset:meta])* $Reset:ident $(#[$meta_no_both:meta])* $NoBoth:ident
+        Colors { $($Color:ident $NoColor:ident $reset_color:ident)* }
+        Attributes { $($Attr:ident $NoAttr:ident $reset_attr:ident)* }
     ) => {
         $(#[$meta_reset])*
         #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
@@ -107,49 +92,68 @@ macro_rules! styler {
             }
         }
 
-        styler!(impl [Reset Into Color] $Reset $($reset_color)*);
+        styler!(impl [Reset From Color] $Reset $($reset_color)*);
+        $(styler!(impl [Reset From $Color] $Reset
+            stringify!($Color) "(Color::" stringify!($reset_color) ")",
+            $Color(Color::$reset_color)
+        );)*
+        $(styler!(impl [Reset From $Attr] $Reset
+            stringify!($Attr) "::" stringify!($reset_attr),
+            $Attr::$reset_attr
+        );)*
 
-        $(
-            $crate::doc!("Returns `" stringify!($Color) "(Color::" stringify!($reset_color) ")`.",
-            impl Into<$Color> for $Reset {
-                $crate::doc!("Returns `" stringify!($Color) "(Color::" stringify!($reset_color) ")`.",
-                fn into(self) -> $Color {
-                    $Color(Color::$reset_color)
-                });
-            });
-            $crate::doc!("Returns `Some(" stringify!($Color) "(Color::" stringify!($reset_color) "))`.",
-            impl Into<Option<$Color>> for $Reset {
-                $crate::doc!("Returns `Some(" stringify!($Color) "(Color::" stringify!($reset_color) "))`.",
-                fn into(self) -> Option<$Color> {
-                    Some($Color(Color::$reset_color))
-                });
-            });
-        )*
-        $(
-            $crate::doc!("Returns `" stringify!($Attr) "::" stringify!($reset_attr) "`.",
-            impl Into<$Attr> for $Reset {
-                $crate::doc!("Returns `" stringify!($Attr) "::" stringify!($reset_attr) "`.",
-                fn into(self) -> $Attr {
-                    $Attr::$reset_attr
-                });
-            });
-            $crate::doc!("Returns `Some(" stringify!($Attr) "::" stringify!($reset_attr) ")`.",
-            impl Into<Option<$Attr>> for $Reset {
-                $crate::doc!("Returns `Some(" stringify!($Attr) "::" stringify!($reset_attr) ")`.",
-                fn into(self) -> Option<$Attr> {
-                    Some($Attr::$reset_attr)
-                });
-            });
-        )*
+        $(#[$meta_no_both])*
+        #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
+        pub struct $NoBoth;
+
+        $(styler!(impl [No] $Color $NoColor $NoBoth);)*
+        $(styler!(impl [No] $Attr $NoAttr);)*
     };
-    (impl [Reset Into Color] $Reset:ident $reset_color:ident $($_:ident)+) => {
+    (impl [Reset From Color] $Reset:ident $reset_color:ident $($_:ident)+) => {
         $crate::doc!("Returns `Color::" stringify!($reset_color) "`.",
-        impl Into<Color> for $Reset {
+        impl From<$Reset> for Color {
             $crate::doc!("Returns `Color::" stringify!($reset_color) "`.",
-            fn into(self) -> Color {
-                Color::$reset_color
+            fn from(_: $Reset) -> Self {
+                Self::$reset_color
             });
         });
+    };
+    (impl [Reset From $Self:ident] $Reset:ident $($doc:expr)*, $body:expr) => {
+        $crate::doc!("Returns `" $($doc)* "`.",
+        impl From<$Reset> for $Self {
+            $crate::doc!("Returns `" $($doc)* "`.",
+            fn from(_: $Reset) -> Self {
+                $body
+            });
+        });
+        $crate::doc!("Returns `Some(" $($doc)* ")`.",
+        impl From<$Reset> for Option<$Self> {
+            $crate::doc!("Returns `Some(" $($doc)* ")`.",
+            fn from(_: $Reset) -> Self {
+                Some($body)
+            });
+        });
+    };
+    (impl [No] $Self:ident $No:ident $($NoBoth:ident)?) => {
+        $crate::doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
+        #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
+        pub struct $No;);
+
+        $crate::doc!("Returns `None`.",
+        impl From<$No> for Option<$Self> {
+            $crate::doc!("Returns `None`.",
+            fn from(_: $No) -> Self {
+                None
+            });
+        });
+
+        $($crate::doc!("Returns `None`.",
+        impl From<$NoBoth> for Option<$Self> {
+            $crate::doc!("Returns `None`.",
+            fn from(_: $NoBoth) -> Self {
+                None
+            });
+        });)?
     };
 
     (impl [get] $Self:ident($self:ident) $get:ident) => {
@@ -284,6 +288,7 @@ mod tests {
 
     #[test]
     fn conversion() {
+        // TODO
         assert_eq!(<Reset as Into<Color>>::into(Reset), ResetColor);
 
         macro_rules! conversion {

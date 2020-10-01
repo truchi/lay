@@ -58,10 +58,6 @@ impl From<Foreground> for Background {
     }
 }
 
-/// Sets `Option<Foreground>` or `Option<Background>` to `None`.
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub struct NoColor;
-
 macro_rules! colors {
     ($($(#[$meta:meta])* $Name:ident ($str:literal $reset_str:literal))*) => {
         $(

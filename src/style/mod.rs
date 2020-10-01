@@ -33,8 +33,8 @@
 //! );
 //! ```
 //!
-//! In addition, we provide the `Reset` type which represents the CSI to reset
-//! all colors/attributes:
+//! In addition, we provide the [`Reset`][reset] type which represents the CSI
+//! to reset all colors/attributes:
 //!
 //! ```
 //! # use lay::*;
@@ -90,6 +90,22 @@
 //! let style = Style::default() * Red / Green + Bold + ResetBlink;
 //! ```
 //!
+//! `lay` defines handy unit struct to `None` attribute fields:
+//! [`NoColor`][no_color], [`NoForeground`][no_foreground],
+//! [`NoBackground`][no_background], [`NoWeight`][no_weight],
+//! [`NoSlant`][no_slant], [`NoBlink`][no_blink], [`NoInvert`][no_invert],
+//! [`NoStrike`][no_strike], [`NoUnderline`][no_underline],
+//! [`NoOverline`][no_overline], [`NoBorder`][no_border].
+//!
+//! ```
+//! # use lay::*;
+//! let style = Style::default() // TODO
+//!     // .foreground(NoColor)
+//!     .foreground(NoForeground)
+//!     // .background(NoColor)
+//!     .background(NoBackground);
+//! ```
+//!
 //! [`Styler`][styler] can easily be implemented with the
 //! [`impl_styler`][impl_styler] macro, and you can generate the operators
 //! overloads with the [`impl_styler_ops`][impl_styler_ops] macro.
@@ -102,6 +118,7 @@
 //!
 //! The [`Style`][style] struct is the most simple implementation of `Styler`
 //! you can think of: it has a field for each attribute wrapped in an `Option`.
+//! It implements styling operations overloads.
 //!
 //! [foreground]: struct.Foreground.html
 //! [background]: struct.Background.html
@@ -113,12 +130,24 @@
 //! [underline]: enum.Underline.html
 //! [overline]: enum.Overline.html
 //! [border]: enum.Border.html
+//! [reset]: struct.Reset.html
 //! [styler]: trait.Styler.html
 //! [styler_and]: trait.Styler.html#method.and
 //! [styler_or]: trait.Styler.html#method.or
 //! [styler_xor]: trait.Styler.html#method.xor
 //! [styler_dedup]: trait.Styler.html#method.dedup
 //! [styler_reset]: trait.Styler.html#method.reset
+//! [no_color]: struct.NoColor.html
+//! [no_foreground]: struct.NoForeground.html
+//! [no_background]: struct.NoBackground.html
+//! [no_weight]: struct.NoWeight.html
+//! [no_slant]: struct.NoSlant.html
+//! [no_blink]: struct.NoBlink.html
+//! [no_invert]: struct.NoInvert.html
+//! [no_strike]: struct.NoStrike.html
+//! [no_underline]: struct.NoUnderline.html
+//! [no_overline]: struct.NoOverline.html
+//! [no_border]: struct.NoBorder.html
 //! [style]: struct.Style.html
 //! [impl_styler]: ../macro.impl_styler.html
 //! [impl_styler_ops]: ../macro.impl_styler_ops.html
@@ -145,6 +174,8 @@ macro_rules! mod_style {
     (
         $(#[$meta_reset:meta])*
         $Reset:ident
+        $(#[$meta_no_both:meta])*
+        $NoBoth:ident
         Colors { $(
             $(#[$meta_color:meta])*
             $Color:ident($color:ident) $NoColor:ident ($str_color:literal $str_reset_color:literal) {
@@ -186,6 +217,8 @@ macro_rules! mod_style {
         styler!(
             $(#[$meta_reset])*
             $Reset
+            $(#[$meta_no_both])*
+            $NoBoth
             Colors { $(
                 $Color($color) $NoColor {
                     $get_color
@@ -213,6 +246,8 @@ macro_rules! mod_style {
 mod_style!(
     /// `Reset`s all terminal attributes.
     Reset
+    /// Sets `Option<Foreground>` or `Option<Background>` to `None`.
+    NoColor
     Colors {
         /// A `Foreground` `Color`.
         ///
