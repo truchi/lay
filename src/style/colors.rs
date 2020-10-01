@@ -69,17 +69,17 @@ macro_rules! colors {
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
             pub struct $Name(pub Color);
 
-            doc!("Returns `" stringify!($Name) "(Color::ResetColor)`.",
+            $crate::doc!("Returns `" stringify!($Name) "(Color::ResetColor)`.",
             impl Default for $Name {
-                doc!("Returns `" stringify!($Name) "(Color::ResetColor)`.",
+                $crate::doc!("Returns `" stringify!($Name) "(Color::ResetColor)`.",
                 fn default() -> Self {
                     Self(Color::ResetColor)
                 });
             });
 
-            doc!("Returns `" stringify!($Name) "(color)`.",
+            $crate::doc!("Returns `" stringify!($Name) "(color)`.",
             impl From<Color> for $Name {
-                doc!("Returns `" stringify!($Name) "(color)`.",
+                $crate::doc!("Returns `" stringify!($Name) "(color)`.",
                 fn from(color: Color) -> Self {
                     Self(color)
                 });
@@ -93,9 +93,9 @@ macro_rules! colors {
                 }
             }
 
-            doc!("Returns `Some(" stringify!($Name) "(color))`.",
+            $crate::doc!("Returns `Some(" stringify!($Name) "(color))`.",
             impl Into<Option<$Name>> for Color {
-                doc!("Returns `Some(" stringify!($Name) "(color))`.",
+                $crate::doc!("Returns `Some(" stringify!($Name) "(color))`.",
                 fn into(self) -> Option<$Name> {
                     Some($Name(self))
                 });

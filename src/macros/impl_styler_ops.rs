@@ -96,21 +96,21 @@ macro_rules! __impl_styler_ops {
         $fn:ident($rhs:tt: $($Rhs:tt)*) $body:expr,
     )* }) => {
         $(
-            doc!($($doc)* ".",
+            $crate::doc!($($doc)* ".",
             impl<$($G $(: $($B+)+,)?)*> ::std::ops::$Op<$($Rhs)*> for $Type {
-                doc!("`" stringify!($Type) "`.",
+                $crate::doc!("`" stringify!($Type) "`.",
                 type Output = Self;);
 
-                doc!($($doc)* ".",
+                $crate::doc!($($doc)* ".",
                 fn $op(mut self, $rhs: $($Rhs)*) -> Self {
                     $crate::Styler::$fn(&mut self, $body);
                     self
                 });
             });
 
-            doc!($($doc)* " mutably.",
+            $crate::doc!($($doc)* " mutably.",
             impl<$($G $(: $($B+)+,)?)*> ::std::ops::$OpAssign<$($Rhs)*> for $Type {
-                doc!($($doc)* " mutably.",
+                $crate::doc!($($doc)* " mutably.",
                 fn $op_assign(&mut self, $rhs: $($Rhs)*) {
                     $crate::Styler::$fn(self, $body);
                 });
@@ -123,24 +123,24 @@ macro_rules! __impl_styler_ops {
         $Op:ident($op:ident) $fn:ident
     )* }) => {
         $(
-            doc!($($doc)* ".",
+            $crate::doc!($($doc)* ".",
             impl<$($G $(: $($B+)+,)?)*> ::std::ops::$Op for $Type {
-                doc!("`" stringify!($Type) "`.",
+                $crate::doc!("`" stringify!($Type) "`.",
                 type Output = Self;);
 
-                doc!($($doc)* ".",
+                $crate::doc!($($doc)* ".",
                 fn $op(mut self) -> Self {
                     $crate::Styler::$fn(&mut self);
                     self
                 });
             });
 
-            doc!($($doc)* " mutably.",
+            $crate::doc!($($doc)* " mutably.",
             impl<$($G $(: $($B+)+,)?)*> ::std::ops::$Op for &mut $Type {
-                doc!("`()` (in place).",
+                $crate::doc!("`()` (in place).",
                 type Output = (););
 
-                doc!($($doc)* " mutably.",
+                $crate::doc!($($doc)* " mutably.",
                 fn $op(self) {
                     $crate::Styler::$fn(self);
                 });

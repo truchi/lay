@@ -14,9 +14,9 @@ macro_rules! attributes {
                 $reset
             }
 
-            doc!("Returns `" stringify!($Name) "::" stringify!($reset) "`.",
+            $crate::doc!("Returns `" stringify!($Name) "::" stringify!($reset) "`.",
             impl Default for $Name {
-                doc!("Returns `" stringify!($Name) "::" stringify!($reset) "`.",
+                $crate::doc!("Returns `" stringify!($Name) "::" stringify!($reset) "`.",
                 fn default() -> Self {
                     Self::$reset
                 });

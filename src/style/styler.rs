@@ -76,14 +76,14 @@ macro_rules! styler {
 
     (impl [No] $($Self:ident $No:ident)*) => {
         $(
-            doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
+            $crate::doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct $No;);
 
 
-            doc!("Returns `None`.",
+            $crate::doc!("Returns `None`.",
             impl Into<Option<$Self>> for $No {
-                doc!("Returns `None`.",
+                $crate::doc!("Returns `None`.",
                 fn into(self) -> Option<$Self> {
                     None
                 });
@@ -110,32 +110,32 @@ macro_rules! styler {
         styler!(impl [Reset Into Color] $Reset $($reset_color)*);
 
         $(
-            doc!("Returns `" stringify!($Color) "(Color::" stringify!($reset_color) ")`.",
+            $crate::doc!("Returns `" stringify!($Color) "(Color::" stringify!($reset_color) ")`.",
             impl Into<$Color> for $Reset {
-                doc!("Returns `" stringify!($Color) "(Color::" stringify!($reset_color) ")`.",
+                $crate::doc!("Returns `" stringify!($Color) "(Color::" stringify!($reset_color) ")`.",
                 fn into(self) -> $Color {
                     $Color(Color::$reset_color)
                 });
             });
-            doc!("Returns `Some(" stringify!($Color) "(Color::" stringify!($reset_color) "))`.",
+            $crate::doc!("Returns `Some(" stringify!($Color) "(Color::" stringify!($reset_color) "))`.",
             impl Into<Option<$Color>> for $Reset {
-                doc!("Returns `Some(" stringify!($Color) "(Color::" stringify!($reset_color) "))`.",
+                $crate::doc!("Returns `Some(" stringify!($Color) "(Color::" stringify!($reset_color) "))`.",
                 fn into(self) -> Option<$Color> {
                     Some($Color(Color::$reset_color))
                 });
             });
         )*
         $(
-            doc!("Returns `" stringify!($Attr) "::" stringify!($reset_attr) "`.",
+            $crate::doc!("Returns `" stringify!($Attr) "::" stringify!($reset_attr) "`.",
             impl Into<$Attr> for $Reset {
-                doc!("Returns `" stringify!($Attr) "::" stringify!($reset_attr) "`.",
+                $crate::doc!("Returns `" stringify!($Attr) "::" stringify!($reset_attr) "`.",
                 fn into(self) -> $Attr {
                     $Attr::$reset_attr
                 });
             });
-            doc!("Returns `Some(" stringify!($Attr) "::" stringify!($reset_attr) ")`.",
+            $crate::doc!("Returns `Some(" stringify!($Attr) "::" stringify!($reset_attr) ")`.",
             impl Into<Option<$Attr>> for $Reset {
-                doc!("Returns `Some(" stringify!($Attr) "::" stringify!($reset_attr) ")`.",
+                $crate::doc!("Returns `Some(" stringify!($Attr) "::" stringify!($reset_attr) ")`.",
                 fn into(self) -> Option<$Attr> {
                     Some($Attr::$reset_attr)
                 });
@@ -143,9 +143,9 @@ macro_rules! styler {
         )*
     };
     (impl [Reset Into Color] $Reset:ident $reset_color:ident $($_:ident)+) => {
-        doc!("Returns `Color::" stringify!($reset_color) "`.",
+        $crate::doc!("Returns `Color::" stringify!($reset_color) "`.",
         impl Into<Color> for $Reset {
-            doc!("Returns `Color::" stringify!($reset_color) "`.",
+            $crate::doc!("Returns `Color::" stringify!($reset_color) "`.",
             fn into(self) -> Color {
                 Color::$reset_color
             });
@@ -153,82 +153,82 @@ macro_rules! styler {
     };
 
     (impl [get] $Self:ident($self:ident) $get:ident) => {
-        doc!("Gets `Option<" stringify!($Self) ">`.",
+        $crate::doc!("Gets `Option<" stringify!($Self) ">`.",
         fn $get(&self) -> Option<$Self>;);
     };
 
     (impl [set] $Self:ident($self:ident) $set:ident $set_mut:ident) => {
-        doc!("Sets `Option<" stringify!($Self) ">`.",
+        $crate::doc!("Sets `Option<" stringify!($Self) ">`.",
         fn $set(mut self, $self: impl Into<Option<$Self>>) -> Self {
             self.$set_mut($self);
             self
         });
     };
     (impl [set mut] $Self:ident($self:ident) $set_mut:ident) => {
-        doc!("Sets `Option<" stringify!($Self) ">` mutably.",
+        $crate::doc!("Sets `Option<" stringify!($Self) ">` mutably.",
         fn $set_mut(&mut self, $self: impl Into<Option<$Self>>););
     };
 
     (impl [unset] $Self:ident($self:ident) $unset:ident $unset_mut:ident $set_mut:ident) => {
-        doc!("Sets " stringify!($self) " to `None`.",
+        $crate::doc!("Sets " stringify!($self) " to `None`.",
         fn $unset(mut self) -> Self {
             self.$set_mut(None);
             self
         });
 
-        doc!("Sets " stringify!($self) " to `None` mutably.",
+        $crate::doc!("Sets " stringify!($self) " to `None` mutably.",
         fn $unset_mut(&mut self) {
             self.$set_mut(None);
         });
     };
 
     (impl [variant] $($doc:expr)*, $set_variant:ident $set_variant_mut:ident $set_mut:ident($body:expr)) => {
-        doc!("Sets `Some(" $($doc)* ")`.",
+        $crate::doc!("Sets `Some(" $($doc)* ")`.",
         fn $set_variant(mut self) -> Self {
             self.$set_mut(Some($body));
             self
         });
 
-        doc!("Sets `Some(" $($doc)* ")` mutably.",
+        $crate::doc!("Sets `Some(" $($doc)* ")` mutably.",
         fn $set_variant_mut(&mut self) {
             self.$set_mut(Some($body));
         });
     };
 
     (impl [rgb] $set_rgb:ident $set_rgb_mut:ident $set_mut:ident($Self:ident)) => {
-        doc!("Sets `Some(" stringify!($Self) "(Color::Rgb(r, g, b)))`.",
+        $crate::doc!("Sets `Some(" stringify!($Self) "(Color::Rgb(r, g, b)))`.",
         fn $set_rgb(mut self, r: u8, g: u8, b: u8) -> Self {
             self.$set_mut(Some($Self(Color::Rgb(r, g, b))));
             self
         });
 
-        doc!("Sets `Some(" stringify!($Self) "(Color::Rgb(r, g, b)))` mutably.",
+        $crate::doc!("Sets `Some(" stringify!($Self) "(Color::Rgb(r, g, b)))` mutably.",
         fn $set_rgb_mut(&mut self, r: u8, g: u8, b: u8) {
             self.$set_mut(Some($Self(Color::Rgb(r, g, b))));
         });
     };
 
     (impl [ansi] $set_ansi:ident $set_ansi_mut:ident $set_mut:ident($Self:ident)) => {
-        doc!("Sets `Some(" stringify!($Self) "(Color::Ansi(ansi)))`.",
+        $crate::doc!("Sets `Some(" stringify!($Self) "(Color::Ansi(ansi)))`.",
         fn $set_ansi(mut self, ansi: u8) -> Self {
             self.$set_mut(Some($Self(Color::Ansi(ansi))));
             self
         });
 
-        doc!("Sets `Some(" stringify!($Self) "(Color::Ansi(ansi)))` mutably.",
+        $crate::doc!("Sets `Some(" stringify!($Self) "(Color::Ansi(ansi)))` mutably.",
         fn $set_ansi_mut(&mut self, ansi: u8) {
             self.$set_mut(Some($Self(Color::Ansi(ansi))));
         });
     };
 
     (impl [op] $fn:ident $fn_mut:ident $($get:ident $set_mut:ident)*) => {
-        doc!("`Option::" stringify!($fn) "` fields.",
+        $crate::doc!("`Option::" stringify!($fn) "` fields.",
         fn $fn(mut self, other: &impl Styler) -> Self {
             $(self.$set_mut(self.$get().$fn(other.$get()));)*
             self
         });
 
-        doc!("`Option::" stringify!($fn) "` fields mutably.",
+        $crate::doc!("`Option::" stringify!($fn) "` fields mutably.",
         fn $fn_mut(&mut self, other: &impl Styler) {
             $(self.$set_mut(self.$get().$fn(other.$get()));)*
         });
