@@ -23,35 +23,29 @@
 //! unsetting CSI. They `Display` the CSI they represent:
 //!
 //! ```
-//! use lay::*;
-//!
-//! fn main() {
-//!     println!(
-//!         "{}Hello, {}world{}!{}",
-//!         Bold,
-//!         Foreground(Red),
-//!         Foreground(ResetColor),
-//!         ResetWeight
-//!     );
-//! }
+//! # use lay::*;
+//! println!(
+//!     "{}Hello, {}world{}!{}",
+//!     Bold,
+//!     Foreground(Red),
+//!     Foreground(ResetColor),
+//!     ResetWeight
+//! );
 //! ```
 //!
 //! In addition, we provide the `Reset` type which represents the CSI to reset
 //! all colors/attributes:
 //!
 //! ```
-//! use lay::*;
-//!
-//! fn main() {
-//!     println!(
-//!         "{}{}{}{}Hello, world!{} No styles here.",
-//!         Foreground(Red),
-//!         Bold,
-//!         Italic,
-//!         Slow,
-//!         Reset
-//!     );
-//! }
+//! # use lay::*;
+//! println!(
+//!     "{}{}{}{}Hello, world!{} No styles here.",
+//!     Foreground(Red),
+//!     Bold,
+//!     Italic,
+//!     Slow,
+//!     Reset
+//! );
 //! ```
 //!
 //! # Styling
@@ -68,58 +62,41 @@
 //! defines getters and setters for types with `Option`al attributes:
 //!
 //! ```
-//! use lay::*;
-//!
+//! # use lay::*;
 //! // NOTE: Style implements Styler, see below
-//! fn main() {
-//!     let style = Style::default() // All fields are None
-//!         .red() // Red foreground
-//!         .on_green() // Green background
-//!         .bold() // Bold text
-//!         .reset_blink(); // Resets blink
+//! let style = Style::default() // All fields are None
+//!     .red() // Red foreground
+//!     .on_green() // Green background
+//!     .bold() // Bold text
+//!     .reset_blink(); // Resets blink
 //!
-//!     assert_eq!(style.get_foreground(), Some(Foreground(Red)));
-//!     assert_eq!(style.get_background(), Some(Background(Green)));
-//!     assert_eq!(style.get_weight(), Some(Bold));
-//!     assert_eq!(style.get_blink(), Some(ResetBlink));
-//!     assert_eq!(style.get_slant(), None);
-//! }
+//! assert_eq!(style.get_foreground(), Some(Foreground(Red)));
+//! assert_eq!(style.get_background(), Some(Background(Green)));
+//! assert_eq!(style.get_weight(), Some(Bold));
+//! assert_eq!(style.get_blink(), Some(ResetBlink));
+//! assert_eq!(style.get_slant(), None);
 //! ```
 //!
 //! It also provides convenients methods for styles manipulation:
-//! - [`and`][styler_and]: `Option::and` fields
-//! - [`or`][styler_or]: `Option::or` fields (inheritance)
-//! - [`xor`][styler_xor]: `Option::xor` fields
-//! - [`dedup`][styler_dedup]: `None`s identical fields
-//! - [`reset`][styler_reset]: Reset fields which are `Some`
+//! [`and`][styler_and], [`or`][styler_or], [`xor`][styler_xor],
+//! [`dedup`][styler_dedup], [`reset`][styler_reset].
 //!
-//! [`Styler`][styler] enables styling operations overloads for ease or use.
+//! For an easier use of styles, [`Styler`][styler] enables styling operations
+//! overloads. The above example could be written:
 //!
-//! TODO
+//! ```
+//! # use lay::*;
+//! // NOTE: Style implements Styler's operators overloads, see below
+//! let style = Style::default() * Red / Green + Bold + ResetBlink;
+//! ```
 //!
 //! [`Styler`][styler] can easily be implemented with the
 //! [`impl_styler`][impl_styler] macro, and you can generate the operators
 //! overloads with the [`impl_styler_ops`][impl_styler_ops] macro.
 //!
-//! ```
-//! use lay::*;
-//!
-//! // NOTE: Style implements Styler, see below
-//!
-//! fn main() {
-//!     // A red foreground
-//!     let style = Style::default().red();
-//!     // Both are equivalent
-//!     let new_style = style.bold().or(&style.black().on_white());
-//!     let new_style = style + Bold | &(style * Black / White);
-//!     // Both are equivalent
-//!     let reset = new_style.reset();
-//!     let reset = !new_style;
-//!
-//!     assert_eq!(new_style, style * Red / White + Bold);
-//!     assert_eq!(reset, style * ResetColor / ResetColor + ResetWeight);
-//! }
-//! ```
+//! You can disable styling operations overloads (and
+//! [`impl_styler_ops`][impl_styler_ops]) by opting out of the `styler-ops`
+//! default feature.
 //!
 //! # `Style`
 //!

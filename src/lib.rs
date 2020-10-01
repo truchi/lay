@@ -5,6 +5,8 @@
 //! This crate defines **styling** and **layering** utilities to print
 //! "graphics" to the terminal.
 //!
+//! (All examples prefixed with `use lay::*`.)
+//!
 //! ## Styles
 //!
 //! The [`style`][mod_style] module exports the basic types
@@ -13,12 +15,9 @@
 //! sequences manually.
 //!
 //! ```
-//! use lay::*;
-//!
-//! fn main() {
-//!     // Greet the world in red
-//!     println!("Hello, {}world{}!", Foreground(Red), Foreground(ResetColor));
-//! }
+//! # use lay::*;
+//! // Greet the world in red
+//! println!("Hello, {}world{}!", Foreground(Red), Foreground(ResetColor));
 //! ```
 //!
 //! On top of thoses you will find the [`Styler`][styler] trait defining types
@@ -28,15 +27,12 @@
 //! your own types.
 //!
 //! ```
-//! use lay::*;
+//! # use lay::*;
+//! let style = Style::default() * Red / Blue;
+//! println!("Hello, {}world{}!", style, !style);
 //!
-//! fn main() {
-//!     let style = Style::default() * Red / Blue;
-//!     println!("Hello, {}world{}!", style, !style);
-//!
-//!     let styled = Styled::from("world") + Bold;
-//!     println!("Hello, {}!", styled);
-//! }
+//! let styled = Styled::from("world") + Bold;
+//! println!("Hello, {}!", styled);
 //! ```
 //!
 //! See the [`style`][mod_style] module for details.
