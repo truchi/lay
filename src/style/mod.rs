@@ -234,7 +234,7 @@ mod_style!(
             get_foreground get_foreground_mut
             foreground foreground_mut
             no_foreground no_foreground_mut
-                ResetColor: fg_reset fg_reset_mut
+                ResetColor: reset_color reset_color_mut
                 Rgb: rgb rgb_mut
                 Ansi: ansi ansi_mut
                 White: white white_mut
@@ -261,7 +261,7 @@ mod_style!(
             get_background get_background_mut
             background background_mut
             no_background no_background_mut
-                ResetColor: on_reset on_reset_mut
+                ResetColor: on_reset_color on_reset_color_mut
                 Rgb: on_rgb on_rgb_mut
                 Ansi: on_ansi on_ansi_mut
                 White: on_white on_white_mut
