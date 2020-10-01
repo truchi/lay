@@ -288,44 +288,49 @@ mod tests {
 
     #[test]
     fn conversion() {
-        // TODO
-        assert_eq!(<Reset as Into<Color>>::into(Reset), ResetColor);
+        // From Reset
+        assert_eq!(Color::from(Reset), ResetColor);
+        assert_eq!(Foreground::from(Reset), Foreground(ResetColor));
+        assert_eq!(Background::from(Reset), Background(ResetColor));
+        assert_eq!(Weight::from(Reset), ResetWeight);
+        assert_eq!(Slant::from(Reset), ResetSlant);
+        assert_eq!(Blink::from(Reset), ResetBlink);
+        assert_eq!(Invert::from(Reset), ResetInvert);
+        assert_eq!(Strike::from(Reset), ResetStrike);
+        assert_eq!(Underline::from(Reset), ResetUnderline);
+        assert_eq!(Overline::from(Reset), ResetOverline);
+        assert_eq!(Border::from(Reset), ResetBorder);
 
-        macro_rules! conversion {
-            (
-                Colors {
-                    $($Color:ident $reset_color:ident,)*
-                }
-                Attributes {
-                    $($Attr:ident $reset_attr:ident,)*
-                }
-            ) => {
-                $(
-                    assert_eq!(<Reset as Into<$Color>>::into(Reset), $Color($reset_color));
-                    assert_eq!(<Reset as Into<Option<$Color>>>::into(Reset), Some($Color($reset_color)));
-                )*
-                $(
-                    assert_eq!(<Reset as Into<$Attr>>::into(Reset), $reset_attr);
-                    assert_eq!(<Reset as Into<Option<$Attr>>>::into(Reset), Some($reset_attr));
-                )*
-            };
-        }
-
-        conversion!(
-            Colors {
-                Foreground ResetColor,
-                Background ResetColor,
-            }
-            Attributes {
-                Weight ResetWeight,
-                Slant ResetSlant,
-                Blink ResetBlink,
-                Invert ResetInvert,
-                Strike ResetStrike,
-                Underline ResetUnderline,
-                Overline ResetOverline,
-                Border ResetBorder,
-            }
+        // Option From Reset
+        assert_eq!(
+            Option::<Foreground>::from(Reset),
+            Some(Foreground(ResetColor))
         );
+        assert_eq!(
+            Option::<Background>::from(Reset),
+            Some(Background(ResetColor))
+        );
+        assert_eq!(Option::<Weight>::from(Reset), Some(ResetWeight));
+        assert_eq!(Option::<Slant>::from(Reset), Some(ResetSlant));
+        assert_eq!(Option::<Blink>::from(Reset), Some(ResetBlink));
+        assert_eq!(Option::<Invert>::from(Reset), Some(ResetInvert));
+        assert_eq!(Option::<Strike>::from(Reset), Some(ResetStrike));
+        assert_eq!(Option::<Underline>::from(Reset), Some(ResetUnderline));
+        assert_eq!(Option::<Overline>::from(Reset), Some(ResetOverline));
+        assert_eq!(Option::<Border>::from(Reset), Some(ResetBorder));
+
+        // Option From No
+        assert_eq!(Option::<Foreground>::from(NoColor), None);
+        assert_eq!(Option::<Background>::from(NoColor), None);
+        assert_eq!(Option::<Foreground>::from(NoForeground), None);
+        assert_eq!(Option::<Background>::from(NoBackground), None);
+        assert_eq!(Option::<Weight>::from(NoWeight), None);
+        assert_eq!(Option::<Slant>::from(NoSlant), None);
+        assert_eq!(Option::<Blink>::from(NoBlink), None);
+        assert_eq!(Option::<Invert>::from(NoInvert), None);
+        assert_eq!(Option::<Strike>::from(NoStrike), None);
+        assert_eq!(Option::<Underline>::from(NoUnderline), None);
+        assert_eq!(Option::<Overline>::from(NoOverline), None);
+        assert_eq!(Option::<Border>::from(NoBorder), None);
     }
 }
