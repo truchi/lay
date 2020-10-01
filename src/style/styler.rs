@@ -4,7 +4,7 @@ macro_rules! styler {
         $Reset:ident
         Colors { $(
             $Color:ident($color:ident) $NoColor:ident {
-                $get_color:ident $get_mut_color:ident
+                $get_color:ident
                 $set_color:ident $set_mut_color:ident
                 $unset_color:ident $unset_mut_color:ident
                 Rgb: $set_rgb:ident $set_rgb_mut:ident
@@ -15,7 +15,7 @@ macro_rules! styler {
         )* }
         Attributes { $(
             $Attr:ident($attr:ident) $NoAttr:ident {
-                $get_attr:ident $get_mut_attr:ident
+                $get_attr:ident
                 $set_attr:ident $set_mut_attr:ident
                 $unset_attr:ident $unset_mut_attr:ident
                 $reset_attr:ident: $set_reset_attr:ident $set_reset_mut_attr:ident
