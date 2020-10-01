@@ -18,9 +18,9 @@
 //!   - [`Overline`][overline]: `Overlined`, `ResetOverline`
 //!   - [`Border`][border]: `Frame`, `Circle`, `ResetBorder`
 //!
-//! All those types `Default` to their reset value/variant: colors default to
-//! the user's terminal default foreground/background color, attributes default
-//! to the unsetting CSI. They `Display` the CSI they represent:
+//! All those types `Default` to their reset value: colors default to the user's
+//! terminal default foreground/background color, attributes default to the
+//! unsetting CSI. They `Display` the CSI they represent:
 //!
 //! ```
 //! use lay::*;
@@ -36,6 +36,24 @@
 //! }
 //! ```
 //!
+//! In addition, we provide the `Reset` type which represents the CSI to reset
+//! all colors/attributes:
+//!
+//! ```
+//! use lay::*;
+//!
+//! fn main() {
+//!     println!(
+//!         "{}{}{}{}Hello, world!{} No styles here.",
+//!         Foreground(Red),
+//!         Bold,
+//!         Italic,
+//!         Slow,
+//!         Reset
+//!     );
+//! }
+//! ```
+//!
 //! # Styling
 //!
 //! (We will refer to both colors and attributes as "attributes".)
@@ -46,10 +64,35 @@
 //!
 //! ## `Styler`
 //!
-//! The [`Styler`][styler] trait defines getters and setters for types with
-//! `Option`al attributes, provides lots of convenient methods for a few
-//! required methods and enables styling operations overloads. It can be easily
-//! implemented with the [`impl_styler`][impl_styler] macro.
+//! The [`Styler`][styler] trait is central to working with styles. It
+//! defines getters and setters for types with `Option`al attributes:
+//!
+//! ```
+//! use lay::*;
+//!
+//! // NOTE: Style implements Styler, see below
+//! fn main() {
+//!     let style = Style::default() // All fields are None
+//!         .red() // Red foreground
+//!         .on_green() // Green background
+//!         .bold() // Bold text
+//!         .reset_blink(); // Resets blink
+//!
+//!     assert_eq!(style.get_foreground(), Some(Foreground(Red)));
+//!     assert_eq!(style.get_background(), Some(Background(Green)));
+//!     assert_eq!(style.get_weight(), Some(Bold));
+//!     assert_eq!(style.get_blink(), Some(ResetBlink));
+//!     assert_eq!(style.get_slant(), None);
+//! }
+//! ```
+//!
+//! [`Styler`][styler] enables styling operations overloads for ease or use.
+//!
+//! TODO
+//!
+//! [`Styler`][styler] can easily be implemented with the
+//! [`impl_styler`][impl_styler] macro, and you can generate the operators
+//! overloads with the [`impl_styler_ops`][impl_styler_ops] macro.
 //!
 //! ```
 //! use lay::*;
@@ -89,6 +132,7 @@
 //! [styler]: trait.Styler.html
 //! [style]: struct.Style.html
 //! [impl_styler]: ../macro.impl_styler.html
+//! [impl_styler_ops]: ../macro.impl_styler_ops.html
 
 #[macro_use]
 mod attributes;
