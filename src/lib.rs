@@ -10,7 +10,7 @@
 //! The [`style`][mod_style] module exports the basic types
 //! ([`Foreground`][foreground], [`Background`][background], [`Color`][color],
 //! [`Weight`][weight], ...) you will need to manipulate terminal control
-//! sequences at a rather low level.
+//! sequences manually.
 //!
 //! ```
 //! use lay::*;

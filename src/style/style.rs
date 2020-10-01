@@ -21,7 +21,7 @@ macro_rules! style {
             pub const RESET: Self = Self {
                 $($attr: Some($Reset),)*
             };
-            /// A `Style` with fields set to `None` (`Style::default()`).
+            /// A `Style` with fields set to `None`.
             pub const EMPTY: Self = Self {
                 $($attr: None,)*
             };
@@ -36,6 +36,7 @@ macro_rules! style {
         impl_styler!((style: Style) {
             $(style.$attr,)*
         });
+        impl_styler_ops!((Style));
     };
 }
 

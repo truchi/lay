@@ -37,6 +37,7 @@ impl<T: Display> From<T> for Styled<T> {
 }
 
 impl_styler!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler_ops!(<T: Display,> (Styled<T>));
 
 impl<T: Display> Display for Styled<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
