@@ -86,6 +86,13 @@
 //! }
 //! ```
 //!
+//! It also provides convenients methods for styles manipulation:
+//! - [`and`][styler_and]: `Option::and` fields
+//! - [`or`][styler_or]: `Option::or` fields (inheritance)
+//! - [`xor`][styler_xor]: `Option::xor` fields
+//! - [`dedup`][styler_dedup]: `None`s identical fields
+//! - [`reset`][styler_reset]: Reset fields which are `Some`
+//!
 //! [`Styler`][styler] enables styling operations overloads for ease or use.
 //!
 //! TODO
@@ -130,6 +137,11 @@
 //! [overline]: enum.Overline.html
 //! [border]: enum.Border.html
 //! [styler]: trait.Styler.html
+//! [styler_and]: trait.Styler.html#method.and
+//! [styler_or]: trait.Styler.html#method.or
+//! [styler_xor]: trait.Styler.html#method.xor
+//! [styler_dedup]: trait.Styler.html#method.dedup
+//! [styler_reset]: trait.Styler.html#method.reset
 //! [style]: struct.Style.html
 //! [impl_styler]: ../macro.impl_styler.html
 //! [impl_styler_ops]: ../macro.impl_styler_ops.html
