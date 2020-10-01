@@ -3,7 +3,7 @@ use std::fmt::{Display, Error, Formatter};
 
 #[macro_use]
 macro_rules! style {
-    ($(($attr:ident: $Attr:ty, $Reset:expr))*) => {
+    ($(($attr:ident: $Attr:ty, $set_attr:ident, $Reset:expr))*) => {
         /// `Style`s.
         ///
         /// A straightforward implementation of `Styler`.
@@ -29,13 +29,15 @@ macro_rules! style {
 
         $(impl From<$Attr> for Style {
             fn from($attr: $Attr) -> Self {
-                Self::default() + $attr
+                Self::default().$set_attr($attr)
             }
         })*
 
         impl_styler!((style: Style) {
             $(style.$attr,)*
         });
+
+        #[cfg(feature = "styler-ops")]
         impl_styler_ops!((Style));
     };
 }

@@ -27,6 +27,8 @@ impl<T: Into<Cell>> From<(T, u16, u16)> for Fill {
 }
 
 impl_styler!((fill: Fill) => fill.cell);
+
+#[cfg(feature = "styler-ops")]
 impl_styler_ops!((Fill));
 
 impl_layer!(Fill [fill, x, y] {

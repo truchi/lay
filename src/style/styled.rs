@@ -1,4 +1,4 @@
-use super::Style;
+use super::{Style, Styler};
 use std::fmt::{Display, Error, Formatter};
 
 /// `Display`able `Style`d content.
@@ -37,10 +37,12 @@ impl<T: Display> From<T> for Styled<T> {
 }
 
 impl_styler!(<T: Display,> (styled: Styled<T>) => styled.style);
+
+#[cfg(feature = "styler-ops")]
 impl_styler_ops!(<T: Display,> (Styled<T>));
 
 impl<T: Display> Display for Styled<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}{}{}", self.style, self.content, !self.style)
+        write!(f, "{}{}{}", self.style, self.content, self.style.reset())
     }
 }

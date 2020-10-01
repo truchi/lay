@@ -202,8 +202,8 @@ macro_rules! mod_style {
         )*);
 
         style!(
-            $(($color: $Color, $Color(Color::$reset_color)))*
-            $(($attr: $Attr, $Attr::$reset_attr))*
+            $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
+            $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
         );
 
         styler!(

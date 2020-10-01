@@ -8,5 +8,6 @@ mod doc;
 mod impl_layer;
 #[macro_use]
 mod impl_styler;
+#[cfg(feature = "styler-ops")]
 #[macro_use]
 mod impl_styler_ops;
