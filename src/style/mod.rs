@@ -303,7 +303,7 @@ mod_style!(
         }
     }
     Attributes {
-        /// `Weight` text (`Bold`, `Light`, `ResetBold`).
+        /// `Weight` (`Bold`, `Light`, `ResetBold`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
@@ -316,7 +316,7 @@ mod_style!(
                 Bold("1"): bold bold_mut
                 Light("2"): light light_mut
         }
-        /// `Slant` text (`Italic`, `ResetSlant`).
+        /// `Slant` (`Italic`, `ResetSlant`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
@@ -328,7 +328,7 @@ mod_style!(
                 ResetSlant("23"): reset_slant reset_slant_mut
                 Italic("3"): italic italic_mut
         }
-        /// `Blink` text (`Slow`, `Fast`, `ResetBlink`).
+        /// `Blink` (`Slow`, `Fast`, `ResetBlink`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
@@ -341,7 +341,7 @@ mod_style!(
                 Slow("5"): slow slow_mut
                 Fast("6"): fast fast_mut
         }
-        /// `Invert` text (`Inverted`, `ResetInvert`).
+        /// `Invert` (`Inverted`, `ResetInvert`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
@@ -353,7 +353,7 @@ mod_style!(
                 ResetInvert("27"): reset_invert reset_invert_mut
                 Inverted("7"): inverted inverted_mut
         }
-        /// `Strik` text (`Striked`, `ResetStrike`).
+        /// `Strike` (`Striked`, `ResetStrike`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
@@ -365,7 +365,7 @@ mod_style!(
                 ResetStrike("29"): reset_strike reset_strike_mut
                 Striked("9"): striked striked_mut
         }
-        /// `Underline` text (`Underlined`, `ResetUnderline`).
+        /// `Underline` (`Underlined`, `ResetUnderline`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
@@ -377,7 +377,7 @@ mod_style!(
                 ResetUnderline("24"): reset_underline reset_underline_mut
                 Underlined("4"): underlined underlined_mut
         }
-        /// `Overlined` text (`Overlined`, `ResetOverline`).
+        /// `Overline` (`Overlined`, `ResetOverline`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
@@ -389,7 +389,7 @@ mod_style!(
                 ResetOverline("55"): reset_overline reset_overline_mut
                 Overlined("53"): overlined overlined_mut
         }
-        /// `Border` text (`Frame`, `Circle`, `ResetBorder`).
+        /// `Border` (`Frame`, `Circle`, `ResetBorder`).
         ///
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///

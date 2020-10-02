@@ -2,7 +2,7 @@ use super::{Background, Foreground};
 
 pub use Color::*;
 
-/// A `Color`.
+/// A `Color` for `Foreground` & `Background`.
 ///
 /// To be used with [`Foreground`][foreground] and [`Background`][background] (a
 /// `Color` on its own does not `impl Display`).
