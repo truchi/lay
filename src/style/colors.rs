@@ -90,10 +90,10 @@ macro_rules! colors {
             }
 
             $crate::doc!("Returns `Some(" stringify!($Name) "(color))`.",
-            impl Into<Option<$Name>> for Color {
+            impl From<Color> for Option<$Name> {
                 $crate::doc!("Returns `Some(" stringify!($Name) "(color))`.",
-                fn into(self) -> Option<$Name> {
-                    Some($Name(self))
+                fn from(color: Color) -> Self {
+                    Some($Name(color))
                 });
             });
 

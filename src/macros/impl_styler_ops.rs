@@ -2,54 +2,63 @@
 #[macro_export]
 macro_rules! impl_styler_ops {
     ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($Type:ty)) => {
-        $crate::__impl_styler_ops!([ops] $Type {
+        $crate::__impl_styler_ops!([ops colors] $Type {
             "Foreground",
-            <$($($G $(: $($B)+)?,)+)?> Mul(mul) MulAssign(mul_assign)
-                foreground_mut(foreground: Color NoColor) $crate::Foreground(foreground),
+            <$($($G $(: $($B)+)?,)+)?>
+                Mul(mul) MulAssign(mul_assign)
+                foreground_mut(foreground: Foreground),
             "Background",
-            <$($($G $(: $($B)+)?,)+)?> Div(div) DivAssign(div_assign)
-                background_mut(background: Color NoColor) $crate::Background(background),
+            <$($($G $(: $($B)+)?,)+)?>
+                Div(div) DivAssign(div_assign)
+                background_mut(background: Background),
+        });
+
+        $crate::__impl_styler_ops!([ops attributes] $Type {
             "Foreground",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                foreground_mut(foreground: Foreground NoForeground) foreground,
+            <$($($G $(: $($B)+)?,)+)?>
+                foreground_mut(foreground: Foreground NoForeground),
             "Background",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                background_mut(background: Background NoBackground) background,
+            <$($($G $(: $($B)+)?,)+)?>
+                background_mut(background: Background NoBackground),
             "Weight",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                weight_mut(weight: Weight NoWeight) weight,
+            <$($($G $(: $($B)+)?,)+)?>
+                weight_mut(weight: Weight NoWeight),
             "Slant",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                slant_mut(slant: Slant NoSlant) slant,
+            <$($($G $(: $($B)+)?,)+)?>
+                slant_mut(slant: Slant NoSlant),
             "Blink",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                blink_mut(blink: Blink NoBlink) blink,
+            <$($($G $(: $($B)+)?,)+)?>
+                blink_mut(blink: Blink NoBlink),
             "Invert",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                invert_mut(invert: Invert NoInvert) invert,
+            <$($($G $(: $($B)+)?,)+)?>
+                invert_mut(invert: Invert NoInvert),
             "Strike",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                strike_mut(strike: Strike NoStrike) strike,
+            <$($($G $(: $($B)+)?,)+)?>
+                strike_mut(strike: Strike NoStrike),
             "Underline",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                underline_mut(underline: Underline NoUnderline) underline,
+            <$($($G $(: $($B)+)?,)+)?>
+                underline_mut(underline: Underline NoUnderline),
             "Overline",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                overline_mut(overline: Overline NoOverline) overline,
+            <$($($G $(: $($B)+)?,)+)?>
+                overline_mut(overline: Overline NoOverline),
             "Border",
-            <$($($G $(: $($B)+)?,)+)?> Add(add) AddAssign(add_assign)
-                border_mut(border: Border NoBorder) border,
+            <$($($G $(: $($B)+)?,)+)?>
+                border_mut(border: Border NoBorder),
         });
 
         $crate::__impl_styler_ops!([bit] $Type {
             "`Option::and` fields",
-            <$($($G $(: $($B)+)?,)+)?> BitAnd(bitand) BitAndAssign(bitand_assign) and_mut,
+            <$($($G $(: $($B)+)?,)+)?>
+                BitAnd(bitand) BitAndAssign(bitand_assign) and_mut,
             "`Option::or` fields",
-            <$($($G $(: $($B)+)?,)+)?> BitOr(bitor) BitOrAssign(bitor_assign) or_mut,
+            <$($($G $(: $($B)+)?,)+)?>
+                BitOr(bitor) BitOrAssign(bitor_assign) or_mut,
             "`Option::xor` fields",
-            <$($($G $(: $($B)+)?,)+)?> BitXor(bitxor) BitXorAssign(bitxor_assign) xor_mut,
+            <$($($G $(: $($B)+)?,)+)?>
+                BitXor(bitxor) BitXorAssign(bitxor_assign) xor_mut,
             "Dedups (`None`s if identicals) fields",
-            <$($($G $(: $($B)+)?,)+)?> Rem(rem) RemAssign(rem_assign) dedup_mut,
+            <$($($G $(: $($B)+)?,)+)?>
+                Rem(rem) RemAssign(rem_assign) dedup_mut,
         });
 
         $crate::__impl_styler_ops!(trait unary $Type {
@@ -62,18 +71,30 @@ macro_rules! impl_styler_ops {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_styler_ops {
-    ([ops] $Type:ty { $(
+    ([ops colors] $Type:ty { $(
         $($doc:expr)*,
         <$($G:ident $(: $($B:path)+)?,)*>
         $Op:ident($op:ident) $OpAssign:ident($op_assign:ident)
-        $fn:ident($rhs:tt: $Rhs:ident $NoRhs:ident) $body:expr,
+        $fn:ident($rhs:tt: $Rhs:ident),
     )* }) => {
         __impl_styler_ops!(trait binary $Type { $(
             "Sets `Option<" $($doc)* ">`",
-            <$($G $(: $($B)+)?,)*> $Op($op) $OpAssign($op_assign)
-            $fn($rhs: $crate::$Rhs) Some($body),
+            <$($G $(: $($B)+)?,)* Color: std::convert::Into<std::option::Option<$crate::$Rhs>>,>
+            $Op($op) $OpAssign($op_assign)
+            $fn($rhs: Color) $rhs,
+        )* });
+    };
+    ([ops attributes] $Type:ty { $(
+        $($doc:expr)*,
+        <$($G:ident $(: $($B:path)+)?,)*>
+        $fn:ident($rhs:tt: $Rhs:ident $NoRhs:ident),
+    )* }) => {
+        __impl_styler_ops!(trait binary $Type { $(
+            "Sets `Option<" $($doc)* ">`",
+            <$($G $(: $($B)+)?,)*> Add(add) AddAssign(add_assign)
+            $fn($rhs: $crate::$Rhs) Some($rhs),
             "Sets " stringify!($rhs) " to `None`",
-            <$($G $(: $($B)+)?,)*> $Op($op) $OpAssign($op_assign)
+            <$($G $(: $($B)+)?,)*> Add(add) AddAssign(add_assign)
             $fn(_: $crate::$NoRhs) None,
         )* });
     };

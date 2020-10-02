@@ -105,12 +105,9 @@
 //!
 //! ```
 //! # use lay::*;
-//! let style = Style::default() * NoColor / NoColor
-//!     + NoForeground
-//!     + NoBackground
-//!     + NoWeight
-//!     + NoSlant
-//!     + NoBlink; // etc...
+//! let style =
+//!     Style::default() * None / None + NoForeground + NoBackground + NoWeight + NoSlant + NoBlink;
+//! // etc...
 //! ```
 //!
 //! [`Styler`][styler] can easily be implemented with the
@@ -181,8 +178,6 @@ macro_rules! mod_style {
     (
         $(#[$meta_reset:meta])*
         $Reset:ident
-        $(#[$meta_no_both:meta])*
-        $NoBoth:ident
         Colors { $(
             $(#[$meta_color:meta])*
             $Color:ident($color:ident) $NoColor:ident ($str_color:literal $str_reset_color:literal) {
@@ -224,8 +219,6 @@ macro_rules! mod_style {
         styler!(
             $(#[$meta_reset])*
             $Reset
-            $(#[$meta_no_both])*
-            $NoBoth
             Colors { $(
                 $Color($color) $NoColor {
                     $get_color
@@ -253,8 +246,6 @@ macro_rules! mod_style {
 mod_style!(
     /// `Reset`s all terminal attributes.
     Reset
-    /// Sets `Option<Foreground>` or `Option<Background>` to `None`.
-    NoColor
     Colors {
         /// A `Foreground` `Color`.
         ///
