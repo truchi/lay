@@ -17,13 +17,13 @@ macro_rules! style {
         }
 
         impl Style {
+            /// A `Style` with fields set to `None`.
+            pub const NONE: Self = Self {
+                $($attr: None,)*
+            };
             /// A `Style` with fields set to their reset value.
             pub const RESET: Self = Self {
                 $($attr: Some($Reset),)*
-            };
-            /// A `Style` with fields set to `None`.
-            pub const EMPTY: Self = Self {
-                $($attr: None,)*
             };
         }
 
@@ -55,6 +55,7 @@ mod tests {
 
     #[test]
     fn consts() {
+        assert_eq!(Style::NONE, Style::default());
         assert_eq!(Style::RESET, Style {
             foreground: Some(Foreground(ResetColor)),
             background: Some(Background(ResetColor)),
@@ -67,7 +68,6 @@ mod tests {
             overline:   Some(ResetOverline),
             border:     Some(ResetBorder),
         });
-        assert_eq!(Style::EMPTY, Style::default());
     }
 
     #[test]

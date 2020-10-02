@@ -89,7 +89,8 @@
 //! ### Styling operations overloads
 //!
 //! For an easier use of styles, [`Styler`][styler] enables styling operations
-//! overloads. The above example could be written:
+//! overloads. The above example could be written with the `Add` (+), `Mul` (*)
+//! and `Div` (/) setters:
 //!
 //! ```
 //! # use lay::*;
@@ -102,6 +103,10 @@
 //!     + Bold
 //!     + ResetBlink;
 //! ```
+//!
+//! Moreover, `BitAnd` (&) is [`and`][styler_and], `BitOr` (|) is
+//! [`or`][styler_or], `BitXor` (^) is [`xor`][styler_xor], `Rem` (%) is
+//! [`dedup`][styler_dedup] and `Not` (!) is [`reset`][styler_reset].
 //!
 //! `lay` defines handy unit struct to `None` their corresponding attribute
 //! fields:
@@ -121,18 +126,24 @@
 //!     + NoBorder;
 //! ```
 //!
-//! You can generate the operators overloads on your own `Styler` types with the
+//! Those overloads are implemented on all `lay`'s `Styler` types. You can
+//! generate the operators overloads on your own `Styler` types with the
 //! [`impl_styler_ops`][impl_styler_ops] macro.
 //!
-//! You can disable styling operations overloads
-//! ([`impl_styler_ops`][impl_styler_ops] and the `No[Attr]` structs) by opting
-//! out of the `styler-ops` default feature.
+//! You can disable styling operations overloads by opting out of the
+//! `styler-ops` default feature.
 //!
 //! # `Style`
 //!
 //! The [`Style`][style] struct is the most simple implementation of `Styler`
 //! you can think of: it has a field for each attribute wrapped in an `Option`.
-//! It implements styling operations overloads.
+//! It `Display`s as the CSIs of its `Some` fields.
+//!
+//! ```
+//! # use lay::*;
+//! let style = Style::default() * Red / Blue;
+//! println!("Hello, {}world{}!", style, !style);
+//! ```
 //!
 //! [foreground]: struct.Foreground.html
 //! [background]: struct.Background.html
@@ -152,6 +163,7 @@
 //! [styler_dedup]: trait.Styler.html#method.dedup
 //! [styler_reset]: trait.Styler.html#method.reset
 //! [style]: struct.Style.html
+//! [styled]: struct.Styled.html
 //! [impl_styler]: ../macro.impl_styler.html
 //! [impl_styler_ops]: ../macro.impl_styler_ops.html
 
