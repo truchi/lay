@@ -74,12 +74,19 @@
 //! assert_eq!(style.get_background(), Some(Background(Green)));
 //! assert_eq!(style.get_weight(), Some(Bold));
 //! assert_eq!(style.get_blink(), Some(ResetBlink));
-//! assert_eq!(style.get_slant(), None);
+//! assert_eq!(style.get_slant(), None); // etc..
 //! ```
 //!
 //! It also provides convenients methods for styles manipulation:
-//! [`and`][styler_and], [`or`][styler_or], [`xor`][styler_xor],
-//! [`dedup`][styler_dedup], [`reset`][styler_reset].
+//! [`and`][styler_and] (`Option::and` fields), [`or`][styler_or] (`Option::or`
+//! fields), [`xor`][styler_xor] (`Option::xor` fields),
+//! [`dedup`][styler_dedup] (`None`s when identical fields),
+//! [`reset`][styler_reset] (reset `Some` fields).
+//!
+//! [`Styler`][styler] can easily be implemented on your own types with the
+//! [`impl_styler`][impl_styler] macro.
+//!
+//! ### Styling operations overloads
 //!
 //! For an easier use of styles, [`Styler`][styler] enables styling operations
 //! overloads. The above example could be written:
@@ -97,26 +104,29 @@
 //! ```
 //!
 //! `lay` defines handy unit struct to `None` their corresponding attribute
-//! fields: [`NoColor`][no_color], [`NoForeground`][no_foreground],
-//! [`NoBackground`][no_background], [`NoWeight`][no_weight],
-//! [`NoSlant`][no_slant], [`NoBlink`][no_blink], [`NoInvert`][no_invert],
-//! [`NoStrike`][no_strike], [`NoUnderline`][no_underline],
-//! [`NoOverline`][no_overline], [`NoBorder`][no_border].
+//! fields:
 //!
 //! ```
 //! # use lay::*;
-//! let style =
-//!     Style::default() * None / None + NoForeground + NoBackground + NoWeight + NoSlant + NoBlink;
-//! // etc...
+//! let style = Style::default()
+//!     + NoForeground // ~= * None
+//!     + NoBackground // ~= / None
+//!     + NoWeight
+//!     + NoSlant
+//!     + NoBlink
+//!     + NoInvert
+//!     + NoStrike
+//!     + NoUnderline
+//!     + NoOverline
+//!     + NoBorder;
 //! ```
 //!
-//! [`Styler`][styler] can easily be implemented with the
-//! [`impl_styler`][impl_styler] macro, and you can generate the operators
-//! overloads with the [`impl_styler_ops`][impl_styler_ops] macro.
+//! You can generate the operators overloads on your own `Styler` types with the
+//! [`impl_styler_ops`][impl_styler_ops] macro.
 //!
-//! You can disable styling operations overloads (and
-//! [`impl_styler_ops`][impl_styler_ops]) by opting out of the `styler-ops`
-//! default feature.
+//! You can disable styling operations overloads
+//! ([`impl_styler_ops`][impl_styler_ops] and the `No[Attr]` structs) by opting
+//! out of the `styler-ops` default feature.
 //!
 //! # `Style`
 //!
@@ -141,17 +151,6 @@
 //! [styler_xor]: trait.Styler.html#method.xor
 //! [styler_dedup]: trait.Styler.html#method.dedup
 //! [styler_reset]: trait.Styler.html#method.reset
-//! [no_color]: struct.NoColor.html
-//! [no_foreground]: struct.NoForeground.html
-//! [no_background]: struct.NoBackground.html
-//! [no_weight]: struct.NoWeight.html
-//! [no_slant]: struct.NoSlant.html
-//! [no_blink]: struct.NoBlink.html
-//! [no_invert]: struct.NoInvert.html
-//! [no_strike]: struct.NoStrike.html
-//! [no_underline]: struct.NoUnderline.html
-//! [no_overline]: struct.NoOverline.html
-//! [no_border]: struct.NoBorder.html
 //! [style]: struct.Style.html
 //! [impl_styler]: ../macro.impl_styler.html
 //! [impl_styler_ops]: ../macro.impl_styler_ops.html

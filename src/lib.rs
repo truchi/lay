@@ -10,7 +10,7 @@
 //! ## Styles
 //!
 //! The [`style`][mod_style] module exports the basic types
-//! ([`Foreground`][foreground], [`Background`][background], [`Color`][color],
+//! ([`Color`][color], [`Foreground`][foreground], [`Background`][background],
 //! [`Weight`][weight], ...) you will need to manipulate terminal control
 //! sequences manually.
 //!
