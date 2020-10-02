@@ -58,8 +58,8 @@
 //!
 //! ## `Styler`
 //!
-//! The [`Styler`][styler] trait is central to working with styles. It
-//! defines getters and setters for types with `Option`al attributes:
+//! The [`Styler`][styler] trait is at the heart of styles. It defines getters
+//! and setters for types with `Option`al attributes:
 //!
 //! ```
 //! # use lay::*;
@@ -68,7 +68,7 @@
 //!     .red() // Red foreground
 //!     .on_green() // Green background
 //!     .bold() // Bold text
-//!     .reset_blink(); // Resets blink
+//!     .reset_blink(); // Reset blink
 //!
 //! assert_eq!(style.get_foreground(), Some(Foreground(Red)));
 //! assert_eq!(style.get_background(), Some(Background(Green)));
@@ -87,11 +87,17 @@
 //! ```
 //! # use lay::*;
 //! // NOTE: Style implements Styler's operators overloads, see below
-//! let style = Style::default() * Red / Green + Bold + ResetBlink;
+//! let style = Style::default()
+//!     * Red // Mul for foreground
+//!     / Green // Div for background
+//!     + Foreground(Red) // Add for everything
+//!     + Background(Green)
+//!     + Bold
+//!     + ResetBlink;
 //! ```
 //!
-//! `lay` defines handy unit struct to `None` attribute fields:
-//! [`NoColor`][no_color], [`NoForeground`][no_foreground],
+//! `lay` defines handy unit struct to `None` their corresponding attribute
+//! fields: [`NoColor`][no_color], [`NoForeground`][no_foreground],
 //! [`NoBackground`][no_background], [`NoWeight`][no_weight],
 //! [`NoSlant`][no_slant], [`NoBlink`][no_blink], [`NoInvert`][no_invert],
 //! [`NoStrike`][no_strike], [`NoUnderline`][no_underline],
@@ -99,11 +105,12 @@
 //!
 //! ```
 //! # use lay::*;
-//! let style = Style::default() // TODO
-//!     // .foreground(NoColor)
-//!     .foreground(NoForeground)
-//!     // .background(NoColor)
-//!     .background(NoBackground);
+//! let style = Style::default() * NoColor / NoColor
+//!     + NoForeground
+//!     + NoBackground
+//!     + NoWeight
+//!     + NoSlant
+//!     + NoBlink; // etc...
 //! ```
 //!
 //! [`Styler`][styler] can easily be implemented with the
