@@ -5,6 +5,8 @@
 #[macro_use]
 mod doc;
 #[macro_use]
+mod impl_into_style;
+#[macro_use]
 mod impl_layer;
 #[macro_use]
 mod impl_styler;

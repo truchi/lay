@@ -31,6 +31,8 @@ impl_styler!((fill: Fill) => fill.cell);
 #[cfg(feature = "styler-ops")]
 impl_styler_ops!((Fill));
 
+impl_into_style!((Fill));
+
 impl_layer!(Fill [fill, x, y] {
     Layer { fill.width } { fill.height } { fill.cell }
     Index { &fill.cell }
