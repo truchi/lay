@@ -105,10 +105,12 @@ macro_rules! __styler {
         );)*
     };
     ([No] $Self:ident $No:ident) => {
+        #[cfg(feature = "styler-ops")]
         $crate::doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
         #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
         pub struct $No;);
 
+        #[cfg(feature = "styler-ops")]
         $crate::doc!("Returns `None`.",
         impl From<$No> for Option<$Self> {
             $crate::doc!("Returns `None`.",
