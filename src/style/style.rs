@@ -40,8 +40,10 @@ macro_rules! style {
             [StylerMut] { $($attr { style.$attr = $attr; })* }
         });
 
-        // #[cfg(feature = "styler-ops")]
-        // impl_styler_ops!((Style));
+        #[cfg(feature = "styler-ops")]
+        impl_styler_ops!(Style);
+        #[cfg(feature = "styler-ops")]
+        impl_styler_mut_ops!(Style);
     };
 }
 

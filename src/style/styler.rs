@@ -109,9 +109,9 @@ macro_rules! styler {
                 );
             )*
 
-            __styler!([and mut] and $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            __styler!([or  mut] or  $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            __styler!([xor mut] xor $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
+            __styler!([and mut] and_mut $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
+            __styler!([or  mut] or_mut  $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
+            __styler!([xor mut] xor_mut $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
             __styler!([dedup mut] $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
             __styler!([reset mut]
                 $($get_color $set_mut_color($Color(Color::$reset_color)))*

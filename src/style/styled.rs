@@ -43,8 +43,10 @@ impl_styler!((styled: Styled<T>) {
     [StylerMut] <T: Display,> => styled.style,
 } );
 
-// #[cfg(feature = "styler-ops")]
-// impl_styler_ops!(<T: Display,> (Styled<T>));
+#[cfg(feature = "styler-ops")]
+impl_styler_ops!(<T: Display,> Styled<T>);
+#[cfg(feature = "styler-ops")]
+impl_styler_mut_ops!(<T: Display,> Styled<T>);
 
 impl_into_style!(<T: Display,> (Styled<T>));
 
