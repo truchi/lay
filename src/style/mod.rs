@@ -174,14 +174,14 @@ mod attributes;
 #[macro_use]
 mod colors;
 #[macro_use]
-// mod style;
+mod style;
 // mod styled;
-// #[macro_use]
+#[macro_use]
 mod styler;
 
 pub use attributes::*;
 pub use colors::*;
-// pub use style::*;
+pub use style::*;
 // pub use styled::*;
 pub use styler::*;
 
@@ -224,10 +224,10 @@ macro_rules! mod_style {
             $Attr: $($variant_attr($str_attr))* + $reset_attr($str_reset_attr)
         )*);
 
-        // style!(
-            // $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
-            // $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
-        // );
+        style!(
+            $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
+            $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
+        );
 
         styler!(
             $(#[$meta_reset])*
