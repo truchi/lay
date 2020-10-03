@@ -130,6 +130,8 @@
 //! generate the operators overloads on your own `Styler` types with the
 //! [`impl_styler_ops`][impl_styler_ops] macro.
 //!
+//! Finally, similar overloads are implemented on attributes types. TODO
+//!
 //! You can disable styling operations overloads by opting out of the
 //! `styler-ops` default feature.
 //!

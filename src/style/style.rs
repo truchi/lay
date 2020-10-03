@@ -29,7 +29,7 @@ macro_rules! style {
 
         $(impl From<$Attr> for Style {
             fn from($attr: $Attr) -> Self {
-                Self::default().$set_attr($attr)
+                Style::NONE.$set_attr($attr)
             }
         })*
 
