@@ -33,17 +33,11 @@ macro_rules! style {
             }
         })*
 
-        impl_styler!([StylerIndex] (style: Style) {
-            $({ style.$attr })*
-        });
-        impl_styler!([StylerIndexMut] (style: Style) {
-            $({ &mut style.$attr })*
-        });
-        impl_styler!([Styler] (style: Style) {
-            $(($attr: $Attr) { style.$attr = $attr; style })*
-        });
-        impl_styler!([StylerMut] (style: Style) {
-            $(($attr: $Attr) { style.$attr = $attr; })*
+        impl_styler!((style: Style) {
+            [StylerIndex] { $({ style.$attr })* }
+            [StylerIndexMut] { $({ &mut style.$attr })* }
+            [Styler] { $($attr { style.$attr = $attr; style })* }
+            [StylerMut] { $($attr { style.$attr = $attr; })* }
         });
 
         // #[cfg(feature = "styler-ops")]

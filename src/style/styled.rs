@@ -36,12 +36,17 @@ impl<T: Display> From<T> for Styled<T> {
     }
 }
 
-impl_styler!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler!((styled: Styled<T>) {
+    [StylerIndex] <T: Display,> => styled.style,
+    [StylerIndexMut] <T: Display,> => styled.style,
+    [Styler] <T: Display,> => styled.style,
+    [StylerMut] <T: Display,> => styled.style,
+} );
 
-#[cfg(feature = "styler-ops")]
-impl_styler_ops!(<T: Display,> (Styled<T>));
-
-impl_into_style!(<T: Display,> (Styled<T>));
+// #[cfg(feature = "styler-ops")]
+// impl_styler_ops!(<T: Display,> (Styled<T>));
+//
+// impl_into_style!(<T: Display,> (Styled<T>));
 
 impl<T: Display> Display for Styled<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {

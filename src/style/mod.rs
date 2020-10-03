@@ -175,14 +175,14 @@ mod attributes;
 mod colors;
 #[macro_use]
 mod style;
-// mod styled;
+mod styled;
 #[macro_use]
 mod styler;
 
 pub use attributes::*;
 pub use colors::*;
 pub use style::*;
-// pub use styled::*;
+pub use styled::*;
 pub use styler::*;
 
 use std::fmt::{Display, Error, Formatter};
