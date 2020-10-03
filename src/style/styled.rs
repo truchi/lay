@@ -36,12 +36,10 @@ impl<T: Display> From<T> for Styled<T> {
     }
 }
 
-impl_styler!((styled: Styled<T>) {
-    [StylerIndex] <T: Display,> => styled.style,
-    [StylerIndexMut] <T: Display,> => styled.style,
-    [Styler] <T: Display,> => styled.style,
-    [StylerMut] <T: Display,> => styled.style,
-} );
+impl_styler_index!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler_index_mut!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler_mut!(<T: Display,> (styled: Styled<T>) => styled.style);
 
 #[cfg(feature = "styler-ops")]
 impl_styler_ops!(<T: Display,> Styled<T>);

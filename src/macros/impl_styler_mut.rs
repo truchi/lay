@@ -1,6 +1,6 @@
-/// Implements `Styler`.
+/// Implements `StylerMut`.
 #[macro_export]
-macro_rules! impl_styler {
+macro_rules! impl_styler_mut {
     ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path)
         $({
             $foreground:tt $foreground_expr:expr,
@@ -16,7 +16,7 @@ macro_rules! impl_styler {
         })?
         $(=> $styler:expr)?
     ) => {
-        $crate::__impl_styler!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self)
+        $crate::__impl_styler_mut!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self)
             $(=> $styler)?
             $({
                 $foreground { let $foreground = $foreground.into(); $foreground_expr },
@@ -36,19 +36,19 @@ macro_rules! impl_styler {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __impl_styler {
+macro_rules! __impl_styler_mut {
     ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path) => $styler:expr) => {
-        $crate::__impl_styler!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) {
-            foreground { $crate::Styler::foreground($styler, foreground); $self },
-            background { $crate::Styler::background($styler, background); $self },
-            weight     { $crate::Styler::weight    ($styler, weight);     $self },
-            slant      { $crate::Styler::slant     ($styler, slant);      $self },
-            blink      { $crate::Styler::blink     ($styler, blink);      $self },
-            invert     { $crate::Styler::invert    ($styler, invert);     $self },
-            strike     { $crate::Styler::strike    ($styler, strike);     $self },
-            underline  { $crate::Styler::underline ($styler, underline);  $self },
-            overline   { $crate::Styler::overline  ($styler, overline);   $self },
-            border     { $crate::Styler::border    ($styler, border);     $self },
+        $crate::__impl_styler_mut!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) {
+            foreground $crate::StylerMut::foreground_mut(&mut $styler, foreground),
+            background $crate::StylerMut::background_mut(&mut $styler, background),
+            weight     $crate::StylerMut::weight_mut    (&mut $styler, weight),
+            slant      $crate::StylerMut::slant_mut     (&mut $styler, slant),
+            blink      $crate::StylerMut::blink_mut     (&mut $styler, blink),
+            invert     $crate::StylerMut::invert_mut    (&mut $styler, invert),
+            strike     $crate::StylerMut::strike_mut    (&mut $styler, strike),
+            underline  $crate::StylerMut::underline_mut (&mut $styler, underline),
+            overline   $crate::StylerMut::overline_mut  (&mut $styler, overline),
+            border     $crate::StylerMut::border_mut    (&mut $styler, border),
         });
     };
     ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path) {
@@ -63,25 +63,24 @@ macro_rules! __impl_styler {
         $overline:tt   $overline_expr:expr,
         $border:tt     $border_expr:expr,
     }) => {
-        impl $(<$($G $(: $($B +)+)?,)+>)? $crate::Styler for $Self {
-            $crate::__impl_styler!(foreground($self, $foreground: Foreground) $foreground_expr);
-            $crate::__impl_styler!(background($self, $background: Background) $background_expr);
-            $crate::__impl_styler!(weight    ($self, $weight:     Weight)     $weight_expr);
-            $crate::__impl_styler!(slant     ($self, $slant:      Slant)      $slant_expr);
-            $crate::__impl_styler!(blink     ($self, $blink:      Blink)      $blink_expr);
-            $crate::__impl_styler!(invert    ($self, $invert:     Invert)     $invert_expr);
-            $crate::__impl_styler!(strike    ($self, $strike:     Strike)     $strike_expr);
-            $crate::__impl_styler!(underline ($self, $underline:  Underline)  $underline_expr);
-            $crate::__impl_styler!(overline  ($self, $overline:   Overline)   $overline_expr);
-            $crate::__impl_styler!(border    ($self, $border:     Border)     $border_expr);
+        impl $(<$($G $(: $($B +)+)?,)+>)? $crate::StylerMut for $Self {
+            $crate::__impl_styler_mut!(foreground_mut($self, $foreground: Foreground) $foreground_expr);
+            $crate::__impl_styler_mut!(background_mut($self, $background: Background) $background_expr);
+            $crate::__impl_styler_mut!(weight_mut    ($self, $weight:     Weight)     $weight_expr);
+            $crate::__impl_styler_mut!(slant_mut     ($self, $slant:      Slant)      $slant_expr);
+            $crate::__impl_styler_mut!(blink_mut     ($self, $blink:      Blink)      $blink_expr);
+            $crate::__impl_styler_mut!(invert_mut    ($self, $invert:     Invert)     $invert_expr);
+            $crate::__impl_styler_mut!(strike_mut    ($self, $strike:     Strike)     $strike_expr);
+            $crate::__impl_styler_mut!(underline_mut ($self, $underline:  Underline)  $underline_expr);
+            $crate::__impl_styler_mut!(overline_mut  ($self, $overline:   Overline)   $overline_expr);
+            $crate::__impl_styler_mut!(border_mut    ($self, $border:     Border)     $border_expr);
         }
     };
 
     ($set:ident($self:ident, $attr:tt: $Attr:ident) $body:expr) => {
-        fn $set(self, $attr: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) -> Self {
-            #[allow(unused_mut)]
-            let mut $self = self;
-            $body
+        fn $set(&mut self, $attr: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) {
+            let $self = self;
+            $body;
         }
     };
 }

@@ -8,6 +8,12 @@ mod doc;
 #[macro_use]
 mod impl_styler;
 #[macro_use]
+mod impl_styler_mut;
+#[macro_use]
+mod impl_styler_index;
+#[macro_use]
+mod impl_styler_index_mut;
+#[macro_use]
 mod impl_into_style;
 #[cfg(feature = "styler-ops")]
 #[macro_use]
