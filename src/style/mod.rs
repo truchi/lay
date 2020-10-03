@@ -174,15 +174,15 @@ mod attributes;
 #[macro_use]
 mod colors;
 #[macro_use]
-mod style;
-mod styled;
-#[macro_use]
+// mod style;
+// mod styled;
+// #[macro_use]
 mod styler;
 
 pub use attributes::*;
 pub use colors::*;
-pub use style::*;
-pub use styled::*;
+// pub use style::*;
+// pub use styled::*;
 pub use styler::*;
 
 use std::fmt::{Display, Error, Formatter};
@@ -194,7 +194,7 @@ macro_rules! mod_style {
         Colors { $(
             $(#[$meta_color:meta])*
             $Color:ident($color:ident) $NoColor:ident ($str_color:literal $str_reset_color:literal) {
-                $get_color:ident
+                $get_color:ident $get_mut_color:ident
                 $set_color:ident $set_mut_color:ident
                 $unset_color:ident $unset_mut_color:ident
                 $reset_color:ident: $set_reset_color:ident $set_reset_mut_color:ident
@@ -206,7 +206,7 @@ macro_rules! mod_style {
         Attributes { $(
             $(#[$meta_attr:meta])*
             $Attr:ident($attr:ident) $NoAttr:ident {
-                $get_attr:ident
+                $get_attr:ident $get_mut_attr:ident
                 $set_attr:ident $set_mut_attr:ident
                 $unset_attr:ident $unset_mut_attr:ident
                 $reset_attr:ident($str_reset_attr:literal): $set_reset_attr:ident $set_reset_mut_attr:ident
@@ -224,17 +224,17 @@ macro_rules! mod_style {
             $Attr: $($variant_attr($str_attr))* + $reset_attr($str_reset_attr)
         )*);
 
-        style!(
-            $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
-            $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
-        );
+        // style!(
+            // $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
+            // $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
+        // );
 
         styler!(
             $(#[$meta_reset])*
             $Reset
             Colors { $(
                 $Color($color) $NoColor {
-                    $get_color
+                    $get_color $get_mut_color
                     $set_color $set_mut_color
                     $unset_color $unset_mut_color
                     Rgb: $set_rgb $set_rgb_mut
@@ -245,7 +245,7 @@ macro_rules! mod_style {
             )* }
             Attributes { $(
                 $Attr($attr) $NoAttr {
-                    $get_attr
+                    $get_attr $get_mut_attr
                     $set_attr $set_mut_attr
                     $unset_attr $unset_mut_attr
                     $reset_attr: $set_reset_attr $set_reset_mut_attr
@@ -266,7 +266,7 @@ mod_style!(
         ///
         /// `Default`s to `Foreground(Color::ResetColor)`, user's default terminal foreground color.
         Foreground(foreground) NoForeground ("38;" "39") {
-            get_foreground
+            get_foreground get_foreground_mut
             foreground foreground_mut
             no_foreground no_foreground_mut
                 ResetColor: reset_color reset_color_mut
@@ -293,7 +293,7 @@ mod_style!(
         ///
         /// `Default`s to `Background(Color::ResetColor)`, user's default terminal background color.
         Background(background) NoBackground ("48;" "49") {
-            get_background
+            get_background get_background_mut
             background background_mut
             no_background no_background_mut
                 ResetColor: on_reset_color on_reset_color_mut
@@ -322,7 +322,7 @@ mod_style!(
         ///
         /// `Default`s to `ResetWeight`, the weight unsetting CSI.
         Weight(weight) NoWeight {
-            get_weight
+            get_weight get_weight_mut
             weight weight_mut
             no_weight no_weight_mut
                 ResetWeight("22"): reset_weight reset_weight_mut
@@ -335,7 +335,7 @@ mod_style!(
         ///
         /// `Default`s to `ResetSlant`, the slant unsetting CSI.
         Slant(slant) NoSlant {
-            get_slant
+            get_slant get_slant_mut
             slant slant_mut
             no_slant no_slant_mut
                 ResetSlant("23"): reset_slant reset_slant_mut
@@ -347,7 +347,7 @@ mod_style!(
         ///
         /// `Default`s to `ResetBlink`, the blink unsetting CSI.
         Blink(blink) NoBlink {
-            get_blink
+            get_blink get_blink_mut
             blink blink_mut
             no_blink no_blink_mut
                 ResetBlink("25"): reset_blink reset_blink_mut
@@ -360,7 +360,7 @@ mod_style!(
         ///
         /// `Default`s to `ResetInvert`, the invert unsetting CSI.
         Invert(invert) NoInvert {
-            get_invert
+            get_invert get_invert_mut
             invert invert_mut
             no_invert no_invert_mut
                 ResetInvert("27"): reset_invert reset_invert_mut
@@ -372,7 +372,7 @@ mod_style!(
         ///
         /// `Default`s to `ResetStrike`, the strike unsetting CSI.
         Strike(strike) NoStrike {
-            get_strike
+            get_strike get_strike_mut
             strike strike_mut
             no_strike no_strike_mut
                 ResetStrike("29"): reset_strike reset_strike_mut
@@ -384,7 +384,7 @@ mod_style!(
         ///
         /// `Default`s to `ResetUnderline`, the underline unsetting CSI.
         Underline(underline) NoUnderline {
-            get_underline
+            get_underline get_underline_mut
             underline underline_mut
             no_underline no_underline_mut
                 ResetUnderline("24"): reset_underline reset_underline_mut
@@ -396,7 +396,7 @@ mod_style!(
         ///
         /// `Default`s to `ResetOverline`, the overline unsetting CSI.
         Overline(overline) NoOverline {
-            get_overline
+            get_overline get_overline_mut
             overline overline_mut
             no_overline no_overline_mut
                 ResetOverline("55"): reset_overline reset_overline_mut
@@ -408,7 +408,7 @@ mod_style!(
         ///
         /// `Default`s to `ResetBorder`, the border unsetting CSI.
         Border(border) NoBorder {
-            get_border
+            get_border get_border_mut
             border border_mut
             no_border no_border_mut
                 ResetBorder("54"): reset_border reset_border_mut
