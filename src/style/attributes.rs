@@ -29,8 +29,8 @@ macro_rules! attributes {
                     f.write_str("\x1B[")?;
 
                     match self {
+                        $Name::$reset => f.write_str($reset_str),
                         $($Name::$variant => f.write_str($str),)*
-                        $Name::$reset => f.write_str($reset_str)
                     }?;
 
                     f.write_str("m")

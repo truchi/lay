@@ -48,6 +48,8 @@
 //! );
 //! ```
 //!
+//! Note that the [`Color`][color] enum does not `Display` by itself.
+//!
 //! # Styling
 //!
 //! (We will refer to both colors and attributes as "attributes".)
@@ -147,6 +149,7 @@
 //! println!("Hello, {}world{}!", style, !style);
 //! ```
 //!
+//! [color]: enum.Color.html
 //! [foreground]: struct.Foreground.html
 //! [background]: struct.Background.html
 //! [weight]: enum.Weight.html

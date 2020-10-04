@@ -28,19 +28,19 @@ macro_rules! styler {
             Attributes { $($Attr $NoAttr $reset_attr)* }
         );
 
-        /// A trait for getting attributes on styled types.
+        /// A trait for getting `Option`al attributes on styled types.
         pub trait StylerIndex {
            $(__styler!([get] $Color $get_color);)*
            $(__styler!([get] $Attr $get_attr);)*
         }
 
-        /// A trait for getting attributes on mutable styled types.
+        /// A trait for getting `Option`al attributes on mutable styled types.
         pub trait StylerIndexMut {
            $(__styler!([get mut] $Color $get_mut_color);)*
            $(__styler!([get mut] $Attr $get_mut_attr);)*
         }
 
-        /// A trait for setting attributes on styled types.
+        /// A trait for setting `Option`al attributes on styled types.
         pub trait Styler: StylerIndex + Sized {
             $(
                 __styler!([set] $Color($color) $set_color);
@@ -80,7 +80,7 @@ macro_rules! styler {
             __styler!([fmt] $($get_color)* $($get_attr)*);
         }
 
-        /// A trait for setting attributes on mutable styled types.
+        /// A trait for setting `Option`al attributes on mutable styled types.
         pub trait StylerMut: StylerIndex {
             $(
                 __styler!([set mut] $Color($color) $set_mut_color);
