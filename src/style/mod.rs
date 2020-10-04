@@ -239,6 +239,7 @@ macro_rules! mod_style {
             Attributes { $($Attr $reset_attr)* }
         );
 
+        #[cfg(feature = "styler-ops")]
         no!($($Color $NoColor)* $($Attr $NoAttr)*);
 
         style!(
