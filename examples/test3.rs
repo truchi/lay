@@ -12,5 +12,5 @@ fn main() {
     println!("{:#?}", Style::default() * Red);
     println!("{:#?}", Style::default() * Rgb(0, 0, 0) * None);
     println!("{:#?}", Style::default().foreground(Rgb(0, 0, 0)));
-    println!("{:#?}", Style::default().weight(NoWeight));
+    println!("{:#?}", Style::default().weight(None));
 }
