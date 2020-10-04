@@ -177,6 +177,8 @@ mod attributes;
 #[macro_use]
 mod colors;
 #[macro_use]
+mod no;
+#[macro_use]
 mod reset;
 #[macro_use]
 mod style;
@@ -186,6 +188,7 @@ mod styler;
 
 pub use attributes::*;
 pub use colors::*;
+pub use no::*;
 pub use reset::*;
 pub use style::*;
 pub use styled::*;
@@ -236,6 +239,8 @@ macro_rules! mod_style {
             Attributes { $($Attr $reset_attr)* }
         );
 
+        no!($($Color $NoColor)* $($Attr $NoAttr)*);
+
         style!(
             $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
             $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
@@ -243,7 +248,7 @@ macro_rules! mod_style {
 
         styler!(
             Colors { $(
-                $Color($color) $NoColor {
+                $Color($color) {
                     $get_color $get_mut_color
                     $set_color $set_mut_color
                     $unset_color $unset_mut_color
@@ -254,7 +259,7 @@ macro_rules! mod_style {
                 }
             )* }
             Attributes { $(
-                $Attr($attr) $NoAttr {
+                $Attr($attr) {
                     $get_attr $get_mut_attr
                     $set_attr $set_mut_attr
                     $unset_attr $unset_mut_attr

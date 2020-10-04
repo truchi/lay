@@ -1,7 +1,7 @@
 macro_rules! styler {
     (
         Colors { $(
-            $Color:ident($color:ident) $NoColor:ident {
+            $Color:ident($color:ident) {
                 $get_color:ident $get_mut_color:ident
                 $set_color:ident $set_mut_color:ident
                 $unset_color:ident $unset_mut_color:ident
@@ -12,7 +12,7 @@ macro_rules! styler {
             }
         )* }
         Attributes { $(
-            $Attr:ident($attr:ident) $NoAttr:ident {
+            $Attr:ident($attr:ident) {
                 $get_attr:ident $get_mut_attr:ident
                 $set_attr:ident $set_mut_attr:ident
                 $unset_attr:ident $unset_mut_attr:ident
@@ -21,9 +21,6 @@ macro_rules! styler {
             }
         )* }
     ) => {
-        $(__styler!([No] $Color $NoColor);)*
-        $(__styler!([No] $Attr $NoAttr);)*
-
         /// A trait for getting `Option`al attributes on styled types.
         pub trait StylerIndex {
            $(__styler!([get] $Color $get_color);)*
@@ -118,13 +115,6 @@ macro_rules! styler {
 }
 
 macro_rules! __styler {
-    ([No] $Self:ident $No:ident) => {
-        #[cfg(feature = "styler-ops")]
-        $crate::doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
-        #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-        pub struct $No;);
-    };
-
     ([get] $Self:ident $get:ident) => {
         $crate::doc!("Gets `Option<" stringify!($Self) ">`.",
         fn $get(&self) -> Option<$Self>;);
