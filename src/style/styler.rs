@@ -134,13 +134,13 @@ macro_rules! __styler {
     };
 
     ([unset] $Self:ident $unset:ident $set:ident) => {
-        $crate::doc!("Sets " stringify!($self) " to `None`.",
+        $crate::doc!("`None`s `" stringify!($Self) "`.",
         fn $unset(self) -> Self {
             self.$set(None)
         });
     };
     ([unset mut] $Self:ident $unset_mut:ident $set_mut:ident) => {
-        $crate::doc!("Sets " stringify!($self) " to `None` mutably.",
+        $crate::doc!("`None`s `" stringify!($Self) "` mutably.",
         fn $unset_mut(&mut self) {
             self.$set_mut(None);
         });
