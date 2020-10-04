@@ -187,7 +187,7 @@ macro_rules! __styler {
 
     ([$op:ident] $fn:ident $($get:ident $set:ident)*) => {
         $crate::doc!("`Option::" stringify!($op) "` fields.",
-        fn $fn(mut self, other: &impl Styler) -> Self {
+        fn $fn(mut self, other: &impl StylerIndex) -> Self {
             $(
                 let $op = self.$get().$op(other.$get());
                 self = self.$set($op);
@@ -198,14 +198,14 @@ macro_rules! __styler {
     };
     ([$op:ident mut] $fn_mut:ident $($get:ident $set_mut:ident)*) => {
         $crate::doc!("`Option::" stringify!($op) "` fields mutably.",
-        fn $fn_mut(&mut self, other: &impl Styler) {
+        fn $fn_mut(&mut self, other: &impl StylerIndex) {
             $(self.$set_mut(self.$get().$op(other.$get()));)*
         });
     };
 
     ([dedup] $($get:ident $set:ident)*) => {
         /// Dedups (`None`s if identicals) fields.
-        fn dedup(mut self, before: &impl Styler) -> Self {
+        fn dedup(mut self, before: &impl StylerIndex) -> Self {
             $(if self.$get() == before.$get() {
                 self = self.$set(None);
             })*
@@ -214,7 +214,7 @@ macro_rules! __styler {
     };
     ([dedup mut] $($get:ident $set_mut:ident)*) => {
         /// Dedups (`None`s if identicals) fields mutably.
-        fn dedup_mut(&mut self, before: &impl Styler) {
+        fn dedup_mut(&mut self, before: &impl StylerIndex) {
             $(if self.$get() == before.$get() {
                 self.$set_mut(None);
             })*
