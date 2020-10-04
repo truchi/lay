@@ -64,23 +64,25 @@ macro_rules! __impl_styler_mut {
         $border:tt     $border_expr:expr,
     }) => {
         impl $(<$($G $(: $($B +)+)?,)+>)? $crate::StylerMut for $Self {
-            $crate::__impl_styler_mut!(foreground_mut($self, $foreground: Foreground) $foreground_expr);
-            $crate::__impl_styler_mut!(background_mut($self, $background: Background) $background_expr);
-            $crate::__impl_styler_mut!(weight_mut    ($self, $weight:     Weight)     $weight_expr);
-            $crate::__impl_styler_mut!(slant_mut     ($self, $slant:      Slant)      $slant_expr);
-            $crate::__impl_styler_mut!(blink_mut     ($self, $blink:      Blink)      $blink_expr);
-            $crate::__impl_styler_mut!(invert_mut    ($self, $invert:     Invert)     $invert_expr);
-            $crate::__impl_styler_mut!(strike_mut    ($self, $strike:     Strike)     $strike_expr);
-            $crate::__impl_styler_mut!(underline_mut ($self, $underline:  Underline)  $underline_expr);
-            $crate::__impl_styler_mut!(overline_mut  ($self, $overline:   Overline)   $overline_expr);
-            $crate::__impl_styler_mut!(border_mut    ($self, $border:     Border)     $border_expr);
+            $crate::__impl_styler_mut!(
+                foreground_mut($self, $foreground: Foreground) $foreground_expr
+                background_mut($self, $background: Background) $background_expr
+                weight_mut    ($self, $weight:     Weight)     $weight_expr
+                slant_mut     ($self, $slant:      Slant)      $slant_expr
+                blink_mut     ($self, $blink:      Blink)      $blink_expr
+                invert_mut    ($self, $invert:     Invert)     $invert_expr
+                strike_mut    ($self, $strike:     Strike)     $strike_expr
+                underline_mut ($self, $underline:  Underline)  $underline_expr
+                overline_mut  ($self, $overline:   Overline)   $overline_expr
+                border_mut    ($self, $border:     Border)     $border_expr
+            );
         }
     };
 
-    ($set:ident($self:ident, $attr:tt: $Attr:ident) $body:expr) => {
-        fn $set(&mut self, $attr: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) {
+    ($($set:ident($self:ident, $attr:tt: $Attr:ident) $body:expr)*) => {
+        $(fn $set(&mut self, $attr: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) {
             let $self = self;
             $body;
-        }
+        })*
     };
 }

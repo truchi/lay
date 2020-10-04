@@ -64,23 +64,25 @@ macro_rules! __impl_styler_index_mut {
         $border_expr:expr,
     }) => {
         impl $(<$($G $(: $($B +)+)?,)+>)? $crate::StylerIndexMut for $Self {
-            $crate::__impl_styler_index_mut!(get_foreground_mut($self, Foreground) $foreground_expr);
-            $crate::__impl_styler_index_mut!(get_background_mut($self, Background) $background_expr);
-            $crate::__impl_styler_index_mut!(get_weight_mut    ($self, Weight)     $weight_expr);
-            $crate::__impl_styler_index_mut!(get_slant_mut     ($self, Slant)      $slant_expr);
-            $crate::__impl_styler_index_mut!(get_blink_mut     ($self, Blink)      $blink_expr);
-            $crate::__impl_styler_index_mut!(get_invert_mut    ($self, Invert)     $invert_expr);
-            $crate::__impl_styler_index_mut!(get_strike_mut    ($self, Strike)     $strike_expr);
-            $crate::__impl_styler_index_mut!(get_underline_mut ($self, Underline)  $underline_expr);
-            $crate::__impl_styler_index_mut!(get_overline_mut  ($self, Overline)   $overline_expr);
-            $crate::__impl_styler_index_mut!(get_border_mut    ($self, Border)     $border_expr);
+            $crate::__impl_styler_index_mut!(
+                get_foreground_mut($self, Foreground) $foreground_expr
+                get_background_mut($self, Background) $background_expr
+                get_weight_mut    ($self, Weight)     $weight_expr
+                get_slant_mut     ($self, Slant)      $slant_expr
+                get_blink_mut     ($self, Blink)      $blink_expr
+                get_invert_mut    ($self, Invert)     $invert_expr
+                get_strike_mut    ($self, Strike)     $strike_expr
+                get_underline_mut ($self, Underline)  $underline_expr
+                get_overline_mut  ($self, Overline)   $overline_expr
+                get_border_mut    ($self, Border)     $border_expr
+            );
         }
     };
 
-    ($get:ident($self:ident, $Attr:ident) $body:expr) => {
-        fn $get(&mut self) -> &mut ::std::option::Option<$crate::$Attr> {
+    ($($get:ident($self:ident, $Attr:ident) $body:expr)*) => {
+        $(fn $get(&mut self) -> &mut ::std::option::Option<$crate::$Attr> {
             let $self = self;
             $body
-        }
+        })*
     };
 }

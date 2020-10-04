@@ -64,23 +64,25 @@ macro_rules! __impl_styler_index {
         $border_expr:expr,
     }) => {
         impl $(<$($G $(: $($B +)+)?,)+>)? $crate::StylerIndex for $Self {
-            $crate::__impl_styler_index!(get_foreground($self, Foreground) $foreground_expr);
-            $crate::__impl_styler_index!(get_background($self, Background) $background_expr);
-            $crate::__impl_styler_index!(get_weight    ($self, Weight)     $weight_expr);
-            $crate::__impl_styler_index!(get_slant     ($self, Slant)      $slant_expr);
-            $crate::__impl_styler_index!(get_blink     ($self, Blink)      $blink_expr);
-            $crate::__impl_styler_index!(get_invert    ($self, Invert)     $invert_expr);
-            $crate::__impl_styler_index!(get_strike    ($self, Strike)     $strike_expr);
-            $crate::__impl_styler_index!(get_underline ($self, Underline)  $underline_expr);
-            $crate::__impl_styler_index!(get_overline  ($self, Overline)   $overline_expr);
-            $crate::__impl_styler_index!(get_border    ($self, Border)     $border_expr);
+            $crate::__impl_styler_index!(
+                get_foreground($self, Foreground) $foreground_expr
+                get_background($self, Background) $background_expr
+                get_weight    ($self, Weight)     $weight_expr
+                get_slant     ($self, Slant)      $slant_expr
+                get_blink     ($self, Blink)      $blink_expr
+                get_invert    ($self, Invert)     $invert_expr
+                get_strike    ($self, Strike)     $strike_expr
+                get_underline ($self, Underline)  $underline_expr
+                get_overline  ($self, Overline)   $overline_expr
+                get_border    ($self, Border)     $border_expr
+            );
         }
     };
 
-    ($get:ident($self:ident, $Attr:ident) $body:expr) => {
-        fn $get(&self) -> ::std::option::Option<$crate::$Attr> {
+    ($($get:ident($self:ident, $Attr:ident) $body:expr)*) => {
+        $(fn $get(&self) -> ::std::option::Option<$crate::$Attr> {
             let $self = self;
             $body
-        }
+        })*
     };
 }

@@ -64,24 +64,26 @@ macro_rules! __impl_styler {
         $border:tt     $border_expr:expr,
     }) => {
         impl $(<$($G $(: $($B +)+)?,)+>)? $crate::Styler for $Self {
-            $crate::__impl_styler!(foreground($self, $foreground: Foreground) $foreground_expr);
-            $crate::__impl_styler!(background($self, $background: Background) $background_expr);
-            $crate::__impl_styler!(weight    ($self, $weight:     Weight)     $weight_expr);
-            $crate::__impl_styler!(slant     ($self, $slant:      Slant)      $slant_expr);
-            $crate::__impl_styler!(blink     ($self, $blink:      Blink)      $blink_expr);
-            $crate::__impl_styler!(invert    ($self, $invert:     Invert)     $invert_expr);
-            $crate::__impl_styler!(strike    ($self, $strike:     Strike)     $strike_expr);
-            $crate::__impl_styler!(underline ($self, $underline:  Underline)  $underline_expr);
-            $crate::__impl_styler!(overline  ($self, $overline:   Overline)   $overline_expr);
-            $crate::__impl_styler!(border    ($self, $border:     Border)     $border_expr);
+            $crate::__impl_styler!(
+                foreground($self, $foreground: Foreground) $foreground_expr
+                background($self, $background: Background) $background_expr
+                weight    ($self, $weight:     Weight)     $weight_expr
+                slant     ($self, $slant:      Slant)      $slant_expr
+                blink     ($self, $blink:      Blink)      $blink_expr
+                invert    ($self, $invert:     Invert)     $invert_expr
+                strike    ($self, $strike:     Strike)     $strike_expr
+                underline ($self, $underline:  Underline)  $underline_expr
+                overline  ($self, $overline:   Overline)   $overline_expr
+                border    ($self, $border:     Border)     $border_expr
+            );
         }
     };
 
-    ($set:ident($self:ident, $attr:tt: $Attr:ident) $body:expr) => {
-        fn $set(self, $attr: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) -> Self {
+    ($($set:ident($self:ident, $attr:tt: $Attr:ident) $body:expr)*) => {
+        $(fn $set(self, $attr: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) -> Self {
             #[allow(unused_mut)]
             let mut $self = self;
             $body
-        }
+        })*
     };
 }
