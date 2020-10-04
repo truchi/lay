@@ -123,15 +123,6 @@ macro_rules! __styler {
         $crate::doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
         #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
         pub struct $No;);
-
-        #[cfg(feature = "styler-ops")]
-        $crate::doc!("Returns `None`.",
-        impl From<$No> for Option<$Self> {
-            $crate::doc!("Returns `None`.",
-            fn from(_: $No) -> Self {
-                None
-            });
-        });
     };
 
     ([get] $Self:ident $get:ident) => {
@@ -265,26 +256,5 @@ macro_rules! __styler {
             $(if let Some(t) = self.$get() { t.fmt(f)?; })*
             Ok(())
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::*;
-    use pretty_assertions::assert_eq;
-
-    #[test]
-    fn conversion() {
-        // Option From No
-        assert_eq!(Option::<Foreground>::from(NoForeground), None);
-        assert_eq!(Option::<Background>::from(NoBackground), None);
-        assert_eq!(Option::<Weight>::from(NoWeight), None);
-        assert_eq!(Option::<Slant>::from(NoSlant), None);
-        assert_eq!(Option::<Blink>::from(NoBlink), None);
-        assert_eq!(Option::<Invert>::from(NoInvert), None);
-        assert_eq!(Option::<Strike>::from(NoStrike), None);
-        assert_eq!(Option::<Underline>::from(NoUnderline), None);
-        assert_eq!(Option::<Overline>::from(NoOverline), None);
-        assert_eq!(Option::<Border>::from(NoBorder), None);
     }
 }
