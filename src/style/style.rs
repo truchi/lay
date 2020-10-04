@@ -46,6 +46,15 @@ macro_rules! style {
             $($attr style.$attr = $attr,)*
         });
 
+        #[cfg(feature = "styler-idx")]
+        impl_styler_idx!((style: Style) {
+            $(&style.$attr,)*
+        });
+        #[cfg(feature = "styler-idx")]
+        impl_styler_mut_idx!((style: Style) {
+            $(&mut style.$attr,)*
+        });
+
         #[cfg(feature = "styler-ops")]
         impl_styler_ops!(Style);
         #[cfg(feature = "styler-ops")]

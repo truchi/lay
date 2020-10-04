@@ -15,6 +15,12 @@ mod impl_styler_index;
 mod impl_styler_index_mut;
 #[macro_use]
 mod impl_into_style;
+#[cfg(feature = "styler-idx")]
+#[macro_use]
+mod impl_styler_idx;
+#[cfg(feature = "styler-idx")]
+#[macro_use]
+mod impl_styler_mut_idx;
 #[cfg(feature = "styler-ops")]
 #[macro_use]
 mod impl_styler_ops;

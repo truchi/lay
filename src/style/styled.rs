@@ -41,6 +41,11 @@ impl_styler_index_mut!(<T: Display,> (styled: Styled<T>) => styled.style);
 impl_styler!(<T: Display,> (styled: Styled<T>) => styled.style);
 impl_styler_mut!(<T: Display,> (styled: Styled<T>) => styled.style);
 
+#[cfg(feature = "styler-idx")]
+impl_styler_idx!(<T: Display,> (styled: Styled<T>) => styled.style);
+#[cfg(feature = "styler-idx")]
+impl_styler_mut_idx!(<T: Display,> (styled: Styled<T>) => styled.style);
+
 #[cfg(feature = "styler-ops")]
 impl_styler_ops!(<T: Display,> Styled<T>);
 #[cfg(feature = "styler-ops")]

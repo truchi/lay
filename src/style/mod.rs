@@ -177,6 +177,8 @@ mod attributes;
 #[macro_use]
 mod colors;
 #[macro_use]
+mod index;
+#[macro_use]
 mod no;
 #[macro_use]
 mod reset;
@@ -188,6 +190,7 @@ mod styler;
 
 pub use attributes::*;
 pub use colors::*;
+pub use index::*;
 pub use no::*;
 pub use reset::*;
 pub use style::*;
@@ -202,7 +205,7 @@ macro_rules! mod_style {
         $Reset:ident
         Colors { $(
             $(#[$meta_color:meta])*
-            $Color:ident($color:ident) $NoColor:ident ($str_color:literal $str_reset_color:literal) {
+            [$IdxColor:ident]$Color:ident($color:ident) $NoColor:ident ($str_color:literal $str_reset_color:literal) {
                 $get_color:ident $get_mut_color:ident
                 $set_color:ident $set_mut_color:ident
                 $unset_color:ident $unset_mut_color:ident
@@ -214,7 +217,7 @@ macro_rules! mod_style {
         )* }
         Attributes { $(
             $(#[$meta_attr:meta])*
-            $Attr:ident($attr:ident) $NoAttr:ident {
+            [$IdxAttr:ident]$Attr:ident($attr:ident) $NoAttr:ident {
                 $get_attr:ident $get_mut_attr:ident
                 $set_attr:ident $set_mut_attr:ident
                 $unset_attr:ident $unset_mut_attr:ident
@@ -241,6 +244,9 @@ macro_rules! mod_style {
 
         #[cfg(feature = "styler-ops")]
         no!($($Color $NoColor)* $($Attr $NoAttr)*);
+
+        #[cfg(feature = "styler-idx")]
+        index!($($Color $IdxColor)* $($Attr $IdxAttr)*);
 
         style!(
             $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
@@ -281,7 +287,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `Foreground(Color::ResetColor)`, user's default terminal foreground color.
-        Foreground(foreground) NoForeground ("38;" "39") {
+        [Fg]Foreground(foreground) NoForeground ("38;" "39") {
             get_foreground get_foreground_mut
             foreground foreground_mut
             no_foreground no_foreground_mut
@@ -308,7 +314,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `Background(Color::ResetColor)`, user's default terminal background color.
-        Background(background) NoBackground ("48;" "49") {
+        [Bg]Background(background) NoBackground ("48;" "49") {
             get_background get_background_mut
             background background_mut
             no_background no_background_mut
@@ -337,7 +343,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetWeight`, the weight unsetting CSI.
-        Weight(weight) NoWeight {
+        [Wgt]Weight(weight) NoWeight {
             get_weight get_weight_mut
             weight weight_mut
             no_weight no_weight_mut
@@ -350,7 +356,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetSlant`, the slant unsetting CSI.
-        Slant(slant) NoSlant {
+        [Slt]Slant(slant) NoSlant {
             get_slant get_slant_mut
             slant slant_mut
             no_slant no_slant_mut
@@ -362,7 +368,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetBlink`, the blink unsetting CSI.
-        Blink(blink) NoBlink {
+        [Blk]Blink(blink) NoBlink {
             get_blink get_blink_mut
             blink blink_mut
             no_blink no_blink_mut
@@ -375,7 +381,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetInvert`, the invert unsetting CSI.
-        Invert(invert) NoInvert {
+        [Inv]Invert(invert) NoInvert {
             get_invert get_invert_mut
             invert invert_mut
             no_invert no_invert_mut
@@ -387,7 +393,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetStrike`, the strike unsetting CSI.
-        Strike(strike) NoStrike {
+        [Stk]Strike(strike) NoStrike {
             get_strike get_strike_mut
             strike strike_mut
             no_strike no_strike_mut
@@ -399,7 +405,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetUnderline`, the underline unsetting CSI.
-        Underline(underline) NoUnderline {
+        [Udl]Underline(underline) NoUnderline {
             get_underline get_underline_mut
             underline underline_mut
             no_underline no_underline_mut
@@ -411,7 +417,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetOverline`, the overline unsetting CSI.
-        Overline(overline) NoOverline {
+        [Ovl]Overline(overline) NoOverline {
             get_overline get_overline_mut
             overline overline_mut
             no_overline no_overline_mut
@@ -423,7 +429,7 @@ mod_style!(
         /// Prints the corresponding CSI to the terminal when `Display`ed.
         ///
         /// `Default`s to `ResetBorder`, the border unsetting CSI.
-        Border(border) NoBorder {
+        [Brd]Border(border) NoBorder {
             get_border get_border_mut
             border border_mut
             no_border no_border_mut
