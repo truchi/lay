@@ -162,7 +162,7 @@ macro_rules! impl_styler_mut_ops {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_styler_mut_ops {
-    (trait binary ($self:ident: $Self:path) { $(
+    (trait binary ($self:tt: $Self:path) { $(
         $($doc:expr)*,
         <$($G:ident $(: $($B:path)+)?,)*>
         $OpAssign:ident($op_assign:ident)
@@ -179,7 +179,7 @@ macro_rules! __impl_styler_mut_ops {
             });
         )*
     };
-    (trait unary ($self:ident: $Self:path) { $(
+    (trait unary ($self:tt: $Self:path) { $(
         $($doc:expr)*,
         <$($G:ident $(: $($B:path)+)?,)*>
         $Op:ident($op:ident) $body:expr

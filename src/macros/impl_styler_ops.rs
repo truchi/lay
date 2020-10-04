@@ -162,7 +162,7 @@ macro_rules! impl_styler_ops {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_styler_ops {
-    (trait binary ($self:ident: $Self:path) -> $Output:path { $(
+    (trait binary ($self:tt: $Self:path) -> $Output:path { $(
         $($doc:expr)*,
         <$($G:ident $(: $($B:path)+)?,)*> $Op:ident($op:ident)
         ($rhs:tt: $($Rhs:tt)*) $body:expr
@@ -181,7 +181,7 @@ macro_rules! __impl_styler_ops {
             });
         )*
     };
-    (trait unary ($self:ident: $Self:path) -> $Output:path { $(
+    (trait unary ($self:tt: $Self:path) -> $Output:path { $(
         $($doc:expr)*,
         <$($G:ident $(: $($B:path)+)?,)*>
         $Op:ident($op:ident) $body:expr

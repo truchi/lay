@@ -1,7 +1,7 @@
 /// Implements `StylerMut`.
 #[macro_export]
 macro_rules! impl_styler_mut {
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path)
+    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path)
         $({
             $foreground:tt $foreground_expr:expr,
             $background:tt $background_expr:expr,
@@ -37,7 +37,7 @@ macro_rules! impl_styler_mut {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_styler_mut {
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path) => $styler:expr) => {
+    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) => $styler:expr) => {
         $crate::__impl_styler_mut!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) {
             foreground $crate::StylerMut::foreground_mut(&mut $styler, foreground),
             background $crate::StylerMut::background_mut(&mut $styler, background),
@@ -51,7 +51,7 @@ macro_rules! __impl_styler_mut {
             border     $crate::StylerMut::border_mut    (&mut $styler, border),
         });
     };
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path) {
+    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) {
         $foreground:tt $foreground_expr:expr,
         $background:tt $background_expr:expr,
         $weight:tt     $weight_expr:expr,
@@ -79,7 +79,7 @@ macro_rules! __impl_styler_mut {
         }
     };
 
-    ($($set:ident($self:ident, $attr:tt: $Attr:ident) $body:expr)*) => {
+    ($($set:ident($self:tt, $attr:tt: $Attr:ident) $body:expr)*) => {
         $(fn $set(&mut self, $attr: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) {
             let $self = self;
             $body;

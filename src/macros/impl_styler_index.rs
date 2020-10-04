@@ -1,7 +1,7 @@
 /// Implements `StylerIndex`.
 #[macro_export]
 macro_rules! impl_styler_index {
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path)
+    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path)
         $({
             $foreground_expr:expr,
             $background_expr:expr,
@@ -37,7 +37,7 @@ macro_rules! impl_styler_index {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __impl_styler_index {
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path) => $styler:expr) => {
+    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) => $styler:expr) => {
         $crate::__impl_styler_index!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) {
             $crate::StylerIndex::get_foreground(&$styler),
             $crate::StylerIndex::get_background(&$styler),
@@ -51,7 +51,7 @@ macro_rules! __impl_styler_index {
             $crate::StylerIndex::get_border(&$styler),
         });
     };
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path) {
+    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) {
         $foreground_expr:expr,
         $background_expr:expr,
         $weight_expr:expr,
@@ -79,7 +79,7 @@ macro_rules! __impl_styler_index {
         }
     };
 
-    ($($get:ident($self:ident, $Attr:ident) $body:expr)*) => {
+    ($($get:ident($self:tt, $Attr:ident) $body:expr)*) => {
         $(fn $get(&self) -> ::std::option::Option<$crate::$Attr> {
             let $self = self;
             $body
