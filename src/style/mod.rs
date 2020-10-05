@@ -203,10 +203,6 @@ use std::fmt::{Display, Error, Formatter};
 priv_impl_styler_ops!(<> (_: Reset) -> Style { Style::RESET });
 #[cfg(feature = "styler-idx")]
 priv_impl_styler_ops!(<> (s: Color) -> Style { Style::from(Foreground(s)) });
-#[cfg(feature = "styler-idx")]
-priv_impl_styler_ops!(<> (s: Foreground) -> Style { Style::from(s) });
-#[cfg(feature = "styler-idx")]
-priv_impl_styler_ops!(<> (s: Weight) -> Style { Style::from(s) });
 
 macro_rules! mod_style {
     (
@@ -244,6 +240,11 @@ macro_rules! mod_style {
             $(#[$meta_attr])*
             $Attr: $($variant_attr($str_attr))* + $reset_attr($str_reset_attr)
         )*);
+
+        $(#[cfg(feature = "styler-ops")]
+        priv_impl_styler_ops!(<> (color: $Color) -> Style { Style::from(color) });)*
+        $(#[cfg(feature = "styler-ops")]
+        priv_impl_styler_ops!(<> (attr: $Attr) -> Style { Style::from(attr) });)*
 
         reset!(
             $(#[$meta_reset])* $Reset

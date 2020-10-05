@@ -21,17 +21,20 @@ macro_rules! style {
             pub const NONE: Self = Self {
                 $($attr: None,)*
             };
+
             /// A `Style` with fields set to their reset value.
             pub const RESET: Self = Self {
                 $($attr: Some($Reset),)*
             };
         }
 
-        $(impl From<$Attr> for Style {
+        $(doc!("Returns an empty `Style` with `Some(" stringify!($attr) ")`",
+        impl From<$Attr> for Style {
+            doc!("Returns an empty `Style` with `Some(" stringify!($attr) ")`",
             fn from($attr: $Attr) -> Self {
                 Style::NONE.$set_attr($attr)
-            }
-        })*
+            });
+        });)*
 
         impl_styler_index!((style: Style) {
             $(style.$attr,)*
