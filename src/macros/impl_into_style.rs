@@ -1,7 +1,12 @@
 /// Impl `Into` `Style`.
 #[macro_export]
 macro_rules! impl_into_style {
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($Type:ty)) => {
+    (
+        // Generics and corresponding bounds
+        $(<$($G:ident $(: $($B:path)+)?,)+>)?
+        // Self
+        $Type:path
+    ) => {
         impl $(<$($G $(: $($B+)+,)?)+>)? ::std::convert::Into<$crate::Style> for $Type {
             fn into(self) -> $crate::Style {
                 $crate::Style {

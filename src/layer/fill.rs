@@ -41,7 +41,7 @@ impl_styler_ops!(Fill);
 #[cfg(feature = "styler-ops")]
 impl_styler_ops!(mut Fill);
 
-impl_into_style!((Fill));
+impl_into_style!(Fill);
 
 impl_layer!(Fill [fill, x, y] {
     Layer { fill.width } { fill.height } { fill.cell }

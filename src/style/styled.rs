@@ -51,7 +51,7 @@ impl_styler_ops!(<T: Display,> Styled<T>);
 #[cfg(feature = "styler-ops")]
 impl_styler_ops!(mut <T: Display,> Styled<T>);
 
-impl_into_style!(<T: Display,> (Styled<T>));
+impl_into_style!(<T: Display,> Styled<T>);
 
 impl<T: Display> Display for Styled<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
