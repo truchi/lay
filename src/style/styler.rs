@@ -1,250 +1,167 @@
 macro_rules! styler {
-    (
-        Colors { $(
-            $Color:ident($color:ident) {
-                $get_color:ident $get_mut_color:ident
-                $set_color:ident $set_mut_color:ident
-                $unset_color:ident $unset_mut_color:ident
-                Rgb: $set_rgb:ident $set_rgb_mut:ident
-                Ansi: $set_ansi:ident $set_ansi_mut:ident
-                $reset_color:ident: $set_reset_color:ident $set_reset_mut_color:ident
-                $($variant_color:ident: $set_variant_color:ident $set_variant_mut_color:ident)*
-            }
-        )* }
-        Attributes { $(
-            $Attr:ident($attr:ident) {
-                $get_attr:ident $get_mut_attr:ident
-                $set_attr:ident $set_mut_attr:ident
-                $unset_attr:ident $unset_mut_attr:ident
-                $reset_attr:ident: $set_reset_attr:ident $set_reset_mut_attr:ident
-                $($variant_attr:ident: $set_variant_attr:ident $set_variant_mut_attr:ident)*
-            }
-        )* }
-    ) => {
+    (Colors { $(
+        $Color:ident($color:ident) {
+            $get_color:ident $get_mut_color:ident
+            $set_color:ident $set_mut_color:ident
+            $unset_color:ident $unset_mut_color:ident
+            Rgb: $set_rgb:ident $set_rgb_mut:ident
+            Ansi: $set_ansi:ident $set_ansi_mut:ident
+            $reset_color:ident: $set_reset_color:ident $set_reset_mut_color:ident
+            $($variant_color:ident: $set_variant_color:ident $set_variant_mut_color:ident)*
+        } )*
+    }
+    Attributes { $(
+        $Attr:ident($attr:ident) {
+            $get_attr:ident $get_mut_attr:ident
+            $set_attr:ident $set_mut_attr:ident
+            $unset_attr:ident $unset_mut_attr:ident
+            $reset_attr:ident: $set_reset_attr:ident $set_reset_mut_attr:ident
+            $($variant_attr:ident: $set_variant_attr:ident $set_variant_mut_attr:ident)*
+        } )*
+    }) => {
         /// A trait for getting `Option`al attributes on styled types.
         pub trait StylerIndex {
-           $(__styler!([get] $Color $get_color);)*
-           $(__styler!([get] $Attr $get_attr);)*
+            priv_styler!(
+                $($get_color(&Self) -> Option<$Color>)*
+                $($get_attr (&Self) -> Option<$Attr>)*
+            );
         }
 
         /// A trait for getting `Option`al attributes on mutable styled types.
         pub trait StylerIndexMut {
-           $(__styler!([get mut] $Color $get_mut_color);)*
-           $(__styler!([get mut] $Attr $get_mut_attr);)*
+            priv_styler!(
+                $($get_mut_color(&mut Self) -> &mut Option<$Color>)*
+                $($get_mut_attr (&mut Self) -> &mut Option<$Attr>)*
+            );
         }
 
         /// A trait for setting `Option`al attributes on styled types.
         pub trait Styler: StylerIndex + Sized {
-            $(
-                __styler!([set] $Color($color) $set_color);
-                __styler!([unset] $Color $unset_color $set_color);
-                $(__styler!([variant]
-                    stringify!($Color) "(Color::" stringify!($variant_color) ")",
-                    $set_variant_color $set_color($Color(Color::$variant_color))
-                );)*
-                __styler!([rgb] $Color $set_rgb $set_color);
-                __styler!([ansi] $Color $set_ansi $set_color);
-                __styler!([variant]
-                    stringify!($Color) "(Color::" stringify!($reset_color) ")",
-                    $set_reset_color $set_color($Color(Color::$reset_color))
-                );
-            )*
-            $(
-                __styler!([set] $Attr($attr) $set_attr);
-                __styler!([unset] $Attr $unset_attr $set_attr);
-                $(__styler!([variant]
-                    stringify!($Attr) "::" stringify!($variant_attr),
-                    $set_variant_attr $set_attr($Attr::$variant_attr)
-                );)*
-                __styler!([variant]
-                    stringify!($Attr) "::" stringify!($reset_attr),
-                    $set_reset_attr $set_attr($Attr::$reset_attr)
-                );
-            )*
+            /// The resulting type of the setters.
+            type Output;
 
-            __styler!([and] and $($get_color $set_color)* $($get_attr $set_attr)*);
-            __styler!([or ] or  $($get_color $set_color)* $($get_attr $set_attr)*);
-            __styler!([xor] xor $($get_color $set_color)* $($get_attr $set_attr)*);
-            __styler!([dedup] $($get_color $set_color)* $($get_attr $set_attr)*);
-            __styler!([reset]
-                $($get_color $set_color($Color(Color::$reset_color)))*
-                $($get_attr  $set_attr(($Attr::$reset_attr)))*
+            priv_styler!((Self) -> Self::Output;
+                $(($color: $Color) {
+                    $set_color
+                    $unset_color
+                    { $set_rgb $set_ansi }
+                    [$(
+                        stringify!($Color) "(Color::" stringify!($variant_color) ")",
+                        $set_variant_color($Color(Color::$variant_color))
+                    )*]
+                    stringify!($Color) "(Color::" stringify!($reset_color) ")",
+                    $set_reset_color($Color(Color::$reset_color))
+                })*
+                $(($attr: $Attr) {
+                    $set_attr $unset_attr
+                    [$(
+                        stringify!($Attr) "::" stringify!($variant_attr),
+                        $set_variant_attr($Attr::$variant_attr)
+                    )*]
+                    stringify!($Attr) "::" stringify!($reset_attr),
+                    $set_reset_attr($Attr::$reset_attr)
+                })*
+                and or xor dedup reset
             );
-            __styler!([fmt] $($get_color)* $($get_attr)*);
+
+            /// Formats the CSIs of `self`'s `Some` fields.
+            fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                $(if let Some(t) = self.$get_color() { t.fmt(f)?; })*
+                $(if let Some(t) = self.$get_attr () { t.fmt(f)?; })*
+                Ok(())
+            }
         }
 
         /// A trait for setting `Option`al attributes on mutable styled types.
         pub trait StylerMut: StylerIndex {
-            $(
-                __styler!([set mut] $Color($color) $set_mut_color);
-                __styler!([unset mut] $Color $unset_mut_color $set_mut_color);
-                $(__styler!([variant mut]
-                    stringify!($Color) "(Color::" stringify!($variant_color) ")",
-                    $set_variant_mut_color $set_mut_color($Color(Color::$variant_color))
-                );)*
-                __styler!([rgb mut] $Color $set_rgb_mut $set_mut_color);
-                __styler!([ansi mut] $Color $set_ansi_mut $set_mut_color);
-                __styler!([variant mut]
+            priv_styler!((&mut Self) -> ();
+                $(($color: $Color) {
+                    $set_mut_color $unset_mut_color
+                    { $set_rgb_mut $set_ansi_mut }
+                    [$(
+                        stringify!($Color) "(Color::" stringify!($variant_color) ")",
+                        $set_variant_mut_color($Color(Color::$variant_color))
+                    )*]
                     stringify!($Color) "(Color::" stringify!($reset_color) ")",
-                    $set_reset_mut_color $set_mut_color($Color(Color::$reset_color))
-                );
-            )*
-            $(
-                __styler!([set mut] $Attr($attr) $set_mut_attr);
-                __styler!([unset mut] $Attr $unset_mut_attr $set_mut_attr);
-                $(__styler!([variant mut]
-                    stringify!($Attr) "::" stringify!($variant_attr),
-                    $set_variant_mut_attr $set_mut_attr($Attr::$variant_attr)
-                );)*
-                __styler!([variant mut]
+                    $set_reset_mut_color($Color(Color::$reset_color))
+                })*
+                $(($attr: $Attr) {
+                    $set_mut_attr $unset_mut_attr
+                    [$(
+                        stringify!($Attr) "::" stringify!($variant_attr),
+                        $set_variant_mut_attr($Attr::$variant_attr)
+                    )*]
                     stringify!($Attr) "::" stringify!($reset_attr),
-                    $set_reset_mut_attr $set_mut_attr($Attr::$reset_attr)
-                );
-            )*
-
-            __styler!([and mut] and_mut $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            __styler!([or  mut] or_mut  $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            __styler!([xor mut] xor_mut $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            __styler!([dedup mut] $($get_color $set_mut_color)* $($get_attr $set_mut_attr)*);
-            __styler!([reset mut]
-                $($get_color $set_mut_color($Color(Color::$reset_color)))*
-                $($get_attr  $set_mut_attr(($Attr::$reset_attr)))*
+                    $set_reset_mut_attr($Attr::$reset_attr)
+                })*
+                and_mut or_mut xor_mut dedup_mut reset_mut
             );
         }
-   };
+    };
 }
 
-macro_rules! __styler {
-    ([get] $Self:ident $get:ident) => {
-        $crate::doc!("Gets `Option<" stringify!($Self) ">`.",
-        fn $get(&self) -> Option<$Self>;);
-    };
-    ([get mut] $Self:ident $get_mut:ident) => {
-        $crate::doc!("Gets `Option<" stringify!($Self) ">`.",
-        fn $get_mut(&mut self) -> &mut Option<$Self>;);
+macro_rules! priv_styler {
+    ($($get:ident($Self:ty) -> $Output:ty)*) => {
+        $($crate::doc!("Gets `" stringify!($Output) "`.",
+        fn $get(self: $Self) -> $Output;);)*
     };
 
-    ([set] $Self:ident($self:ident) $set:ident) => {
-        $crate::doc!("Sets `Option<" stringify!($Self) ">`.",
-        fn $set(self, $self: impl Into<Option<$Self>>) -> Self;);
-    };
-    ([set mut] $Self:ident($self:ident) $set_mut:ident) => {
-        $crate::doc!("Sets `Option<" stringify!($Self) ">` mutably.",
-        fn $set_mut(&mut self, $self: impl Into<Option<$Self>>););
-    };
+    (($Self:ty) -> $Output:ty;
+        $(($attr:ident: $Attr:ident) {
+            $set:ident $unset:ident
+            $({ $set_rgb:ident $set_ansi:ident })?
+            [$(
+                $($doc_variant:expr)*,
+                $set_variant:ident($body_variant:expr)
+            )*]
+                $($doc_reset:expr)*,
+                $set_reset:ident($body_reset:expr)
+        })*
+        $and:ident $or:ident $xor:ident $dedup:ident $reset:ident
+    ) => {
+        $(
+            $crate::doc!("Sets `Option<" stringify!($Attr) ">`.",
+            fn $set(self: $Self, $attr: impl Into<Option<$Attr>>) -> $Output;);
 
-    ([unset] $Self:ident $unset:ident $set:ident) => {
-        $crate::doc!("`None`s `" stringify!($Self) "`.",
-        fn $unset(self) -> Self {
-            self.$set(None)
-        });
-    };
-    ([unset mut] $Self:ident $unset_mut:ident $set_mut:ident) => {
-        $crate::doc!("`None`s `" stringify!($Self) "` mutably.",
-        fn $unset_mut(&mut self) {
-            self.$set_mut(None);
-        });
-    };
+            $crate::doc!("`None`s `" stringify!($Attr) "`.",
+            fn $unset(self: $Self) -> $Output {
+                self.$set(None)
+            });
 
-    ([variant] $($doc:expr)*, $set_variant:ident $set:ident($body:expr)) => {
-        $crate::doc!("Sets `Some(" $($doc)* ")`.",
-        fn $set_variant(self) -> Self {
-            self.$set(Some($body))
-        });
-    };
-    ([variant mut] $($doc:expr)*, $set_variant_mut:ident $set_mut:ident($body:expr)) => {
-        $crate::doc!("Sets `Some(" $($doc)* ")` mutably.",
-        fn $set_variant_mut(&mut self) {
-            self.$set_mut(Some($body));
-        });
-    };
+            $($crate::doc!("Sets `Some(" $($doc_variant)* ")`.",
+            fn $set_variant(self: $Self) -> $Output {
+                self.$set(Some($body_variant))
+            });)*
 
-    ([rgb] $Self:ident $set_rgb:ident $set:ident) => {
-        $crate::doc!("Sets `Some(" stringify!($Self) "(Color::Rgb(r, g, b)))`.",
-        fn $set_rgb(self, r: u8, g: u8, b: u8) -> Self {
-            self.$set(Some($Self(Color::Rgb(r, g, b))))
-        });
-    };
-    ([rgb mut] $Self:ident $set_rgb_mut:ident $set_mut:ident) => {
-        $crate::doc!("Sets `Some(" stringify!($Self) "(Color::Rgb(r, g, b)))` mutably.",
-        fn $set_rgb_mut(&mut self, r: u8, g: u8, b: u8) {
-            self.$set_mut(Some($Self(Color::Rgb(r, g, b))));
-        });
-    };
+            $($crate::doc!("Sets `Some(" stringify!($Attr) "(Color::Rgb(r, g, b)))`.",
+            fn $set_rgb(self: $Self, r: u8, g: u8, b: u8) -> $Output {
+                self.$set(Some($Attr(Color::Rgb(r, g, b))))
+            });)?
 
-    ([ansi] $Self:ident $set_ansi:ident $set:ident) => {
-        $crate::doc!("Sets `Some(" stringify!($Self) "(Color::Ansi(ansi)))`.",
-        fn $set_ansi(self, ansi: u8) -> Self {
-            self.$set(Some($Self(Color::Ansi(ansi))))
-        });
-    };
-    ([ansi mut] $Self:ident $set_ansi_mut:ident $set_mut:ident) => {
-        $crate::doc!("Sets `Some(" stringify!($Self) "(Color::Ansi(ansi)))` mutably.",
-        fn $set_ansi_mut(&mut self, ansi: u8) {
-            self.$set_mut(Some($Self(Color::Ansi(ansi))));
-        });
-    };
+            $($crate::doc!("Sets `Some(" stringify!($Attr) "(Color::Ansi(ansi)))`.",
+            fn $set_ansi(self: $Self, ansi: u8) -> $Output {
+                self.$set(Some($Attr(Color::Ansi(ansi))))
+            });)?
 
-    ([$op:ident] $fn:ident $($get:ident $set:ident)*) => {
-        $crate::doc!("`Option::" stringify!($op) "` fields.",
-        fn $fn(mut self, other: &impl StylerIndex) -> Self {
-            $(
-                let $op = self.$get().$op(other.$get());
-                self = self.$set($op);
-            )*
-            self
-        });
+            $crate::doc!("Sets `Some(" $($doc_reset)* ")`.",
+            fn $set_reset(self: $Self) -> $Output {
+                self.$set(Some($body_reset))
+            });
+        )*
 
-    };
-    ([$op:ident mut] $fn_mut:ident $($get:ident $set_mut:ident)*) => {
-        $crate::doc!("`Option::" stringify!($op) "` fields mutably.",
-        fn $fn_mut(&mut self, other: &impl StylerIndex) {
-            $(self.$set_mut(self.$get().$op(other.$get()));)*
-        });
-    };
+        /// `Option::and` fields.
+        fn $and(self: $Self, other: &impl StylerIndex) -> $Output;
 
-    ([dedup] $($get:ident $set:ident)*) => {
+        /// `Option::or` fields.
+        fn $or(self: $Self, other: &impl StylerIndex) -> $Output;
+
+        /// `Option::xor` fields.
+        fn $xor(self: $Self, other: &impl StylerIndex) -> $Output;
+
         /// Dedups (`None`s if identicals) fields.
-        fn dedup(mut self, before: &impl StylerIndex) -> Self {
-            $(if self.$get() == before.$get() {
-                self = self.$set(None);
-            })*
-            self
-        }
-    };
-    ([dedup mut] $($get:ident $set_mut:ident)*) => {
-        /// Dedups (`None`s if identicals) fields mutably.
-        fn dedup_mut(&mut self, before: &impl StylerIndex) {
-            $(if self.$get() == before.$get() {
-                self.$set_mut(None);
-            })*
-        }
-    };
+        fn $dedup(self: $Self, before: &impl StylerIndex) -> $Output;
 
-    // TODO None if already reset
-    ([reset] $($get:ident $set:ident($body:expr))*) => {
         /// Resets (sets to reset value) fields which are `Some`.
-        fn reset(mut self) -> Self {
-            $(if let Some(_) = self.$get() {
-                self = self.$set(Some($body));
-            })*
-            self
-        }
+        fn $reset(self: $Self) -> $Output;
     };
-    ([reset mut] $($get:ident $set_mut:ident($body:expr))*) => {
-        /// Resets (sets to reset value) fields which are `Some` mutably.
-        fn reset_mut(&mut self) {
-            $(if let Some(_) = self.$get() {
-                self.$set_mut(Some($body));
-            })*
-        }
-    };
-
-    ([fmt] $($get:ident)*) => {
-        /// Formats the CSIs of `self`'s `Some` fields.
-        fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-            $(if let Some(t) = self.$get() { t.fmt(f)?; })*
-            Ok(())
-        }
-    }
 }
