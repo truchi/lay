@@ -37,19 +37,19 @@ impl<T: Display> From<T> for Styled<T> {
 }
 
 impl_styler_index!(<T: Display,> (styled: Styled<T>) => styled.style);
-impl_styler_index_mut!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler_index!(mut <T: Display,> (styled: Styled<T>) => styled.style);
 impl_styler!(<T: Display,> (styled: Styled<T>) => styled.style);
-impl_styler_mut!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler!(mut <T: Display,> (styled: Styled<T>) => styled.style);
 
 #[cfg(feature = "styler-idx")]
 impl_styler_idx!(<T: Display,> (styled: Styled<T>) => styled.style);
 #[cfg(feature = "styler-idx")]
-impl_styler_mut_idx!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler_idx!(mut <T: Display,> (styled: Styled<T>) => styled.style);
 
 #[cfg(feature = "styler-ops")]
 impl_styler_ops!(<T: Display,> Styled<T>);
 #[cfg(feature = "styler-ops")]
-impl_styler_mut_ops!(<T: Display,> Styled<T>);
+impl_styler_ops!(mut <T: Display,> Styled<T>);
 
 impl_into_style!(<T: Display,> (Styled<T>));
 

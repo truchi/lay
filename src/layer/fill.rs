@@ -27,14 +27,14 @@ impl<T: Into<Cell>> From<(T, u16, u16)> for Fill {
 }
 
 impl_styler_index!((fill: Fill) => fill.cell);
-impl_styler_index_mut!((fill: Fill) => fill.cell);
+impl_styler_index!(mut (fill: Fill) => fill.cell);
 impl_styler!((fill: Fill) => fill.cell);
-impl_styler_mut!((fill: Fill) => fill.cell);
+impl_styler!(mut (fill: Fill) => fill.cell);
 
 #[cfg(feature = "styler-ops")]
 impl_styler_ops!(Fill);
 #[cfg(feature = "styler-ops")]
-impl_styler_mut_ops!(Fill);
+impl_styler_ops!(mut Fill);
 
 impl_into_style!((Fill));
 

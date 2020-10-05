@@ -36,13 +36,13 @@ macro_rules! style {
         impl_styler_index!((style: Style) {
             $(style.$attr,)*
         });
-        impl_styler_index_mut!((style: Style) {
+        impl_styler_index!(mut (style: Style) {
             $(&mut style.$attr,)*
         });
         impl_styler!((style: Style) {
             $($attr { style.$attr = $attr; style },)*
         });
-        impl_styler_mut!((style: Style) {
+        impl_styler!(mut (style: Style) {
             $($attr style.$attr = $attr,)*
         });
 
@@ -51,14 +51,14 @@ macro_rules! style {
             $(&style.$attr,)*
         });
         #[cfg(feature = "styler-idx")]
-        impl_styler_mut_idx!((style: Style) {
+        impl_styler_idx!(mut (style: Style) {
             $(&mut style.$attr,)*
         });
 
         #[cfg(feature = "styler-ops")]
         impl_styler_ops!(Style);
         #[cfg(feature = "styler-ops")]
-        impl_styler_mut_ops!(Style);
+        impl_styler_ops!(mut Style);
     };
 }
 
