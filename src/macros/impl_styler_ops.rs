@@ -16,7 +16,7 @@ macro_rules! impl_styler_ops {
         // Type
         $Self:path
     ) => {
-        $crate::priv_impl_styler_ops!(<$($($G $(: $($B)+)?,)+)?> (s: $Self) -> $Self);
+        $crate::priv_impl_styler_ops!(<$($($G $(: $($B)+)?,)+)?> (s: $Self) -> $Self { s });
 
         $crate::priv_impl_styler_ops!(trait unary (s: $Self) -> $Self {
             "Resets (sets to reset value) fields which are `Some`.",
@@ -31,177 +31,151 @@ macro_rules! impl_styler_ops {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! priv_impl_styler_ops {
-    (<$($G:ident $(: $($B:path)+)?,)*> ($self:tt: $Self:path) -> $Output:path $(, $expr:expr)?) => {
+    (<$($G:ident $(: $($B:path)+)?,)*> ($self:tt: $Self:path) -> $Output:path $block:block) => {
         $crate::priv_impl_styler_ops!(trait binary ($self: $Self) -> $Output {
             "Sets `Option<Foreground>`.",
             <$($G $(: $($B)+)?,)*
                 C: std::convert::Into<std::option::Option<$crate::Foreground>>,>
             Mul(mul) (foreground: C) {
-                $(let $self = $expr;)?
-                $crate::Styler::foreground($self, foreground)
+                $crate::Styler::foreground($block, foreground)
             }
             "Sets `Option<Background>`.",
             <$($G $(: $($B)+)?,)*
                 C: std::convert::Into<std::option::Option<$crate::Background>>,>
             Div(div) (background: C) {
-                $(let $self = $expr;)?
-                $crate::Styler::background($self, background)
+                $crate::Styler::background($block, background)
             }
 
             "Sets `Option<Foreground>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (foreground: $crate::Foreground) {
-                $(let $self = $expr;)?
-                $crate::Styler::foreground($self, Some(foreground))
+                $crate::Styler::foreground($block, Some(foreground))
             }
             "Sets foreground to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoForeground) {
-                $(let $self = $expr;)?
-                $crate::Styler::foreground($self, None)
+                $crate::Styler::foreground($block, None)
             }
 
             "Sets `Option<Background>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (background: $crate::Background) {
-                $(let $self = $expr;)?
-                $crate::Styler::background($self, Some(background))
+                $crate::Styler::background($block, Some(background))
             }
             "Sets background to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoBackground) {
-                $(let $self = $expr;)?
-                $crate::Styler::background($self, None)
+                $crate::Styler::background($block, None)
             }
 
             "Sets `Option<Weight>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (weight: $crate::Weight) {
-                $(let $self = $expr;)?
-                $crate::Styler::weight($self, Some(weight))
+                $crate::Styler::weight($block, Some(weight))
             }
             "Sets weight to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoWeight) {
-                $(let $self = $expr;)?
-                $crate::Styler::weight($self, None)
+                $crate::Styler::weight($block, None)
             }
 
             "Sets `Option<Slant>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (slant: $crate::Slant) {
-                $(let $self = $expr;)?
-                $crate::Styler::slant($self, Some(slant))
+                $crate::Styler::slant($block, Some(slant))
             }
             "Sets slant to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoSlant) {
-                $(let $self = $expr;)?
-                $crate::Styler::slant($self, None)
+                $crate::Styler::slant($block, None)
             }
 
             "Sets `Option<Blink>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (blink: $crate::Blink) {
-                $(let $self = $expr;)?
-                $crate::Styler::blink($self, Some(blink))
+                $crate::Styler::blink($block, Some(blink))
             }
             "Sets blink to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoBlink) {
-                $(let $self = $expr;)?
-                $crate::Styler::blink($self, None)
+                $crate::Styler::blink($block, None)
             }
 
             "Sets `Option<Invert>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (invert: $crate::Invert) {
-                $(let $self = $expr;)?
-                $crate::Styler::invert($self, Some(invert))
+                $crate::Styler::invert($block, Some(invert))
             }
             "Sets invert to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoInvert) {
-                $(let $self = $expr;)?
-                $crate::Styler::invert($self, None)
+                $crate::Styler::invert($block, None)
             }
 
             "Sets `Option<Strike>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (strike: $crate::Strike) {
-                $(let $self = $expr;)?
-                $crate::Styler::strike($self, Some(strike))
+                $crate::Styler::strike($block, Some(strike))
             }
             "Sets strike to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoStrike) {
-                $(let $self = $expr;)?
-                $crate::Styler::strike($self, None)
+                $crate::Styler::strike($block, None)
             }
 
             "Sets `Option<Underline>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (underline: $crate::Underline) {
-                $(let $self = $expr;)?
-                $crate::Styler::underline($self, Some(underline))
+                $crate::Styler::underline($block, Some(underline))
             }
             "Sets underline to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoUnderline) {
-                $(let $self = $expr;)?
-                $crate::Styler::underline($self, None)
+                $crate::Styler::underline($block, None)
             }
 
             "Sets `Option<Overline>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (overline: $crate::Overline) {
-                $(let $self = $expr;)?
-                $crate::Styler::overline($self, Some(overline))
+                $crate::Styler::overline($block, Some(overline))
             }
             "Sets overline to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoOverline) {
-                $(let $self = $expr;)?
-                $crate::Styler::overline($self, None)
+                $crate::Styler::overline($block, None)
             }
 
             "Sets `Option<Border>`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (border: $crate::Border) {
-                $(let $self = $expr;)?
-                $crate::Styler::border($self, Some(border))
+                $crate::Styler::border($block, Some(border))
             }
             "Sets border to `None`.",
             <$($G $(: $($B)+)?,)*>
             Add(add) (_: $crate::NoBorder) {
-                $(let $self = $expr;)?
-                $crate::Styler::border($self, None)
+                $crate::Styler::border($block, None)
             }
 
             "`Option::and` fields.",
             <$($G $(: $($B)+)?,)* Styler: $crate::Styler,>
             BitAnd(bitand) (styler: &Styler) {
-                $(let $self = $expr;)?
-                $crate::Styler::and($self, styler)
+                $crate::Styler::and($block, styler)
             }
             "`Option::or` fields.",
             <$($G $(: $($B)+)?,)* Styler: $crate::Styler,>
             BitOr(bitor) (styler: &Styler) {
-                $(let $self = $expr;)?
-                $crate::Styler::or($self, styler)
+                $crate::Styler::or($block, styler)
             }
             "`Option::xor` fields.",
             <$($G $(: $($B)+)?,)* Styler: $crate::Styler,>
             BitXor(bitxor) (styler: &Styler) {
-                $(let $self = $expr;)?
-                $crate::Styler::xor($self, styler)
+                $crate::Styler::xor($block, styler)
             }
 
             "Dedups (`None`s if identicals) fields.",
             <$($G $(: $($B)+)?,)* Styler: $crate::Styler,>
             Rem(rem) (styler: &Styler) {
-                $(let $self = $expr;)?
-                $crate::Styler::dedup($self, styler)
+                $crate::Styler::dedup($block, styler)
             }
         });
     };
