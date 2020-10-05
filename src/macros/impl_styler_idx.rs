@@ -129,7 +129,7 @@ macro_rules! priv_impl_styler_idx {
             type Output = ::std::option::Option<$crate::$Attr>;);
 
             doc!("Indexes `Option<" stringify!($Attr) ">`.",
-            fn index(&self, _idx: $crate::$Idx) -> &::std::option::Option<$crate::$Attr> {
+            fn index(&self, _: $crate::$Idx) -> &::std::option::Option<$crate::$Attr> {
                 let $self = self;
                 $body
             });
@@ -139,7 +139,7 @@ macro_rules! priv_impl_styler_idx {
         doc!("Indexes `Option<" stringify!($Attr) ">` mutably.",
         impl $(<$($G $(: $($B +)+)?,)+>)? std::ops::IndexMut<$crate::$Idx> for $Self {
             doc!("Indexes `Option<" stringify!($Attr) ">` mutably.",
-            fn index_mut(&mut self, _idx: $crate::$Idx) -> &mut ::std::option::Option<$crate::$Attr> {
+            fn index_mut(&mut self, _: $crate::$Idx) -> &mut ::std::option::Option<$crate::$Attr> {
                 let $self = self;
                 $body
             });
