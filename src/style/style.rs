@@ -42,11 +42,11 @@ macro_rules! style {
         impl_styler_index!(mut (style: Style) {
             $(&mut style.$attr,)*
         });
-        impl_styler!((style: Style) {
-            $($attr { style.$attr = $attr; style },)*
+        impl_styler!((style: Style) -> Self {
+            $(($attr) { style.$attr = $attr; style },)*
         });
         impl_styler!(mut (style: Style) {
-            $($attr style.$attr = $attr,)*
+            $(($attr) style.$attr = $attr,)*
         });
 
         #[cfg(feature = "styler-idx")]

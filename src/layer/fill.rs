@@ -28,7 +28,7 @@ impl<T: Into<Cell>> From<(T, u16, u16)> for Fill {
 
 impl_styler_index!((fill: Fill) => fill.cell);
 impl_styler_index!(mut (fill: Fill) => fill.cell);
-impl_styler!((fill: Fill) => fill.cell);
+impl_styler!((fill: Fill) -> Self => fill.cell);
 impl_styler!(mut (fill: Fill) => fill.cell);
 
 #[cfg(feature = "styler-idx")]

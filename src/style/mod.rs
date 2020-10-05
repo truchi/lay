@@ -182,9 +182,9 @@ mod index;
 mod no;
 #[macro_use]
 mod reset;
-// #[macro_use]
-// mod style;
-// mod styled;
+#[macro_use]
+mod style;
+mod styled;
 #[macro_use]
 mod styler;
 
@@ -193,8 +193,8 @@ pub use colors::*;
 pub use index::*;
 pub use no::*;
 pub use reset::*;
-// pub use style::*;
-// pub use styled::*;
+pub use style::*;
+pub use styled::*;
 pub use styler::*;
 
 use std::fmt::{Display, Error, Formatter};
@@ -236,10 +236,10 @@ macro_rules! mod_style {
             $Attr: $($variant_attr($str_attr))* + $reset_attr($str_reset_attr)
         )*);
 
-        // $(#[cfg(feature = "styler-ops")]
-        // priv_impl_styler_ops!(<> (color: $Color) -> Style { Style::from(color) });)*
-        // $(#[cfg(feature = "styler-ops")]
-        // priv_impl_styler_ops!(<> (attr: $Attr) -> Style { Style::from(attr) });)*
+        $(#[cfg(feature = "styler-ops")]
+        priv_impl_styler_ops!(<> (color: $Color) -> Style { Style::from(color) });)*
+        $(#[cfg(feature = "styler-ops")]
+        priv_impl_styler_ops!(<> (attr: $Attr) -> Style { Style::from(attr) });)*
 
         reset!(
             $(#[$meta_reset])* $Reset
@@ -253,10 +253,10 @@ macro_rules! mod_style {
         #[cfg(feature = "styler-idx")]
         index!($($Color $IdxColor)* $($Attr $IdxAttr)*);
 
-        // style!(
-            // $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
-            // $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
-        // );
+        style!(
+            $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
+            $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
+        );
 
         styler!(
             Colors { $(

@@ -38,7 +38,7 @@ impl<T: Display> From<T> for Styled<T> {
 
 impl_styler_index!(<T: Display,> (styled: Styled<T>) => styled.style);
 impl_styler_index!(mut <T: Display,> (styled: Styled<T>) => styled.style);
-impl_styler!(<T: Display,> (styled: Styled<T>) => styled.style);
+impl_styler!(<T: Display,> (styled: Styled<T>) -> Self => styled.style);
 impl_styler!(mut <T: Display,> (styled: Styled<T>) => styled.style);
 
 #[cfg(feature = "styler-idx")]
