@@ -199,6 +199,13 @@ pub use styler::*;
 
 use std::fmt::{Display, Error, Formatter};
 
+#[cfg(feature = "styler-idx")]
+priv_impl_styler_ops!(<> (s: Color) -> Style, Style::from(Foreground(s)));
+#[cfg(feature = "styler-idx")]
+priv_impl_styler_ops!(<> (s: Foreground) -> Style, Style::from(s));
+#[cfg(feature = "styler-idx")]
+priv_impl_styler_ops!(<> (s: Weight) -> Style, Style::from(s));
+
 macro_rules! mod_style {
     (
         $(#[$meta_reset:meta])*
