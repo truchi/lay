@@ -31,6 +31,11 @@ impl_styler_index!(mut (fill: Fill) => fill.cell);
 impl_styler!((fill: Fill) => fill.cell);
 impl_styler!(mut (fill: Fill) => fill.cell);
 
+#[cfg(feature = "styler-idx")]
+impl_styler_idx!((fill: Fill) => fill.cell);
+#[cfg(feature = "styler-idx")]
+impl_styler_idx!(mut (fill: Fill) => fill.cell);
+
 #[cfg(feature = "styler-ops")]
 impl_styler_ops!(Fill);
 #[cfg(feature = "styler-ops")]
