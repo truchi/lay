@@ -87,16 +87,18 @@ macro_rules! priv_impl_styler_idx {
         $overline_expr:expr,
         $border_expr:expr,
     }) => {
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Fg  Foreground $foreground_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Bg  Background $background_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Wgt Weight     $weight_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Slt Slant      $slant_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Blk Blink      $blink_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Inv Invert     $invert_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Stk Strike     $strike_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Udl Underline  $underline_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Ovl Overline   $overline_expr);
-        $crate::priv_impl_styler_idx!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Brd Border     $border_expr);
+        $crate::priv_impl_styler_idx!(($self: $Self)
+            $(<$($G $(: $($B)+)?,)+>)? Fg  Foreground $foreground_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Bg  Background $background_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Wgt Weight     $weight_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Slt Slant      $slant_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Blk Blink      $blink_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Inv Invert     $invert_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Stk Strike     $strike_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Udl Underline  $underline_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Ovl Overline   $overline_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Brd Border     $border_expr,
+        );
     };
     (mut $(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:ident: $Self:path) {
         $foreground_expr:expr,
@@ -110,39 +112,45 @@ macro_rules! priv_impl_styler_idx {
         $overline_expr:expr,
         $border_expr:expr,
     }) => {
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Fg  Foreground $foreground_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Bg  Background $background_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Wgt Weight     $weight_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Slt Slant      $slant_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Blk Blink      $blink_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Inv Invert     $invert_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Stk Strike     $strike_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Udl Underline  $underline_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Ovl Overline   $overline_expr);
-        $crate::priv_impl_styler_idx!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) Brd Border     $border_expr);
+        $crate::priv_impl_styler_idx!(mut ($self: $Self)
+            $(<$($G $(: $($B)+)?,)+>)? Fg  Foreground $foreground_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Bg  Background $background_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Wgt Weight     $weight_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Slt Slant      $slant_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Blk Blink      $blink_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Inv Invert     $invert_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Stk Strike     $strike_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Udl Underline  $underline_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Ovl Overline   $overline_expr,
+            $(<$($G $(: $($B)+)?,)+>)? Brd Border     $border_expr,
+        );
     };
 
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) $Idx:ident $Attr:ident $body:expr) => {
-        doc!("Indexes `Option<" stringify!($Attr) ">`.",
-        impl $(<$($G $(: $($B +)+)?,)+>)? std::ops::Index<$crate::$Idx> for $Self {
-            $crate::doc!("`Option<" stringify!($Attr) ">`.",
-            type Output = ::std::option::Option<$crate::$Attr>;);
-
+    (($self:tt: $Self:path) $($(<$($G:ident $(: $($B:path)+)?,)+>)? $Idx:ident $Attr:ident $body:expr,)*) => {
+        $(
             doc!("Indexes `Option<" stringify!($Attr) ">`.",
-            fn index(&self, _: $crate::$Idx) -> &::std::option::Option<$crate::$Attr> {
-                let $self = self;
-                $body
+            impl $(<$($G $(: $($B +)+)?,)+>)? std::ops::Index<$crate::$Idx> for $Self {
+                $crate::doc!("`Option<" stringify!($Attr) ">`.",
+                type Output = ::std::option::Option<$crate::$Attr>;);
+
+                doc!("Indexes `Option<" stringify!($Attr) ">`.",
+                fn index(&self, _: $crate::$Idx) -> &::std::option::Option<$crate::$Attr> {
+                    let $self = self;
+                    $body
+                });
             });
-        });
+        )*
     };
-    (mut $(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) $Idx:ident $Attr:ident $body:expr) => {
-        doc!("Indexes `Option<" stringify!($Attr) ">` mutably.",
-        impl $(<$($G $(: $($B +)+)?,)+>)? std::ops::IndexMut<$crate::$Idx> for $Self {
+    (mut ($self:tt: $Self:path) $($(<$($G:ident $(: $($B:path)+)?,)+>)? $Idx:ident $Attr:ident $body:expr,)*) => {
+        $(
             doc!("Indexes `Option<" stringify!($Attr) ">` mutably.",
-            fn index_mut(&mut self, _: $crate::$Idx) -> &mut ::std::option::Option<$crate::$Attr> {
-                let $self = self;
-                $body
+            impl $(<$($G $(: $($B +)+)?,)+>)? std::ops::IndexMut<$crate::$Idx> for $Self {
+                doc!("Indexes `Option<" stringify!($Attr) ">` mutably.",
+                fn index_mut(&mut self, _: $crate::$Idx) -> &mut ::std::option::Option<$crate::$Attr> {
+                    let $self = self;
+                    $body
+                });
             });
-        });
+        )*
     };
 }
