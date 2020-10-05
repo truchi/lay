@@ -15,7 +15,6 @@ macro_rules! reset {
             }
         }
 
-        __reset!([From Color] $Reset $($reset_color)*);
         $(__reset!([From $Color] $Reset
             stringify!($Color) "(Color::" stringify!($reset_color) ")",
             $Color(Color::$reset_color)
@@ -28,23 +27,7 @@ macro_rules! reset {
 }
 
 macro_rules! __reset {
-    ([From Color] $Reset:ident $reset_color:ident $($_:ident)+) => {
-        $crate::doc!("Returns `Color::" stringify!($reset_color) "`.",
-        impl From<$Reset> for Color {
-            $crate::doc!("Returns `Color::" stringify!($reset_color) "`.",
-            fn from(_: $Reset) -> Self {
-                Self::$reset_color
-            });
-        });
-    };
     ([From $Self:ident] $Reset:ident $($doc:expr)*, $body:expr) => {
-        $crate::doc!("Returns `" $($doc)* "`.",
-        impl From<$Reset> for $Self {
-            $crate::doc!("Returns `" $($doc)* "`.",
-            fn from(_: $Reset) -> Self {
-                $body
-            });
-        });
         $crate::doc!("Returns `Some(" $($doc)* ")`.",
         impl From<$Reset> for Option<$Self> {
             $crate::doc!("Returns `Some(" $($doc)* ")`.",
@@ -63,20 +46,6 @@ mod tests {
 
     #[test]
     fn conversion() {
-        // From Reset
-        assert_eq!(Color::from(Reset), ResetColor);
-        assert_eq!(Foreground::from(Reset), Foreground(ResetColor));
-        assert_eq!(Background::from(Reset), Background(ResetColor));
-        assert_eq!(Weight::from(Reset), ResetWeight);
-        assert_eq!(Slant::from(Reset), ResetSlant);
-        assert_eq!(Blink::from(Reset), ResetBlink);
-        assert_eq!(Invert::from(Reset), ResetInvert);
-        assert_eq!(Strike::from(Reset), ResetStrike);
-        assert_eq!(Underline::from(Reset), ResetUnderline);
-        assert_eq!(Overline::from(Reset), ResetOverline);
-        assert_eq!(Border::from(Reset), ResetBorder);
-
-        // Option From Reset
         assert_eq!(
             Option::<Foreground>::from(Reset),
             Some(Foreground(ResetColor))
