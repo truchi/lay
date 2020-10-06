@@ -25,6 +25,14 @@ macro_rules! styler {
                 $($get_color(&Self) -> Option<$Color>)*
                 $($get_attr (&Self) -> Option<$Attr>)*
             );
+
+            /// Returns a `Style`.
+            fn get_style(&self) -> Style {
+                Style {
+                    $($color: self.$get_color(),)*
+                    $($attr : self.$get_attr(),)*
+                }
+            }
         }
 
         /// A trait for getting `Option`al attributes on mutable styled types.
@@ -61,7 +69,13 @@ macro_rules! styler {
                     stringify!($Attr) "::" stringify!($reset_attr),
                     $set_reset_attr($Attr::$reset_attr)
                 })*
-                and or xor dedup reset
+            );
+
+            priv_styler!((Self) (
+                    $($get_color $set_color($Color(Color::$reset_color)))*
+                    $($get_attr  $set_attr ($Attr::$reset_attr))*
+                )
+                style and or xor dedup reset
             );
 
             /// Formats the CSIs of `self`'s `Some` fields.
@@ -94,7 +108,13 @@ macro_rules! styler {
                     stringify!($Attr) "::" stringify!($reset_attr),
                     $set_reset_mut_attr($Attr::$reset_attr)
                 })*
-                and_mut or_mut xor_mut dedup_mut reset_mut
+            );
+
+            priv_styler!((&mut Self) (
+                    $($get_color $set_mut_color($Color(Color::$reset_color)))*
+                    $($get_attr  $set_mut_attr ($Attr::$reset_attr))*
+                )
+                style_mut and_mut or_mut xor_mut dedup_mut reset_mut
             );
         }
     };
@@ -114,10 +134,9 @@ macro_rules! priv_styler {
                 $($doc_variant:expr)*,
                 $set_variant:ident($body_variant:expr)
             )*]
-                $($doc_reset:expr)*,
-                $set_reset:ident($body_reset:expr)
+            $($doc_reset:expr)*,
+            $set_reset:ident($body_reset:expr)
         })*
-        $and:ident $or:ident $xor:ident $dedup:ident $reset:ident
     ) => {
         $(
             $crate::doc!("Sets `Option<" stringify!($Attr) ">`.",
@@ -148,20 +167,90 @@ macro_rules! priv_styler {
                 self.$set(Some($body_reset))
             });
         )*
+    };
+    ((Self) ($($get:ident $set:ident($reset_expr:expr))*)
+        $style:ident $and:ident $or:ident $xor:ident $dedup:ident $reset:ident
+    ) => {
+        /// Applies `styler`'s styles.
+        fn $style(self, styler: &impl StylerIndex) -> <Self::Output as Styler>::Output
+        where
+            Self::Output: Styler<Output = Self::Output>
+        {
+            let out = self;
+            $(let out = out.$set(styler.$get());)*
+            out
+        }
 
-        /// `Option::and` fields.
-        fn $and(self: $Self, other: &impl StylerIndex) -> $Output;
-
-        /// `Option::or` fields.
-        fn $or(self: $Self, other: &impl StylerIndex) -> $Output;
-
-        /// `Option::xor` fields.
-        fn $xor(self: $Self, other: &impl StylerIndex) -> $Output;
+        priv_styler!((Self) and $and $($get $set)*);
+        priv_styler!((Self) or  $or  $($get $set)*);
+        priv_styler!((Self) xor $xor $($get $set)*);
 
         /// Dedups (`None`s if identicals) fields.
-        fn $dedup(self: $Self, before: &impl StylerIndex) -> $Output;
+        fn $dedup(mut self, before: &impl StylerIndex) -> Self
+        where
+            Self: Styler<Output = Self>
+        {
+            $(if self.$get() == before.$get() {
+                self = self.$set(None);
+            })*
+            self
+        }
 
         /// Resets (sets to reset value) fields which are `Some`.
-        fn $reset(self: $Self) -> $Output;
+        fn $reset(mut self) -> Self
+        where
+            Self: Styler<Output = Self>
+        {
+            $(if let Some(_) = self.$get() {
+                self = self.$set(Some($reset_expr));
+            })*
+            self
+        }
+    };
+    ((Self) $op:ident $fn:ident $($get:ident $set:ident)*) => {
+        doc!("`Option::" stringify!($op) "` fields.",
+        fn $fn(self, other: &impl StylerIndex) -> <Self::Output as Styler>::Output
+        where
+            Self::Output: Styler<Output = Self::Output>
+        {
+            let out = self;
+            $(
+                let op = out.$get().$op(other.$get());
+                let out = out.$set(op);
+            )*
+            out
+        });
+    };
+    ((&mut Self) ($($get:ident $set:ident($reset_expr:expr))*)
+        $style:ident $and:ident $or:ident $xor:ident $dedup:ident $reset:ident
+    ) => {
+        /// Applies `styler`'s styles.
+        fn $style(&mut self, styler: &impl StylerIndex) {
+            $(self.$set(styler.$get());)*
+        }
+
+        priv_styler!((&mut Self) and $and $($get $set)*);
+        priv_styler!((&mut Self) or  $or  $($get $set)*);
+        priv_styler!((&mut Self) xor $xor $($get $set)*);
+
+        /// Dedups (`None`s if identicals) fields.
+        fn $dedup(&mut self, before: &impl StylerIndex) {
+            $(if self.$get() == before.$get() {
+                self.$set(None);
+            })*
+        }
+
+        /// Resets (sets to reset value) fields which are `Some`.
+        fn $reset(&mut self) {
+            $(if let Some(_) = self.$get() {
+                self.$set(Some($reset_expr));
+            })*
+        }
+    };
+    ((&mut Self) $op:ident $fn:ident $($get:ident $set:ident)*) => {
+        doc!("`Option::" stringify!($op) "` fields.",
+        fn $fn(&mut self, other: &impl StylerIndex) {
+            $(self.$set(self.$get().$op(other.$get()));)*
+        });
     };
 }
