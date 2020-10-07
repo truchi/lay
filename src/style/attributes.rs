@@ -1,3 +1,32 @@
+use crate::*;
+
+impl_styler_index!(
+    (weight: Weight) {
+        None, None, Some(*weight), None, None, None, None, None, None, None,
+    }
+    (slant: Slant) {
+        None, None, None, Some(*slant), None, None, None, None, None, None,
+    }
+    (blink: Blink) {
+        None, None, None, None, Some(*blink), None, None, None, None, None,
+    }
+    (invert: Invert) {
+        None, None, None, None, None, Some(*invert), None, None, None, None,
+    }
+    (strike: Strike) {
+        None, None, None, None, None, None, Some(*strike), None, None, None,
+    }
+    (underline: Underline) {
+        None, None, None, None, None, None, None, Some(*underline), None, None,
+    }
+    (overline: Overline) {
+        None, None, None, None, None, None, None, None, Some(*overline), None,
+    }
+    (border: Border) {
+        None, None, None, None, None, None, None, None, None, Some(*border),
+    }
+);
+
 macro_rules! attributes {
     ($(
         $(#[$meta:meta])*

@@ -199,19 +199,6 @@ pub use styler::*;
 
 use std::fmt::{Display, Error, Formatter};
 
-impl_styler_index!((foreground: Foreground) {
-    Some(*foreground),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-});
-
 impl_styler!((__: Foreground) -> Style {
     (foreground) Style::NONE.foreground(foreground),
     (background) Style::NONE.background(background),

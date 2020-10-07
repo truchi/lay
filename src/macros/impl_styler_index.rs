@@ -1,7 +1,7 @@
 /// Implements `StylerIndex`/ `StylerIndexMut`.
 #[macro_export]
 macro_rules! impl_styler_index {
-    (
+    ($(
         // "" or "mut"
         $($mut:ident)?
         // Generics and corresponding bounds
@@ -24,8 +24,8 @@ macro_rules! impl_styler_index {
             })?
             // A getter to a Styler field
             $(=> $styler:expr)?
-    ) => {
-        $crate::priv_impl_styler_index!($($mut)? $(<$($G $(: $($B)+)?,)+>)? ($self: $Self)
+    )+) => {
+        $($crate::priv_impl_styler_index!($($mut)? $(<$($G $(: $($B)+)?,)+>)? ($self: $Self)
             $(=> $styler)?
             $({
                 $foreground_expr,
@@ -39,7 +39,7 @@ macro_rules! impl_styler_index {
                 $overline_expr,
                 $border_expr,
             })?
-        );
+        );)+
     };
 }
 

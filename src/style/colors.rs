@@ -58,6 +58,15 @@ impl From<Foreground> for Background {
     }
 }
 
+impl_styler_index!(
+    (foreground: Foreground) {
+        Some(*foreground), None, None, None, None, None, None, None, None, None,
+    }
+    (background: Background) {
+        None, Some(*background), None, None, None, None, None, None, None, None,
+    }
+);
+
 macro_rules! colors {
     ($($(#[$meta:meta])* $Name:ident ($str:literal $reset_str:literal))*) => {
         $(
