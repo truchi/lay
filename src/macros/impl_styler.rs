@@ -1,7 +1,7 @@
 /// Implements `Styler`/`StylerMut`.
 #[macro_export]
 macro_rules! impl_styler {
-    (
+    ($(
         // "" or "mut"
         $($mut:ident)?
         // Generics and corresponding bounds
@@ -31,8 +31,8 @@ macro_rules! impl_styler {
             })?
             // A getter to a Styler field
             $(=> $styler:expr)?
-    ) => {
-        $crate::priv_impl_styler!($($mut)? $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) $(-> $Output)?
+    )+) => {
+        $($crate::priv_impl_styler!($($mut)? $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) $(-> $Output)?
             $(=> $styler)?
             $({
                 ($foreground) { let $foreground = $foreground.into(); $foreground_expr },
@@ -51,7 +51,7 @@ macro_rules! impl_styler {
                 $(%($dedup)   $dedup_expr,)?
                 $(!()         $reset_expr,)?
             })?
-        );
+        );)+
     };
 }
 

@@ -132,7 +132,7 @@ macro_rules! priv_impl_styler_index {
 
     ($($get:ident($self:tt, $Attr:ident) $body:expr,)*) => {
         $(fn $get(&self) -> ::std::option::Option<$crate::$Attr> {
-            #[allow(unused_variables)]
+            #[allow(unused)]
             let $self = self;
             $body
         })*

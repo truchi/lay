@@ -36,27 +36,20 @@ macro_rules! style {
             });
         });)*
 
-        impl_styler_index!((style: Style) {
-            $(style.$attr,)*
-        });
-        impl_styler_index!(mut (style: Style) {
-            $(&mut style.$attr,)*
-        });
-        impl_styler!((style: Style) -> Self {
-            $(($attr) { style.$attr = $attr; style },)*
-        });
-        impl_styler!(mut (style: Style) {
-            $(($attr) style.$attr = $attr,)*
-        });
+        impl_styler_index!(
+                (style: Style) { $(style.$attr,)* }
+            mut (style: Style) { $(&mut style.$attr,)* }
+        );
+        impl_styler!(
+                (style: Style) -> Self { $(($attr) { style.$attr = $attr; style },)* }
+            mut (style: Style) { $(($attr) style.$attr = $attr,)* }
+        );
 
         #[cfg(feature = "styler-idx")]
-        impl_styler_idx!((style: Style) {
-            $(&style.$attr,)*
-        });
-        #[cfg(feature = "styler-idx")]
-        impl_styler_idx!(mut (style: Style) {
-            $(&mut style.$attr,)*
-        });
+        impl_styler_idx!(
+                (style: Style) { $(&style.$attr,)* }
+            mut (style: Style) { $(&mut style.$attr,)* }
+        );
 
         #[cfg(feature = "styler-ops")]
         impl_styler_ops!(Style);
