@@ -53,20 +53,12 @@ macro_rules! styler {
                     $set_color
                     $unset_color
                     { $set_rgb $set_ansi }
-                    [$(
-                        stringify!($Color) "(Color::" stringify!($variant_color) ")",
-                        $set_variant_color($Color(Color::$variant_color))
-                    )*]
-                    stringify!($Color) "(Color::" stringify!($reset_color) ")",
+                    [$($set_variant_color($Color(Color::$variant_color)))*]
                     $set_reset_color($Color(Color::$reset_color))
                 })*
                 $(($attr: $Attr) {
                     $set_attr $unset_attr
-                    [$(
-                        stringify!($Attr) "::" stringify!($variant_attr),
-                        $set_variant_attr($Attr::$variant_attr)
-                    )*]
-                    stringify!($Attr) "::" stringify!($reset_attr),
+                    [$($set_variant_attr($Attr::$variant_attr))*]
                     $set_reset_attr($Attr::$reset_attr)
                 })*
             );
@@ -92,20 +84,12 @@ macro_rules! styler {
                 $(($color: $Color) {
                     $set_mut_color $unset_mut_color
                     { $set_rgb_mut $set_ansi_mut }
-                    [$(
-                        stringify!($Color) "(Color::" stringify!($variant_color) ")",
-                        $set_variant_mut_color($Color(Color::$variant_color))
-                    )*]
-                    stringify!($Color) "(Color::" stringify!($reset_color) ")",
+                    [$($set_variant_mut_color($Color(Color::$variant_color)))*]
                     $set_reset_mut_color($Color(Color::$reset_color))
                 })*
                 $(($attr: $Attr) {
                     $set_mut_attr $unset_mut_attr
-                    [$(
-                        stringify!($Attr) "::" stringify!($variant_attr),
-                        $set_variant_mut_attr($Attr::$variant_attr)
-                    )*]
-                    stringify!($Attr) "::" stringify!($reset_attr),
+                    [$($set_variant_mut_attr($Attr::$variant_attr))*]
                     $set_reset_mut_attr($Attr::$reset_attr)
                 })*
             );
@@ -130,11 +114,7 @@ macro_rules! priv_styler {
         $(($attr:ident: $Attr:ident) {
             $set:ident $unset:ident
             $({ $set_rgb:ident $set_ansi:ident })?
-            [$(
-                $($doc_variant:expr)*,
-                $set_variant:ident($body_variant:expr)
-            )*]
-            $($doc_reset:expr)*,
+            [$($set_variant:ident($body_variant:expr))*]
             $set_reset:ident($body_reset:expr)
         })*
     ) => {
@@ -147,7 +127,7 @@ macro_rules! priv_styler {
                 self.$set(None)
             });
 
-            $($crate::doc!("Sets `Some(" $($doc_variant)* ")`.",
+            $($crate::doc!("Sets `Some(" stringify!($body_variant) ")`.",
             fn $set_variant(self: $Self) -> $Output {
                 self.$set(Some($body_variant))
             });)*
@@ -162,7 +142,7 @@ macro_rules! priv_styler {
                 self.$set(Some($Attr(Color::Ansi(ansi))))
             });)?
 
-            $crate::doc!("Sets `Some(" $($doc_reset)* ")`.",
+            $crate::doc!("Sets `Some(" stringify!($body_reset) ")`.",
             fn $set_reset(self: $Self) -> $Output {
                 self.$set(Some($body_reset))
             });
