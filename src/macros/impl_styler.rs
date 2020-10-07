@@ -23,13 +23,11 @@ macro_rules! impl_styler {
                 ($underline:tt)  $underline_expr:expr,
                 ($overline:tt)   $overline_expr:expr,
                 ($border:tt)     $border_expr:expr,
-                $(
-                    ($and:tt)    $and_expr:expr,
-                    ($or:tt)     $or_expr:expr,
-                    ($xor:tt)    $xor_expr:expr,
-                    ($dedup:tt)  $dedup_expr:expr,
-                                 $reset_expr:expr,
-                )?
+                $(&($and:tt)     $and_expr:expr,)?
+                $(|($or:tt)      $or_expr:expr,)?
+                $(^($xor:tt)     $xor_expr:expr,)?
+                $(%($dedup:tt)   $dedup_expr:expr,)?
+                $(!()            $reset_expr:expr,)?
             })?
             // A getter to a Styler field
             $(=> $styler:expr)?
@@ -47,13 +45,11 @@ macro_rules! impl_styler {
                 ($underline)  { let $underline  = $underline.into();  $underline_expr },
                 ($overline)   { let $overline   = $overline.into();   $overline_expr },
                 ($border)     { let $border     = $border.into();     $border_expr },
-                $(
-                    ($and)    $and_expr,
-                    ($or)     $or_expr,
-                    ($xor)    $xor_expr,
-                    ($dedup)  $dedup_expr,
-                              $reset_expr,
-                )?
+                $(&($and)     $and_expr,)?
+                $(|($or)      $or_expr,)?
+                $(^($xor)     $xor_expr,)?
+                $(%($dedup)   $dedup_expr,)?
+                $(!()         $reset_expr,)?
             })?
         );
     };
@@ -74,11 +70,6 @@ macro_rules! priv_impl_styler {
             (underline)  { $crate::Styler::underline ($styler, underline);  $self },
             (overline)   { $crate::Styler::overline  ($styler, overline);   $self },
             (border)     { $crate::Styler::border    ($styler, border);     $self },
-            (and)        { $crate::Styler::and       ($styler, and);        $self },
-            (or)         { $crate::Styler::or        ($styler, or);         $self },
-            (xor)        { $crate::Styler::xor       ($styler, xor);        $self },
-            (dedup)      { $crate::Styler::dedup     ($styler, dedup);      $self },
-                         { $crate::Styler::reset     ($styler);             $self },
         });
     };
     (mut $(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) => $styler:expr) => {
@@ -93,11 +84,6 @@ macro_rules! priv_impl_styler {
             (underline)  $crate::StylerMut::underline_mut (&mut $styler, underline),
             (overline)   $crate::StylerMut::overline_mut  (&mut $styler, overline),
             (border)     $crate::StylerMut::border_mut    (&mut $styler, border),
-            (and)        $crate::StylerMut::and_mut       (&mut $styler, and),
-            (or)         $crate::StylerMut::or_mut        (&mut $styler, or),
-            (xor)        $crate::StylerMut::xor_mut       (&mut $styler, xor),
-            (dedup)      $crate::StylerMut::dedup_mut     (&mut $styler, dedup),
-                         $crate::StylerMut::reset_mut     (&mut $styler),
         });
     };
 
@@ -112,13 +98,11 @@ macro_rules! priv_impl_styler {
         ($underline:tt)  $underline_expr:expr,
         ($overline:tt)   $overline_expr:expr,
         ($border:tt)     $border_expr:expr,
-        $(
-            ($and:tt)    $and_expr:expr,
-            ($or:tt)     $or_expr:expr,
-            ($xor:tt)    $xor_expr:expr,
-            ($dedup:tt)  $dedup_expr:expr,
-                         $reset_expr:expr,
-        )?
+        $(&($and:tt)     $and_expr:expr,)?
+        $(|($or:tt)      $or_expr:expr,)?
+        $(^($xor:tt)     $xor_expr:expr,)?
+        $(%($dedup:tt)   $dedup_expr:expr,)?
+        $(!()            $reset_expr:expr,)?
     }) => {
         impl $(<$($G $(: $($B +)+)?,)+>)? $crate::Styler for $Self {
             type Output = $Output;
@@ -136,25 +120,11 @@ macro_rules! priv_impl_styler {
                 border    ($border:     Border)     $border_expr
             );
 
-            $crate::priv_impl_styler!($self
-                get_foreground foreground($crate::Foreground($crate::Color::ResetColor))
-                get_background background($crate::Background($crate::Color::ResetColor))
-                get_weight weight($crate::Weight::ResetWeight)
-                get_slant slant($crate::Slant::ResetSlant)
-                get_blink blink($crate::Blink::ResetBlink)
-                get_invert invert($crate::Invert::ResetInvert)
-                get_strike strike($crate::Strike::ResetStrike)
-                get_underline underline($crate::Underline::ResetUnderline)
-                get_overline overline($crate::Overline::ResetOverline)
-                get_border border($crate::Border::ResetBorder),
-                $(
-                    and   ($and  )  $and_expr,
-                    or    ($or   )  $or_expr,
-                    xor   ($xor  )  $xor_expr,
-                    dedup ($dedup)  $dedup_expr,
-                    reset ()        $reset_expr,
-                )?
-            );
+            $(priv_impl_styler!($self and   $and   $and_expr);)?
+            $(priv_impl_styler!($self or    $or    $or_expr);)?
+            $(priv_impl_styler!($self xor   $xor   $xor_expr);)?
+            $(priv_impl_styler!($self dedup $dedup $dedup_expr);)?
+            $(priv_impl_styler!($self reset        $reset_expr);)?
         }
     };
     (mut $(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) {
@@ -168,13 +138,11 @@ macro_rules! priv_impl_styler {
         ($underline:tt)  $underline_expr:expr,
         ($overline:tt)   $overline_expr:expr,
         ($border:tt)     $border_expr:expr,
-        $(
-            ($and:tt)    $and_expr:expr,
-            ($or:tt)     $or_expr:expr,
-            ($xor:tt)    $xor_expr:expr,
-            ($dedup:tt)  $dedup_expr:expr,
-                         $reset_expr:expr,
-        )?
+        $(&($and:tt)     $and_expr:expr,)?
+        $(|($or:tt)      $or_expr:expr,)?
+        $(^($xor:tt)     $xor_expr:expr,)?
+        $(%($dedup:tt)   $dedup_expr:expr,)?
+        $(!()            $reset_expr:expr,)?
     }) => {
         impl $(<$($G $(: $($B +)+)?,)+>)? $crate::StylerMut for $Self {
             $crate::priv_impl_styler!(mut $self
@@ -190,83 +158,17 @@ macro_rules! priv_impl_styler {
                 border_mut    ($border:     Border)     $border_expr
             );
 
-            $crate::priv_impl_styler!(mut $self
-                get_foreground foreground_mut($crate::Foreground($crate::Color::ResetColor))
-                get_background background_mut($crate::Background($crate::Color::ResetColor))
-                get_weight weight_mut($crate::Weight::ResetWeight)
-                get_slant slant_mut($crate::Slant::ResetSlant)
-                get_blink blink_mut($crate::Blink::ResetBlink)
-                get_invert invert_mut($crate::Invert::ResetInvert)
-                get_strike strike_mut($crate::Strike::ResetStrike)
-                get_underline underline_mut($crate::Underline::ResetUnderline)
-                get_overline overline_mut($crate::Overline::ResetOverline)
-                get_border border_mut($crate::Border::ResetBorder),
-                $(
-                    and_mut   ($and  )  $and_expr,
-                    or_mut    ($or   )  $or_expr,
-                    xor_mut   ($xor  )  $xor_expr,
-                    dedup_mut ($dedup)  $dedup_expr,
-                    reset_mut ()        $reset_expr,
-                )?
-            );
+            $(priv_impl_styler!(mut $self and_mut   $and   $and_expr);)?
+            $(priv_impl_styler!(mut $self or_mut    $or    $or_expr);)?
+            $(priv_impl_styler!(mut $self xor_mut   $xor   $xor_expr);)?
+            $(priv_impl_styler!(mut $self dedup_mut $dedup $dedup_expr);)?
+            $(priv_impl_styler!(mut $self reset_mut        $reset_expr);)?
         }
-    };
-
-    ($self:tt $($get:ident $set:ident($body:expr))*,) => {
-        $crate::priv_impl_styler!($self _1 _2(_3),
-            and(other) {
-                $($self = $self.$set($self.$get().and(other.$get()));)*
-                $self
-            },
-            or(other) {
-                $($self = $self.$set($self.$get().or(other.$get()));)*
-                $self
-            },
-            xor(other) {
-                $($self = $self.$set($self.$get().xor(other.$get()));)*
-                $self
-            },
-            dedup(before) {
-                $(if $self.$get() == before.$get() {
-                    $self = $self.$set(None);
-                })*
-                $self
-            },
-            reset() {
-                $(if let Some(_) = $self.$get() {
-                    $self = $self.$set(Some($body));
-                })*
-                $self
-            },
-        );
-    };
-    (mut $self:tt $($get:ident $set:ident($body:expr))*,) => {
-        $crate::priv_impl_styler!(mut $self _1 _2(_3),
-            and_mut(other) {
-                $($self.$set($self.$get().and(other.$get()));)*
-            },
-            or_mut(other) {
-                $($self.$set($self.$get().or(other.$get()));)*
-            },
-            xor_mut(other) {
-                $($self.$set($self.$get().xor(other.$get()));)*
-            },
-            dedup_mut(before) {
-                $(if $self.$get() == before.$get() {
-                    $self.$set(None);
-                })*
-            },
-            reset_mut() {
-                $(if let Some(_) = $self.$get() {
-                    $self.$set(Some($body));
-                })*
-            },
-        );
     };
 
     ($self:tt $($set:ident($attr:tt: $Attr:ident) $body:expr)*) => {
         $(fn $set(self, $attr: impl ::std::convert::Into<::std::option::Option<$crate::$Attr>>) -> Self::Output {
-            #[allow(unused_mut)]
+            #[allow(unused)]
             let mut $self = self;
             $body
         })*
@@ -278,17 +180,54 @@ macro_rules! priv_impl_styler {
         })*
     };
 
-    ($self:tt $($_1:ident $_2:ident($_3:expr))*, $($fn:ident ($($other:tt)?) $body:expr,)*) => {
-        $(fn $fn(self $(, $other: &impl $crate::StylerIndex)?) -> Self::Output {
-            #[allow(unused_mut)]
+    ($self:tt $fn:ident $arg:tt $expr:expr) => {
+        fn $fn(self, $arg: &impl StylerIndex) -> <Self::Output as Styler>::Output
+        where
+            Self::Output: Styler<Output = Self::Output>,
+        {
+            #[allow(unused)]
             let mut $self = self;
-            $body
-        })*
+            $expr
+        }
     };
-    (mut $self:tt $($_1:ident $_2:ident($_3:expr))*, $($fn:ident ($($other:tt)?) $body:expr,)*) => {
-        $(fn $fn(&mut self $(, $other: &impl $crate::StylerIndex)?) {
+    (mut $self:tt $fn:ident $arg:tt $expr:expr) => {
+        fn $fn(&mut self, $arg: &impl StylerIndex) {
             let $self = self;
-            $body
-        })*
+            $expr;
+        }
+    };
+
+    ($self:tt dedup $arg:tt $expr:expr) => {
+        fn dedup(self, $arg: &impl StylerIndex) -> Self
+        where
+            Self: Styler<Output = Self>
+        {
+            #[allow(unused)]
+            let mut $self = self;
+            $expr
+        }
+    };
+    ($self:tt dedup $arg:tt $expr:expr) => {
+        fn dedup(&mut self, $arg: &impl StylerIndex) {
+            let $self = self;
+            $expr;
+        }
+    };
+
+    ($self:tt reset $expr:expr) => {
+        fn reset(self) -> Self
+        where
+            Self: Styler<Output = Self>
+        {
+            #[allow(unused)]
+            let mut $self = self;
+            $expr
+        }
+    };
+    ($self:tt reset $expr:expr) => {
+        fn reset(&mut self) {
+            let $self = self;
+            $expr
+        }
     };
 }

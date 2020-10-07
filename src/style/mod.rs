@@ -199,6 +199,33 @@ pub use styler::*;
 
 use std::fmt::{Display, Error, Formatter};
 
+impl_styler_index!((foreground: Foreground) {
+    Some(*foreground),
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+});
+
+impl_styler!((__: Foreground) -> Style {
+    (foreground) Style::NONE.foreground(foreground),
+    (background) Style::NONE.background(background),
+    (weight)     Style::NONE.weight(weight),
+    (slant)      Style::NONE.slant(slant),
+    (blink)      Style::NONE.blink(blink),
+    (invert)     Style::NONE.invert(invert),
+    (strike)     Style::NONE.strike(strike),
+    (underline)  Style::NONE.underline(underline),
+    (overline)   Style::NONE.overline(overline),
+    (border)     Style::NONE.border(border),
+    &(_)         Style::NONE,
+});
+
 macro_rules! mod_style {
     (
         $(#[$meta_reset:meta])*

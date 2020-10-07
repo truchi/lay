@@ -80,8 +80,8 @@ macro_rules! styler {
 
             /// Formats the CSIs of `self`'s `Some` fields.
             fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-                $(if let Some(t) = self.$get_color() { t.fmt(f)?; })*
-                $(if let Some(t) = self.$get_attr () { t.fmt(f)?; })*
+                $(if let Some(t) = self.$get_color() { <$Color as Display>::fmt(&t, f)?; })*
+                $(if let Some(t) = self.$get_attr () { <$Attr  as Display>::fmt(&t, f)?; })*
                 Ok(())
             }
         }
