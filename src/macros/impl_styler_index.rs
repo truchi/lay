@@ -5,7 +5,7 @@ macro_rules! impl_styler_index {
         // "" or "mut"
         $($mut:ident)?
         // Generics and corresponding bounds
-        $(<$($G:ident $(: $($B:path)+)?,)+>)?
+        $(<($($bounds:tt)+)>)?
         // self argument and type
         ($self:tt: $Self:path)
         // One of:
@@ -25,7 +25,7 @@ macro_rules! impl_styler_index {
             // A getter to a Styler field
             $(=> $styler:expr)?
     )+) => {
-        $($crate::priv_impl_styler_index!($($mut)? $(<$($G $(: $($B)+)?,)+>)? ($self: $Self)
+        $($crate::priv_impl_styler_index!($($mut)? $(<($($bounds)+)>)? ($self: $Self)
             $(=> $styler)?
             $({
                 $foreground_expr,
@@ -46,8 +46,8 @@ macro_rules! impl_styler_index {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! priv_impl_styler_index {
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) => $styler:expr) => {
-        $crate::priv_impl_styler_index!($(<$($G $(: $($B)+)?,)+>)? ($self: $Self) {
+    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:path) => $styler:expr) => {
+        $crate::priv_impl_styler_index!($(<($($bounds)+)>)? ($self: $Self) {
             $crate::StylerIndex::get_foreground(&$styler),
             $crate::StylerIndex::get_background(&$styler),
             $crate::StylerIndex::get_weight(&$styler),
@@ -60,8 +60,8 @@ macro_rules! priv_impl_styler_index {
             $crate::StylerIndex::get_border(&$styler),
         });
     };
-    (mut $(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) => $styler:expr) => {
-        $crate::priv_impl_styler_index!(mut $(<$($G $(: $($B)+)?,)+>)? ($self: $Self) {
+    (mut $(<($($bounds:tt)+)>)? ($self:tt: $Self:path) => $styler:expr) => {
+        $crate::priv_impl_styler_index!(mut $(<($($bounds)+)>)? ($self: $Self) {
             $crate::StylerIndexMut::get_foreground_mut(&mut $styler),
             $crate::StylerIndexMut::get_background_mut(&mut $styler),
             $crate::StylerIndexMut::get_weight_mut    (&mut $styler),
@@ -75,7 +75,7 @@ macro_rules! priv_impl_styler_index {
         });
     };
 
-    ($(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) {
+    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:path) {
         $foreground_expr:expr,
         $background_expr:expr,
         $weight_expr:expr,
@@ -87,7 +87,7 @@ macro_rules! priv_impl_styler_index {
         $overline_expr:expr,
         $border_expr:expr,
     }) => {
-        impl $(<$($G $(: $($B +)+)?,)+>)? $crate::StylerIndex for $Self {
+        impl $(<$($bounds)+>)? $crate::StylerIndex for $Self {
             $crate::priv_impl_styler_index!(
                 get_foreground($self, Foreground) $foreground_expr,
                 get_background($self, Background) $background_expr,
@@ -102,7 +102,7 @@ macro_rules! priv_impl_styler_index {
             );
         }
     };
-    (mut $(<$($G:ident $(: $($B:path)+)?,)+>)? ($self:tt: $Self:path) {
+    (mut $(<($($bounds:tt)+)>)? ($self:tt: $Self:path) {
         $foreground_expr:expr,
         $background_expr:expr,
         $weight_expr:expr,
@@ -114,7 +114,7 @@ macro_rules! priv_impl_styler_index {
         $overline_expr:expr,
         $border_expr:expr,
     }) => {
-        impl $(<$($G $(: $($B +)+)?,)+>)? $crate::StylerIndexMut for $Self {
+        impl $(<$($bounds)+>)? $crate::StylerIndexMut for $Self {
             $crate::priv_impl_styler_index!(mut
                 get_foreground_mut($self, Foreground) $foreground_expr,
                 get_background_mut($self, Background) $background_expr,

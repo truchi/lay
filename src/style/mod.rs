@@ -261,10 +261,10 @@ macro_rules! mod_style {
             (border)     Style::NONE.border(border),
         });)*
 
-        $(#[cfg(feature = "styler-ops")]
-        priv_impl_styler_ops!(<> (color: $Color) -> Style { Style::from(color) });)*
-        $(#[cfg(feature = "styler-ops")]
-        priv_impl_styler_ops!(<> (attr: $Attr) -> Style { Style::from(attr) });)*
+        // $(#[cfg(feature = "styler-ops")]
+        // priv_impl_styler_ops!(<> (color: $Color) -> Style { Style::from(color) });)*
+        // $(#[cfg(feature = "styler-ops")]
+        // priv_impl_styler_ops!(<> (attr: $Attr) -> Style { Style::from(attr) });)*
 
         reset!(
             $(#[$meta_reset])* $Reset
