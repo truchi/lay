@@ -1,25 +1,25 @@
 /// Impl `Styler`/`StylerMut` ops.
 #[macro_export]
 macro_rules! impl_styler_ops {
-    (
+    ($(
         // "" or "mut"
         $($mut:ident)?
         // Generics and corresponding bounds
         $(<($($bounds:tt)+)>)?
         // Type
-        ($Self:path)
+        ($Self:ty)
         // Styler's Output
         // (Leave empty instead of Self to get Rem and Not)
-        $(-> $Output:path)?
-    ) => {
-        $crate::priv_impl_styler_ops!($($mut)? $(<($($bounds)+)>)? ($Self) $(-> $Output)?);
+        $(-> $Output:ty)?
+    )+) => {
+        $($crate::priv_impl_styler_ops!($($mut)? $(<($($bounds)+)>)? ($Self) $(-> $Output)?);)+
     };
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! priv_impl_styler_ops {
-    (trait unary ($self:tt: $Self:path) -> $Output:path { $(
+    (trait unary ($self:tt: $Self:ty) -> $Output:ty { $(
         $($doc:expr)*,
         $(<($($bounds:tt)+)>)?
         $Op:ident($op:ident) $body:expr
@@ -36,7 +36,7 @@ macro_rules! priv_impl_styler_ops {
             });
         });)*
     };
-    (mut trait unary ($self:tt: $Self:path) { $(
+    (mut trait unary ($self:tt: $Self:ty) { $(
         $($doc:expr)*,
         $(<($($bounds:tt)+)>)?
         $Op:ident($op:ident) $body:expr
@@ -54,7 +54,7 @@ macro_rules! priv_impl_styler_ops {
         });)*
     };
 
-    (trait binary ($self:tt: $Self:path) -> $Output:path { $(
+    (trait binary ($self:tt: $Self:ty) -> $Output:ty { $(
         $($doc:expr)*,
         $(<($($bounds:tt)+)>)? $Op:ident($op:ident)
         ($rhs:tt: $($Rhs:tt)*) $body:expr
@@ -71,7 +71,7 @@ macro_rules! priv_impl_styler_ops {
             });
         });)*
     };
-    (mut trait binary ($self:tt: $Self:path) { $(
+    (mut trait binary ($self:tt: $Self:ty) { $(
         $($doc:expr)*,
         $(<($($bounds:tt)+)>)? $OpAssign:ident($op_assign:ident)
         ($rhs:tt: $($Rhs:tt)*) $body:expr
@@ -86,7 +86,7 @@ macro_rules! priv_impl_styler_ops {
         });)*
     };
 
-    ($(<($($bounds:tt)+)>)? ($Self:path)) => {
+    ($(<($($bounds:tt)+)>)? ($Self:ty)) => {
         $crate::priv_impl_styler_ops!($(<($($bounds)+)>)? ($Self) -> $Self);
 
         $crate::priv_impl_styler_ops!(trait binary (s: $Self) -> $Self {
@@ -105,7 +105,7 @@ macro_rules! priv_impl_styler_ops {
             }
         });
     };
-    ($(<($($bounds:tt)+)>)? ($Self:path) -> $Output:path) => {
+    ($(<($($bounds:tt)+)>)? ($Self:ty) -> $Output:ty) => {
         $crate::priv_impl_styler_ops!(trait binary (s: $Self) -> $Output {
             "Sets `Option<Foreground>`.",
             <($($($bounds)+,)?
@@ -247,7 +247,7 @@ macro_rules! priv_impl_styler_ops {
             }
         });
     };
-    (mut $(<($($bounds:tt)+)>)? ($Self:path)) => {
+    (mut $(<($($bounds:tt)+)>)? ($Self:ty)) => {
         $crate::priv_impl_styler_ops!(mut trait binary (s: $Self) {
             "Sets `Option<Foreground>` mutably.",
             <($($($bounds)+,)?

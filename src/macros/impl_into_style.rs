@@ -3,11 +3,11 @@
 macro_rules! impl_into_style {
     (
         // Generics and corresponding bounds
-        $(<$($G:ident $(: $($B:path)+)?,)+>)?
+        $(<($($bounds:tt)+)>)?
         // Self
-        $Type:path
+        ($Self:ty)
     ) => {
-        impl $(<$($G $(: $($B+)+,)?)+>)? ::std::convert::Into<$crate::Style> for $Type {
+        impl $(<$($bounds)+>)? ::std::convert::Into<$crate::Style> for $Self {
             fn into(self) -> $crate::Style {
                 $crate::Style {
                     foreground: <Self as $crate::StylerIndex>::get_foreground(&self),

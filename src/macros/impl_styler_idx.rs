@@ -7,7 +7,7 @@ macro_rules! impl_styler_idx {
         // Generics and corresponding bounds
         $(<($($bounds:tt)+)>)?
         // self argument and type
-        ($self:tt: $Self:path)
+        ($self:tt: $Self:ty)
         // One of:
             // List of getters to attributes
             $({
@@ -46,7 +46,7 @@ macro_rules! impl_styler_idx {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! priv_impl_styler_idx {
-    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:path) => $styler:expr) => {
+    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:ty) => $styler:expr) => {
         $crate::priv_impl_styler_idx!($(<($($bounds)+)>)? ($self: $Self) {
             ::std::ops::Index::<$crate::Fg>::index(&$styler, $crate::Fg),
             ::std::ops::Index::<$crate::Bg>::index(&$styler, $crate::Bg),
@@ -60,7 +60,7 @@ macro_rules! priv_impl_styler_idx {
             ::std::ops::Index::<$crate::Brd>::index(&$styler, $crate::Brd),
         });
     };
-    (mut $(<($($bounds:tt)+)>)? ($self:tt: $Self:path) => $styler:expr) => {
+    (mut $(<($($bounds:tt)+)>)? ($self:tt: $Self:ty) => $styler:expr) => {
         $crate::priv_impl_styler_idx!(mut $(<($($bounds)+)>)? ($self: $Self) {
             ::std::ops::IndexMut::<$crate::Fg>::index_mut(&mut $styler, $crate::Fg),
             ::std::ops::IndexMut::<$crate::Bg>::index_mut(&mut $styler, $crate::Bg),
@@ -75,7 +75,7 @@ macro_rules! priv_impl_styler_idx {
         });
     };
 
-    ($(<($($bounds:tt)+)>)? ($self:ident: $Self:path) {
+    ($(<($($bounds:tt)+)>)? ($self:ident: $Self:ty) {
         $foreground_expr:expr,
         $background_expr:expr,
         $weight_expr:expr,
@@ -100,7 +100,7 @@ macro_rules! priv_impl_styler_idx {
             $(<($($bounds)+)>)? Brd Border     $border_expr,
         );
     };
-    (mut $(<($($bounds:tt)+)>)? ($self:ident: $Self:path) {
+    (mut $(<($($bounds:tt)+)>)? ($self:ident: $Self:ty) {
         $foreground_expr:expr,
         $background_expr:expr,
         $weight_expr:expr,
@@ -126,7 +126,7 @@ macro_rules! priv_impl_styler_idx {
         );
     };
 
-    (($self:tt: $Self:path) $($(<($($bounds:tt)+)>)? $Idx:ident $Attr:ident $body:expr,)*) => {
+    (($self:tt: $Self:ty) $($(<($($bounds:tt)+)>)? $Idx:ident $Attr:ident $body:expr,)*) => {
         $(
             doc!("Indexes `Option<" stringify!($Attr) ">`.",
             impl $(<$($bounds)+>)? std::ops::Index<$crate::$Idx> for $Self {
@@ -141,7 +141,7 @@ macro_rules! priv_impl_styler_idx {
             });
         )*
     };
-    (mut ($self:tt: $Self:path) $($(<($($bounds:tt)+)>)? $Idx:ident $Attr:ident $body:expr,)*) => {
+    (mut ($self:tt: $Self:ty) $($(<($($bounds:tt)+)>)? $Idx:ident $Attr:ident $body:expr,)*) => {
         $(
             doc!("Indexes `Option<" stringify!($Attr) ">` mutably.",
             impl $(<$($bounds)+>)? std::ops::IndexMut<$crate::$Idx> for $Self {

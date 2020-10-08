@@ -1,3 +1,41 @@
+use super::{Style, Styled};
+
+impl_styler_index!(
+    <('a)> (_: &'a str) {
+        None, None, None, None, None, None, None, None, None, None,
+    }
+    (_: String) {
+        None, None, None, None, None, None, None, None, None, None,
+    }
+);
+
+impl_styler!(
+    (content: String) -> Styled<String> {
+        (foreground) Styled { content, style: Style::NONE.foreground(foreground) },
+        (background) Styled { content, style: Style::NONE.background(background) },
+        (weight)     Styled { content, style: Style::NONE.weight(weight) },
+        (slant)      Styled { content, style: Style::NONE.slant(slant) },
+        (blink)      Styled { content, style: Style::NONE.blink(blink) },
+        (invert)     Styled { content, style: Style::NONE.invert(invert) },
+        (strike)     Styled { content, style: Style::NONE.strike(strike) },
+        (underline)  Styled { content, style: Style::NONE.underline(underline) },
+        (overline)   Styled { content, style: Style::NONE.overline(overline) },
+        (border)     Styled { content, style: Style::NONE.border(border) },
+    }
+    <('a)> (content: &'a str) -> Styled<&'a str> {
+        (foreground) Styled { content, style: Style::NONE.foreground(foreground) },
+        (background) Styled { content, style: Style::NONE.background(background) },
+        (weight)     Styled { content, style: Style::NONE.weight(weight) },
+        (slant)      Styled { content, style: Style::NONE.slant(slant) },
+        (blink)      Styled { content, style: Style::NONE.blink(blink) },
+        (invert)     Styled { content, style: Style::NONE.invert(invert) },
+        (strike)     Styled { content, style: Style::NONE.strike(strike) },
+        (underline)  Styled { content, style: Style::NONE.underline(underline) },
+        (overline)   Styled { content, style: Style::NONE.overline(overline) },
+        (border)     Styled { content, style: Style::NONE.border(border) },
+    }
+);
+
 macro_rules! styler {
     (Colors { $(
         $Color:ident($color:ident) {

@@ -7,9 +7,9 @@ macro_rules! impl_styler {
         // Generics and corresponding bounds
         $(<($($bounds:tt)+)>)?
         // self argument and type
-        ($self:tt: $Self:path)
+        ($self:tt: $Self:ty)
         // Styler's Output
-        $(-> $Output:path)?
+        $(-> $Output:ty)?
         // One of:
             // List of arguments and setters to attributes
             $({
@@ -58,7 +58,7 @@ macro_rules! impl_styler {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! priv_impl_styler {
-    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:path) -> $Output:path => $styler:expr) => {
+    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:ty) -> $Output:ty => $styler:expr) => {
         $crate::priv_impl_styler!($(<($($bounds)+)>)? ($self: $Self) -> $Output {
             (foreground) { $crate::Styler::foreground($styler, foreground); $self },
             (background) { $crate::Styler::background($styler, background); $self },
@@ -72,7 +72,7 @@ macro_rules! priv_impl_styler {
             (border)     { $crate::Styler::border    ($styler, border);     $self },
         });
     };
-    (mut $(<($($bounds:tt)+)>)? ($self:tt: $Self:path) => $styler:expr) => {
+    (mut $(<($($bounds:tt)+)>)? ($self:tt: $Self:ty) => $styler:expr) => {
         $crate::priv_impl_styler!(mut $(<($($bounds)+)>)? ($self: $Self) {
             (foreground) $crate::StylerMut::foreground_mut(&mut $styler, foreground),
             (background) $crate::StylerMut::background_mut(&mut $styler, background),
@@ -87,7 +87,7 @@ macro_rules! priv_impl_styler {
         });
     };
 
-    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:path) -> $Output:path {
+    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:ty) -> $Output:ty {
         ($foreground:tt) $foreground_expr:expr,
         ($background:tt) $background_expr:expr,
         ($weight:tt)     $weight_expr:expr,
@@ -127,7 +127,7 @@ macro_rules! priv_impl_styler {
             $(priv_impl_styler!($self reset        $reset_expr);)?
         }
     };
-    (mut $(<($($bounds:tt)+)>)? ($self:tt: $Self:path) {
+    (mut $(<($($bounds:tt)+)>)? ($self:tt: $Self:ty) {
         ($foreground:tt) $foreground_expr:expr,
         ($background:tt) $background_expr:expr,
         ($weight:tt)     $weight_expr:expr,
