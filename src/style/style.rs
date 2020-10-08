@@ -52,9 +52,10 @@ macro_rules! style {
         );
 
         #[cfg(feature = "styler-ops")]
-        impl_styler_ops!(Style);
-        #[cfg(feature = "styler-ops")]
-        impl_styler_ops!(mut Style);
+        impl_styler_ops!(
+                (Style)
+            mut (Style)
+        );
     };
 }
 

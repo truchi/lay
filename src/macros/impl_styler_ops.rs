@@ -2,29 +2,17 @@
 #[macro_export]
 macro_rules! impl_styler_ops {
     (
-        mut
+        // "" or "mut"
+        $($mut:ident)?
         // Generics and corresponding bounds
         $(<($($bounds:tt)+)>)?
         // Type
-        $Self:path
+        ($Self:path)
+        // Styler's Output
+        // (Leave empty instead of Self to get Rem and Not)
+        $(-> $Output:path)?
     ) => {
-        $crate::priv_impl_styler_ops!(mut $(<($($bounds)+)>)? $Self);
-    };
-    (
-        // Generics and corresponding bounds
-        $(<($($bounds:tt)+)>)?
-        // Type
-        $Self:path
-    ) => {
-        $crate::priv_impl_styler_ops!($(<($($bounds)+)>)? (s: $Self) -> $Self { s });
-
-        $crate::priv_impl_styler_ops!(trait unary (s: $Self) -> $Self {
-            "Resets (sets to reset value) fields which are `Some`.",
-            $(<($($bounds)+)>)?
-            Not(not) {
-                $crate::Styler::reset(s)
-            }
-        });
+        $crate::priv_impl_styler_ops!($($mut)? $(<($($bounds)+)>)? ($Self) $(-> $Output)?);
     };
 }
 
@@ -45,7 +33,6 @@ macro_rules! priv_impl_styler_ops {
             fn $op(self) -> $Output {
                 let $self = self;
                 $body
-
             });
         });)*
     };
@@ -99,155 +86,168 @@ macro_rules! priv_impl_styler_ops {
         });)*
     };
 
-    ($(<($($bounds:tt)+)>)? ($self:tt: $Self:path) -> $Output:path $block:block) => {
-        $crate::priv_impl_styler_ops!(trait binary ($self: $Self) -> $Output {
+    ($(<($($bounds:tt)+)>)? ($Self:path)) => {
+        $crate::priv_impl_styler_ops!($(<($($bounds)+)>)? ($Self) -> $Self);
+
+        $crate::priv_impl_styler_ops!(trait binary (s: $Self) -> $Self {
+            "Dedups (`None`s if identicals) fields.",
+            <($($($bounds)+,)? Styler: $crate::Styler)>
+            Rem(rem) (styler: &Styler) {
+                $crate::Styler::dedup(s, styler)
+            }
+        });
+
+        $crate::priv_impl_styler_ops!(trait unary (s: $Self) -> $Self {
+            "Resets (sets to reset value) fields which are `Some`.",
+            $(<($($bounds)+)>)?
+            Not(not) {
+                $crate::Styler::reset(s)
+            }
+        });
+    };
+    ($(<($($bounds:tt)+)>)? ($Self:path) -> $Output:path) => {
+        $crate::priv_impl_styler_ops!(trait binary (s: $Self) -> $Output {
             "Sets `Option<Foreground>`.",
             <($($($bounds)+,)?
                 C: std::convert::Into<std::option::Option<$crate::Foreground>>)>
             Mul(mul) (foreground: C) {
-                $crate::Styler::foreground($block, foreground)
+                $crate::Styler::foreground(s, foreground)
             }
             "Sets `Option<Background>`.",
             <($($($bounds)+,)?
                 C: std::convert::Into<std::option::Option<$crate::Background>>)>
             Div(div) (background: C) {
-                $crate::Styler::background($block, background)
+                $crate::Styler::background(s, background)
             }
 
             "Sets `Option<Foreground>`.",
             $(<($($bounds)+)>)?
             Add(add) (foreground: $crate::Foreground) {
-                $crate::Styler::foreground($block, Some(foreground))
+                $crate::Styler::foreground(s, Some(foreground))
             }
             "Sets foreground to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoForeground) {
-                $crate::Styler::foreground($block, None)
+                $crate::Styler::foreground(s, None)
             }
 
             "Sets `Option<Background>`.",
             $(<($($bounds)+)>)?
             Add(add) (background: $crate::Background) {
-                $crate::Styler::background($block, Some(background))
+                $crate::Styler::background(s, Some(background))
             }
             "Sets background to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoBackground) {
-                $crate::Styler::background($block, None)
+                $crate::Styler::background(s, None)
             }
 
             "Sets `Option<Weight>`.",
             $(<($($bounds)+)>)?
             Add(add) (weight: $crate::Weight) {
-                $crate::Styler::weight($block, Some(weight))
+                $crate::Styler::weight(s, Some(weight))
             }
             "Sets weight to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoWeight) {
-                $crate::Styler::weight($block, None)
+                $crate::Styler::weight(s, None)
             }
 
             "Sets `Option<Slant>`.",
             $(<($($bounds)+)>)?
             Add(add) (slant: $crate::Slant) {
-                $crate::Styler::slant($block, Some(slant))
+                $crate::Styler::slant(s, Some(slant))
             }
             "Sets slant to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoSlant) {
-                $crate::Styler::slant($block, None)
+                $crate::Styler::slant(s, None)
             }
 
             "Sets `Option<Blink>`.",
             $(<($($bounds)+)>)?
             Add(add) (blink: $crate::Blink) {
-                $crate::Styler::blink($block, Some(blink))
+                $crate::Styler::blink(s, Some(blink))
             }
             "Sets blink to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoBlink) {
-                $crate::Styler::blink($block, None)
+                $crate::Styler::blink(s, None)
             }
 
             "Sets `Option<Invert>`.",
             $(<($($bounds)+)>)?
             Add(add) (invert: $crate::Invert) {
-                $crate::Styler::invert($block, Some(invert))
+                $crate::Styler::invert(s, Some(invert))
             }
             "Sets invert to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoInvert) {
-                $crate::Styler::invert($block, None)
+                $crate::Styler::invert(s, None)
             }
 
             "Sets `Option<Strike>`.",
             $(<($($bounds)+)>)?
             Add(add) (strike: $crate::Strike) {
-                $crate::Styler::strike($block, Some(strike))
+                $crate::Styler::strike(s, Some(strike))
             }
             "Sets strike to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoStrike) {
-                $crate::Styler::strike($block, None)
+                $crate::Styler::strike(s, None)
             }
 
             "Sets `Option<Underline>`.",
             $(<($($bounds)+)>)?
             Add(add) (underline: $crate::Underline) {
-                $crate::Styler::underline($block, Some(underline))
+                $crate::Styler::underline(s, Some(underline))
             }
             "Sets underline to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoUnderline) {
-                $crate::Styler::underline($block, None)
+                $crate::Styler::underline(s, None)
             }
 
             "Sets `Option<Overline>`.",
             $(<($($bounds)+)>)?
             Add(add) (overline: $crate::Overline) {
-                $crate::Styler::overline($block, Some(overline))
+                $crate::Styler::overline(s, Some(overline))
             }
             "Sets overline to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoOverline) {
-                $crate::Styler::overline($block, None)
+                $crate::Styler::overline(s, None)
             }
 
             "Sets `Option<Border>`.",
             $(<($($bounds)+)>)?
             Add(add) (border: $crate::Border) {
-                $crate::Styler::border($block, Some(border))
+                $crate::Styler::border(s, Some(border))
             }
             "Sets border to `None`.",
             $(<($($bounds)+)>)?
             Add(add) (_: $crate::NoBorder) {
-                $crate::Styler::border($block, None)
+                $crate::Styler::border(s, None)
             }
 
             "`Option::and` fields.",
             <($($($bounds)+,)? Styler: $crate::Styler)>
             BitAnd(bitand) (styler: &Styler) {
-                $crate::Styler::and($block, styler)
+                $crate::Styler::and(s, styler)
             }
             "`Option::or` fields.",
             <($($($bounds)+,)? Styler: $crate::Styler)>
             BitOr(bitor) (styler: &Styler) {
-                $crate::Styler::or($block, styler)
+                $crate::Styler::or(s, styler)
             }
             "`Option::xor` fields.",
             <($($($bounds)+,)? Styler: $crate::Styler)>
             BitXor(bitxor) (styler: &Styler) {
-                $crate::Styler::xor($block, styler)
-            }
-
-            "Dedups (`None`s if identicals) fields.",
-            <($($($bounds)+,)? Styler: $crate::Styler)>
-            Rem(rem) (styler: &Styler) {
-                $crate::Styler::dedup($block, styler)
+                $crate::Styler::xor(s, styler)
             }
         });
     };
-    (mut $(<($($bounds:tt)+)>)? $Self:path) => {
+    (mut $(<($($bounds:tt)+)>)? ($Self:path)) => {
         $crate::priv_impl_styler_ops!(mut trait binary (s: $Self) {
             "Sets `Option<Foreground>` mutably.",
             <($($($bounds)+,)?

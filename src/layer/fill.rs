@@ -42,9 +42,10 @@ impl_styler_idx!(
 );
 
 #[cfg(feature = "styler-ops")]
-impl_styler_ops!(Fill);
-#[cfg(feature = "styler-ops")]
-impl_styler_ops!(mut Fill);
+impl_styler_ops!(
+        (Fill)
+    mut (Fill)
+);
 
 impl_into_style!(Fill);
 
