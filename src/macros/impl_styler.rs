@@ -180,23 +180,6 @@ macro_rules! priv_impl_styler {
         })*
     };
 
-    ($self:tt $fn:ident $arg:tt $expr:expr) => {
-        fn $fn(self, $arg: &impl StylerIndex) -> <Self::Output as Styler>::Output
-        where
-            Self::Output: Styler<Output = Self::Output>,
-        {
-            #[allow(unused)]
-            let mut $self = self;
-            $expr
-        }
-    };
-    (mut $self:tt $fn:ident $arg:tt $expr:expr) => {
-        fn $fn(&mut self, $arg: &impl StylerIndex) {
-            let $self = self;
-            $expr;
-        }
-    };
-
     ($self:tt dedup $arg:tt $expr:expr) => {
         fn dedup(self, $arg: &impl StylerIndex) -> Self
         where
@@ -207,8 +190,9 @@ macro_rules! priv_impl_styler {
             $expr
         }
     };
-    ($self:tt dedup $arg:tt $expr:expr) => {
-        fn dedup(&mut self, $arg: &impl StylerIndex) {
+    (mut $self:tt dedup_mut $arg:tt $expr:expr) => {
+        fn dedup_mut(&mut self, $arg: &impl StylerIndex) {
+            #[allow(unused)]
             let $self = self;
             $expr;
         }
@@ -224,10 +208,29 @@ macro_rules! priv_impl_styler {
             $expr
         }
     };
-    ($self:tt reset $expr:expr) => {
-        fn reset(&mut self) {
+    (mut $self:tt reset_mut $expr:expr) => {
+        fn reset_mut(&mut self) {
+            #[allow(unused)]
             let $self = self;
             $expr
+        }
+    };
+
+    ($self:tt $fn:ident $arg:tt $expr:expr) => {
+        fn $fn(self, $arg: &impl StylerIndex) -> <Self::Output as Styler>::Output
+        where
+            Self::Output: Styler<Output = Self::Output>,
+        {
+            #[allow(unused)]
+            let mut $self = self;
+            $expr
+        }
+    };
+    (mut $self:tt $fn:ident $arg:tt $expr:expr) => {
+        fn $fn(&mut self, $arg: &impl StylerIndex) {
+            #[allow(unused)]
+            let $self = self;
+            $expr;
         }
     };
 }
