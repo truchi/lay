@@ -1,7 +1,9 @@
+//! Attributes `Index`ers.
+
 macro_rules! index {
     ($($Self:ident)*) => {
         $(
-            doc!("Index of `Option<" stringify!($Self) ">`.",
+            doc!("`Index`es `Option<" stringify!($Self) ">`.",
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct $Self;);
         )*

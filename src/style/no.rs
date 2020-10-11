@@ -1,3 +1,5 @@
+//! Attributes `None`rs.
+
 macro_rules! no {
     ($($Self:ident)*) => {
         $(

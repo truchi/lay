@@ -1,48 +1,6 @@
 use super::*;
 use std::fmt::{Display, Error, Formatter};
 
-pub use Color::*;
-
-/// A `Color` for `Foreground` & `Background`.
-///
-/// To be used with [`Foreground`][foreground] and [`Background`][background] (a
-/// `Color` on its own does not `impl Display`).
-///
-/// Defaults to `ResetColor`.
-///
-/// [foreground]: struct.Foreground.html
-/// [background]: struct.Background.html
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub enum Color {
-    White,
-    Black,
-    Grey,
-    DarkGrey,
-    Red,
-    DarkRed,
-    Green,
-    DarkGreen,
-    Yellow,
-    DarkYellow,
-    Blue,
-    DarkBlue,
-    Magenta,
-    DarkMagenta,
-    Cyan,
-    DarkCyan,
-    Rgb(u8, u8, u8),
-    Ansi(u8),
-    ResetColor,
-}
-
-/// Returns `Color::ResetColor`.
-impl Default for Color {
-    /// Returns `Color::ResetColor`.
-    fn default() -> Self {
-        Self::ResetColor
-    }
-}
-
 macro_rules! colors {
     ($(
         $(#[$meta_ground:meta])*
@@ -191,11 +149,9 @@ mod tests {
 
     #[test]
     fn default() {
-        // Color defaults to ResetColor
-        assert_eq!(Color::default(), ResetColor);
-
-        // Foreground/Background default to Foreground/Background(ResetColor)
+        // Foreground default to Foreground(ResetColor)
         assert_eq!(Foreground::default(), Foreground(ResetColor));
+        // Background default to Background(ResetColor)
         assert_eq!(Background::default(), Background(ResetColor));
     }
 

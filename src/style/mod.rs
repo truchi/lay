@@ -172,15 +172,22 @@
 //! [impl_styler]: ../macro.impl_styler.html
 //! [impl_styler_ops]: ../macro.impl_styler_ops.html
 
-mod attributes;
+mod attrs;
+mod color;
 mod colors;
 mod reset;
 mod style;
 mod styled;
 mod styler;
 
+/// Attributes (`Foreground`, `Background`, `Weight`, `Slant`, `Blink`,
+/// `Invert`, `Strike`, `Underline`, `Overline`, `Border`)
+pub mod attributes {
+    pub use super::{attrs::*, colors::*};
+}
+
 pub use attributes::*;
-pub use colors::*;
+pub use color::*;
 pub use reset::*;
 pub use style::*;
 pub use styled::*;
