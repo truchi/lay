@@ -115,7 +115,9 @@ macro_rules! colors {
                         f.write_str($csi)?;
 
                         match color {
+                            Color::White => f.write_str("5;15"),
                             Color::Black => f.write_str("5;0"),
+                            Color::Grey => f.write_str("5;7"),
                             Color::DarkGrey => f.write_str("5;8"),
                             Color::Red => f.write_str("5;9"),
                             Color::DarkRed => f.write_str("5;1"),
@@ -129,8 +131,6 @@ macro_rules! colors {
                             Color::DarkMagenta => f.write_str("5;5"),
                             Color::Cyan => f.write_str("5;14"),
                             Color::DarkCyan => f.write_str("5;6"),
-                            Color::White => f.write_str("5;15"),
-                            Color::Grey => f.write_str("5;7"),
                             Color::Rgb(r, g, b) => write!(f, "2;{};{};{}", r, g, b),
                             Color::Ansi(ansi) => write!(f, "5;{}", ansi),
                             _ => Ok(()) // NOTE: unreachable

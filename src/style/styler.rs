@@ -249,6 +249,8 @@ styler!(
                 ResetColor: reset_color reset_color_mut
                 White: white white_mut
                 Black: black black_mut
+                Grey: grey grey_mut
+                DarkGrey: dark_grey dark_grey_mut
                 Red: red red_mut
                 DarkRed: dark_red dark_red_mut
                 Green: green green_mut
@@ -271,6 +273,8 @@ styler!(
                 ResetColor: on_reset_color on_reset_color_mut
                 White: on_white on_white_mut
                 Black: on_black on_black_mut
+                Grey: on_grey on_grey_mut
+                DarkGrey: on_dark_grey on_dark_grey_mut
                 Red: on_red on_red_mut
                 DarkRed: on_dark_red on_dark_red_mut
                 Green: on_green on_green_mut
