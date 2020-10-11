@@ -66,11 +66,43 @@
 //! [impl_styler]: macro.impl_styler.html
 //! [gh_examples]: https://github.com/truchi/lay/tree/master/examples
 
-#[macro_use]
-mod macros;
+// #[macro_use]
+// mod macros;
+//
+// pub mod layer;
+// pub mod style;
+//
+// pub use layer::*;
+// pub use style::*;
 
-pub mod layer;
-pub mod style;
+pub mod new {
+    use super::*;
+    use lay_macros::*;
 
-pub use layer::*;
-pub use style::*;
+    make_color!();
+    make_foreground!();
+    make_background!();
+    make_attrs!();
+    // make_style!();
+
+    /// LALALA  
+    /// ```
+    /// fn main() {
+    ///      let lol = "lol";
+    /// }
+    /// assert_eq!(12, 12, #prout);
+    /// ```
+    #[color(prout, lol = caca)]
+    _item! {}
+
+    test!(
+        /// LALALA
+        ///
+        /// ```
+        /// fn main() {
+        ///     let lol = "lol";
+        /// }
+        /// assert_eq!(12, 12, #prout);
+        /// ```
+    );
+}

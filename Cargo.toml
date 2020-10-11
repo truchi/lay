@@ -11,6 +11,10 @@ default = ["styler-idx", "styler-ops"]
 styler-idx = []
 styler-ops = []
 
+[dependencies]
+lay_macros = { path = "lay_macros" }
+pretty_assertions = "0.6"
+
 [dev-dependencies]
 crossterm = "0.17"
 pretty_assertions = "0.6"
