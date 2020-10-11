@@ -1,10 +1,11 @@
-#[cfg(feature = "styler-ops")]
 macro_rules! no {
-    ($($Self:ident $No:ident)*) => {
+    ($($Self:ident)*) => {
         $(
-            $crate::doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
+            doc!("Sets `Option<" stringify!($Self) ">` to `None`.",
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct $No;);
+            pub struct $Self;);
         )*
     };
 }
+
+no!(Foreground Background Weight Slant Blink Invert Strike Underline Overline Border);

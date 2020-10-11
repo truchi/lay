@@ -1,38 +1,64 @@
-use super::{Style, Styler};
+use super::*;
 use std::fmt::{Display, Error, Formatter};
+
+/// `Style`s.
+///
+/// A straightforward implementation of `Styler`.
+///
+/// `Display`s the corresponding CSIs to the terminal.
+///
+/// `Default`s as an empty `Style` (all fields set to `None`).
+#[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
+pub struct Style {
+    pub foreground: Option<Foreground>,
+    pub background: Option<Background>,
+    pub weight:     Option<Weight>,
+    pub slant:      Option<Slant>,
+    pub blink:      Option<Blink>,
+    pub invert:     Option<Invert>,
+    pub strike:     Option<Strike>,
+    pub underline:  Option<Underline>,
+    pub overline:   Option<Overline>,
+    pub border:     Option<Border>,
+}
+
+impl Style {
+    /// A `Style` with fields set to `None`.
+    pub const NONE: Self = Self {
+        foreground: None,
+        background: None,
+        weight:     None,
+        slant:      None,
+        blink:      None,
+        invert:     None,
+        strike:     None,
+        underline:  None,
+        overline:   None,
+        border:     None,
+    };
+    /// A `Style` with fields set to their reset value.
+    pub const RESET: Self = Self {
+        foreground: Some(Foreground(Color::ResetColor)),
+        background: Some(Background(Color::ResetColor)),
+        weight:     Some(Weight::ResetWeight),
+        slant:      Some(Slant::ResetSlant),
+        blink:      Some(Blink::ResetBlink),
+        invert:     Some(Invert::ResetInvert),
+        strike:     Some(Strike::ResetStrike),
+        underline:  Some(Underline::ResetUnderline),
+        overline:   Some(Overline::ResetOverline),
+        border:     Some(Border::ResetBorder),
+    };
+}
 
 #[macro_use]
 macro_rules! style {
-    ($(($attr:ident: $Attr:ident, $set_attr:ident, $Reset:expr))*) => {
-        /// `Style`s.
-        ///
-        /// A straightforward implementation of `Styler`.
-        ///
-        /// `Display`s the corresponding CSIs to the terminal.
-        ///
-        /// `Default`s as an empty `Style` (all fields set to `None`).
-        #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
-        pub struct Style {
-            $(pub $attr: Option<$Attr>,)*
-        }
-
-        impl Style {
-            /// A `Style` with fields set to `None`.
-            pub const NONE: Self = Self {
-                $($attr: None,)*
-            };
-
-            /// A `Style` with fields set to their reset value.
-            pub const RESET: Self = Self {
-                $($attr: Some($Reset),)*
-            };
-        }
-
+    ($($attr:ident: $Attr:ident,)*) => {
         $(doc!("Returns an empty `Style` with `Some(" stringify!($attr) ")`",
         impl From<$Attr> for Style {
             doc!("Returns an empty `Style` with `Some(" stringify!($attr) ")`",
             fn from($attr: $Attr) -> Self {
-                Style::NONE.$set_attr($attr)
+                Style::NONE.$attr($attr)
             });
         });)*
 
@@ -40,6 +66,7 @@ macro_rules! style {
                 (style: Style) { $(style.$attr,)* }
             mut (style: Style) { $(&mut style.$attr,)* }
         );
+
         impl_styler!(
                 (style: Style) -> Self { $(($attr) { style.$attr = $attr; style },)* }
             mut (style: Style) { $(($attr) style.$attr = $attr,)* }
@@ -58,6 +85,19 @@ macro_rules! style {
         );
     };
 }
+
+style!(
+    foreground: Foreground,
+    background: Background,
+    weight: Weight,
+    slant: Slant,
+    blink: Blink,
+    invert: Invert,
+    strike: Strike,
+    underline: Underline,
+    overline: Overline,
+    border: Border,
+);
 
 impl Display for Style {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {

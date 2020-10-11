@@ -172,17 +172,9 @@
 //! [impl_styler]: ../macro.impl_styler.html
 //! [impl_styler_ops]: ../macro.impl_styler_ops.html
 
-#[macro_use]
 mod attributes;
-#[macro_use]
 mod colors;
-#[macro_use]
-mod index;
-#[macro_use]
-mod no;
-#[macro_use]
 mod reset;
-#[macro_use]
 mod style;
 mod styled;
 #[macro_use]
@@ -190,12 +182,42 @@ mod styler;
 
 pub use attributes::*;
 pub use colors::*;
-pub use index::*;
-pub use no::*;
 pub use reset::*;
 pub use style::*;
 pub use styled::*;
 pub use styler::*;
+
+#[cfg(feature = "styler-ops")]
+pub mod no;
+#[cfg(feature = "styler-ops")]
+pub use no::{
+    Background as NoBackground,
+    Blink as NoBlink,
+    Border as NoBorder,
+    Foreground as NoForeground,
+    Invert as NoInvert,
+    Overline as NoOverline,
+    Slant as NoSlant,
+    Strike as NoStrike,
+    Underline as NoUnderline,
+    Weight as NoWeight,
+};
+
+#[cfg(feature = "styler-idx")]
+pub mod i;
+#[cfg(feature = "styler-idx")]
+pub use i::{
+    Background as Bg,
+    Blink as Blk,
+    Border as Brd,
+    Foreground as Fg,
+    Invert as Inv,
+    Overline as Ovl,
+    Slant as Slt,
+    Strike as Stk,
+    Underline as Udl,
+    Weight as Wgt,
+};
 
 use std::fmt::{Display, Error, Formatter};
 
@@ -226,63 +248,6 @@ macro_rules! mod_style {
             }
         )* }
     ) => {
-        colors!($(
-            $(#[$meta_color])*
-            $Color ($str_color $str_reset_color)
-        )*);
-
-        attributes!($(
-            $(#[$meta_attr])*
-            $Attr: $($variant_attr($str_attr))* + $reset_attr($str_reset_attr)
-        )*);
-
-        $(impl_styler!((__: $Color) -> Style {
-            (foreground) Style::NONE.foreground(foreground),
-            (background) Style::NONE.background(background),
-            (weight)     Style::NONE.weight(weight),
-            (slant)      Style::NONE.slant(slant),
-            (blink)      Style::NONE.blink(blink),
-            (invert)     Style::NONE.invert(invert),
-            (strike)     Style::NONE.strike(strike),
-            (underline)  Style::NONE.underline(underline),
-            (overline)   Style::NONE.overline(overline),
-            (border)     Style::NONE.border(border),
-        });)*
-        $(impl_styler!((__: $Attr) -> Style {
-            (foreground) Style::NONE.foreground(foreground),
-            (background) Style::NONE.background(background),
-            (weight)     Style::NONE.weight(weight),
-            (slant)      Style::NONE.slant(slant),
-            (blink)      Style::NONE.blink(blink),
-            (invert)     Style::NONE.invert(invert),
-            (strike)     Style::NONE.strike(strike),
-            (underline)  Style::NONE.underline(underline),
-            (overline)   Style::NONE.overline(overline),
-            (border)     Style::NONE.border(border),
-        });)*
-
-        $(#[cfg(feature = "styler-ops")]
-        impl_styler_ops!(($Color) -> Style);)*
-        $(#[cfg(feature = "styler-ops")]
-        impl_styler_ops!(($Attr) -> Style);)*
-
-        reset!(
-            $(#[$meta_reset])* $Reset
-            Colors { $($Color $reset_color)* }
-            Attributes { $($Attr $reset_attr)* }
-        );
-
-        #[cfg(feature = "styler-ops")]
-        no!($($Color $NoColor)* $($Attr $NoAttr)*);
-
-        #[cfg(feature = "styler-idx")]
-        index!($($Color $IdxColor)* $($Attr $IdxAttr)*);
-
-        style!(
-            $(($color: $Color, $set_color, $Color(Color::$reset_color)))*
-            $(($attr: $Attr, $set_attr, $Attr::$reset_attr))*
-        );
-
         styler!(
             Colors { $(
                 $Color($color) {

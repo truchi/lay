@@ -1,43 +1,60 @@
+use super::*;
+use std::fmt::{Display, Error, Formatter};
+
+/// `Reset`s all terminal attributes.
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
+pub struct Reset;
+
+/// Prints the "Reset"/"Normal" csi to the terminal.
+impl Display for Reset {
+    /// Prints the "Reset"/"Normal" csi to the terminal.
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        f.write_str("\x1B[0m")
+    }
+}
+
 macro_rules! reset {
-    ($(#[$meta_reset:meta])* $Reset:ident
-        Colors { $($Color:ident $reset_color:ident)* }
-        Attributes { $($Attr:ident $reset_attr:ident)* }
+    (
+        Colors { $($Color:ident,)* }
+        Attributes { $($Attr:ident $reset_attr:ident,)* }
     ) => {
-        $(#[$meta_reset])*
-        #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-        pub struct $Reset;
-
-        /// Prints the "Reset"/"Normal" csi to the terminal.
-        impl Display for $Reset {
-            /// Prints the "Reset"/"Normal" csi to the terminal.
-            fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-                f.write_str("\x1B[0m")
-            }
-        }
-
-        $(__reset!([From $Color] $Reset
-            stringify!($Color) "(Color::" stringify!($reset_color) ")",
-            $Color(Color::$reset_color)
+        $(reset!([From $Color]
+            stringify!($Color) "(Color::ResetColor)",
+            $Color(Color::ResetColor)
         );)*
-        $(__reset!([From $Attr] $Reset
+
+        $(reset!([From $Attr]
             stringify!($Attr) "::" stringify!($reset_attr),
             $Attr::$reset_attr
         );)*
     };
-}
-
-macro_rules! __reset {
-    ([From $Self:ident] $Reset:ident $($doc:expr)*, $body:expr) => {
-        $crate::doc!("Returns `Some(" $($doc)* ")`.",
-        impl From<$Reset> for Option<$Self> {
-            $crate::doc!("Returns `Some(" $($doc)* ")`.",
-            fn from(_: $Reset) -> Self {
+    ([From $Self:ident] $($doc:expr)*, $body:expr) => {
+        doc!("Returns `Some(" $($doc)* ")`.",
+        impl From<Reset> for Option<$Self> {
+            doc!("Returns `Some(" $($doc)* ")`.",
+            fn from(_: Reset) -> Self {
                 Some($body)
             });
         });
     };
-
 }
+
+reset!(
+    Colors {
+        Foreground,
+        Background,
+    }
+    Attributes {
+        Weight ResetWeight,
+        Slant ResetSlant,
+        Blink ResetBlink,
+        Invert ResetInvert,
+        Strike ResetStrike,
+        Underline ResetUnderline,
+        Overline ResetOverline,
+        Border ResetBorder,
+    }
+);
 
 #[cfg(test)]
 mod tests {

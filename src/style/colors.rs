@@ -1,4 +1,5 @@
-use super::{Background, Foreground};
+use super::*;
+use std::fmt::{Display, Error, Formatter};
 
 pub use Color::*;
 
@@ -13,7 +14,9 @@ pub use Color::*;
 /// [background]: struct.Background.html
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Color {
+    White,
     Black,
+    Grey,
     DarkGrey,
     Red,
     DarkRed,
@@ -27,8 +30,6 @@ pub enum Color {
     DarkMagenta,
     Cyan,
     DarkCyan,
-    White,
-    Grey,
     Rgb(u8, u8, u8),
     Ansi(u8),
     ResetColor,
@@ -42,72 +43,66 @@ impl Default for Color {
     }
 }
 
-/// Returns `Foreground(color)`.
-impl From<Background> for Foreground {
-    /// Returns `Foreground(color)`.
-    fn from(Background(color): Background) -> Self {
-        Self(color)
-    }
-}
-
-/// Returns `Background(color)`.
-impl From<Foreground> for Background {
-    /// Returns `Background(color)`.
-    fn from(Foreground(color): Foreground) -> Self {
-        Self(color)
-    }
-}
-
-impl_styler_index!(
-    (foreground: Foreground) {
-        Some(*foreground), None, None, None, None, None, None, None, None, None,
-    }
-    (background: Background) {
-        None, Some(*background), None, None, None, None, None, None, None, None,
-    }
-);
-
 macro_rules! colors {
-    ($($(#[$meta:meta])* $Name:ident ($str:literal $reset_str:literal))*) => {
+    ($(
+        $(#[$meta_ground:meta])*
+        $Ground:ident($csi:literal $reset:literal)
+    )*) => {
         $(
-            $(#[$meta])*
+            $(#[$meta_ground])*
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-            pub struct $Name(pub Color);
+            pub struct $Ground(pub Color);
 
-            $crate::doc!("Returns `" stringify!($Name) "(Color::ResetColor)`.",
-            impl Default for $Name {
-                $crate::doc!("Returns `" stringify!($Name) "(Color::ResetColor)`.",
+            doc!("Returns `" stringify!($Ground) "(Color::ResetColor)`.",
+            impl Default for $Ground {
+                doc!("Returns `" stringify!($Ground) "(Color::ResetColor)`.",
                 fn default() -> Self {
                     Self(Color::ResetColor)
                 });
             });
 
-            $crate::doc!("Returns `" stringify!($Name) "(color)`.",
-            impl From<Color> for $Name {
-                $crate::doc!("Returns `" stringify!($Name) "(color)`.",
+            doc!("Returns `" stringify!($Ground) "(color)`.",
+            impl From<Color> for $Ground {
+                doc!("Returns `" stringify!($Ground) "(color)`.",
                 fn from(color: Color) -> Self {
                     Self(color)
                 });
             });
 
             /// Returns the inner `Color`.
-            impl From<$Name> for Color {
+            impl From<$Ground> for Color {
                 /// Returns the inner `Color`.
-                fn from($Name(color): $Name) -> Self {
+                fn from($Ground(color): $Ground) -> Self {
                     color
                 }
             }
 
-            $crate::doc!("Returns `Some(" stringify!($Name) "(color))`.",
-            impl From<Color> for Option<$Name> {
-                $crate::doc!("Returns `Some(" stringify!($Name) "(color))`.",
+            doc!("Returns `Some(" stringify!($Ground) "(color))`.",
+            impl From<Color> for Option<$Ground> {
+                doc!("Returns `Some(" stringify!($Ground) "(color))`.",
                 fn from(color: Color) -> Self {
-                    Some($Name(color))
+                    Some($Ground(color))
                 });
             });
 
+            impl_styler!((__: $Ground) -> Style {
+                (foreground) Style::NONE.foreground(foreground),
+                (background) Style::NONE.background(background),
+                (weight)     Style::NONE.weight(weight),
+                (slant)      Style::NONE.slant(slant),
+                (blink)      Style::NONE.blink(blink),
+                (invert)     Style::NONE.invert(invert),
+                (strike)     Style::NONE.strike(strike),
+                (underline)  Style::NONE.underline(underline),
+                (overline)   Style::NONE.overline(overline),
+                (border)     Style::NONE.border(border),
+            });
+
+            #[cfg(feature = "styler-ops")]
+            impl_styler_ops!(($Ground) -> Style);
+
             /// Prints the corresponding CSI to the terminal.
-            impl Display for $Name {
+            impl Display for $Ground {
                 /// Prints the corresponding CSI to the terminal.
                 fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
                     let color = self.0;
@@ -115,9 +110,9 @@ macro_rules! colors {
                     f.write_str("\x1B[")?;
 
                     if color == Color::ResetColor {
-                        f.write_str($reset_str)?;
+                        f.write_str($reset)?;
                     } else {
-                        f.write_str($str)?;
+                        f.write_str($csi)?;
 
                         match color {
                             Color::Black => f.write_str("5;0"),
@@ -148,6 +143,46 @@ macro_rules! colors {
         )*
     };
 }
+
+colors!(
+    /// A `Foreground` `Color`.
+    ///
+    /// Prints the corresponding CSI to the terminal when `Display`ed.
+    ///
+    /// `Default`s to `Foreground(Color::ResetColor)`, user's default terminal foreground color.
+    Foreground("38;" "39")
+    /// A `Background` `Color`.
+    ///
+    /// Prints the corresponding CSI to the terminal when `Display`ed.
+    ///
+    /// `Default`s to `Background(Color::ResetColor)`, user's default terminal background color.
+    Background("48;" "49")
+);
+
+/// Returns `Foreground(color)`.
+impl From<Background> for Foreground {
+    /// Returns `Foreground(color)`.
+    fn from(Background(color): Background) -> Self {
+        Self(color)
+    }
+}
+
+/// Returns `Background(color)`.
+impl From<Foreground> for Background {
+    /// Returns `Background(color)`.
+    fn from(Foreground(color): Foreground) -> Self {
+        Self(color)
+    }
+}
+
+impl_styler_index!(
+    (foreground: Foreground) {
+        Some(*foreground), None, None, None, None, None, None, None, None, None,
+    }
+    (background: Background) {
+        None, Some(*background), None, None, None, None, None, None, None, None,
+    }
+);
 
 #[cfg(test)]
 mod tests {
