@@ -1,40 +1,5 @@
-use super::{Style, Styled};
-
-impl_styler_index!(
-    <('a)> (_: &'a str) {
-        None, None, None, None, None, None, None, None, None, None,
-    }
-    (_: String) {
-        None, None, None, None, None, None, None, None, None, None,
-    }
-);
-
-impl_styler!(
-    (content: String) -> Styled<String> {
-        (foreground) Styled { content, style: Style::NONE.foreground(foreground) },
-        (background) Styled { content, style: Style::NONE.background(background) },
-        (weight)     Styled { content, style: Style::NONE.weight(weight) },
-        (slant)      Styled { content, style: Style::NONE.slant(slant) },
-        (blink)      Styled { content, style: Style::NONE.blink(blink) },
-        (invert)     Styled { content, style: Style::NONE.invert(invert) },
-        (strike)     Styled { content, style: Style::NONE.strike(strike) },
-        (underline)  Styled { content, style: Style::NONE.underline(underline) },
-        (overline)   Styled { content, style: Style::NONE.overline(overline) },
-        (border)     Styled { content, style: Style::NONE.border(border) },
-    }
-    <('a)> (content: &'a str) -> Styled<&'a str> {
-        (foreground) Styled { content, style: Style::NONE.foreground(foreground) },
-        (background) Styled { content, style: Style::NONE.background(background) },
-        (weight)     Styled { content, style: Style::NONE.weight(weight) },
-        (slant)      Styled { content, style: Style::NONE.slant(slant) },
-        (blink)      Styled { content, style: Style::NONE.blink(blink) },
-        (invert)     Styled { content, style: Style::NONE.invert(invert) },
-        (strike)     Styled { content, style: Style::NONE.strike(strike) },
-        (underline)  Styled { content, style: Style::NONE.underline(underline) },
-        (overline)   Styled { content, style: Style::NONE.overline(overline) },
-        (border)     Styled { content, style: Style::NONE.border(border) },
-    }
-);
+use super::*;
+use std::fmt::{Display, Error, Formatter};
 
 macro_rules! styler {
     (Colors { $(
@@ -144,7 +109,7 @@ macro_rules! styler {
 
 macro_rules! priv_styler {
     ($($get:ident($Self:ty) -> $Output:ty)*) => {
-        $($crate::doc!("Gets `" stringify!($Output) "`.",
+        $(doc!("Gets `" stringify!($Output) "`.",
         fn $get(self: $Self) -> $Output;);)*
     };
 
@@ -157,30 +122,30 @@ macro_rules! priv_styler {
         })*
     ) => {
         $(
-            $crate::doc!("Sets `Option<" stringify!($Attr) ">`.",
+            doc!("Sets `Option<" stringify!($Attr) ">`.",
             fn $set(self: $Self, $attr: impl Into<Option<$Attr>>) -> $Output;);
 
-            $crate::doc!("`None`s `" stringify!($Attr) "`.",
+            doc!("`None`s `" stringify!($Attr) "`.",
             fn $unset(self: $Self) -> $Output {
                 self.$set(None)
             });
 
-            $($crate::doc!("Sets `Some(" stringify!($body_variant) ")`.",
+            $(doc!("Sets `Some(" stringify!($body_variant) ")`.",
             fn $set_variant(self: $Self) -> $Output {
                 self.$set(Some($body_variant))
             });)*
 
-            $($crate::doc!("Sets `Some(" stringify!($Attr) "(Color::Rgb(r, g, b)))`.",
+            $(doc!("Sets `Some(" stringify!($Attr) "(Color::Rgb(r, g, b)))`.",
             fn $set_rgb(self: $Self, r: u8, g: u8, b: u8) -> $Output {
                 self.$set(Some($Attr(Color::Rgb(r, g, b))))
             });)?
 
-            $($crate::doc!("Sets `Some(" stringify!($Attr) "(Color::Ansi(ansi)))`.",
+            $(doc!("Sets `Some(" stringify!($Attr) "(Color::Ansi(ansi)))`.",
             fn $set_ansi(self: $Self, ansi: u8) -> $Output {
                 self.$set(Some($Attr(Color::Ansi(ansi))))
             });)?
 
-            $crate::doc!("Sets `Some(" stringify!($body_reset) ")`.",
+            doc!("Sets `Some(" stringify!($body_reset) ")`.",
             fn $set_reset(self: $Self) -> $Output {
                 self.$set(Some($body_reset))
             });
@@ -272,3 +237,149 @@ macro_rules! priv_styler {
         });
     };
 }
+
+styler!(
+    Colors {
+        Foreground(foreground) {
+            get_foreground get_foreground_mut
+            foreground foreground_mut
+            no_foreground no_foreground_mut
+                Rgb: rgb rgb_mut
+                Ansi: ansi ansi_mut
+                ResetColor: reset_color reset_color_mut
+                White: white white_mut
+                Black: black black_mut
+                Red: red red_mut
+                DarkRed: dark_red dark_red_mut
+                Green: green green_mut
+                DarkGreen: dark_green dark_green_mut
+                Yellow: yellow yellow_mut
+                DarkYellow: dark_yellow dark_yellow_mut
+                Blue: blue blue_mut
+                DarkBlue: dark_blue dark_blue_mut
+                Magenta: magenta magenta_mut
+                DarkMagenta: dark_magenta dark_magenta_mut
+                Cyan: cyan cyan_mut
+                DarkCyan: dark_cyan dark_cyan_mut
+        }
+        Background(background) {
+            get_background get_background_mut
+            background background_mut
+            no_background no_background_mut
+                Rgb: on_rgb on_rgb_mut
+                Ansi: on_ansi on_ansi_mut
+                ResetColor: on_reset_color on_reset_color_mut
+                White: on_white on_white_mut
+                Black: on_black on_black_mut
+                Red: on_red on_red_mut
+                DarkRed: on_dark_red on_dark_red_mut
+                Green: on_green on_green_mut
+                DarkGreen: on_dark_green on_dark_green_mut
+                Yellow: on_yellow on_yellow_mut
+                DarkYellow: on_dark_yellow on_dark_yellow_mut
+                Blue: on_blue on_blue_mut
+                DarkBlue: on_dark_blue on_dark_blue_mut
+                Magenta: on_magenta on_magenta_mut
+                DarkMagenta: on_dark_magenta on_dark_magenta_mut
+                Cyan: on_cyan on_cyan_mut
+                DarkCyan: on_dark_cyan on_dark_cyan_mut
+        }
+    }
+    Attributes {
+        Weight(weight) {
+            get_weight get_weight_mut
+            weight weight_mut
+            no_weight no_weight_mut
+                ResetWeight: reset_weight reset_weight_mut
+                Bold: bold bold_mut
+                Light: light light_mut
+        }
+        Slant(slant) {
+            get_slant get_slant_mut
+            slant slant_mut
+            no_slant no_slant_mut
+                ResetSlant: reset_slant reset_slant_mut
+                Italic: italic italic_mut
+        }
+        Blink(blink) {
+            get_blink get_blink_mut
+            blink blink_mut
+            no_blink no_blink_mut
+                ResetBlink: reset_blink reset_blink_mut
+                Slow: slow slow_mut
+                Fast: fast fast_mut
+        }
+        Invert(invert) {
+            get_invert get_invert_mut
+            invert invert_mut
+            no_invert no_invert_mut
+                ResetInvert: reset_invert reset_invert_mut
+                Inverted: inverted inverted_mut
+        }
+        Strike(strike) {
+            get_strike get_strike_mut
+            strike strike_mut
+            no_strike no_strike_mut
+                ResetStrike: reset_strike reset_strike_mut
+                Striked: striked striked_mut
+        }
+        Underline(underline) {
+            get_underline get_underline_mut
+            underline underline_mut
+            no_underline no_underline_mut
+                ResetUnderline: reset_underline reset_underline_mut
+                Underlined: underlined underlined_mut
+        }
+        Overline(overline) {
+            get_overline get_overline_mut
+            overline overline_mut
+            no_overline no_overline_mut
+                ResetOverline: reset_overline reset_overline_mut
+                Overlined: overlined overlined_mut
+        }
+        Border(border) {
+            get_border get_border_mut
+            border border_mut
+            no_border no_border_mut
+                ResetBorder: reset_border reset_border_mut
+                Frame: frame frame_mut
+                Circle: circle circle_mut
+        }
+    }
+);
+
+impl_styler_index!(
+    <('a)> (_: &'a str) {
+        None, None, None, None, None, None, None, None, None, None,
+    }
+    (_: String) {
+        None, None, None, None, None, None, None, None, None, None,
+    }
+);
+
+impl_styler!(
+    (content: String) -> Styled<String> {
+        (foreground) Styled { content, style: Style::NONE.foreground(foreground) },
+        (background) Styled { content, style: Style::NONE.background(background) },
+        (weight)     Styled { content, style: Style::NONE.weight(weight) },
+        (slant)      Styled { content, style: Style::NONE.slant(slant) },
+        (blink)      Styled { content, style: Style::NONE.blink(blink) },
+        (invert)     Styled { content, style: Style::NONE.invert(invert) },
+        (strike)     Styled { content, style: Style::NONE.strike(strike) },
+        (underline)  Styled { content, style: Style::NONE.underline(underline) },
+        (overline)   Styled { content, style: Style::NONE.overline(overline) },
+        (border)     Styled { content, style: Style::NONE.border(border) },
+    }
+    <('a)> (content: &'a str) -> Styled<&'a str> {
+        (foreground) Styled { content, style: Style::NONE.foreground(foreground) },
+        (background) Styled { content, style: Style::NONE.background(background) },
+        (weight)     Styled { content, style: Style::NONE.weight(weight) },
+        (slant)      Styled { content, style: Style::NONE.slant(slant) },
+        (blink)      Styled { content, style: Style::NONE.blink(blink) },
+        (invert)     Styled { content, style: Style::NONE.invert(invert) },
+        (strike)     Styled { content, style: Style::NONE.strike(strike) },
+        (underline)  Styled { content, style: Style::NONE.underline(underline) },
+        (overline)   Styled { content, style: Style::NONE.overline(overline) },
+        (border)     Styled { content, style: Style::NONE.border(border) },
+    }
+);
