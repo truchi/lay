@@ -76,6 +76,9 @@ impl_styler!((__: Reset) -> Style {
     (border)     Style::RESET.border(border),
 });
 
+#[cfg(feature = "styler-ops")]
+impl_styler_ops!((Reset) -> Style);
+
 /// Prints the "Reset" CSI to the terminal.
 impl Display for Reset {
     /// Prints the "Reset" CSI to the terminal.
@@ -157,4 +160,6 @@ mod tests {
             border(Circle)
         );
     }
+
+    // TODO test styler ops
 }
