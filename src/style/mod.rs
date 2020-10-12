@@ -181,7 +181,7 @@ mod styled;
 mod styler;
 
 /// Attributes (`Foreground`, `Background`, `Weight`, `Slant`, `Blink`,
-/// `Invert`, `Strike`, `Underline`, `Overline`, `Border`)
+/// `Invert`, `Strike`, `Underline`, `Overline`, `Border`).
 pub mod attributes {
     pub use super::{attrs::*, colors::*};
 }

@@ -197,6 +197,12 @@ mod tests {
         let border = Frame;
 
         macro_rules! styler {
+            ($($var:ident($Attr:expr))*) => {
+                $(assert_eq!($var.$var($Attr), Style {
+                    $var: Some($Attr),
+                    ..Style::NONE
+                });)*
+            };
             ($($var:ident $(.$attr:ident($Attr:expr))*,)*) => {
                 $($(assert_eq!($var.$attr($Attr), Style {
                     $var: Some($var),
@@ -205,6 +211,17 @@ mod tests {
                 });)*)*
             };
         }
+
+        styler!(
+            weight(Light)
+            slant(ResetSlant)
+            blink(Slow)
+            invert(Inverted)
+            strike(ResetStrike)
+            underline(Underlined)
+            overline(Overlined)
+            border(Circle)
+        );
 
         styler!(
             weight

@@ -7,9 +7,12 @@ macro_rules! colors {
         $Ground:ident($ground:ident)($csi:literal $reset:literal)
     )*) => {
         $(
-            $(#[$meta_ground])*
+            doc!(
+            "A `" stringify!($Ground) "` `Color`.\n\n"
+            "Prints the corresponding CSI to the terminal when `Display`ed.\n\n"
+            "`Default`s to `" stringify!($Ground) "(Color::ResetColor)`, user's default terminal's " stringify!($ground) " color.",
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-            pub struct $Ground(pub Color);
+            pub struct $Ground(pub Color););
 
             doc!("Returns `" stringify!($Ground) "(Color::ResetColor)`.",
             impl Default for $Ground {
@@ -103,17 +106,7 @@ macro_rules! colors {
 }
 
 colors!(
-    /// A `Foreground` `Color`.
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `Foreground(Color::ResetColor)`, user's default terminal foreground color.
     Foreground(foreground)("38;" "39")
-    /// A `Background` `Color`.
-    ///
-    /// Prints the corresponding CSI to the terminal when `Display`ed.
-    ///
-    /// `Default`s to `Background(Color::ResetColor)`, user's default terminal background color.
     Background(background)("48;" "49")
 );
 
