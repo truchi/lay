@@ -201,23 +201,23 @@ mod tests {
         let foreground = Foreground(Grey);
         assert_eq!(foreground.foreground(Blue), Style {
             foreground: Some(Foreground(Blue)),
-            ..Style::default()
+            ..Style::NONE
         });
         assert_eq!(foreground.background(Blue), Style {
-            foreground: Some(Foreground(Grey)),
+            foreground: Some(foreground),
             background: Some(Background(Blue)),
-            ..Style::default()
+            ..Style::NONE
         });
 
         let background = Background(Yellow);
         assert_eq!(background.foreground(Red), Style {
             foreground: Some(Foreground(Red)),
-            background: Some(Background(Yellow)),
-            ..Style::default()
+            background: Some(background),
+            ..Style::NONE
         });
         assert_eq!(background.background(Green), Style {
             background: Some(Background(Green)),
-            ..Style::default()
+            ..Style::NONE
         });
 
         macro_rules! styler {
@@ -237,7 +237,7 @@ mod tests {
                 $(assert_eq!($var.$attr($Attr), Style {
                     $var: Some($var),
                     $attr: Some($Attr),
-                    ..Style::default()
+                    ..Style::NONE
                 });)*
             };
         }
