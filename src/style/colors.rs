@@ -4,7 +4,7 @@ use std::fmt::{Display, Error, Formatter};
 macro_rules! colors {
     ($(
         $(#[$meta_ground:meta])*
-        $Ground:ident($csi:literal $reset:literal)
+        $Ground:ident($ground:ident)($csi:literal $reset:literal)
     )*) => {
         $(
             $(#[$meta_ground])*
@@ -43,17 +43,17 @@ macro_rules! colors {
                 });
             });
 
-            impl_styler!((__: $Ground) -> Style {
-                (foreground) Style::NONE.foreground(foreground),
-                (background) Style::NONE.background(background),
-                (weight)     Style::NONE.weight(weight),
-                (slant)      Style::NONE.slant(slant),
-                (blink)      Style::NONE.blink(blink),
-                (invert)     Style::NONE.invert(invert),
-                (strike)     Style::NONE.strike(strike),
-                (underline)  Style::NONE.underline(underline),
-                (overline)   Style::NONE.overline(overline),
-                (border)     Style::NONE.border(border),
+            impl_styler!((g: $Ground) -> Style {
+                (foreground) Style::NONE.$ground(Some(g)).foreground(foreground),
+                (background) Style::NONE.$ground(Some(g)).background(background),
+                (weight)     Style::NONE.$ground(Some(g)).weight(weight),
+                (slant)      Style::NONE.$ground(Some(g)).slant(slant),
+                (blink)      Style::NONE.$ground(Some(g)).blink(blink),
+                (invert)     Style::NONE.$ground(Some(g)).invert(invert),
+                (strike)     Style::NONE.$ground(Some(g)).strike(strike),
+                (underline)  Style::NONE.$ground(Some(g)).underline(underline),
+                (overline)   Style::NONE.$ground(Some(g)).overline(overline),
+                (border)     Style::NONE.$ground(Some(g)).border(border),
             });
 
             #[cfg(feature = "styler-ops")]
@@ -108,13 +108,13 @@ colors!(
     /// Prints the corresponding CSI to the terminal when `Display`ed.
     ///
     /// `Default`s to `Foreground(Color::ResetColor)`, user's default terminal foreground color.
-    Foreground("38;" "39")
+    Foreground(foreground)("38;" "39")
     /// A `Background` `Color`.
     ///
     /// Prints the corresponding CSI to the terminal when `Display`ed.
     ///
     /// `Default`s to `Background(Color::ResetColor)`, user's default terminal background color.
-    Background("48;" "49")
+    Background(background)("48;" "49")
 );
 
 /// Returns `Foreground(color)`.
@@ -173,4 +173,77 @@ mod tests {
         assert_eq!(Foreground::from(Background(Black)), Foreground(Black));
         assert_eq!(Background::from(Foreground(White)), Background(White));
     }
+
+    #[test]
+    fn styler_index() {
+        let foreground = Foreground(Grey);
+        let background = Background(Red);
+
+        macro_rules! styler_index {
+            ($($var:ident $get_some:ident $($get_none:ident)*,)*) => {
+                $(
+                    assert_eq!($var.$get_some(), Some($var));
+                    $(assert_eq!($var.$get_none(), None);)*
+                )*
+            };
+        }
+
+        styler_index!(
+            foreground get_foreground get_background get_weight get_slant get_blink
+            get_invert get_strike get_underline get_overline get_border,
+            background get_background get_foreground get_weight get_slant get_blink
+            get_invert get_strike get_underline get_overline get_border,
+        );
+    }
+
+    #[test]
+    fn styler() {
+        let foreground = Foreground(Grey);
+        assert_eq!(foreground.foreground(Blue), Style {
+            foreground: Some(Foreground(Blue)),
+            ..Style::default()
+        });
+        assert_eq!(foreground.background(Blue), Style {
+            foreground: Some(Foreground(Grey)),
+            background: Some(Background(Blue)),
+            ..Style::default()
+        });
+
+        let background = Background(Yellow);
+        assert_eq!(background.foreground(Red), Style {
+            foreground: Some(Foreground(Red)),
+            background: Some(Background(Yellow)),
+            ..Style::default()
+        });
+        assert_eq!(background.background(Green), Style {
+            background: Some(Background(Green)),
+            ..Style::default()
+        });
+
+        macro_rules! styler {
+            ($($var:ident)*) => {
+                $(styler!($var
+                    .weight(Bold)
+                    .slant(Italic)
+                    .blink(Slow)
+                    .invert(Inverted)
+                    .strike(Striked)
+                    .underline(Underlined)
+                    .overline(Overlined)
+                    .border(Frame)
+                );)*
+            };
+            ($var:ident $(.$attr:ident($Attr:ident))*) => {
+                $(assert_eq!($var.$attr($Attr), Style {
+                    $var: Some($var),
+                    $attr: Some($Attr),
+                    ..Style::default()
+                });)*
+            };
+        }
+
+        styler!(foreground background);
+    }
+
+    // TODO test styler ops
 }

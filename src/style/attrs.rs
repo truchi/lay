@@ -144,4 +144,9 @@ mod tests {
         assert_eq!(Overline::default(), ResetOverline);
         assert_eq!(Border::default(), ResetBorder);
     }
+
+    #[test]
+    fn styler_index() {
+        ()
+    }
 }
