@@ -1,59 +1,26 @@
 use super::*;
 use std::fmt::{Display, Error, Formatter};
 
-/// `Style`s.
-///
-/// A straightforward implementation of `Styler`.
-///
-/// `Display`s the corresponding CSIs to the terminal.
-///
-/// `Default`s as an empty `Style` (all fields set to `None`).
-#[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
-pub struct Style {
-    pub foreground: Option<Foreground>,
-    pub background: Option<Background>,
-    pub weight:     Option<Weight>,
-    pub slant:      Option<Slant>,
-    pub blink:      Option<Blink>,
-    pub invert:     Option<Invert>,
-    pub strike:     Option<Strike>,
-    pub underline:  Option<Underline>,
-    pub overline:   Option<Overline>,
-    pub border:     Option<Border>,
-}
-
-impl Style {
-    /// A `Style` with fields set to `None`.
-    pub const NONE: Self = Self {
-        foreground: None,
-        background: None,
-        weight:     None,
-        slant:      None,
-        blink:      None,
-        invert:     None,
-        strike:     None,
-        underline:  None,
-        overline:   None,
-        border:     None,
-    };
-    /// A `Style` with fields set to their reset value.
-    pub const RESET: Self = Self {
-        foreground: Some(Foreground(Color::ResetColor)),
-        background: Some(Background(Color::ResetColor)),
-        weight:     Some(Weight::ResetWeight),
-        slant:      Some(Slant::ResetSlant),
-        blink:      Some(Blink::ResetBlink),
-        invert:     Some(Invert::ResetInvert),
-        strike:     Some(Strike::ResetStrike),
-        underline:  Some(Underline::ResetUnderline),
-        overline:   Some(Overline::ResetOverline),
-        border:     Some(Border::ResetBorder),
-    };
-}
-
 #[macro_use]
 macro_rules! style {
-    ($($attr:ident: $Attr:ident,)*) => {
+    ($(#[$meta:meta])* $($attr:ident: $Attr:ident $reset:expr,)*) => {
+        $(#[$meta])*
+        #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
+        pub struct Style {
+            $(pub $attr: Option<$Attr>,)*
+        }
+
+        impl Style {
+            /// A `Style` with fields set to `None`.
+            pub const NONE: Self = Self {
+                $($attr: None,)*
+            };
+            /// A `Style` with fields set to their reset value.
+            pub const RESET: Self = Self {
+                $($attr: Some($reset),)*
+            };
+        }
+
         $(doc!("Returns an empty `Style` with `Some(" stringify!($attr) ")`",
         impl From<$Attr> for Style {
             doc!("Returns an empty `Style` with `Some(" stringify!($attr) ")`",
@@ -87,16 +54,23 @@ macro_rules! style {
 }
 
 style!(
-    foreground: Foreground,
-    background: Background,
-    weight: Weight,
-    slant: Slant,
-    blink: Blink,
-    invert: Invert,
-    strike: Strike,
-    underline: Underline,
-    overline: Overline,
-    border: Border,
+    /// `Style`s.
+    ///
+    /// A straightforward implementation of `Styler`.
+    ///
+    /// `Display`s the corresponding CSIs to the terminal.
+    ///
+    /// `Default`s as an empty `Style` (all fields set to `None`).
+    foreground: Foreground Foreground(Color::ResetColor),
+    background: Background Background(Color::ResetColor),
+    weight: Weight Weight::ResetWeight,
+    slant: Slant Slant::ResetSlant,
+    blink: Blink Blink::ResetBlink,
+    invert: Invert Invert::ResetInvert,
+    strike: Strike Strike::ResetStrike,
+    underline: Underline Underline::ResetUnderline,
+    overline: Overline Overline::ResetOverline,
+    border: Border Border::ResetBorder,
 );
 
 impl Display for Style {
@@ -145,28 +119,108 @@ mod tests {
 
     #[test]
     fn conversion() {
-        assert_eq!(Style::from(Foreground(Red)), Style {
-            foreground: Some(Foreground(Red)),
-            ..Style::default()
-        });
-        assert_eq!(Style::from(Background(Green)), Style {
-            background: Some(Background(Green)),
-            ..Style::default()
-        });
-        assert_eq!(Style::from(Bold), Style {
-            weight: Some(Bold),
-            ..Style::default()
-        });
+        let foreground = Foreground(Grey);
+        let background = Background(Red);
+        let weight = Bold;
+        let slant = ResetSlant;
+        let blink = Slow;
+        let invert = Inverted;
+        let strike = Striked;
+        let underline = ResetUnderline;
+        let overline = Overlined;
+        let border = Circle;
+
+        macro_rules! conversion {
+            ($($var:ident)*) => {
+                $(assert_eq!(Style::from($var), Style {
+                    $var: Some($var),
+                    ..Style::NONE
+                });)*
+            };
+        }
+
+        conversion!(foreground background weight slant blink invert strike underline overline border);
     }
 
     #[test]
-    fn ops() {
-        assert_eq!(Style::default() * Blue / Yellow + Bold + Italic, Style {
-            foreground: Some(Foreground(Blue)),
-            background: Some(Background(Yellow)),
-            weight: Some(Bold),
-            slant: Some(Italic),
-            ..Style::default()
-        });
+    fn styler_index() {
+        macro_rules! styler_index {
+            ($($attr:ident $get:ident $get_mut:ident [$idx:ident] $Attr:expr, $NewAttr:expr)*) => {
+                let mut style = Style {
+                    $($attr: $Attr,)*
+                };
+
+                $(
+                    assert_eq!(style.$get(), $Attr);
+                    assert_eq!(style[$idx], $Attr);
+
+                    *style.$get_mut() = $NewAttr;
+                    assert_eq!(style.$attr, $NewAttr);
+                    style[$idx] = $Attr;
+                    assert_eq!(style.$attr, $Attr);
+                )*
+            };
+        }
+
+        styler_index!(
+            foreground get_foreground get_foreground_mut [Fg] Some(Foreground(DarkCyan)), Some(Foreground(Blue))
+            background get_background get_background_mut [Bg] Some(Background(DarkMagenta)), None
+            weight get_weight get_weight_mut [Wgt] Some(Bold), Some(Light)
+            slant get_slant get_slant_mut [Slt] Some(Italic), Some(Italic)
+            blink get_blink get_blink_mut [Blk] None, Some(Slow)
+            invert get_invert get_invert_mut [Inv] Some(Inverted), Some(ResetInvert)
+            strike get_strike get_strike_mut [Stk] Some(ResetStrike), None
+            underline get_underline get_underline_mut [Udl] Some(Underlined), Some(ResetUnderline)
+            overline get_overline get_overline_mut [Ovl] Some(ResetOverline), None
+            border get_border get_border_mut [Brd] None, Some(Circle)
+        );
     }
+
+    #[test]
+    fn styler() {
+        let mut style = Style {
+            foreground: Some(Foreground(DarkBlue)),
+            background: Some(Background(DarkRed)),
+            weight:     Some(Bold),
+            slant:      None,
+            blink:      Some(ResetBlink),
+            invert:     Some(Inverted),
+            strike:     Some(ResetStrike),
+            underline:  None,
+            overline:   Some(ResetOverline),
+            border:     None,
+        };
+
+        macro_rules! styler {
+            ($($attr:ident($Attr:expr) $attr_mut:ident($NewAttr:expr))*) => {
+                $(
+                    assert_eq!(style.$attr($Attr), Style {
+                        $attr: $Attr,
+                        ..style
+                    });
+
+                    style.$attr_mut($NewAttr);
+                    assert_eq!(style, Style {
+                        $attr: $NewAttr,
+                        ..style
+                    });
+                )*
+            };
+        }
+
+        styler!(
+            foreground(Some(Foreground(Black))) foreground_mut(Some(Foreground(Black)))
+            background(None) background_mut(Some(Background(White)))
+            weight(Some(Light)) weight_mut(None)
+            slant(None) slant_mut(None)
+            blink(Some(Slow)) blink_mut(Some(Slow))
+            invert(Some(Inverted)) invert_mut(Some(Inverted))
+            strike(None) strike_mut(Some(Striked))
+            underline(Some(Underlined)) underline_mut(Some(Underlined))
+            overline(Some(Overlined)) overline_mut(Some(Overlined))
+            border(Some(Circle)) border_mut(None)
+        );
+    }
+
+    // TODO test styler ops
 }
