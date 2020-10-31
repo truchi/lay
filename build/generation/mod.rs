@@ -1,5 +1,8 @@
 macro_rules! ident {
     ($fmt:literal $(, $($rest:tt)*)?) => { ::quote::format_ident!($fmt $(, $($rest)*)?) };
+    ($($ident:ident = ($fmt:literal, $expr:expr),)*) => {
+        $(#[allow(non_snake_case)] let $ident = ident!($fmt, $expr);)*
+    };
     ($($ident:ident = $expr:expr,)*) => {
         $(#[allow(non_snake_case)] let $ident = ident!("{}", $expr);)*
     };
@@ -67,12 +70,14 @@ pub fn generate() {
 
             write_part("style/mod.rs", "import_markers", LAY.import_markers());
             write("style/color.rs", LAY.color());
+            write("style/reset.rs", LAY.reset());
             write("style/i.rs", LAY.i());
             write("style/no.rs", LAY.no());
-            write("style/reset.rs", LAY.reset());
             write("style/attributes/mod.rs", LAY.mod_style_attributes());
             write("style/attributes/foreground.rs", LAY.foreground());
             write("style/attributes/background.rs", LAY.background());
+            write("style/styler/mod.rs", LAY.mod_styler_styler());
+            write("style/styler/styler_index.rs", LAY.styler_index());
 
             for (name, content) in LAY.attributes() {
                 write(&format!("style/attributes/{}.rs", name), content);
