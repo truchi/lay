@@ -20,4 +20,4 @@ pretty_assertions = "0.6"
 
 [build-dependencies]
 quote = "1.0"
-# proc-macro2 = { version = "1.0", default-features = false }
+proc-macro2 = { version = "1.0", default-features = false }

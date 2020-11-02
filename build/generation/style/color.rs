@@ -1,9 +1,8 @@
-use crate::generation::{Lay, LINE_BREAK};
+use crate::generation::*;
 
 impl Lay {
-    #[allow(non_snake_case)]
-    pub fn color(&self) -> String {
-        let Colors = [self.colors.colors, self.colors.lights, self.colors.darks].concat();
+    pub fn color(&self) -> TokenStream {
+        let Colors = self.colors.colors;
         let Colors = Colors.iter().map(|color| ident!("{}", color));
 
         let decl_doc = doc!(
@@ -30,16 +29,16 @@ impl Lay {
             ResetColor = self.colors.reset
         );
 
-        quote! {
-            Color = self.colors.name,
-            Rgb = self.colors.rgb,
-            Ansi = self.colors.ansi,
-            ResetColor = self.colors.reset, {
-            pub use #Color::*;
+        let Color = ident!(self.colors.name);
+        let Rgb = ident!(self.colors.rgb);
+        let Ansi = ident!(self.colors.ansi);
+        let ResetColor = ident!(self.colors.reset);
 
+        quote! {
+            pub use #Color::*;
             #LINE_BREAK
 
-            #(#[doc = #decl_doc])*
+            #decl_doc
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
             pub enum #Color {
                 #(#Colors,)*
@@ -47,16 +46,15 @@ impl Lay {
                 #Ansi(u8),
                 #ResetColor,
             }
-
             #LINE_BREAK
 
-            #(#[doc = #default_doc])*
+            #default_doc
             impl Default for Color {
-                #(#[doc = #default_doc])*
+                #default_doc
                 fn default() -> Self {
                     Self::ResetColor
                 }
             }
-        }}
+        }
     }
 }

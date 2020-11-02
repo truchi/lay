@@ -1,19 +1,19 @@
-use crate::generation::{Lay, LINE_BREAK};
+use crate::generation::*;
 
 impl Lay {
-    pub fn i(&self) -> String {
-        marker(self, "Attributes `Index`ers.", |name| {
+    pub fn i(&self) -> TokenStream {
+        marker(self, idoc!("Attributes `Index`ers."), |name| {
             doc!("`Index`es `{}`.", name)
         })
     }
 
-    pub fn no(&self) -> String {
-        marker(self, "Attributes `None`rs.", |name| {
+    pub fn no(&self) -> TokenStream {
+        marker(self, idoc!("Attributes `None`rs."), |name| {
             doc!("`None`s `{}`.", name)
         })
     }
 
-    pub fn import_markers(&self) -> String {
+    pub fn import_markers(&self) -> TokenStream {
         let grounds: Vec<_> = vec![
             (
                 self.foreground.name,
@@ -34,23 +34,24 @@ impl Lay {
         let attributes = [grounds, attributes].concat();
 
         let i = attributes.iter().map(|(name, short, _)| {
-            ident!(Attribute = name, Short = short,);
-            quote::quote! { #Attribute as #Short }
+            let Attribute = ident!(name);
+            let Short = ident!(short);
+            quote! { #Attribute as #Short }
         });
 
         let no = attributes.iter().map(|(name, _, no)| {
-            ident!(Attribute = name, No = no,);
-            quote::quote! { #Attribute as #No }
+            let Attribute = ident!(name);
+            let No = ident!(no);
+            quote! { #Attribute as #No }
         });
 
-        quote! {{
+        quote! {
             #[cfg(feature = "styler-idx")]
             pub mod i;
             #[cfg(feature = "styler-idx")]
             pub use i::{
                 #(#i,)*
             };
-
             #LINE_BREAK
 
             #[cfg(feature = "styler-ops")]
@@ -59,20 +60,20 @@ impl Lay {
             pub use no::{
                 #(#no,)*
             };
-        }}
+        }
     }
 }
 
-fn marker(lay: &Lay, mod_doc: &str, doc_fn: fn(&str) -> Vec<String>) -> String {
+fn marker(lay: &Lay, mod_doc: Doc, doc_fn: fn(&str) -> Doc) -> TokenStream {
     let grounds: Vec<_> = vec![lay.foreground.name, lay.background.name];
     let attributes: Vec<_> = lay.attributes.iter().map(|a| a.name).collect();
     let markers = [grounds, attributes].concat();
     let markers = markers.iter().map(|name| {
         let doc = doc_fn(name);
-        ident!(Name = name,);
+        let Name = ident!(name);
 
-        quote::quote! {
-            #(#[doc = #doc])*
+        quote! {
+            #doc
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct #Name;
 
@@ -80,11 +81,10 @@ fn marker(lay: &Lay, mod_doc: &str, doc_fn: fn(&str) -> Vec<String>) -> String {
         }
     });
 
-    quote! {{
-        #![doc = #mod_doc]
-
+    quote! {
+        #mod_doc
         #LINE_BREAK
 
         #(#markers)*
-    }}
+    }
 }

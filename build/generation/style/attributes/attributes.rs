@@ -1,7 +1,7 @@
-use crate::generation::{Attribute, Lay, LINE_BREAK};
+use crate::generation::*;
 
 impl Lay {
-    pub fn attributes(&self) -> Vec<(String, String)> {
+    pub fn attributes(&self) -> Vec<(String, TokenStream)> {
         self.attributes
             .iter()
             .map(|attr| (attr.name.to_lowercase(), attribute(attr)))
@@ -9,8 +9,7 @@ impl Lay {
     }
 }
 
-#[allow(non_snake_case)]
-fn attribute(attribute: &Attribute) -> String {
+fn attribute(attribute: &Attribute) -> TokenStream {
     let Variant = attribute
         .variants
         .iter()
@@ -38,28 +37,27 @@ fn attribute(attribute: &Attribute) -> String {
         ResetAttribute = attribute.reset,
     );
 
-    quote! {
-        Attribute = attribute.name,
-        ResetAttribute = attribute.reset, {
-            pub use #Attribute::*;
+    let Attribute = ident!(attribute.name);
+    let ResetAttribute = ident!(attribute.reset);
 
+    quote! {
+            pub use #Attribute::*;
             #LINE_BREAK
 
-            #(#[doc = #decl_doc])*
+            #decl_doc
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
             pub enum #Attribute {
                 #(#Variant,)*
                 #ResetAttribute
             }
-
             #LINE_BREAK
 
-            #(#[doc = #default_doc])*
+            #default_doc
             impl Default for #Attribute {
-                #(#[doc = #default_doc])*
+                #default_doc
                 fn default() -> Self {
                     Self::#ResetAttribute
                 }
             }
-    }}
+    }
 }

@@ -2,8 +2,6 @@
 pub struct Colors {
     pub name:   &'static str,
     pub colors: &'static [&'static str],
-    pub lights: &'static [&'static str],
-    pub darks:  &'static [&'static str],
     pub rgb:    &'static str,
     pub ansi:   &'static str,
     pub reset:  &'static str,
@@ -47,9 +45,13 @@ macro_rules! lay {
             reset:  $reset,
             colors: $crate::generation::lay::Colors {
                 name:   $Color,
-                colors: &[$($color,)+],
-                lights: &[$($light,)+],
-                darks:  &[$(concat!($dark, $light),)+],
+                colors: &[
+                    $($color,)+
+                    $(
+                        $light,
+                        concat!($dark, $light),
+                    )+
+                ],
                 rgb:    $rgb,
                 ansi:   $ansi,
                 reset:  concat!($reset, $Color),

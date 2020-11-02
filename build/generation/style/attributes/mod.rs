@@ -4,10 +4,10 @@ mod ground;
 pub use attributes::*;
 pub use ground::*;
 
-use crate::generation::{Lay, LINE_BREAK};
+use crate::generation::*;
 
 impl Lay {
-    pub fn mod_style_attributes(&self) -> String {
+    pub fn mod_style_attributes(&self) -> TokenStream {
         let grounds: Vec<_> = vec![self.foreground.name, self.background.name];
         let attributes: Vec<_> = self.attributes.iter().map(|a| a.name).collect();
         let attributes = [grounds, attributes].concat();
@@ -17,19 +17,15 @@ impl Lay {
             .map(|m| format!("`{}`", m))
             .collect::<Vec<_>>()
             .join(", ");
-        let doc = doc!("Attributes ({}).", doc);
+        let doc = idoc!("Attributes ({}).", doc);
 
         let r#mod = attributes.iter().map(|m| ident!("{}", m.to_lowercase()));
 
-        quote! {{
-            #(#![doc = #doc])*
-
+        quote! {
+            #doc
             #LINE_BREAK
 
-            #(
-                mod #r#mod;
-                pub use #r#mod::*;
-            )*
-        }}
+            #(mod #r#mod; pub use #r#mod::*;)*
+        }
     }
 }

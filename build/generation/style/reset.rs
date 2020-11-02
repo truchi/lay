@@ -1,14 +1,16 @@
-use crate::generation::{Lay, LINE_BREAK};
+use crate::generation::*;
 
 impl Lay {
-    pub fn reset(&self) -> String {
+    pub fn reset(&self) -> TokenStream {
         let reset = self.reset;
         let color = self.colors.name;
         let reset_color = self.colors.reset;
         let grounds = vec![self.foreground.name, self.background.name];
         let attributes = self.attributes;
 
-        ident!(Reset = reset, Color = color, ResetColor = reset_color,);
+        let Reset = ident!(reset);
+        let Color = ident!(color);
+        let ResetColor = ident!(reset_color);
 
         let grounds = grounds.iter().map(|ground| {
             let doc = doc!(
@@ -18,16 +20,15 @@ impl Lay {
                 ResetColor = reset_color
             );
 
-            ident!(Ground = ground,);
-            quote::quote! {
-                #(#[doc = #doc])*
+            let Ground = ident!(ground);
+            quote! {
+                #doc
                 impl From<#Reset> for Option<#Ground> {
-                    #(#[doc = #doc])*
+                    #doc
                     fn from(_: #Reset) -> Self {
                         Some(#Ground(#Color::#ResetColor))
                     }
                 }
-
                 #LINE_BREAK
             }
         });
@@ -42,38 +43,35 @@ impl Lay {
                     ResetAttribute = reset_attribute
                 );
 
-                ident!(Attribute = attribute, ResetAttribute = reset_attribute,);
+                let Attribute = ident!(attribute);
+                let ResetAttribute = ident!(reset_attribute);
 
-                quote::quote! {
-                    #(#[doc = #doc])*
+                quote! {
+                    #doc
                     impl From<#Reset> for Option<#Attribute> {
-                        #(#[doc = #doc])*
+                        #doc
                         fn from(_: #Reset) -> Self {
                             Some(#Attribute::#ResetAttribute)
                         }
                     }
-
                     #LINE_BREAK
                 }
             })
             .collect();
 
-        quote! {{
+        quote! {
             use crate::*;
-
             #LINE_BREAK
 
             /// `Reset`s all terminal attributes.
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct Reset;
-
             #LINE_BREAK
 
             #(#grounds)*
-
             #LINE_BREAK
 
             #(#attributes)*
-        }}
+        }
     }
 }
