@@ -14,36 +14,33 @@ impl Lay {
     }
 
     pub fn import_markers(&self) -> TokenStream {
-        let grounds: Vec<_> = vec![
-            (
-                self.foreground.name,
-                self.foreground.short,
-                self.foreground.no,
-            ),
-            (
-                self.background.name,
-                self.background.short,
-                self.background.no,
-            ),
-        ];
-        let attributes: Vec<_> = self
+        let grounds: Vec<_> = self
+            .grounds
+            .iter()
+            .map(|a| (a.name, a.short, a.no))
+            .collect();
+        let attributes = self
             .attributes
             .iter()
             .map(|a| (a.name, a.short, a.no))
             .collect();
         let attributes = [grounds, attributes].concat();
 
-        let i = attributes.iter().map(|(name, short, _)| {
-            let Attribute = ident!(name);
-            let Short = ident!(short);
-            quote! { #Attribute as #Short }
-        });
+        let attribute_as = |(attribute, r#as)| {
+            let Attribute = ident!(attribute);
+            let As = ident!(r#as);
+            quote! { #Attribute as #As }
+        };
 
-        let no = attributes.iter().map(|(name, _, no)| {
-            let Attribute = ident!(name);
-            let No = ident!(no);
-            quote! { #Attribute as #No }
-        });
+        let i = attributes
+            .iter()
+            .map(|(name, short, _)| (name, short))
+            .map(attribute_as);
+
+        let no = attributes
+            .iter()
+            .map(|(name, _, no)| (name, no))
+            .map(attribute_as);
 
         quote! {
             #[cfg(feature = "styler-idx")]
@@ -65,7 +62,7 @@ impl Lay {
 }
 
 fn marker(lay: &Lay, mod_doc: Doc, doc_fn: fn(&str) -> Doc) -> TokenStream {
-    let grounds: Vec<_> = vec![lay.foreground.name, lay.background.name];
+    let grounds: Vec<_> = lay.grounds.iter().map(|a| a.name).collect();
     let attributes: Vec<_> = lay.attributes.iter().map(|a| a.name).collect();
     let markers = [grounds, attributes].concat();
     let markers = markers.iter().map(|name| {
@@ -76,7 +73,6 @@ fn marker(lay: &Lay, mod_doc: Doc, doc_fn: fn(&str) -> Doc) -> TokenStream {
             #doc
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct #Name;
-
             #LINE_BREAK
         }
     });

@@ -8,8 +8,8 @@ use crate::generation::*;
 
 impl Lay {
     pub fn mod_style_attributes(&self) -> TokenStream {
-        let grounds: Vec<_> = vec![self.foreground.name, self.background.name];
-        let attributes: Vec<_> = self.attributes.iter().map(|a| a.name).collect();
+        let grounds: Vec<_> = self.grounds.iter().map(|a| a.name).collect();
+        let attributes = self.attributes.iter().map(|a| a.name).collect();
         let attributes = [grounds, attributes].concat();
 
         let doc = attributes

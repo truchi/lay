@@ -4,7 +4,8 @@ impl Lay {
     pub fn style(&self) -> TokenStream {
         let Color = ident!(self.colors.name);
         let ResetColor = ident!(self.colors.reset);
-        let ground_tuple = |ground: Ground| {
+
+        let ground_tuple = |ground: &Ground| {
             let Ground = ident!(ground.name);
             (ground.name, quote! { #Ground(#Color::#ResetColor) })
         };
@@ -14,7 +15,7 @@ impl Lay {
             (attribute.name, quote! { #Attribute::#ResetAttibute })
         };
 
-        let grounds = vec![ground_tuple(self.foreground), ground_tuple(self.background)];
+        let grounds: Vec<_> = self.grounds.iter().map(ground_tuple).collect();
         let attributes = self.attributes.iter().map(attribute_tuple).collect();
         let attributes = [grounds, attributes].concat();
 

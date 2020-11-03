@@ -13,9 +13,13 @@ impl Lay {
     }
 
     fn trait_styler_index(&self) -> TokenStream {
-        let grounds = vec![self.foreground.name, self.background.name];
-        let attributes = self.attributes.iter().map(|attribute| attribute.name);
-        let attributes = [grounds.clone(), attributes.collect()].concat();
+        let grounds: Vec<_> = self.grounds.iter().map(|ground| ground.name).collect();
+        let attributes = self
+            .attributes
+            .iter()
+            .map(|attribute| attribute.name)
+            .collect();
+        let attributes = [grounds, attributes].concat();
 
         let style = attributes.clone();
         let style = style.iter().map(|attribute| {
@@ -72,10 +76,13 @@ impl Lay {
             // #Attribute::#ResetAttibute })
         };
 
-        let grounds = vec![self.foreground.name, self.background.name];
-        let attributes = self.attributes.iter().map(|attribute| attribute.name);
-
-        let attributes = [grounds.clone(), attributes.collect()].concat();
+        let grounds: Vec<_> = self.grounds.iter().map(|ground| ground.name).collect();
+        let attributes = self
+            .attributes
+            .iter()
+            .map(|attribute| attribute.name)
+            .collect();
+        let attributes = [grounds, attributes].concat();
 
         let setters = attributes.iter().map(|attribute| {
             let doc = doc!("Sets `Option<{Attribute}>`.", Attribute = attribute);

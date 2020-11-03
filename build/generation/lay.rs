@@ -28,8 +28,7 @@ pub struct Attribute {
 pub struct Lay {
     pub reset:      &'static str,
     pub colors:     Colors,
-    pub foreground: Ground,
-    pub background: Ground,
+    pub grounds:    &'static [Ground],
     pub attributes: &'static [Attribute],
 }
 
@@ -56,18 +55,20 @@ macro_rules! lay {
                 ansi:   $ansi,
                 reset:  concat!($reset, $Color),
             },
-            foreground: $crate::generation::lay::Ground {
-                name:  $foreground,
-                short: $foreground_short,
-                reset: concat!($reset, $foreground),
-                no:    concat!($no, $foreground),
-            },
-            background: $crate::generation::lay::Ground {
-                name:  $background,
-                short: $background_short,
-                reset: concat!($reset, $background),
-                no:    concat!($no, $background),
-            },
+            grounds: &[
+                $crate::generation::lay::Ground {
+                    name:  $foreground,
+                    short: $foreground_short,
+                    reset: concat!($reset, $foreground),
+                    no:    concat!($no, $foreground),
+                },
+                $crate::generation::lay::Ground {
+                    name:  $background,
+                    short: $background_short,
+                    reset: concat!($reset, $background),
+                    no:    concat!($no, $background),
+                },
+            ],
             attributes: &[$(
                 $crate::generation::lay::Attribute {
                     name:     $name,

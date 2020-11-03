@@ -5,7 +5,7 @@ impl Lay {
         let reset = self.reset;
         let color = self.colors.name;
         let reset_color = self.colors.reset;
-        let grounds = vec![self.foreground.name, self.background.name];
+        let grounds = self.grounds;
         let attributes = self.attributes;
 
         let Reset = ident!(reset);
@@ -15,12 +15,12 @@ impl Lay {
         let grounds = grounds.iter().map(|ground| {
             let doc = doc!(
                 "Returns `Some({Ground}({Color}::{ResetColor}))`.",
-                Ground = ground,
+                Ground = ground.name,
                 Color = color,
                 ResetColor = reset_color
             );
 
-            let Ground = ident!(ground);
+            let Ground = ident!(ground.name);
             quote! {
                 #doc
                 impl From<#Reset> for Option<#Ground> {

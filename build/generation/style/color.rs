@@ -17,10 +17,10 @@ impl Lay {
             [{background}]: struct.{Background}.html",
             Color = self.colors.name,
             ResetColor = self.colors.reset,
-            Foreground = self.foreground.name,
-            Background = self.background.name,
-            foreground = self.foreground.name.to_lowercase(),
-            background = self.background.name.to_lowercase(),
+            Foreground = self.grounds[0].name,
+            Background = self.grounds[1].name,
+            foreground = self.grounds[0].name.to_lowercase(),
+            background = self.grounds[1].name.to_lowercase(),
         );
 
         let default_doc = doc!(

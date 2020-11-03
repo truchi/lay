@@ -2,11 +2,11 @@ use crate::generation::*;
 
 impl Lay {
     pub fn foreground(&self) -> TokenStream {
-        ground(&self, &self.foreground)
+        ground(&self, &self.grounds[0])
     }
 
     pub fn background(&self) -> TokenStream {
-        ground(&self, &self.background)
+        ground(&self, &self.grounds[1])
     }
 }
 
