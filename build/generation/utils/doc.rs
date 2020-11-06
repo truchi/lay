@@ -1,6 +1,14 @@
 use crate::generation::*;
 use quote::{ToTokens, TokenStreamExt};
 
+macro_rules! doc {
+    ($($arg:tt)+) => { $crate::generation::utils::Doc::new(format!($($arg)+), false) };
+}
+
+macro_rules! idoc {
+    ($($arg:tt)+) => { $crate::generation::utils::Doc::new(format!($($arg)+), true) };
+}
+
 pub struct Doc(Vec<String>, bool);
 
 impl Doc {
@@ -62,9 +70,3 @@ impl ToTokens for Doc {
         }
     }
 }
-
-// impl From<Doc> for String {
-// fn from(doc: Doc) -> Self {
-// ()
-// }
-// }

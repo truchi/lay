@@ -6,23 +6,24 @@
 //! Attributes (`Foreground`, `Background`, `Weight`, `Slant`, `Underline`,
 //! `Strike`, `Overline`, `Invert`, `Blink`, `Border`).
 
-mod foreground;
-pub use foreground::*;
 mod background;
-pub use background::*;
-mod weight;
-pub use weight::*;
-mod slant;
-pub use slant::*;
-mod underline;
-pub use underline::*;
-mod strike;
-pub use strike::*;
-mod overline;
-pub use overline::*;
-mod invert;
-pub use invert::*;
 mod blink;
-pub use blink::*;
 mod border;
+mod foreground;
+mod invert;
+mod overline;
+mod slant;
+mod strike;
+mod underline;
+mod weight;
+
+pub use background::*;
+pub use blink::*;
 pub use border::*;
+pub use foreground::*;
+pub use invert::*;
+pub use overline::*;
+pub use slant::*;
+pub use strike::*;
+pub use underline::*;
+pub use weight::*;

@@ -1,78 +1,61 @@
 use crate::generation::*;
 
-impl Lay {
+impl Generation<'_> {
     pub fn i(&self) -> TokenStream {
-        marker(self, idoc!("Attributes `Index`ers."), |name| {
-            doc!("`Index`es `{}`.", name)
-        })
+        marker(self.0, idoc!("Attributes `Index`ers."), "`Index`es")
     }
 
     pub fn no(&self) -> TokenStream {
-        marker(self, idoc!("Attributes `None`rs."), |name| {
-            doc!("`None`s `{}`.", name)
-        })
+        marker(self.0, idoc!("Attributes `None`rs."), "`None`s")
     }
 
     pub fn import_markers(&self) -> TokenStream {
-        let grounds: Vec<_> = self
-            .grounds
-            .iter()
-            .map(|a| (a.name, a.short, a.no))
-            .collect();
         let attributes = self
+            .0
             .attributes
             .iter()
-            .map(|a| (a.name, a.short, a.no))
-            .collect();
-        let attributes = [grounds, attributes].concat();
+            .map(|attribute| {
+                (
+                    attribute.name().clone(),
+                    attribute.short().clone(),
+                    attribute.no(),
+                )
+            })
+            .collect::<Vec<_>>();
 
-        let attribute_as = |(attribute, r#as)| {
-            let Attribute = ident!(attribute);
-            let As = ident!(r#as);
-            quote! { #Attribute as #As }
+        let make = |feature, mod_name, exports: &mut dyn Iterator<Item = _>| {
+            let exports = exports.map(|(attribute, export)| quote! { #attribute as #export });
+
+            quote! {
+                #[cfg(feature = #feature)]
+                pub mod #mod_name;
+                #[cfg(feature = #feature)]
+                pub use #mod_name::{ #(#exports,)* };
+            }
         };
 
-        let i = attributes
-            .iter()
-            .map(|(name, short, _)| (name, short))
-            .map(attribute_as);
+        let mut i = attributes.iter().map(|(name, short, _)| (name, short));
+        let mut no = attributes.iter().map(|(name, _, no)| (name, no));
 
-        let no = attributes
-            .iter()
-            .map(|(name, _, no)| (name, no))
-            .map(attribute_as);
+        let i = make("styler-idx", self.0.i.lower(), &mut i);
+        let no = make("styler-ops", self.0.no.lower(), &mut no);
 
         quote! {
-            #[cfg(feature = "styler-idx")]
-            pub mod i;
-            #[cfg(feature = "styler-idx")]
-            pub use i::{
-                #(#i,)*
-            };
+            #i
             #LINE_BREAK
-
-            #[cfg(feature = "styler-ops")]
-            pub mod no;
-            #[cfg(feature = "styler-ops")]
-            pub use no::{
-                #(#no,)*
-            };
+            #no
         }
     }
 }
 
-fn marker(lay: &Lay, mod_doc: Doc, doc_fn: fn(&str) -> Doc) -> TokenStream {
-    let grounds: Vec<_> = lay.grounds.iter().map(|a| a.name).collect();
-    let attributes: Vec<_> = lay.attributes.iter().map(|a| a.name).collect();
-    let markers = [grounds, attributes].concat();
-    let markers = markers.iter().map(|name| {
-        let doc = doc_fn(name);
-        let Name = ident!(name);
+fn marker(lay: &Lay, mod_doc: Doc, fn_doc: &str) -> TokenStream {
+    let markers = lay.attributes.iter().map(|attribute| {
+        let doc = doc!("{} `{}`.", fn_doc, attribute);
 
         quote! {
             #doc
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct #Name;
+            pub struct #attribute;
             #LINE_BREAK
         }
     });

@@ -1,4 +1,4 @@
-use super::*;
+use crate::generation::*;
 use std::{
     env::var,
     fs::{create_dir_all, read, File},

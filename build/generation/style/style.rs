@@ -1,65 +1,61 @@
 use crate::generation::*;
 
-impl Lay {
+impl Generation<'_> {
     pub fn style(&self) -> TokenStream {
-        let Color = ident!(self.colors.name);
-        let ResetColor = ident!(self.colors.reset);
+        let color = &self.0.color;
+        let reset_color = self.0.color.reset();
+        let attributes = self
+            .0
+            .attributes
+            .iter()
+            .map(|attribute| {
+                let name = attribute.name();
+                let name_lower = name.lower();
 
-        let ground_tuple = |ground: &Ground| {
-            let Ground = ident!(ground.name);
-            (ground.name, quote! { #Ground(#Color::#ResetColor) })
-        };
-        let attribute_tuple = |attribute: &Attribute| {
-            let Attribute = ident!(attribute.name);
-            let ResetAttibute = ident!(attribute.reset);
-            (attribute.name, quote! { #Attribute::#ResetAttibute })
-        };
+                match attribute {
+                    Attribute::Ground(_) =>
+                        (name, name_lower, quote! { #name(#color::#reset_color) }),
+                    Attribute::Attr(_) => {
+                        let reset_attr = name.reset();
 
-        let grounds: Vec<_> = self.grounds.iter().map(ground_tuple).collect();
-        let attributes = self.attributes.iter().map(attribute_tuple).collect();
-        let attributes = [grounds, attributes].concat();
+                        (name, name_lower, quote! { #name::#reset_attr })
+                    }
+                }
+            })
+            .collect::<Vec<_>>();
 
         let style = attributes.clone();
-        let style = style.iter().map(|(name, ..)| {
-            let Attribute = ident!(name);
-            let attribute = ident!(name.to_lowercase());
-            quote! { pub #attribute: Option<#Attribute>, }
-        });
+        let style = style
+            .iter()
+            .map(|(name, name_lower, ..)| quote! { pub #name_lower: Option<#name>, });
 
         let none = attributes.clone();
-        let none = none.iter().map(|(name, ..)| {
-            let attribute = ident!(name.to_lowercase());
-            quote! { #attribute: None, }
-        });
+        let none = none
+            .iter()
+            .map(|(_, name_lower, ..)| quote! { #name_lower: None, });
 
         let reset = attributes.clone();
-        let reset = reset.iter().map(|(name, reset)| {
-            let attribute = ident!(name.to_lowercase());
-            quote! { #attribute: Some(#reset), }
-        });
+        let reset = reset
+            .iter()
+            .map(|(_, name_lower, reset)| quote! { #name_lower: Some(#reset), });
 
-        let from = attributes.iter().map(|(name, ..)| {
+        let from = attributes.iter().map(|(name, name_lower, ..)| {
             let attributes = attributes.clone();
-            let attributes = attributes.iter().map(|(n, ..)| {
-                let attribute = ident!(n.to_lowercase());
-                if n == name {
-                    quote! { #attribute: Some(#attribute), }
+            let attributes = attributes.iter().map(|(n, l, ..)| {
+                if l == name_lower {
+                    quote! { #l: Some(#l), }
                 } else {
-                    quote! { #attribute: None, }
+                    quote! { #l: None, }
                 }
             });
 
-            let doc = doc!(
-                "Returns an empty `Style` with `Some({attribute})`.",
-                attribute = name.to_lowercase()
-            );
-            let Attribute = ident!(name);
-            let attribute = ident!(name.to_lowercase());
+            let doc = doc!("Returns an empty `Style` with `Some({})`.", name_lower);
+
             quote! {
                 #doc
-                impl From<#Attribute> for Style {
+                impl From<#name> for Style {
                     #doc
-                    fn from(#attribute: #Attribute) -> Self {
+                    fn from(#name_lower: #name) -> Self {
                         Self {
                             #(#attributes)*
                         }

@@ -7,10 +7,10 @@ pub use Color::*;
 
 /// A `Color` for `Foreground` & `Background`.
 ///
-/// To be used with [`Foreground`][foreground] and [`Background`][background] (a
-/// `Color` on its own does not `impl Display`).
+/// To be used with [`Foreground`][foreground] and [`Background`][background]
+/// (a `Color` on its own does not `Display`).
 ///
-/// Defaults to `ResetColor`.
+/// `Default`s to `ResetColor`.
 ///
 /// [foreground]: struct.Foreground.html
 /// [background]: struct.Background.html

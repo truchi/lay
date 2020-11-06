@@ -1,58 +1,54 @@
 use crate::generation::*;
 
-impl Lay {
+impl Generation<'_> {
     pub fn color(&self) -> TokenStream {
-        let Colors = self.colors.colors;
-        let Colors = Colors.iter().map(|color| ident!("{}", color));
+        let color = &self.0.color;
+        let colors = &color.colors;
+        let rgb = &color.rgb;
+        let ansi = &color.ansi;
+        let reset_color = color.reset();
+        let foreground = &self.0.foreground;
+        let background = &self.0.background;
 
         let decl_doc = doc!(
-            "A `{Color}` for `{Foreground}` & `{Background}`.
+            "A `{color}` for `{foreground}` & `{background}`.
 
-            To be used with [`{Foreground}`][{foreground}] and [`{Background}`][{background}] (a
-            `{Color}` on its own does not `impl Display`).
+            To be used with [`{foreground}`][{fg_link}] and [`{background}`][{bg_link}]
+            (a `{color}` on its own does not `Display`).
 
-            Defaults to `{ResetColor}`.
+            `Default`s to `{reset_color}`.
 
-            [{foreground}]: struct.{Foreground}.html
-            [{background}]: struct.{Background}.html",
-            Color = self.colors.name,
-            ResetColor = self.colors.reset,
-            Foreground = self.grounds[0].name,
-            Background = self.grounds[1].name,
-            foreground = self.grounds[0].name.to_lowercase(),
-            background = self.grounds[1].name.to_lowercase(),
+            [{fg_link}]: struct.{foreground}.html
+            [{bg_link}]: struct.{background}.html",
+            color = color,
+            reset_color = reset_color,
+            foreground = foreground,
+            background = background,
+            fg_link = foreground.lower(),
+            bg_link = background.lower(),
         );
 
-        let default_doc = doc!(
-            "Returns `{Color}::{ResetColor}`.",
-            Color = self.colors.name,
-            ResetColor = self.colors.reset
-        );
-
-        let Color = ident!(self.colors.name);
-        let Rgb = ident!(self.colors.rgb);
-        let Ansi = ident!(self.colors.ansi);
-        let ResetColor = ident!(self.colors.reset);
+        let default_doc = doc!("Returns `{}::{}`.", color, reset_color);
 
         quote! {
-            pub use #Color::*;
+            pub use #color::*;
             #LINE_BREAK
 
             #decl_doc
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-            pub enum #Color {
-                #(#Colors,)*
-                #Rgb(u8, u8, u8),
-                #Ansi(u8),
-                #ResetColor,
+            pub enum #color {
+                #(#colors,)*
+                #rgb(u8, u8, u8),
+                #ansi(u8),
+                #reset_color,
             }
             #LINE_BREAK
 
             #default_doc
-            impl Default for Color {
+            impl Default for #color {
                 #default_doc
                 fn default() -> Self {
-                    Self::ResetColor
+                    Self::#reset_color
                 }
             }
         }

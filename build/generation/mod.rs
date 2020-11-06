@@ -1,4 +1,4 @@
-#![allow(non_snake_case)]
+#![allow(unused)]
 
 #[macro_use]
 mod utils;
@@ -6,47 +6,65 @@ mod utils;
 mod lay;
 
 mod style;
-mod write;
 
 use lay::*;
 use proc_macro2::TokenStream;
 use quote::quote;
 use utils::*;
-use write::*;
 
-const LAY: Lay = lay!(
-    ("Reset" "No")
-    "Color": ["White" "Black"] ("Rgb" "Ansi")
-    "Dark": ["Grey" "Red" "Green" "Yellow" "Blue" "Magenta" "Cyan"]
-    ["Fg"/"Foreground" "Bg"/"Background"]
-    "Wgt"/"Weight":    ["Bold" "Light"]
-    "Slt"/"Slant":     ["Italic"]
-    "Udl"/"Underline": ["Underlined"]
-    "Str"/"Strike":    ["Striked"]
-    "Ovl"/"Overline":  ["Ovelined"]
-    "Inv"/"Invert":    ["Inverted"]
-    "Blk"/"Blink":     ["Slow" "Fast"]
-    "Brd"/"Border":    ["Circle" "Frame"]
+consts!(
+    I No Reset Get On Mut
+
+    Color
+    [White Black (Dark) Grey Red Green Yellow Blue Magenta Cyan]
+    Rgb Ansi
+
+    [Foreground(Fg) Background(Bg)]
+    [
+        Weight(Wgt)    [Bold Light]
+        Slant(Slt)     [Italic]
+        Underline(Udl) [Underlined]
+        Strike(Str)    [Striked]
+        Overline(Ovl)  [Ovelined]
+        Invert(Inv)    [Inverted]
+        Blink(Blk)     [Slow Fast]
+        Border(Brd)    [Circle Frame]
+    ]
 );
+
+pub struct Generation<'a>(&'a Lay);
 
 pub fn generate() {
     if let Ok(profile) = std::env::var("PROFILE") {
         if profile == "debug" {
-            // panic!("{:#?}", LAY);
+            let lay = Lay::new();
+            let gen = Generation(&lay);
+
+            // panic!("{:#?}", lay);
             println!("cargo:rerun-if-changed=build/mod.rs");
 
-            write_part("style/mod.rs", "import_markers", LAY.import_markers());
-            write("style/color.rs", LAY.color());
-            write("style/reset.rs", LAY.reset());
-            write("style/i.rs", LAY.i());
-            write("style/no.rs", LAY.no());
-            write("style/attributes/mod.rs", LAY.mod_style_attributes());
-            write("style/attributes/foreground.rs", LAY.foreground());
-            write("style/attributes/background.rs", LAY.background());
-            write("style/styler.rs", LAY.styler());
-            write("style/style.rs", LAY.style());
+            write_part("style/mod.rs", "import_markers", gen.import_markers());
 
-            for (name, content) in LAY.attributes() {
+            write(&format!("style/{}.rs", lay.color.lower()), gen.color());
+            write(&format!("style/{}.rs", lay.reset.lower()), gen.reset());
+            write(&format!("style/{}.rs", lay.i.lower()), gen.i());
+            write(&format!("style/{}.rs", lay.no.lower()), gen.no());
+            write(
+                &format!("style/attributes/mod.rs"),
+                gen.mod_style_attributes(),
+            );
+            write(
+                &format!("style/attributes/{}.rs", lay.foreground.lower()),
+                gen.foreground(),
+            );
+            write(
+                &format!("style/attributes/{}.rs", lay.background.lower()),
+                gen.background(),
+            );
+            write("style/style.rs", gen.style());
+            write("style/styler.rs", gen.styler());
+
+            for (name, content) in gen.attributes() {
                 write(&format!("style/attributes/{}.rs", name), content);
             }
 

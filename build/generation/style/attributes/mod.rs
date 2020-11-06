@@ -1,16 +1,16 @@
 mod attributes;
 mod ground;
 
-pub use attributes::*;
-pub use ground::*;
-
 use crate::generation::*;
 
-impl Lay {
+impl Generation<'_> {
     pub fn mod_style_attributes(&self) -> TokenStream {
-        let grounds: Vec<_> = self.grounds.iter().map(|a| a.name).collect();
-        let attributes = self.attributes.iter().map(|a| a.name).collect();
-        let attributes = [grounds, attributes].concat();
+        let attributes = self
+            .0
+            .attributes
+            .iter()
+            .map(Attribute::name)
+            .collect::<Vec<_>>();
 
         let doc = attributes
             .iter()
@@ -19,13 +19,15 @@ impl Lay {
             .join(", ");
         let doc = idoc!("Attributes ({}).", doc);
 
-        let r#mod = attributes.iter().map(|m| ident!("{}", m.to_lowercase()));
+        let mod_mod = attributes.iter().map(|m| ident!("{}", m.lower()));
+        let use_mod = mod_mod.clone();
 
         quote! {
             #doc
             #LINE_BREAK
-
-            #(mod #r#mod; pub use #r#mod::*;)*
+            #(mod #mod_mod;)*
+            #LINE_BREAK
+            #(pub use #use_mod::*;)*
         }
     }
 }

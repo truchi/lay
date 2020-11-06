@@ -4,14 +4,11 @@ macro_rules! ident {
     ($fmt:expr, $($rest:tt)*) => { ::quote::format_ident!($fmt, $($rest)*) };
 }
 
-macro_rules! doc {
-    ($($arg:tt)+) => { $crate::generation::utils::Doc::new(format!($($arg)+), false) };
-}
-
-macro_rules! idoc {
-    ($($arg:tt)+) => { $crate::generation::utils::Doc::new(format!($($arg)+), true) };
-}
-
+#[macro_use]
 mod doc;
+mod ident;
+mod write;
 
 pub use doc::*;
+pub use ident::*;
+pub use write::*;

@@ -1,9 +1,9 @@
 use crate::generation::*;
 
-impl Lay {
+impl Generation<'_> {
     pub fn styler(&self) -> TokenStream {
-        let styler = self.trait_styler();
-        let styler_index = self.trait_styler_index();
+        let styler = trait_styler(self.0);
+        let styler_index = trait_styler_index(self.0);
 
         quote! {
             use crate::*; #LINE_BREAK
@@ -11,107 +11,204 @@ impl Lay {
             #styler
         }
     }
+}
 
-    fn trait_styler_index(&self) -> TokenStream {
-        let grounds: Vec<_> = self.grounds.iter().map(|ground| ground.name).collect();
-        let attributes = self
-            .attributes
+fn trait_styler_index(lay: &Lay) -> TokenStream {
+    let attributes = lay
+        .attributes
+        .iter()
+        .map(|attribute| (attribute.name(), attribute.lower(), attribute.get().snake()))
+        .collect::<Vec<_>>();
+
+    let style = attributes
+        .iter()
+        .map(|(_, attribute_lower, get)| quote! { #attribute_lower: self.#get(), });
+
+    let index = attributes.iter().map(|(attribute, _, get)| {
+        let doc = doc!("Gets `Option<{}>`.", attribute);
+
+        quote! { #doc fn #get(&self) -> Option<#attribute>; #LINE_BREAK }
+    });
+
+    let index_mut = attributes.iter().map(|(attribute, _, get)| {
+        let doc = doc!("Gets `&mut Option<{}>`.", attribute);
+
+        quote! { #doc fn #get(&mut self) -> &mut Option<#attribute>; #LINE_BREAK }
+    });
+
+    quote! {
+        /// A trait for getting `Option`al attributes on styled types.
+        pub trait StylerIndex {
+            #(#index)*
+            #LINE_BREAK
+
+            /// Returns a `Style`.
+            fn style(&self) -> Style {
+                Style { #(#style)* }
+            }
+        }
+        #LINE_BREAK
+
+        /// A trait for getting `Option`al attributes on mutable styled types.
+        pub trait StylerIndexMut {
+            #(#index_mut)*
+        }
+    }
+}
+
+fn trait_styler(lay: &Lay) -> TokenStream {
+    let color = &lay.color;
+    let reset_color = color.reset();
+    let on_reset_color = color.on_reset();
+
+    let ground_variants = |ground: &Ground| {
+        color
+            .colors
             .iter()
-            .map(|attribute| attribute.name)
-            .collect();
-        let attributes = [grounds, attributes].concat();
+            .map(|variant| {
+                (
+                    format!("{}({}::{})", ground, color, variant),
+                    if ground == &lay.foreground {
+                        variant.set().snake()
+                    } else {
+                        variant.on_set().snake()
+                    },
+                    quote! { #ground(#color::#variant) },
+                )
+            })
+            .collect::<Vec<_>>()
+    };
 
-        let style = attributes.clone();
-        let style = style.iter().map(|attribute| {
-            let get = ident!("get_{}", attribute.to_lowercase());
-            let attribute = ident!(attribute.to_lowercase());
-            quote! { #attribute: self.#get(), }
-        });
+    let attr_variants = |attr: &Attr| {
+        attr.variants
+            .iter()
+            .map(|variant| {
+                (
+                    format!("{}::{}", attr, variant),
+                    variant.set().snake(),
+                    quote! { #attr::#variant },
+                )
+            })
+            .collect::<Vec<_>>()
+    };
 
-        let index = attributes.iter().map(|attribute| {
-            let doc = doc!("Gets `Option<{Attribute}>`.", Attribute = attribute);
-            let get = ident!("get_{}", attribute.to_lowercase());
+    let specials = |ground: &Ground, set| {
+        let rgb = &color.rgb;
+        let ansi = &color.ansi;
 
-            let Attribute = ident!(attribute);
-            quote! { #doc fn #get(&self) -> Option<#Attribute>; #LINE_BREAK }
-        });
+        let rgb_doc = doc!("Sets `Some({}({}::{}(r, g, b)))`.", ground, color, rgb);
+        let ansi_doc = doc!("Sets `Some({}({}::{}(ansi)))`.", ground, color, ansi);
 
-        let index_mut = attributes.clone();
-        let index_mut = index_mut.iter().map(|attribute| {
-            let doc = doc!("Gets `&mut Option<{Attribute}>`.", Attribute = attribute);
-            let get = ident!("get_{}", attribute.to_lowercase());
-
-            let Attribute = ident!(attribute);
-            quote! { #doc fn #get(&mut self) -> &mut Option<#Attribute>; #LINE_BREAK }
-        });
+        let (set_rgb, set_ansi) = if ground == &lay.foreground {
+            (rgb.set().snake(), ansi.set().snake())
+        } else {
+            (rgb.on_set().snake(), ansi.on_set().snake())
+        };
 
         quote! {
-            /// A trait for getting `Option`al attributes on styled types.
-            pub trait StylerIndex {
-                #(#index)*
-                #LINE_BREAK
-
-                /// Returns a `Style`.
-                fn style(&self) -> Style {
-                    Style { #(#style)* }
-                }
+            #rgb_doc
+            fn #set_rgb(self, r: u8, g: u8, b: u8) -> Self {
+                self.#set(Some(#ground(#color::#rgb(r, g, b))))
             }
             #LINE_BREAK
 
-            /// A trait for getting `Option`al attributes on mutable styled types.
-            pub trait StylerIndexMut {
-                #(#index_mut)*
+            #ansi_doc
+            fn #set_ansi(self, ansi: u8) -> Self {
+                self.#set(Some(#ground(#color::#ansi(ansi))))
             }
+            #LINE_BREAK
         }
-    }
+    };
 
-    fn trait_styler(&self) -> TokenStream {
-        let ground_tuple = |ground: Ground| {
-            // ident!(Ground = ground.name,);
-            // (ground.name, quote! { #Ground(#Color::#ResetColor) })
-        };
-        let attribute_tuple = |attribute: &Attribute| {
-            // ident!(Attribute = attribute.name, ResetAttibute =
-            // attribute.reset,); (attribute.name, quote! {
-            // #Attribute::#ResetAttibute })
-        };
+    let ground_reset = |ground: &Ground| {
+        (
+            format!("{}({}::{})", ground, color, reset_color),
+            if ground == &lay.foreground {
+                reset_color.snake()
+            } else {
+                on_reset_color.snake()
+            },
+            quote! { #ground(#color::#reset_color) },
+        )
+    };
 
-        let grounds: Vec<_> = self.grounds.iter().map(|ground| ground.name).collect();
-        let attributes = self
-            .attributes
-            .iter()
-            .map(|attribute| attribute.name)
-            .collect();
-        let attributes = [grounds, attributes].concat();
+    let attr_reset = |attr: &Attr| {
+        let reset_attr = attr.reset();
 
-        let setters = attributes.iter().map(|attribute| {
-            let doc = doc!("Sets `Option<{Attribute}>`.", Attribute = attribute);
-            let no_doc = doc!("`None`s `Option<{Attribute}>`.", Attribute = attribute);
-            let Attribute = ident!(attribute);
-            let attribute = ident!(attribute.to_lowercase());
-            let no_attribute = ident!("no_{}", attribute);
+        (
+            format!("{}::{}", attr, reset_attr),
+            attr.reset().snake(),
+            quote! { #attr::#reset_attr },
+        )
+    };
+
+    let attributes = lay
+        .attributes
+        .iter()
+        .map(|attribute| {
+            let name = attribute.name();
+            let lower = attribute.lower();
+            let get = attribute.get().snake();
+            let set = attribute.set().snake();
+            let no = attribute.no().snake();
+
+            let (variants, specials, reset) = match attribute {
+                Attribute::Ground(ground) => (
+                    ground_variants(ground),
+                    Some(specials(ground, set.clone())),
+                    ground_reset(ground),
+                ),
+                Attribute::Attr(attr) => (attr_variants(attr), None, attr_reset(attr)),
+            };
+
+            (name, lower, get, set, variants, specials, reset, no)
+        })
+        .collect::<Vec<_>>();
+
+    let setters = attributes
+        .iter()
+        .map(|(name, lower, _, set, variants, specials, reset, no)| {
+            let doc = doc!("Sets `Option<{}>`.", name);
+            let no_doc = doc!("`None`s `Option<{}>`.", name);
+
+            let variants = variants.iter().map(|(doc, set_variant, expr)| {
+                let doc = doc!("Sets `Some({})`.", doc);
+
+                quote! {
+                    #doc fn #set_variant(self) -> Self { self.#set(Some(#expr)) }
+                    #LINE_BREAK
+                }
+            });
+
+            let (reset_doc, reset, reset_expr) = reset;
+            let reset_doc = doc!("Sets `Some({})`.", reset_doc);
+
             quote! {
                 #doc
-                fn #attribute(self, #attribute: impl Into<Option<#Attribute>>) -> Self;
+                fn #set(self, #lower: impl Into<Option<#name>>) -> Self;
+                #LINE_BREAK
+
+                #(#variants)*
+                #specials
+
+                #reset_doc
+                fn #reset(self) -> Self { self.#set(Some(#reset_expr)) }
                 #LINE_BREAK
 
                 #no_doc
-                fn #no_attribute(self) -> Self {
-                    self.#attribute(None)
-                }
+                fn #no(self) -> Self { self.#set(None) }
                 #LINE_BREAK
             }
         });
 
-        quote! {
-            /// A trait for setting `Option`al attributes on styled types.
-            pub trait Styler: StylerIndex + Sized {
-                /// The resulting type of the setters.
-                type Output;
-                #LINE_BREAK
+    quote! {
+        /// A trait for setting `Option`al attributes on styled types.
+        pub trait Styler: StylerIndex + Sized {
+            /// The resulting type of the setters.
+            type Output;
+            #LINE_BREAK
 
-                #(#setters)*
-            }
+            #(#setters)*
         }
     }
 }

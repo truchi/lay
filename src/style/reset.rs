@@ -5,7 +5,7 @@
 
 use crate::*;
 
-/// `Reset`s all terminal attributes.
+/// `Reset`s all attributes.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Reset;
 
