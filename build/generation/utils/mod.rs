@@ -6,9 +6,9 @@ macro_rules! ident {
 
 #[macro_use]
 mod doc;
-mod ident;
+// mod ident;
 mod write;
 
 pub use doc::*;
-pub use ident::*;
+// pub use ident::*;
 pub use write::*;

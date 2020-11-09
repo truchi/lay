@@ -3,65 +3,11 @@ use quote::{ToTokens, TokenStreamExt};
 use std::fmt::{Display, Error, Formatter};
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug)]
-pub struct Ident(Vec<String>);
+pub struct Ident(Vec<&'static str>);
 
 impl Ident {
-    pub fn new(parts: &[&str]) -> Self {
-        Self(parts.into_iter().map(|str| str::to_string(str)).collect())
-    }
-
-    pub fn prefix(&self, prefix: &str) -> Self {
-        let mut parts = self.0.clone();
-        parts.insert(0, prefix.to_string());
-
-        Self(parts)
-    }
-
-    pub fn suffix(&self, suffix: &str) -> Self {
-        let mut parts = self.0.clone();
-        parts.push(suffix.to_string());
-
-        Self(parts)
-    }
-
-    pub fn no(&self) -> Self {
-        self.prefix(Lay::NO)
-    }
-
-    pub fn reset(&self) -> Self {
-        self.prefix(Lay::RESET)
-    }
-
-    pub fn get(&self) -> Self {
-        self.prefix(Lay::GET)
-    }
-
-    pub fn get_mut(&self) -> Self {
-        self.prefix(Lay::GET).suffix(Lay::MUT)
-    }
-
-    pub fn set(&self) -> Self {
-        self.clone()
-    }
-
-    pub fn set_mut(&self) -> Self {
-        self.suffix(Lay::MUT)
-    }
-
-    pub fn on_set(&self) -> Self {
-        self.prefix(Lay::ON)
-    }
-
-    pub fn on_set_mut(&self) -> Self {
-        self.prefix(Lay::ON).suffix(Lay::MUT)
-    }
-
-    pub fn on_reset(&self) -> Self {
-        self.prefix(Lay::RESET).prefix(Lay::ON)
-    }
-
-    pub fn on_reset_mut(&self) -> Self {
-        self.prefix(Lay::RESET).prefix(Lay::ON).suffix(Lay::MUT)
+    pub fn new(parts: &[&'static str]) -> Self {
+        Self(parts.to_vec())
     }
 
     pub fn lower(&self) -> proc_macro2::Ident {
@@ -78,6 +24,56 @@ impl Ident {
         let i = self.0.iter().map(low).collect::<Vec<_>>().join("_");
         ident!(i)
     }
+
+    pub fn fix(&self, prefix: &[&'static str], suffix: &[&'static str]) -> Self {
+        let mut parts = Vec::with_capacity(self.0.len() + prefix.len() + suffix.len());
+
+        for part in prefix.iter().chain(&self.0).chain(suffix) {
+            parts.push(*part);
+        }
+
+        Self(parts)
+    }
+
+    pub fn no(&self) -> Self {
+        self.fix(&[Lay::NO], &[])
+    }
+
+    pub fn reset(&self) -> Self {
+        self.fix(&[Lay::RESET], &[])
+    }
+
+    pub fn get(&self) -> Self {
+        self.fix(&[Lay::GET], &[])
+    }
+
+    pub fn get_mut(&self) -> Self {
+        self.fix(&[Lay::GET], &[Lay::MUT])
+    }
+
+    pub fn set(&self) -> Self {
+        self.fix(&[], &[])
+    }
+
+    pub fn set_mut(&self) -> Self {
+        self.fix(&[], &[Lay::MUT])
+    }
+
+    pub fn on_set(&self) -> Self {
+        self.fix(&[Lay::ON], &[])
+    }
+
+    pub fn on_set_mut(&self) -> Self {
+        self.fix(&[Lay::ON], &[Lay::MUT])
+    }
+
+    pub fn on_reset(&self) -> Self {
+        self.fix(&[Lay::ON, Lay::RESET], &[])
+    }
+
+    pub fn on_reset_mut(&self) -> Self {
+        self.fix(&[Lay::ON, Lay::RESET], &[Lay::MUT])
+    }
 }
 
 impl ToTokens for Ident {
@@ -92,11 +88,11 @@ impl Display for Ident {
     }
 }
 
-fn low(s: &String) -> String {
+fn low(s: &&str) -> String {
     s.to_lowercase()
 }
 
-fn cap(s: &String) -> String {
+fn cap(s: &&str) -> String {
     let mut c = s.chars();
     match c.next() {
         None => String::new(),

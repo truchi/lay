@@ -78,6 +78,34 @@ impl Attribute {
             Self::Attr(attr) => Some(&attr.variants),
         }
     }
+
+    pub fn reset_expr(&self, lay: &Lay) -> TokenStream {
+        match self {
+            Self::Ground(ground) => {
+                let color = &lay.color;
+                let reset_color = color.reset();
+                quote! { #ground(#color::#reset_color) }
+            }
+            Self::Attr(attr) => {
+                let reset_attr = attr.reset();
+                quote! { #attr::#reset_attr }
+            }
+        }
+    }
+
+    pub fn reset_str(&self, lay: &Lay) -> String {
+        match self {
+            Self::Ground(ground) => {
+                let color = &lay.color;
+                let reset_color = color.reset();
+                format!("{}({}::{})", ground, color, reset_color)
+            }
+            Self::Attr(attr) => {
+                let reset_attr = attr.reset();
+                format!("{}::{}", attr, reset_attr)
+            }
+        }
+    }
 }
 
 impl Deref for Attribute {
