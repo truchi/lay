@@ -8,7 +8,7 @@ pub use Invert::*;
 /// `Invert` (`Inverted`, `ResetInvert`).
 ///
 /// Prints the corresponding CSI to the terminal when `Display`ed.
-/// `Default`s to `ResetInvert`, the unsetting CSI.
+/// `Default`s to `Invert::ResetInvert`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Invert {
     Inverted,
@@ -19,6 +19,6 @@ pub enum Invert {
 impl Default for Invert {
     /// Returns `Invert::ResetInvert`.
     fn default() -> Self {
-        Self::ResetInvert
+        Invert::ResetInvert
     }
 }

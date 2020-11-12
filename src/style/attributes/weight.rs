@@ -8,7 +8,7 @@ pub use Weight::*;
 /// `Weight` (`Bold`, `Light`, `ResetWeight`).
 ///
 /// Prints the corresponding CSI to the terminal when `Display`ed.
-/// `Default`s to `ResetWeight`, the unsetting CSI.
+/// `Default`s to `Weight::ResetWeight`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Weight {
     Bold,
@@ -20,6 +20,6 @@ pub enum Weight {
 impl Default for Weight {
     /// Returns `Weight::ResetWeight`.
     fn default() -> Self {
-        Self::ResetWeight
+        Weight::ResetWeight
     }
 }

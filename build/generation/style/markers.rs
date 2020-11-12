@@ -1,24 +1,22 @@
 use crate::generation::*;
 
-impl Generation<'_> {
-    pub fn i(&self) -> TokenStream {
-        marker(self.0, idoc!("Attributes `Index`ers."), "`Index`es")
+impl Generation {
+    pub fn i() -> TokenStream {
+        marker(idoc!("Attributes `Index`ers."), "`Index`es")
     }
 
-    pub fn no(&self) -> TokenStream {
-        marker(self.0, idoc!("Attributes `None`rs."), "`None`s")
+    pub fn no() -> TokenStream {
+        marker(idoc!("Attributes `None`rs."), "`None`s")
     }
 
-    pub fn import_markers(&self) -> TokenStream {
-        let attributes = self
-            .0
-            .attributes
+    pub fn import_markers() -> TokenStream {
+        let attributes = ATTRIBUTES
             .iter()
             .map(|attribute| {
                 (
-                    attribute.name().clone(),
-                    attribute.short().clone(),
-                    attribute.no(),
+                    attribute.name.pascal,
+                    attribute.short,
+                    attribute.none.pascal,
                 )
             })
             .collect::<Vec<_>>();
@@ -34,22 +32,22 @@ impl Generation<'_> {
             }
         };
 
-        let mut i = attributes.iter().map(|(name, short, _)| (name, short));
-        let mut no = attributes.iter().map(|(name, _, no)| (name, no));
+        let mut indexes = attributes.iter().map(|(name, short, _)| (name, short));
+        let mut nones = attributes.iter().map(|(name, _, none)| (name, none));
 
-        let i = make("styler-idx", self.0.i.lower(), &mut i);
-        let no = make("styler-ops", self.0.no.lower(), &mut no);
+        let indexes = make("styler-idx", INDEX, &mut indexes);
+        let nones = make("styler-ops", NONE, &mut nones);
 
         quote! {
-            #i
+            #indexes
             #LINE_BREAK
-            #no
+            #nones
         }
     }
 }
 
-fn marker(lay: &Lay, mod_doc: Doc, fn_doc: &str) -> TokenStream {
-    let markers = lay.attributes.iter().map(|attribute| {
+fn marker(mod_doc: Doc, fn_doc: &str) -> TokenStream {
+    let markers = ATTRIBUTES.iter().map(|attribute| {
         let doc = doc!("{} `{}`.", fn_doc, attribute);
 
         quote! {

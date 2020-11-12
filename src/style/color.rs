@@ -7,13 +7,10 @@ pub use Color::*;
 
 /// A `Color` for `Foreground` & `Background`.
 ///
-/// To be used with [`Foreground`][foreground] and [`Background`][background]
+/// To be used with `Foreground` and `Background`
 /// (a `Color` on its own does not `Display`).
 ///
-/// `Default`s to `ResetColor`.
-///
-/// [foreground]: struct.Foreground.html
-/// [background]: struct.Background.html
+/// `Default`s to `Color::ResetColor`.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Color {
     White,
@@ -41,6 +38,6 @@ pub enum Color {
 impl Default for Color {
     /// Returns `Color::ResetColor`.
     fn default() -> Self {
-        Self::ResetColor
+        Color::ResetColor
     }
 }

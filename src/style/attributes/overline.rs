@@ -8,7 +8,7 @@ pub use Overline::*;
 /// `Overline` (`Ovelined`, `ResetOverline`).
 ///
 /// Prints the corresponding CSI to the terminal when `Display`ed.
-/// `Default`s to `ResetOverline`, the unsetting CSI.
+/// `Default`s to `Overline::ResetOverline`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Overline {
     Ovelined,
@@ -19,6 +19,6 @@ pub enum Overline {
 impl Default for Overline {
     /// Returns `Overline::ResetOverline`.
     fn default() -> Self {
-        Self::ResetOverline
+        Overline::ResetOverline
     }
 }

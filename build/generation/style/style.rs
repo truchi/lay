@@ -1,63 +1,42 @@
 use crate::generation::*;
 
-impl Generation<'_> {
-    pub fn style(&self) -> TokenStream {
-        let color = &self.0.color;
-        let reset_color = self.0.color.reset();
-        let attributes = self
-            .0
-            .attributes
+impl Generation {
+    pub fn style() -> TokenStream {
+        let attributes = ATTRIBUTES
             .iter()
-            .map(|attribute| {
-                let name = attribute.name();
-                let name_lower = name.lower();
-
-                match attribute {
-                    Attribute::Ground(_) =>
-                        (name, name_lower, quote! { #name(#color::#reset_color) }),
-                    Attribute::Attr(_) => {
-                        let reset_attr = name.reset();
-
-                        (name, name_lower, quote! { #name::#reset_attr })
-                    }
-                }
-            })
+            .map(|attribute| (attribute, attribute.snake, attribute.reset))
             .collect::<Vec<_>>();
 
-        let style = attributes.clone();
-        let style = style
+        let style = attributes
             .iter()
-            .map(|(name, name_lower, ..)| quote! { pub #name_lower: Option<#name>, });
+            .map(|(attribute, snake, _)| quote! { pub #snake: Option<#attribute> });
 
-        let none = attributes.clone();
-        let none = none
+        let none = attributes
             .iter()
-            .map(|(_, name_lower, ..)| quote! { #name_lower: None, });
+            .map(|(_, snake, _)| quote! { #snake: None });
 
-        let reset = attributes.clone();
-        let reset = reset
+        let reset = attributes
             .iter()
-            .map(|(_, name_lower, reset)| quote! { #name_lower: Some(#reset), });
+            .map(|(_, snake, reset)| quote! { #snake: Some(#reset) });
 
-        let from = attributes.iter().map(|(name, name_lower, ..)| {
-            let attributes = attributes.clone();
-            let attributes = attributes.iter().map(|(n, l, ..)| {
-                if l == name_lower {
-                    quote! { #l: Some(#l), }
+        let from = attributes.iter().map(|(attribute, snake, reset)| {
+            let attributes = attributes.iter().map(|(a, s, r)| {
+                if s == snake {
+                    quote! { #s: Some(#s) }
                 } else {
-                    quote! { #l: None, }
+                    quote! { #s: None }
                 }
             });
 
-            let doc = doc!("Returns an empty `Style` with `Some({})`.", name_lower);
+            let doc = doc!("Returns an empty `Style` with `Some({})`.", snake);
 
             quote! {
                 #doc
-                impl From<#name> for Style {
+                impl From<#attribute> for Style {
                     #doc
-                    fn from(#name_lower: #name) -> Self {
+                    fn from(#snake: #attribute) -> Self {
                         Self {
-                            #(#attributes)*
+                            #(#attributes,)*
                         }
                     }
                 }
@@ -78,19 +57,19 @@ impl Generation<'_> {
             /// `Default`s as an empty `Style` (all fields set to `None`).
             #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
             pub struct Style {
-                #(#style)*
+                #(#style,)*
             }
             #LINE_BREAK
 
             impl Style {
                 /// A `Style` with fields set to `None`.
                 pub const NONE: Self = Self {
-                    #(#none)*
+                    #(#none,)*
                 };
 
                 /// A `Style` with fields set to their reset value.
                 pub const RESET: Self = Self {
-                    #(#reset)*
+                    #(#reset,)*
                 };
             }
             #LINE_BREAK

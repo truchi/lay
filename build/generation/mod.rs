@@ -1,40 +1,16 @@
 #![allow(unused)]
 
 #[macro_use]
-mod lay2;
-
-#[macro_use]
 mod utils;
-// #[macro_use]
-// mod lay;
+#[macro_use]
+mod lay;
 
-// mod style;
+mod style;
 
-use lay2::*;
-// use lay::*;
+use lay::*;
 use proc_macro2::TokenStream;
 use quote::quote;
 use utils::*;
-
-// consts!(
-// I No Reset Get On Mut
-//
-// Color
-// [White Black (Dark) Grey Red Green Yellow Blue Magenta Cyan]
-// Rgb Ansi
-//
-// [Foreground(Fg) Background(Bg)]
-// [
-// Weight(Wgt)    [Bold Light]
-// Slant(Slt)     [Italic]
-// Underline(Udl) [Underlined]
-// Strike(Str)    [Striked]
-// Overline(Ovl)  [Ovelined]
-// Invert(Inv)    [Inverted]
-// Blink(Blk)     [Slow Fast]
-// Border(Brd)    [Circle Frame]
-// ]
-// );
 
 Lay!(
     Reset reset
@@ -64,47 +40,47 @@ Lay!(
     ]
 );
 
-pub struct Generation<'a>(&'a Lay);
+pub struct Generation;
 
 pub fn generate() {
     if let Ok(profile) = std::env::var("PROFILE") {
         if profile == "debug" {
-            panic!("{:#?}", LAY);
-            // let lay = Lay::new();
-            // let gen = Generation(&lay);
-
-            // panic!("{:#?}", lay);
-
-            // This script does an aweful lot of heap allocations...
+            // panic!("{:#?}", LAY);
             println!("cargo:rerun-if-changed=build/mod.rs");
 
-            // write_part("style/mod.rs", "import_markers",
-            // gen.import_markers());
-            //
-            // write(&format!("style/{}.rs", lay.color.lower()), gen.color());
-            // write(&format!("style/{}.rs", lay.reset.lower()), gen.reset());
-            // write(&format!("style/{}.rs", lay.i.lower()), gen.i());
-            // write(&format!("style/{}.rs", lay.no.lower()), gen.no());
-            // write(
-            // &format!("style/attributes/mod.rs"),
-            // gen.mod_style_attributes(),
-            // );
-            // write(
-            // &format!("style/attributes/{}.rs", lay.foreground.lower()),
-            // gen.foreground(),
-            // );
-            // write(
-            // &format!("style/attributes/{}.rs", lay.background.lower()),
-            // gen.background(),
-            // );
-            // write("style/style.rs", gen.style());
-            // write("style/styler.rs", gen.styler());
-            //
-            // for (name, content) in gen.attributes() {
-            // write(&format!("style/attributes/{}.rs", name), content);
-            // }
+            write_part(
+                "style/mod.rs",
+                "import_markers",
+                Generation::import_markers(),
+            );
 
-            // panic!(); // To show println calls...
+            write(&format!("style/{}.rs", COLOR.snake), Generation::color());
+            write(
+                &format!("style/{}.rs", RESET.to_lowercase()),
+                Generation::reset(),
+            );
+            write(&format!("style/{}.rs", INDEX), Generation::i());
+            write(&format!("style/{}.rs", NONE), Generation::no());
+            write(
+                &format!("style/attributes/mod.rs"),
+                Generation::mod_style_attributes(),
+            );
+            write("style/style.rs", Generation::style());
+            write("style/styler.rs", Generation::styler());
+
+            for ground in GROUNDS {
+                write(
+                    &format!("style/attributes/{}.rs", ground.snake),
+                    Generation::ground(*ground),
+                );
+            }
+
+            for attr in ATTRS {
+                write(
+                    &format!("style/attributes/{}.rs", attr.snake),
+                    Generation::attr(*attr),
+                );
+            }
         }
     }
 }

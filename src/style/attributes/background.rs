@@ -17,7 +17,7 @@ pub struct Background(pub Color);
 impl Default for Background {
     /// `Default`s to `Background(Color::ResetColor)`.
     fn default() -> Self {
-        Self(Color::ResetColor)
+        Background(Color::ResetColor)
     }
 }
 

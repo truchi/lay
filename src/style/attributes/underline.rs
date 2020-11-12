@@ -8,7 +8,7 @@ pub use Underline::*;
 /// `Underline` (`Underlined`, `ResetUnderline`).
 ///
 /// Prints the corresponding CSI to the terminal when `Display`ed.
-/// `Default`s to `ResetUnderline`, the unsetting CSI.
+/// `Default`s to `Underline::ResetUnderline`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Underline {
     Underlined,
@@ -19,6 +19,6 @@ pub enum Underline {
 impl Default for Underline {
     /// Returns `Underline::ResetUnderline`.
     fn default() -> Self {
-        Self::ResetUnderline
+        Underline::ResetUnderline
     }
 }

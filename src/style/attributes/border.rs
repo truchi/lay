@@ -8,7 +8,7 @@ pub use Border::*;
 /// `Border` (`Circle`, `Frame`, `ResetBorder`).
 ///
 /// Prints the corresponding CSI to the terminal when `Display`ed.
-/// `Default`s to `ResetBorder`, the unsetting CSI.
+/// `Default`s to `Border::ResetBorder`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Border {
     Circle,
@@ -20,6 +20,6 @@ pub enum Border {
 impl Default for Border {
     /// Returns `Border::ResetBorder`.
     fn default() -> Self {
-        Self::ResetBorder
+        Border::ResetBorder
     }
 }

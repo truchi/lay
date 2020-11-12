@@ -8,7 +8,7 @@ pub use Strike::*;
 /// `Strike` (`Striked`, `ResetStrike`).
 ///
 /// Prints the corresponding CSI to the terminal when `Display`ed.
-/// `Default`s to `ResetStrike`, the unsetting CSI.
+/// `Default`s to `Strike::ResetStrike`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Strike {
     Striked,
@@ -19,6 +19,6 @@ pub enum Strike {
 impl Default for Strike {
     /// Returns `Strike::ResetStrike`.
     fn default() -> Self {
-        Self::ResetStrike
+        Strike::ResetStrike
     }
 }
