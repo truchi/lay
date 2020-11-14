@@ -95,43 +95,100 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Foreground>`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self;
 
-    fn white(self) -> Self;
+    /// Sets `Some(Foreground(Color::White))`.
+    fn white(self) -> Self {
+        self.foreground(Foreground(Color::White))
+    }
 
-    fn black(self) -> Self;
+    /// Sets `Some(Foreground(Color::Black))`.
+    fn black(self) -> Self {
+        self.foreground(Foreground(Color::Black))
+    }
 
-    fn grey(self) -> Self;
+    /// Sets `Some(Foreground(Color::Grey))`.
+    fn grey(self) -> Self {
+        self.foreground(Foreground(Color::Grey))
+    }
 
-    fn dark_grey(self) -> Self;
+    /// Sets `Some(Foreground(Color::DarkGrey))`.
+    fn dark_grey(self) -> Self {
+        self.foreground(Foreground(Color::DarkGrey))
+    }
 
-    fn red(self) -> Self;
+    /// Sets `Some(Foreground(Color::Red))`.
+    fn red(self) -> Self {
+        self.foreground(Foreground(Color::Red))
+    }
 
-    fn dark_red(self) -> Self;
+    /// Sets `Some(Foreground(Color::DarkRed))`.
+    fn dark_red(self) -> Self {
+        self.foreground(Foreground(Color::DarkRed))
+    }
 
-    fn green(self) -> Self;
+    /// Sets `Some(Foreground(Color::Green))`.
+    fn green(self) -> Self {
+        self.foreground(Foreground(Color::Green))
+    }
 
-    fn dark_green(self) -> Self;
+    /// Sets `Some(Foreground(Color::DarkGreen))`.
+    fn dark_green(self) -> Self {
+        self.foreground(Foreground(Color::DarkGreen))
+    }
 
-    fn yellow(self) -> Self;
+    /// Sets `Some(Foreground(Color::Yellow))`.
+    fn yellow(self) -> Self {
+        self.foreground(Foreground(Color::Yellow))
+    }
 
-    fn dark_yellow(self) -> Self;
+    /// Sets `Some(Foreground(Color::DarkYellow))`.
+    fn dark_yellow(self) -> Self {
+        self.foreground(Foreground(Color::DarkYellow))
+    }
 
-    fn blue(self) -> Self;
+    /// Sets `Some(Foreground(Color::Blue))`.
+    fn blue(self) -> Self {
+        self.foreground(Foreground(Color::Blue))
+    }
 
-    fn dark_blue(self) -> Self;
+    /// Sets `Some(Foreground(Color::DarkBlue))`.
+    fn dark_blue(self) -> Self {
+        self.foreground(Foreground(Color::DarkBlue))
+    }
 
-    fn magenta(self) -> Self;
+    /// Sets `Some(Foreground(Color::Magenta))`.
+    fn magenta(self) -> Self {
+        self.foreground(Foreground(Color::Magenta))
+    }
 
-    fn dark_magenta(self) -> Self;
+    /// Sets `Some(Foreground(Color::DarkMagenta))`.
+    fn dark_magenta(self) -> Self {
+        self.foreground(Foreground(Color::DarkMagenta))
+    }
 
-    fn cyan(self) -> Self;
+    /// Sets `Some(Foreground(Color::Cyan))`.
+    fn cyan(self) -> Self {
+        self.foreground(Foreground(Color::Cyan))
+    }
 
-    fn dark_cyan(self) -> Self;
+    /// Sets `Some(Foreground(Color::DarkCyan))`.
+    fn dark_cyan(self) -> Self {
+        self.foreground(Foreground(Color::DarkCyan))
+    }
 
-    fn rgb(self, r: u8, g: u8, b: u8) -> Self;
+    /// Sets `Some(Foreground(Color::Rgb(r,g,b)))`.
+    fn rgb(self, r: u8, g: u8, b: u8) -> Self {
+        self.foreground(Foreground(Color::Rgb(r, g, b)))
+    }
 
-    fn ansi(self, ansi: u8) -> Self;
+    /// Sets `Some(Foreground(Color::Ansi(ansi)))`.
+    fn ansi(self, ansi: u8) -> Self {
+        self.foreground(Foreground(Color::Ansi(ansi)))
+    }
 
-    fn reset_color(self) -> Self;
+    /// Sets `Some(Foreground(Color::ResetColor))`.
+    fn reset_color(self) -> Self {
+        self.foreground(Foreground(Color::ResetColor))
+    }
 
     /// `None`s `Option<Foreground>`.
     fn no_foreground(self) -> Self {
@@ -141,43 +198,100 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Background>`.
     fn background(self, background: impl Into<Option<Background>>) -> Self;
 
-    fn on_white(self) -> Self;
+    /// Sets `Some(Background(Color::White))`.
+    fn on_white(self) -> Self {
+        self.background(Background(Color::White))
+    }
 
-    fn on_black(self) -> Self;
+    /// Sets `Some(Background(Color::Black))`.
+    fn on_black(self) -> Self {
+        self.background(Background(Color::Black))
+    }
 
-    fn on_grey(self) -> Self;
+    /// Sets `Some(Background(Color::Grey))`.
+    fn on_grey(self) -> Self {
+        self.background(Background(Color::Grey))
+    }
 
-    fn on_dark_grey(self) -> Self;
+    /// Sets `Some(Background(Color::DarkGrey))`.
+    fn on_dark_grey(self) -> Self {
+        self.background(Background(Color::DarkGrey))
+    }
 
-    fn on_red(self) -> Self;
+    /// Sets `Some(Background(Color::Red))`.
+    fn on_red(self) -> Self {
+        self.background(Background(Color::Red))
+    }
 
-    fn on_dark_red(self) -> Self;
+    /// Sets `Some(Background(Color::DarkRed))`.
+    fn on_dark_red(self) -> Self {
+        self.background(Background(Color::DarkRed))
+    }
 
-    fn on_green(self) -> Self;
+    /// Sets `Some(Background(Color::Green))`.
+    fn on_green(self) -> Self {
+        self.background(Background(Color::Green))
+    }
 
-    fn on_dark_green(self) -> Self;
+    /// Sets `Some(Background(Color::DarkGreen))`.
+    fn on_dark_green(self) -> Self {
+        self.background(Background(Color::DarkGreen))
+    }
 
-    fn on_yellow(self) -> Self;
+    /// Sets `Some(Background(Color::Yellow))`.
+    fn on_yellow(self) -> Self {
+        self.background(Background(Color::Yellow))
+    }
 
-    fn on_dark_yellow(self) -> Self;
+    /// Sets `Some(Background(Color::DarkYellow))`.
+    fn on_dark_yellow(self) -> Self {
+        self.background(Background(Color::DarkYellow))
+    }
 
-    fn on_blue(self) -> Self;
+    /// Sets `Some(Background(Color::Blue))`.
+    fn on_blue(self) -> Self {
+        self.background(Background(Color::Blue))
+    }
 
-    fn on_dark_blue(self) -> Self;
+    /// Sets `Some(Background(Color::DarkBlue))`.
+    fn on_dark_blue(self) -> Self {
+        self.background(Background(Color::DarkBlue))
+    }
 
-    fn on_magenta(self) -> Self;
+    /// Sets `Some(Background(Color::Magenta))`.
+    fn on_magenta(self) -> Self {
+        self.background(Background(Color::Magenta))
+    }
 
-    fn on_dark_magenta(self) -> Self;
+    /// Sets `Some(Background(Color::DarkMagenta))`.
+    fn on_dark_magenta(self) -> Self {
+        self.background(Background(Color::DarkMagenta))
+    }
 
-    fn on_cyan(self) -> Self;
+    /// Sets `Some(Background(Color::Cyan))`.
+    fn on_cyan(self) -> Self {
+        self.background(Background(Color::Cyan))
+    }
 
-    fn on_dark_cyan(self) -> Self;
+    /// Sets `Some(Background(Color::DarkCyan))`.
+    fn on_dark_cyan(self) -> Self {
+        self.background(Background(Color::DarkCyan))
+    }
 
-    fn on_rgb(self, r: u8, g: u8, b: u8) -> Self;
+    /// Sets `Some(Background(Color::Rgb(r,g,b)))`.
+    fn on_rgb(self, r: u8, g: u8, b: u8) -> Self {
+        self.background(Background(Color::Rgb(r, g, b)))
+    }
 
-    fn on_ansi(self, ansi: u8) -> Self;
+    /// Sets `Some(Background(Color::Ansi(ansi)))`.
+    fn on_ansi(self, ansi: u8) -> Self {
+        self.background(Background(Color::Ansi(ansi)))
+    }
 
-    fn on_reset_color(self) -> Self;
+    /// Sets `Some(Background(Color::ResetColor))`.
+    fn on_reset_color(self) -> Self {
+        self.background(Background(Color::ResetColor))
+    }
 
     /// `None`s `Option<Background>`.
     fn no_background(self) -> Self {
@@ -187,11 +301,20 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Weight>`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self;
 
-    fn bold(self) -> Self;
+    /// Sets `Some(Weight::Bold)`.
+    fn bold(self) -> Self {
+        self.weight(Weight::Bold)
+    }
 
-    fn light(self) -> Self;
+    /// Sets `Some(Weight::Light)`.
+    fn light(self) -> Self {
+        self.weight(Weight::Light)
+    }
 
-    fn reset_weight(self) -> Self;
+    /// Sets `Some(Weight::ResetWeight)`.
+    fn reset_weight(self) -> Self {
+        self.weight(Weight::ResetWeight)
+    }
 
     /// `None`s `Option<Weight>`.
     fn no_weight(self) -> Self {
@@ -201,9 +324,15 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Slant>`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self;
 
-    fn italic(self) -> Self;
+    /// Sets `Some(Slant::Italic)`.
+    fn italic(self) -> Self {
+        self.slant(Slant::Italic)
+    }
 
-    fn reset_slant(self) -> Self;
+    /// Sets `Some(Slant::ResetSlant)`.
+    fn reset_slant(self) -> Self {
+        self.slant(Slant::ResetSlant)
+    }
 
     /// `None`s `Option<Slant>`.
     fn no_slant(self) -> Self {
@@ -213,9 +342,15 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Underline>`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self;
 
-    fn underlined(self) -> Self;
+    /// Sets `Some(Underline::Underlined)`.
+    fn underlined(self) -> Self {
+        self.underline(Underline::Underlined)
+    }
 
-    fn reset_underline(self) -> Self;
+    /// Sets `Some(Underline::ResetUnderline)`.
+    fn reset_underline(self) -> Self {
+        self.underline(Underline::ResetUnderline)
+    }
 
     /// `None`s `Option<Underline>`.
     fn no_underline(self) -> Self {
@@ -225,9 +360,15 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Strike>`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self;
 
-    fn striked(self) -> Self;
+    /// Sets `Some(Strike::Striked)`.
+    fn striked(self) -> Self {
+        self.strike(Strike::Striked)
+    }
 
-    fn reset_strike(self) -> Self;
+    /// Sets `Some(Strike::ResetStrike)`.
+    fn reset_strike(self) -> Self {
+        self.strike(Strike::ResetStrike)
+    }
 
     /// `None`s `Option<Strike>`.
     fn no_strike(self) -> Self {
@@ -237,9 +378,15 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Overline>`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self;
 
-    fn ovelined(self) -> Self;
+    /// Sets `Some(Overline::Ovelined)`.
+    fn ovelined(self) -> Self {
+        self.overline(Overline::Ovelined)
+    }
 
-    fn reset_overline(self) -> Self;
+    /// Sets `Some(Overline::ResetOverline)`.
+    fn reset_overline(self) -> Self {
+        self.overline(Overline::ResetOverline)
+    }
 
     /// `None`s `Option<Overline>`.
     fn no_overline(self) -> Self {
@@ -249,9 +396,15 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Invert>`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self;
 
-    fn inverted(self) -> Self;
+    /// Sets `Some(Invert::Inverted)`.
+    fn inverted(self) -> Self {
+        self.invert(Invert::Inverted)
+    }
 
-    fn reset_invert(self) -> Self;
+    /// Sets `Some(Invert::ResetInvert)`.
+    fn reset_invert(self) -> Self {
+        self.invert(Invert::ResetInvert)
+    }
 
     /// `None`s `Option<Invert>`.
     fn no_invert(self) -> Self {
@@ -261,11 +414,20 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Blink>`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self;
 
-    fn slow(self) -> Self;
+    /// Sets `Some(Blink::Slow)`.
+    fn slow(self) -> Self {
+        self.blink(Blink::Slow)
+    }
 
-    fn fast(self) -> Self;
+    /// Sets `Some(Blink::Fast)`.
+    fn fast(self) -> Self {
+        self.blink(Blink::Fast)
+    }
 
-    fn reset_blink(self) -> Self;
+    /// Sets `Some(Blink::ResetBlink)`.
+    fn reset_blink(self) -> Self {
+        self.blink(Blink::ResetBlink)
+    }
 
     /// `None`s `Option<Blink>`.
     fn no_blink(self) -> Self {
@@ -275,11 +437,20 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Border>`.
     fn border(self, border: impl Into<Option<Border>>) -> Self;
 
-    fn circle(self) -> Self;
+    /// Sets `Some(Border::Circle)`.
+    fn circle(self) -> Self {
+        self.border(Border::Circle)
+    }
 
-    fn frame(self) -> Self;
+    /// Sets `Some(Border::Frame)`.
+    fn frame(self) -> Self {
+        self.border(Border::Frame)
+    }
 
-    fn reset_border(self) -> Self;
+    /// Sets `Some(Border::ResetBorder)`.
+    fn reset_border(self) -> Self {
+        self.border(Border::ResetBorder)
+    }
 
     /// `None`s `Option<Border>`.
     fn no_border(self) -> Self {

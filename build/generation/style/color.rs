@@ -17,10 +17,7 @@ impl Generation {
 
         let default_doc = doc!("Returns `{}`.", RESET_COLOR);
 
-        let colors = COLORS.iter().map(|color| {
-            let types = color.types();
-            quote! { #color#types }
-        });
+        let colors = COLORS.iter().map(Variant::decl);
 
         quote! {
             pub use #COLOR::*;

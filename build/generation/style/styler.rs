@@ -223,13 +223,18 @@ fn trait_styler() -> TokenStream {
         let none_doc = doc!("`None`s `Option<{}>`.", attribute);
 
         let variants = attribute.variants.iter().map(|variant| {
-            let set = variant.set;
+            let set_variant = variant.set;
+            // let full = variant.full();
             let params = variant.params();
-            let fields = variant.fields();
-            // let doc = doc!("Sets `Some({}::{})`.", );
+            let val = attribute.wrap_variant(variant);
+            // FIXME Wrong!
+            let doc = doc!("Sets `Some({})`.", val.to_string().replace(' ', ""));
 
             quote! {
-                fn #set(self, #params) -> Self;
+                #doc
+                fn #set_variant(self, #params) -> Self {
+                    self.#set(#val)
+                }
                 #LINE_BREAK
             }
         });

@@ -95,29 +95,42 @@ pub type Variants = &'static [Variant];
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct Variant {
     pub name:    Ident,
+    // TODO Yes I have to do this
+    // Color::Ansi(ansi)
+    // Foreground(Color::Ansi(ansi))
     pub set:     Str,
     pub set_mut: Str,
     pub fields:  Strs,
 }
 
 impl Variant {
+    pub fn decl(&self) -> TokenStream {
+        let types = self.types();
+        quote! { #self#types }
+    }
+
     pub fn types(&self) -> TokenStream {
         let fields = self.fields;
 
         if fields.len() > 0 {
             let types = fields.iter().map(|field| quote! { u8 });
 
-            quote! { (#(#types,)*) }
+            quote! { (#(#types),*) }
         } else {
             quote! {}
         }
+    }
+
+    pub fn val(&self) -> TokenStream {
+        let fields = self.fields();
+        quote! { #self#fields }
     }
 
     pub fn fields(&self) -> TokenStream {
         let fields = self.fields;
 
         if fields.len() > 0 {
-            quote! { (#(#fields,)*) }
+            quote! { (#(#fields),*) }
         } else {
             quote! {}
         }
@@ -126,7 +139,7 @@ impl Variant {
     pub fn params(&self) -> TokenStream {
         let fields = self.fields.iter().map(|field| quote! { #field: u8 });
 
-        quote! { #(#fields,)* }
+        quote! { #(#fields),* }
     }
 }
 
@@ -143,7 +156,14 @@ derefs!(self Variant {
 pub type Attrs = &'static [Attr];
 
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+pub enum Type {
+    Ground,
+    Attribute,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub struct Attr {
+    pub r#type:   Type,
     pub name:     Ident,
     pub reset:    Str, // Foreground(Color::ResetColor) or Weight::ResetWeight
     pub none:     Ident,
@@ -153,6 +173,24 @@ pub struct Attr {
     pub get_mut:  Str,
     pub set_mut:  Str,
     pub variants: Variants,
+}
+
+impl Attr {
+    pub fn full_variant(&self, variant: &Variant) -> TokenStream {
+        let val = variant.val();
+        match self.r#type {
+            Type::Ground => quote! { #COLOR::#val },
+            Type::Attribute => quote! { #self::#val },
+        }
+    }
+
+    pub fn wrap_variant(&self, variant: &Variant) -> TokenStream {
+        let full = self.full_variant(variant);
+        match self.r#type {
+            Type::Ground => quote! { #self(#full) },
+            Type::Attribute => quote! { #full },
+        }
+    }
 }
 
 derefs!(self Attr {
@@ -246,7 +284,7 @@ macro_rules! Styler {
 
 macro_rules! Attr {
     (
-        $Attr:ident $attr:ident ($Short:ident)
+        $Type:ident $Attr:ident $attr:ident ($Short:ident)
         $None:ident $none:ident
         $(const $ResetConst:ident)?
         $(ident $ResetIdent:ident)?
@@ -258,6 +296,7 @@ macro_rules! Attr {
         )*]
     ) => {
         Attr {
+            r#type:   Type::$Type,
             name:     Ident!($Attr, $attr),
             $(reset:  $ResetConst,)?
             $(reset:  Str(concat!(stringify!($Attr), "::", stringify!($ResetIdent), stringify!($Attr))),)?
@@ -305,7 +344,7 @@ macro_rules! Lay {
         pub const COLORS: Variants = FOREGROUND.variants;
 
         pub const FOREGROUND: Attr = Attr!(
-            $Foreground $foreground ($Fg)
+            Ground $Foreground $foreground ($Fg)
             $None $none
             const RESET_FOREGROUND
             [
@@ -318,7 +357,7 @@ macro_rules! Lay {
         );
 
         pub const BACKGROUND: Attr = Attr!(
-            $Background $background ($Bg)
+            Ground $Background $background ($Bg)
             $None $none
             const RESET_BACKGROUND
             [
@@ -334,7 +373,7 @@ macro_rules! Lay {
 
         pub const ATTRS: Attrs = &[$(
             Attr!(
-                $Attr $attr ($A)
+                Attribute $Attr $attr ($A)
                 $None $none
                 ident $Reset
                 [
