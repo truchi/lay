@@ -7,7 +7,7 @@ pub use Strike::*;
 
 /// `Strike` (`Striked`, `ResetStrike`).
 ///
-/// Prints the corresponding CSI to the terminal when `Display`ed.
+/// Prints the corresponding CSI to the terminal when `Display`ed.  
 /// `Default`s to `Strike::ResetStrike`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Strike {

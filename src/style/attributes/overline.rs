@@ -5,13 +5,13 @@
 
 pub use Overline::*;
 
-/// `Overline` (`Ovelined`, `ResetOverline`).
+/// `Overline` (`Overlined`, `ResetOverline`).
 ///
-/// Prints the corresponding CSI to the terminal when `Display`ed.
+/// Prints the corresponding CSI to the terminal when `Display`ed.  
 /// `Default`s to `Overline::ResetOverline`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Overline {
-    Ovelined,
+    Overlined,
     ResetOverline,
 }
 

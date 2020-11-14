@@ -5,29 +5,21 @@
 
 pub use Color::*;
 
-/// A `Color` for `Foreground` & `Background`.
+/// A `Color` for `Foreground` and `Background`.
 ///
 /// To be used with `Foreground` and `Background`
-/// (a `Color` on its own does not `Display`).
-///
+/// (a `Color` on its own does not `Display`).  
 /// `Default`s to `Color::ResetColor`.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Color {
     White,
     Black,
-    Grey,
     DarkGrey,
-    Red,
     DarkRed,
-    Green,
     DarkGreen,
-    Yellow,
     DarkYellow,
-    Blue,
     DarkBlue,
-    Magenta,
     DarkMagenta,
-    Cyan,
     DarkCyan,
     Rgb(u8, u8, u8),
     Ansi(u8),

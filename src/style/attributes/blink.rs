@@ -7,7 +7,7 @@ pub use Blink::*;
 
 /// `Blink` (`Slow`, `Fast`, `ResetBlink`).
 ///
-/// Prints the corresponding CSI to the terminal when `Display`ed.
+/// Prints the corresponding CSI to the terminal when `Display`ed.  
 /// `Default`s to `Blink::ResetBlink`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Blink {

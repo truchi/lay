@@ -1,14 +1,14 @@
 use crate::generation::*;
 
 impl Generation {
-    pub fn attr(attr: Attr) -> TokenStream {
-        let variants = attr.variants;
-        let reset = attr.reset;
+    pub fn attr(&self, attr: &Attr) -> TokenStream {
+        let variants = &attr.variants;
+        let reset = &attr.reset.full;
 
         let decl_doc = doc!(
             "`{attr}` ({variants}).
 
-            Prints the corresponding CSI to the terminal when `Display`ed.
+            Prints the corresponding CSI to the terminal when `Display`ed.  
             `Default`s to `{reset}`, the unsetting CSI.",
             attr = attr,
             reset = reset,

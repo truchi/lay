@@ -7,7 +7,7 @@ use crate::*;
 
 /// A `Foreground` `Color`.
 ///
-/// Prints the corresponding CSI to the terminal when `Display`ed.
+/// Prints the corresponding CSI to the terminal when `Display`ed.  
 /// `Default`s to `Foreground(Color::ResetColor)`, user's default terminal's
 /// foreground color.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
@@ -21,17 +21,17 @@ impl Default for Foreground {
     }
 }
 
-/// Returns `Foreground(color)`.
+/// Returns `Foreground(Color)`.
 impl From<Color> for Foreground {
-    /// Returns `Foreground(color)`.
+    /// Returns `Foreground(Color)`.
     fn from(color: Color) -> Self {
-        Self(color)
+        Foreground(color)
     }
 }
 
-/// Returns `Some(Foreground(color))`.
+/// Returns `Some(Foreground(Color))`.
 impl From<Color> for Option<Foreground> {
-    /// Returns `Some(Foreground(color))`.
+    /// Returns `Some(Foreground(Color))`.
     fn from(color: Color) -> Self {
         Some(Foreground(color))
     }

@@ -7,7 +7,7 @@ pub use Slant::*;
 
 /// `Slant` (`Italic`, `ResetSlant`).
 ///
-/// Prints the corresponding CSI to the terminal when `Display`ed.
+/// Prints the corresponding CSI to the terminal when `Display`ed.  
 /// `Default`s to `Slant::ResetSlant`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Slant {

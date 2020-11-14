@@ -347,6 +347,8 @@ pub struct Lay {
     pub foreground: Attr,
     pub background: Attr,
     pub attributes: Vec<Attr>,
+    pub grounds:    Vec<Attr>,
+    pub all:        Vec<Attr>,
 }
 
 impl Lay {
@@ -388,6 +390,9 @@ impl Lay {
             .collect::<Vec<_>>();
 
         let (foreground, background) = Attr::grounds(colors.clone());
+        let grounds = vec![foreground.clone(), background.clone()];
+        let attributes = Attr::attributes(attributes);
+        let all = [grounds.clone(), attributes.clone()].concat();
 
         Self {
             index: Ident::new(&[Self::INDEX]),
@@ -396,7 +401,9 @@ impl Lay {
             color: Color::new(colors),
             foreground,
             background,
-            attributes: Attr::attributes(attributes),
+            attributes,
+            grounds,
+            all,
         }
     }
 }

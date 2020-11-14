@@ -1,18 +1,20 @@
 use crate::generation::*;
 
 impl Generation {
-    pub fn ground(ground: Attr) -> TokenStream {
-        let color = COLOR.snake;
-        let reset = ground.reset;
+    pub fn ground(&self, ground: &Attr) -> TokenStream {
+        let color = &self.color;
+        let color_snake = &color.snake;
+        let reset = &ground.reset.wrapped;
+        let reset_color = &color.reset;
 
         let decl_doc = doc!(
             "A `{ground}` `{color}`.
 
-            Prints the corresponding CSI to the terminal when `Display`ed.
+            Prints the corresponding CSI to the terminal when `Display`ed.  
             `Default`s to `{reset}`, user's default terminal's {ground_snake} color.",
             ground = ground,
             ground_snake = ground.snake,
-            color = COLOR,
+            color = color,
             reset = reset,
         );
         let default_doc = doc!("`Default`s to `{}`.", reset);
@@ -25,32 +27,32 @@ impl Generation {
 
             #decl_doc
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-            pub struct #ground(pub #COLOR);
+            pub struct #ground(pub #color);
             #LINE_BREAK
 
             #default_doc
             impl Default for #ground {
                 #default_doc
                 fn default() -> Self {
-                    #ground(#RESET_COLOR)
+                    #reset
                 }
             }
             #LINE_BREAK
 
             #from_color_doc
-            impl From<#COLOR> for #ground {
+            impl From<#color> for #ground {
                 #from_color_doc
-                fn from(#color: #COLOR) -> Self {
-                    Self(#color)
+                fn from(#color_snake: #color) -> Self {
+                    #ground(#color_snake)
                 }
             }
             #LINE_BREAK
 
             #from_color_option_doc
-            impl From<#COLOR> for Option<#ground> {
+            impl From<#color> for Option<#ground> {
                 #from_color_option_doc
-                fn from(#color: #COLOR) -> Self {
-                    Some(#ground(#color))
+                fn from(#color_snake: #color) -> Self {
+                    Some(#ground(#color_snake))
                 }
             }
         }

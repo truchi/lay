@@ -5,11 +5,12 @@ mod utils;
 #[macro_use]
 mod lay;
 
-// mod style;
+mod style;
 
 use lay::*;
 use proc_macro2::TokenStream;
 use quote::quote;
+use std::ops::Deref;
 use utils::*;
 
 impl Ident {
@@ -62,11 +63,19 @@ impl Lay {
 #[derive(Clone, Debug)]
 pub struct Generation(Lay);
 
+impl Deref for Generation {
+    type Target = Lay;
+
+    fn deref(&self) -> &Lay {
+        &self.0
+    }
+}
+
 pub fn generate() {
     if let Ok(profile) = std::env::var("PROFILE") {
         if profile == "debug" {
             let gen = Generation(Lay::new());
-            panic!("{:#?}", gen);
+            // panic!("{:#?}", gen);
             println!("cargo:rerun-if-changed=build/mod.rs");
 
             // write_part(
@@ -74,34 +83,34 @@ pub fn generate() {
             // "import_markers",
             // Generation::import_markers(),
             // );
-            //
-            // write(&format!("style/{}.rs", COLOR.snake), Generation::color());
+
+            write(&format!("style/{}.rs", gen.color.snake), gen.color());
             // write(
             // &format!("style/{}.rs", RESET.to_lowercase()),
             // Generation::reset(),
             // );
             // write(&format!("style/{}.rs", INDEX), Generation::i());
             // write(&format!("style/{}.rs", NONE), Generation::no());
-            // write(
-            // &format!("style/attributes/mod.rs"),
-            // Generation::mod_style_attributes(),
-            // );
+            write(
+                &format!("style/attributes/mod.rs"),
+                gen.mod_style_attributes(),
+            );
             // write("style/style.rs", Generation::style());
             // write("style/styler.rs", Generation::styler());
-            //
-            // for ground in GROUNDS {
-            // write(
-            // &format!("style/attributes/{}.rs", ground.snake),
-            // Generation::ground(*ground),
-            // );
-            // }
-            //
-            // for attr in ATTRS {
-            // write(
-            // &format!("style/attributes/{}.rs", attr.snake),
-            // Generation::attr(*attr),
-            // );
-            // }
+
+            for ground in &gen.grounds {
+                write(
+                    &format!("style/attributes/{}.rs", ground.snake),
+                    gen.ground(ground),
+                );
+            }
+
+            for attribute in &gen.attributes {
+                write(
+                    &format!("style/attributes/{}.rs", attribute.snake),
+                    gen.attr(attribute),
+                );
+            }
         }
     }
 }
