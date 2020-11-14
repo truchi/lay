@@ -2,7 +2,7 @@ use crate::generation::*;
 use proc_macro2::{Delimiter, Group, TokenTree};
 use quote::{ToTokens, TokenStreamExt};
 use std::{
-    fmt::{Display, Error, Formatter},
+    fmt::{Debug, Display, Error, Formatter},
     ops::Deref,
     str::FromStr,
 };
@@ -34,31 +34,38 @@ macro_rules! derefs {
 // Str
 // -----------------------------------------------
 
-pub type Strs = &'static [Str];
-
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub struct Str(pub &'static str);
+#[derive(Clone)]
+pub struct Str {
+    string: String,
+    tree:   TokenTree,
+}
 
 derefs!(self Str {
-    deref str { &self.0 }
-    tokens {
-        tokens.append(
-            TokenTree::from(
-                Group::new(
-                    Delimiter::None,
-                    TokenStream::from_str(self.0).expect("Cannot convert to TokenStream")
-                )
-            )
-        )
-    }
+    deref str { &self.string }
+    tokens { tokens.append(self.tree.clone()) }
     f { <str as Display>::fmt(self, f) }
 });
+
+impl Str {
+    pub fn new(string: &str) -> Self {
+        let string = string.to_string();
+        let tokens = TokenStream::from_str(&string).expect("Cannot convert to TokenStream");
+        let tree = TokenTree::from(Group::new(Delimiter::None, tokens));
+        Self { string, tree }
+    }
+}
+
+impl Debug for Str {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "{}", self.string)
+    }
+}
 
 // -----------------------------------------------
 // Ident
 // -----------------------------------------------
 
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+#[derive(Clone)]
 pub struct Ident {
     pub pascal: Str,
     pub snake:  Str,
@@ -70,77 +77,89 @@ derefs!(self Ident {
     f { <Str as Display>::fmt(&self, f) }
 });
 
-// -----------------------------------------------
-// Color
-// -----------------------------------------------
+impl Ident {
+    pub fn new(parts: &[&str]) -> Self {
+        Self {
+            pascal: Self::pascal(parts),
+            snake:  Self::snake(parts),
+        }
+    }
 
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub struct Color {
-    pub name:  Ident,
-    pub reset: Str, // Color::ResetColor
+    pub fn pascal(parts: &[&str]) -> Str {
+        Str::new(&parts.join(""))
+    }
+
+    pub fn snake(parts: &[&str]) -> Str {
+        Str::new(
+            &parts
+                .iter()
+                .map(|part| part.to_lowercase())
+                .collect::<Vec<_>>()
+                .join("_"),
+        )
+    }
+
+    pub fn none(&self) -> Str {
+        Str::new(&format!("{}_{}", Lay::NONE.to_lowercase(), self.snake))
+    }
+
+    pub fn get(&self) -> Str {
+        Str::new(&format!("{}{}", Self::GET, self.snake))
+    }
+
+    pub fn set(&self, on: bool) -> Str {
+        Str::new(&format!(
+            "{}{}{}",
+            if on { Self::ON } else { "" },
+            Self::SET,
+            self.snake,
+        ))
+    }
+
+    pub fn get_mut(&self) -> Str {
+        Str::new(&format!("{}{}{}", Self::GET, self.snake, Self::MUT))
+    }
+
+    pub fn set_mut(&self, on: bool) -> Str {
+        Str::new(&format!(
+            "{}{}{}{}",
+            if on { Self::ON } else { "" },
+            Self::SET,
+            self.snake,
+            Self::MUT,
+        ))
+    }
+
+    pub fn none_mut(&self) -> Str {
+        Str::new(&format!(
+            "{}_{}{}",
+            Lay::NONE.to_lowercase(),
+            self.snake,
+            Self::MUT,
+        ))
+    }
 }
 
-derefs!(self Color {
-    deref Ident { &self.name }
-    tokens { self.name.to_tokens(tokens) }
-    f { <Ident as Display>::fmt(&self, f) }
-});
+impl Debug for Ident {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "({}, {})", self.pascal, self.snake)
+    }
+}
 
 // -----------------------------------------------
 // Variant
 // -----------------------------------------------
 
-pub type Variants = &'static [Variant];
-
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+#[derive(Clone, Debug)]
 pub struct Variant {
-    pub name:    Ident,
-    // TODO Yes I have to do this
-    // Color::Ansi(ansi)
-    // Foreground(Color::Ansi(ansi))
-    pub set:     Str,
-    pub set_mut: Str,
-    pub fields:  Strs,
-}
-
-impl Variant {
-    pub fn decl(&self) -> TokenStream {
-        let types = self.types();
-        quote! { #self#types }
-    }
-
-    pub fn types(&self) -> TokenStream {
-        let fields = self.fields;
-
-        if fields.len() > 0 {
-            let types = fields.iter().map(|field| quote! { u8 });
-
-            quote! { (#(#types),*) }
-        } else {
-            quote! {}
-        }
-    }
-
-    pub fn val(&self) -> TokenStream {
-        let fields = self.fields();
-        quote! { #self#fields }
-    }
-
-    pub fn fields(&self) -> TokenStream {
-        let fields = self.fields;
-
-        if fields.len() > 0 {
-            quote! { (#(#fields),*) }
-        } else {
-            quote! {}
-        }
-    }
-
-    pub fn params(&self) -> TokenStream {
-        let fields = self.fields.iter().map(|field| quote! { #field: u8 });
-
-        quote! { #(#fields),* }
-    }
+    pub name:       Ident,
+    pub args:       Str, // r: u8, g: u8, b: u8
+    pub with_types: Str, // Ansi(u8)
+    pub full:       Str, // Color::Ansi(ansi)
+    pub wrapped:    Str, /* Color: Color::Ansi(ansi), Grounds: Foreground(Color::Ansi(ansi)),
+                          * Attrs: Weight::Bold */
+    pub set:        Str,
+    pub set_mut:    Str,
 }
 
 derefs!(self Variant {
@@ -149,48 +168,104 @@ derefs!(self Variant {
     f { <Ident as Display>::fmt(&self, f) }
 });
 
+impl Variant {
+    pub fn new(
+        name: Ident,
+        (parent, wrapper, on): (&str, Option<&str>, bool),
+        fields: &[&str],
+    ) -> Self {
+        let concat = |wrap, f: fn(&&str) -> String| {
+            let r = fields.iter().map(f).collect::<Vec<_>>().join(", ");
+            if wrap && r.len() > 0 {
+                format!("({})", r)
+            } else {
+                r
+            }
+        };
+        let names = concat(true, |field| field.to_string());
+        let types = concat(true, |_| String::from(Self::TYPE));
+        let args = Str::new(&concat(false, |field| format!("{}: {}", field, Self::TYPE)));
+
+        let with_types = Str::new(&format!("{}{}", name, types));
+        let full = Str::new(&format!("{}::{}{}", parent, name, names));
+        let wrapped = wrapper.map_or_else(
+            || full.clone(),
+            |wrapper| Str::new(&format!("{}({})", wrapper, full)),
+        );
+        let set = name.set(on);
+        let set_mut = name.set_mut(on);
+
+        Self {
+            name,
+            args,
+            with_types,
+            full,
+            wrapped,
+            set,
+            set_mut,
+        }
+    }
+}
+
+// -----------------------------------------------
+// Color
+// -----------------------------------------------
+
+#[derive(Clone, Debug)]
+pub struct Color {
+    pub name:     Ident,
+    pub reset:    Variant,
+    pub variants: Vec<Variant>,
+}
+
+derefs!(self Color {
+    deref Ident { &self.name }
+    tokens { self.name.to_tokens(tokens) }
+    f { <Ident as Display>::fmt(&self, f) }
+});
+
+impl Color {
+    pub fn new(colors: Vec<(Ident, Vec<&str>)>) -> Self {
+        let name = Ident::new(&[Lay::COLOR]);
+        let variants = colors
+            .clone()
+            .into_iter()
+            .map(|(name, fields)| Variant::new(name, (Lay::COLOR, None, false), &fields))
+            .collect::<Vec<_>>();
+        let reset = variants.last().unwrap().clone();
+
+        Self {
+            name,
+            variants,
+            reset,
+        }
+    }
+}
+
 // -----------------------------------------------
 // Attr
 // -----------------------------------------------
 
-pub type Attrs = &'static [Attr];
-
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub enum Type {
-    Ground,
+#[derive(Clone, Debug)]
+pub enum AttrType {
+    Foreground,
+    Background,
     Attribute,
 }
 
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+#[derive(Clone, Debug)]
 pub struct Attr {
-    pub r#type:   Type,
+    pub ty:       AttrType,
     pub name:     Ident,
-    pub reset:    Str, // Foreground(Color::ResetColor) or Weight::ResetWeight
-    pub none:     Ident,
     pub short:    Str,
     pub get:      Str,
     pub set:      Str,
+    pub none:     Str,
     pub get_mut:  Str,
     pub set_mut:  Str,
-    pub variants: Variants,
-}
-
-impl Attr {
-    pub fn full_variant(&self, variant: &Variant) -> TokenStream {
-        let val = variant.val();
-        match self.r#type {
-            Type::Ground => quote! { #COLOR::#val },
-            Type::Attribute => quote! { #self::#val },
-        }
-    }
-
-    pub fn wrap_variant(&self, variant: &Variant) -> TokenStream {
-        let full = self.full_variant(variant);
-        match self.r#type {
-            Type::Ground => quote! { #self(#full) },
-            Type::Attribute => quote! { #full },
-        }
-    }
+    pub none_mut: Str,
+    pub variants: Vec<Variant>,
+    pub reset:    Variant,
 }
 
 derefs!(self Attr {
@@ -199,225 +274,129 @@ derefs!(self Attr {
     f { <Ident as Display>::fmt(&self, f) }
 });
 
-// -----------------------------------------------
-// Attribute
-// -----------------------------------------------
+impl Attr {
+    pub fn new(ty: AttrType, short: Str, name: Ident, variants: Vec<(Ident, Vec<&str>)>) -> Self {
+        let get = name.get();
+        let set = name.set(false);
+        let none = name.none();
+        let get_mut = name.get_mut();
+        let set_mut = name.set_mut(false);
+        let none_mut = name.none_mut();
 
-pub type Attributes = &'static [Attribute];
+        let variants = variants
+            .into_iter()
+            .map(|(variant, fields)| {
+                Variant::new(
+                    variant,
+                    match ty {
+                        AttrType::Foreground => (Lay::COLOR, Some(&name), false),
+                        AttrType::Background => (Lay::COLOR, Some(&name), true),
+                        AttrType::Attribute => (&name, None, false),
+                    },
+                    &fields,
+                )
+            })
+            .collect::<Vec<_>>();
+        let reset = variants.last().unwrap().clone();
 
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
-pub enum Attribute {
-    Ground(Attr),
-    Attribute(Attr),
-}
-
-impl Attribute {
-    pub fn attr(&self) -> &Attr {
-        match self {
-            Self::Ground(ground) => ground,
-            Self::Attribute(attribute) => attribute,
+        Self {
+            ty,
+            short,
+            name,
+            get,
+            set,
+            none,
+            get_mut,
+            set_mut,
+            none_mut,
+            variants,
+            reset,
         }
     }
-}
 
-derefs!(self Attribute {
-    deref Attr {
-        match self {
-            Self::Ground(ground) => ground,
-            Self::Attribute(attribute) => attribute,
-        }
+    pub fn grounds(colors: Vec<(Ident, Vec<&str>)>) -> (Self, Self) {
+        let fg = Str::new(Lay::FOREGROUND.0);
+        let foreground = Ident::new(&[Lay::FOREGROUND.1]);
+        let foreground = Attr::new(AttrType::Foreground, fg, foreground, colors.clone());
+
+        let bg = Str::new(Lay::BACKGROUND.0);
+        let background = Ident::new(&[Lay::BACKGROUND.1]);
+        let background = Attr::new(AttrType::Background, bg, background, colors);
+
+        (foreground, background)
     }
-    tokens { self.name.to_tokens(tokens) }
-    f { <Attr as Display>::fmt(self, f) }
-});
+
+    pub fn attributes(attributes: Vec<(Str, Ident, Vec<(Ident, Vec<&str>)>)>) -> Vec<Self> {
+        attributes
+            .into_iter()
+            .map(|(short, name, fields)| Attr::new(AttrType::Attribute, short, name, fields))
+            .collect()
+    }
+}
 
 // -----------------------------------------------
 // Lay
 // -----------------------------------------------
 
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+#[derive(Clone, Debug)]
 pub struct Lay {
-    pub index:      Str,
-    pub reset:      Str,
-    pub none:       Str,
+    pub index:      Ident,
+    pub reset:      Ident,
+    pub none:       Ident,
     pub color:      Color,
-    pub colors:     Variants,
     pub foreground: Attr,
     pub background: Attr,
-    pub grounds:    Attrs,
-    pub attrs:      Attrs,
-    pub attributes: Attributes,
+    pub attributes: Vec<Attr>,
 }
 
-// -----------------------------------------------
-// Macros
-// -----------------------------------------------
+impl Lay {
+    pub fn new() -> Self {
+        let colors: Vec<(Ident, Vec<&str>)> = Self::COLORS
+            .iter()
+            .map(|(prefix, colors)| {
+                colors
+                    .iter()
+                    .map(|(color, fields)| {
+                        let fields = fields.to_vec();
 
-macro_rules! Str {
-    ($_0:ident $($_:ident)*) => {
-        Str(concat!(stringify!($_0), $(stringify!($_),)*))
-    };
-    ($_0:ident $($_:ident)* $join:literal) => {
-        Str(concat!(stringify!($_0), $($join, stringify!($_),)*))
-    };
-}
+                        if let Some(prefix) = prefix {
+                            (Ident::new(&[prefix, color]), fields)
+                        } else {
+                            (Ident::new(&[color]), fields)
+                        }
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .flatten()
+            .chain(vec![(Ident::new(&[Self::RESET, Self::COLOR]), vec![])])
+            .collect::<Vec<_>>();
 
-macro_rules! Ident {
-    ($cap0:ident $($cap:ident)*, $low0:ident $($low:ident)*) => {
-        Ident {
-            pascal: Str!($cap0 $($cap)*),
-            snake:  Str!($low0 $($low)* "_"),
+        let attributes: Vec<(Str, Ident, Vec<(Ident, Vec<&str>)>)> = Self::ATTRIBUTES
+            .iter()
+            .map(|(short, name, variants)| {
+                let short = Str::new(short);
+                let name = Ident::new(&[name]);
+
+                let variants = variants
+                    .iter()
+                    .map(|variant| (Ident::new(&[variant]), vec![]))
+                    .chain(vec![(Ident::new(&[Self::RESET, &name]), vec![])])
+                    .collect();
+
+                (short, name, variants)
+            })
+            .collect::<Vec<_>>();
+
+        let (foreground, background) = Attr::grounds(colors.clone());
+
+        Self {
+            index: Ident::new(&[Self::INDEX]),
+            reset: Ident::new(&[Self::RESET]),
+            none: Ident::new(&[Self::NONE]),
+            color: Color::new(colors),
+            foreground,
+            background,
+            attributes: Attr::attributes(attributes),
         }
-    };
-}
-
-macro_rules! Styler {
-    ($cap0:ident $($cap:ident)*, $low0:ident $($low:ident)* $(, $prefix:ident)?) => {
-        Styler {
-            get:     Str!(get         $low0 $($low)*     "_"),
-            set:     Str!($($prefix)? $low0 $($low)*     "_"),
-            get_mut: Str!(get         $low0 $($low)* mut "_"),
-            set_mut: Str!($($prefix)? $low0 $($low)* mut "_"),
-        }
-    };
-}
-
-macro_rules! Attr {
-    (
-        $Type:ident $Attr:ident $attr:ident ($Short:ident)
-        $None:ident $none:ident
-        $(const $ResetConst:ident)?
-        $(ident $ResetIdent:ident)?
-        [$(
-            $(+ $prefix:ident)?
-            $cap0:ident $($cap:ident)*,
-            $low0:ident $($low:ident)*
-            $(( $($field:ident)* ))?,
-        )*]
-    ) => {
-        Attr {
-            r#type:   Type::$Type,
-            name:     Ident!($Attr, $attr),
-            $(reset:  $ResetConst,)?
-            $(reset:  Str(concat!(stringify!($Attr), "::", stringify!($ResetIdent), stringify!($Attr))),)?
-            none:     Ident!($None $Attr, $none $attr),
-            short:    Str!($Short),
-            get:      Str!(get $attr     "_"),
-            set:      Str!(    $attr     "_"),
-            get_mut:  Str!(get $attr mut "_"),
-            set_mut:  Str!(    $attr mut "_"),
-            variants: &[$(
-                Variant {
-                    name:    Ident!($cap0 $($cap)*, $low0 $($low)*),
-                    set:     Str!($($prefix)? $low0 $($low)*     "_"),
-                    set_mut: Str!($($prefix)? $low0 $($low)* mut "_"),
-                    fields:  &[$( $(Str!($field),)* )?]
-                },
-            )*],
-        }
-    };
-}
-
-macro_rules! Lay {
-    (
-        $Reset:ident $reset:ident
-        $None:ident  $none:ident
-        $Color:ident $color:ident
-        [$($C:ident)* ($Dark:ident) $($Light:ident)*] $Rgb:ident $Ansi:ident
-        [$($c:ident)* ($dark:ident) $($light:ident)*] $rgb:ident $ansi:ident
-        $Foreground:ident $foreground:ident ($Fg:ident)
-        $Background:ident $background:ident ($Bg:ident)
-        [$(
-            $i:literal $Attr:ident($A:ident) [$($Variant:ident)*]
-                       $attr:ident           [$($variant:ident)*]
-        )*]
-    ) => {
-        pub const INDEX: Str = Str!(i);
-        pub const RESET: Str = Str!($Reset);
-        pub const NONE: Str = Str!($none);
-
-        pub const COLOR: Color = Color {
-            name:  Ident!($Color, $color),
-            reset: RESET_COLOR,
-        };
-
-        pub const COLORS: Variants = FOREGROUND.variants;
-
-        pub const FOREGROUND: Attr = Attr!(
-            Ground $Foreground $foreground ($Fg)
-            $None $none
-            const RESET_FOREGROUND
-            [
-                $($C, $c,)*
-                $($Light, $light, $Dark $Light, $dark $light,)*
-                $Rgb, $rgb (r g b),
-                $Ansi, $ansi (ansi),
-                $Reset $Color, $reset $color,
-            ]
-        );
-
-        pub const BACKGROUND: Attr = Attr!(
-            Ground $Background $background ($Bg)
-            $None $none
-            const RESET_BACKGROUND
-            [
-                $(+ on $C, $c,)*
-                $(+ on $Light, $light, + on $Dark $Light, $dark $light,)*
-                + on $Rgb, $rgb (r g b),
-                + on $Ansi, $ansi (ansi),
-                + on $Reset $Color, $reset $color,
-            ]
-        );
-
-        pub const GROUNDS: Attrs = &[FOREGROUND, BACKGROUND];
-
-        pub const ATTRS: Attrs = &[$(
-            Attr!(
-                Attribute $Attr $attr ($A)
-                $None $none
-                ident $Reset
-                [
-                    $($Variant, $variant,)*
-                    $Reset $Attr, $reset $attr,
-                ]
-            ),
-        )*];
-
-        pub const ATTRIBUTES: Attributes = &[
-            Attribute::Ground(FOREGROUND),
-            Attribute::Ground(BACKGROUND),
-            $(Attribute::Attribute(ATTRS[$i]),)*
-        ];
-
-        pub const LAY: Lay = Lay {
-            index:      INDEX,
-            reset:      RESET,
-            none:       NONE,
-            color:      COLOR,
-            colors:     COLORS,
-            foreground: FOREGROUND,
-            background: BACKGROUND,
-            grounds:    GROUNDS,
-            attrs:      ATTRS,
-            attributes: ATTRIBUTES,
-        };
-
-        // -----
-
-        pub const RESET_COLOR: Str = Str(concat!(
-            stringify!($Color), "::", stringify!($Reset), stringify!($Color),
-        ));
-
-        pub const RESET_FOREGROUND: Str = Str(concat!(
-            stringify!($Foreground), "(",
-                stringify!($Color), "::", stringify!($Reset), stringify!($Color),
-            ")",
-        ));
-
-        pub const RESET_BACKGROUND: Str = Str(concat!(
-            stringify!($Background), "(",
-                stringify!($Color), "::", stringify!($Reset), stringify!($Color),
-            ")",
-        ));
-    };
+    }
 }

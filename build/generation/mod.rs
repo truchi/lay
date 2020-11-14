@@ -3,11 +3,11 @@
 #[macro_use]
 mod utils;
 #[macro_use]
-mod lay2;
+mod lay;
 
 // mod style;
 
-use lay2::*;
+use lay::*;
 use proc_macro2::TokenStream;
 use quote::quote;
 use utils::*;
