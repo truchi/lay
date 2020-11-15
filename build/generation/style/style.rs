@@ -1,10 +1,11 @@
 use crate::generation::*;
 
 impl Generation {
-    pub fn style() -> TokenStream {
-        let attributes = ATTRIBUTES
+    pub fn style(&self) -> TokenStream {
+        let attributes = self
+            .all
             .iter()
-            .map(|attribute| (attribute, attribute.snake, attribute.reset))
+            .map(|attribute| (attribute, &attribute.snake, &attribute.reset.wrapped))
             .collect::<Vec<_>>();
 
         let style = attributes
@@ -19,8 +20,8 @@ impl Generation {
             .iter()
             .map(|(_, snake, reset)| quote! { #snake: Some(#reset) });
 
-        let from = attributes.iter().map(|(attribute, snake, reset)| {
-            let attributes = attributes.iter().map(|(a, s, r)| {
+        let from = attributes.iter().map(|(attribute, snake, _)| {
+            let attributes = attributes.iter().map(|(_, s, _)| {
                 if s == snake {
                     quote! { #s: Some(#s) }
                 } else {

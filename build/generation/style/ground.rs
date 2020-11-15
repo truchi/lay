@@ -5,7 +5,6 @@ impl Generation {
         let color = &self.color;
         let color_snake = &color.snake;
         let reset = &ground.reset.wrapped;
-        let reset_color = &color.reset;
 
         let decl_doc = doc!(
             "A `{ground}` `{color}`.

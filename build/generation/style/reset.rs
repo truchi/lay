@@ -1,19 +1,20 @@
 use crate::generation::*;
 
 impl Generation {
-    pub fn reset() -> TokenStream {
-        let doc = doc!("`{}`s all attributes.", RESET);
+    pub fn reset(&self) -> TokenStream {
+        let reset = &self.reset;
+        let doc = doc!("`{}`s all attributes.", reset);
 
-        let froms = ATTRIBUTES.iter().map(|attribute| {
-            let reset = attribute.reset;
-            let doc = doc!("Returns `Some({})`.", reset);
+        let froms = self.all.iter().map(|attribute| {
+            let reset_attribute = &attribute.reset.wrapped;
+            let doc = doc!("Returns `Some({})`.", reset_attribute);
 
             quote! {
                 #doc
-                impl From<#RESET> for Option<#attribute> {
+                impl From<#reset> for Option<#attribute> {
                     #doc
-                    fn from(_: #RESET) -> Self {
-                        Some(#reset)
+                    fn from(_: #reset) -> Self {
+                        Some(#reset_attribute)
                     }
                 }
                 #LINE_BREAK
@@ -26,7 +27,7 @@ impl Generation {
 
             #doc
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
-            pub struct #RESET;
+            pub struct #reset;
             #LINE_BREAK
 
             #(#froms)*

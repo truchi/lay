@@ -55,6 +55,12 @@ impl Str {
     }
 }
 
+impl PartialEq for Str {
+    fn eq(&self, other: &Self) -> bool {
+        self.string == other.string
+    }
+}
+
 impl Debug for Str {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         write!(f, "{}", self.string)
@@ -98,51 +104,69 @@ impl Ident {
                 .join("_"),
         )
     }
-
-    pub fn none(&self) -> Str {
-        Str::new(&format!("{}_{}", Lay::NONE.to_lowercase(), self.snake))
-    }
-
-    pub fn get(&self) -> Str {
-        Str::new(&format!("{}{}", Self::GET, self.snake))
-    }
-
-    pub fn set(&self, on: bool) -> Str {
-        Str::new(&format!(
-            "{}{}{}",
-            if on { Self::ON } else { "" },
-            Self::SET,
-            self.snake,
-        ))
-    }
-
-    pub fn get_mut(&self) -> Str {
-        Str::new(&format!("{}{}{}", Self::GET, self.snake, Self::MUT))
-    }
-
-    pub fn set_mut(&self, on: bool) -> Str {
-        Str::new(&format!(
-            "{}{}{}{}",
-            if on { Self::ON } else { "" },
-            Self::SET,
-            self.snake,
-            Self::MUT,
-        ))
-    }
-
-    pub fn none_mut(&self) -> Str {
-        Str::new(&format!(
-            "{}_{}{}",
-            Lay::NONE.to_lowercase(),
-            self.snake,
-            Self::MUT,
-        ))
-    }
 }
 
 impl Debug for Ident {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         write!(f, "({}, {})", self.pascal, self.snake)
+    }
+}
+
+// ==
+
+#[derive(Clone, Debug)]
+pub struct VariantStyler {
+    pub set:     Str,
+    pub set_mut: Str,
+}
+
+impl VariantStyler {
+    pub fn new(ident: &Ident, on: bool) -> Self {
+        Self {
+            set:     Str::new(&format!(
+                "{}{}{}",
+                if on { AttrStyler::ON } else { "" },
+                AttrStyler::SET,
+                ident.snake,
+            )),
+            set_mut: Str::new(&format!(
+                "{}{}{}{}",
+                if on { AttrStyler::ON } else { "" },
+                AttrStyler::SET,
+                ident.snake,
+                AttrStyler::MUT,
+            )),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct AttrStyler {
+    pub get:      Str,
+    pub get_mut:  Str,
+    pub set:      Str,
+    pub set_mut:  Str,
+    pub none:     Str,
+    pub none_mut: Str,
+}
+
+impl AttrStyler {
+    pub fn new(ident: &Ident) -> Self {
+        let VariantStyler { set, set_mut } = VariantStyler::new(ident, false);
+
+        Self {
+            get: Str::new(&format!("{}{}", Self::GET, ident.snake)),
+            get_mut: Str::new(&format!("{}{}{}", Self::GET, ident.snake, Self::MUT)),
+            set,
+            set_mut,
+            none: Str::new(&format!("{}_{}", Lay::NONE.to_lowercase(), ident.snake)),
+            none_mut: Str::new(&format!(
+                "{}_{}{}",
+                Lay::NONE.to_lowercase(),
+                ident.snake,
+                Self::MUT,
+            )),
+        }
     }
 }
 
@@ -158,8 +182,7 @@ pub struct Variant {
     pub full:       Str, // Color::Ansi(ansi)
     pub wrapped:    Str, /* Color: Color::Ansi(ansi), Grounds: Foreground(Color::Ansi(ansi)),
                           * Attrs: Weight::Bold */
-    pub set:        Str,
-    pub set_mut:    Str,
+    pub styler:     VariantStyler,
 }
 
 derefs!(self Variant {
@@ -192,8 +215,7 @@ impl Variant {
             || full.clone(),
             |wrapper| Str::new(&format!("{}({})", wrapper, full)),
         );
-        let set = name.set(on);
-        let set_mut = name.set_mut(on);
+        let styler = VariantStyler::new(&name, on);
 
         Self {
             name,
@@ -201,8 +223,7 @@ impl Variant {
             with_types,
             full,
             wrapped,
-            set,
-            set_mut,
+            styler,
         }
     }
 }
@@ -258,12 +279,8 @@ pub struct Attr {
     pub ty:       AttrType,
     pub name:     Ident,
     pub short:    Str,
-    pub get:      Str,
-    pub set:      Str,
     pub none:     Str,
-    pub get_mut:  Str,
-    pub set_mut:  Str,
-    pub none_mut: Str,
+    pub styler:   AttrStyler,
     pub variants: Vec<Variant>,
     pub reset:    Variant,
 }
@@ -276,12 +293,8 @@ derefs!(self Attr {
 
 impl Attr {
     pub fn new(ty: AttrType, short: Str, name: Ident, variants: Vec<(Ident, Vec<&str>)>) -> Self {
-        let get = name.get();
-        let set = name.set(false);
-        let none = name.none();
-        let get_mut = name.get_mut();
-        let set_mut = name.set_mut(false);
-        let none_mut = name.none_mut();
+        let none = Str::new(&format!("{}{}", Lay::NONE, name));
+        let styler = AttrStyler::new(&name);
 
         let variants = variants
             .into_iter()
@@ -303,12 +316,8 @@ impl Attr {
             ty,
             short,
             name,
-            get,
-            set,
             none,
-            get_mut,
-            set_mut,
-            none_mut,
+            styler,
             variants,
             reset,
         }
@@ -355,21 +364,7 @@ impl Lay {
     pub fn new() -> Self {
         let colors: Vec<(Ident, Vec<&str>)> = Self::COLORS
             .iter()
-            .map(|(prefix, colors)| {
-                colors
-                    .iter()
-                    .map(|(color, fields)| {
-                        let fields = fields.to_vec();
-
-                        if let Some(prefix) = prefix {
-                            (Ident::new(&[prefix, color]), fields)
-                        } else {
-                            (Ident::new(&[color]), fields)
-                        }
-                    })
-                    .collect::<Vec<_>>()
-            })
-            .flatten()
+            .map(|(color, fields)| (Ident::new(color), fields.to_vec()))
             .chain(vec![(Ident::new(&[Self::RESET, Self::COLOR]), vec![])])
             .collect::<Vec<_>>();
 

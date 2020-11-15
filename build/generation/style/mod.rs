@@ -1,10 +1,10 @@
 mod attribute;
 mod color;
 mod ground;
-// mod markers;
-// mod reset;
-// mod style;
-// mod styler;
+mod markers;
+mod reset;
+mod style;
+mod styler;
 
 use crate::generation::*;
 

@@ -1,8 +1,8 @@
-macro_rules! ident {
-    ($fmt:literal) => { ::quote::format_ident!($fmt) };
-    ($fmt:expr) => { ::quote::format_ident!("{}", $fmt) };
-    ($fmt:expr, $($rest:tt)*) => { ::quote::format_ident!($fmt, $($rest)*) };
-}
+// macro_rules! ident {
+// ($fmt:literal) => { ::quote::format_ident!($fmt) };
+// ($fmt:expr) => { ::quote::format_ident!("{}", $fmt) };
+// ($fmt:expr, $($rest:tt)*) => { ::quote::format_ident!($fmt, $($rest)*) };
+// }
 
 #[macro_use]
 mod doc;

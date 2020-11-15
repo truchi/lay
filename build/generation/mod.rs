@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 #[macro_use]
 mod utils;
 #[macro_use]
@@ -13,7 +11,7 @@ use quote::quote;
 use std::ops::Deref;
 use utils::*;
 
-impl Ident {
+impl AttrStyler {
     const GET: &'static str = "get_";
     const MUT: &'static str = "_mut";
     const ON: &'static str = "on_";
@@ -37,21 +35,25 @@ impl Lay {
     ];
     const BACKGROUND: (&'static str, &'static str) = ("Bg", "Background");
     const COLOR: &'static str = "Color";
-    const COLORS: &'static [(
-        Option<&'static str>,
-        &'static [(&'static str, &'static [&'static str])],
-    )] = &[
-        (None, &[("White", &[]), ("Black", &[])]),
-        (Some("Dark"), &[
-            ("Grey", &[]),
-            ("Red", &[]),
-            ("Green", &[]),
-            ("Yellow", &[]),
-            ("Blue", &[]),
-            ("Magenta", &[]),
-            ("Cyan", &[]),
-        ]),
-        (None, &[("Rgb", &["r", "g", "b"]), ("Ansi", &["ansi"])]),
+    const COLORS: &'static [(&'static [&'static str], &'static [&'static str])] = &[
+        (&["White"], &[]),
+        (&["Black"], &[]),
+        (&["Grey"], &[]),
+        (&["Dark", "Grey"], &[]),
+        (&["Red"], &[]),
+        (&["Dark", "Red"], &[]),
+        (&["Green"], &[]),
+        (&["Dark", "Green"], &[]),
+        (&["Yellow"], &[]),
+        (&["Dark", "Yellow"], &[]),
+        (&["Blue"], &[]),
+        (&["Dark", "Blue"], &[]),
+        (&["Magenta"], &[]),
+        (&["Dark", "Magenta"], &[]),
+        (&["Cyan"], &[]),
+        (&["Dark", "Cyan"], &[]),
+        (&["Rgb"], &["r", "g", "b"]),
+        (&["Ansi"], &["ansi"]),
     ];
     const FOREGROUND: (&'static str, &'static str) = ("Fg", "Foreground");
     const INDEX: &'static str = "I";
@@ -78,33 +80,32 @@ pub fn generate() {
             // panic!("{:#?}", gen);
             println!("cargo:rerun-if-changed=build/mod.rs");
 
-            // write_part(
-            // "style/mod.rs",
-            // "import_markers",
-            // Generation::import_markers(),
-            // );
+            write_part("style/mod.rs", "import_markers", gen.import_markers());
 
             write(&format!("style/{}.rs", gen.color.snake), gen.color());
-            // write(
-            // &format!("style/{}.rs", RESET.to_lowercase()),
-            // Generation::reset(),
-            // );
-            // write(&format!("style/{}.rs", INDEX), Generation::i());
-            // write(&format!("style/{}.rs", NONE), Generation::no());
+            write(&format!("style/{}.rs", gen.reset.snake), gen.reset());
+            write(&format!("style/{}.rs", gen.index.snake), gen.i());
+            write(&format!("style/{}.rs", gen.none.snake), gen.no());
+            write("style/style.rs", gen.style());
+
+            let (styler_index, styler_index_mut) = gen.styler_index();
+            let (styler, styler_mut) = gen.styler();
+            write("style/styler/mod.rs", gen.mod_style_styler());
+            write("style/styler/styler_index.rs", styler_index);
+            write("style/styler/styler_index_mut.rs", styler_index_mut);
+            write("style/styler/styler.rs", styler);
+            write("style/styler/styler_mut.rs", styler_mut);
+
             write(
                 &format!("style/attributes/mod.rs"),
                 gen.mod_style_attributes(),
             );
-            // write("style/style.rs", Generation::style());
-            // write("style/styler.rs", Generation::styler());
-
             for ground in &gen.grounds {
                 write(
                     &format!("style/attributes/{}.rs", ground.snake),
                     gen.ground(ground),
                 );
             }
-
             for attribute in &gen.attributes {
                 write(
                     &format!("style/attributes/{}.rs", attribute.snake),
