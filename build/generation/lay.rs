@@ -112,7 +112,9 @@ impl Debug for Ident {
     }
 }
 
-// ==
+// -----------------------------------------------
+// VariantStyler
+// -----------------------------------------------
 
 #[derive(Clone, Debug)]
 pub struct VariantStyler {
@@ -139,6 +141,10 @@ impl VariantStyler {
         }
     }
 }
+
+// -----------------------------------------------
+// AttrStyler
+// -----------------------------------------------
 
 #[derive(Clone, Debug)]
 pub struct AttrStyler {
