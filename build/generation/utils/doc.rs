@@ -18,6 +18,7 @@ macro_rules! comment {
 pub const COMMENT_START: &str = "__COMMENT_START__";
 pub const COMMENT_END: &str = "__COMMENT_END__";
 
+#[derive(Clone, Default, Debug)]
 pub struct Doc(TokenStream);
 
 impl Doc {
