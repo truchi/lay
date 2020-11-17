@@ -80,7 +80,7 @@ impl Debug for Str {
 // Ident
 // -----------------------------------------------
 
-#[derive(Clone, Default)]
+#[derive(Clone, PartialEq, Default)]
 pub struct Ident {
     pub pascal: Str,
     pub snake:  Str,
@@ -127,10 +127,10 @@ impl Debug for Ident {
 
 #[derive(Clone, Default)]
 pub struct StylerFn {
-    doc:  Doc,
-    name: Str,
-    sign: TokenStream,
-    body: Option<TokenStream>,
+    pub doc:  Doc,
+    pub name: Str,
+    pub sign: TokenStream,
+    pub body: Option<TokenStream>,
 }
 
 impl StylerFn {
@@ -686,6 +686,12 @@ impl Attr {
             .into_iter()
             .map(|(short, name, fields)| Attr::new(AttrType::Attribute, short, name, fields))
             .collect()
+    }
+}
+
+impl PartialEq for Attr {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
     }
 }
 

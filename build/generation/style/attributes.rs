@@ -42,6 +42,9 @@ impl Generation {
         let from_color_doc = doc!("Returns `{}({})`.", ground, color);
         let from_color_option_doc = doc!("Returns `Some({}({}))`.", ground, color);
 
+        let styler_index = self.impl_styler_index(ground);
+        let styler = self.impl_styler(ground);
+
         quote! {
             use crate::*;
             #LINE_BREAK
@@ -76,6 +79,10 @@ impl Generation {
                     Some(#ground(#color_snake))
                 }
             }
+            #LINE_BREAK
+
+            #styler_index #LINE_BREAK
+            #styler
         }
     }
 
@@ -99,7 +106,11 @@ impl Generation {
 
         let default_doc = doc!("Returns `{}`.", reset);
 
+        let styler_index = self.impl_styler_index(attr);
+        let styler = self.impl_styler(attr);
+
         quote! {
+            use crate::*;
             pub use #attr::*;
             #LINE_BREAK
 
@@ -116,6 +127,67 @@ impl Generation {
                 fn default() -> Self {
                     #reset
                 }
+            }
+            #LINE_BREAK
+
+            #styler_index #LINE_BREAK
+            #styler
+        }
+    }
+
+    // ======= //
+    // Helpers //
+    // ======= //
+
+    fn impl_styler_index(&self, attribute: &Attr) -> TokenStream {
+        let styler_index = &self.styler.styler_index;
+
+        let getters = self.all.iter().map(|getter| {
+            let get = &getter.fn_get.sign;
+            let val = if attribute == getter {
+                quote! { Some(*self) }
+            } else {
+                quote! { None }
+            };
+
+            quote! { #get { #val } }
+        });
+
+        quote! {
+            impl #styler_index for #attribute {
+                #(#getters)*
+            }
+        }
+    }
+
+    fn impl_styler(&self, attribute: &Attr) -> TokenStream {
+        let styler = &self.styler.styler;
+
+        let setters = self.all.iter().map(|setter| {
+            let snake = &setter.snake;
+            let set = &setter.fn_set.sign;
+
+            let style = self.all.iter().map(|field| {
+                let s = &field.snake;
+
+                if field == setter {
+                    quote! { #s: #snake.into() }
+                } else {
+                    if attribute == field {
+                        quote! { #s: Some(self) }
+                    } else {
+                        quote! { #s: None }
+                    }
+                }
+            });
+
+            quote! { #set { Style { #(#style,)* } } }
+        });
+
+        quote! {
+            impl #styler for #attribute {
+                type Output = Style;
+                #(#setters)*
             }
         }
     }
