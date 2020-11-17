@@ -38,7 +38,7 @@ pub trait StylerIndex {
     fn get_border(&self) -> Option<Border>;
 
     /// Returns a `Style`.
-    fn style(&self) -> Style {
+    fn to_style(&self) -> Style {
         Style {
             foreground: self.get_foreground(),
             background: self.get_background(),

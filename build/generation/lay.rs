@@ -143,71 +143,65 @@ impl StylerFn {
         }
     }
 
-    pub fn new_attr_get(attr: &Attr) -> (Self, Self) {
-        let snake = &attr.snake;
-
-        let (doc, doc_mut) = (
-            doc!("Gets `Option<{}>`.", attr),
-            doc!("Gets `&mut Option<{}>`.", attr),
-        );
-        let (name, name_mut) = (
-            Str::new(&format!("{}{}", Self::GET, snake)),
-            Str::new(&format!("{}{}{}", Self::GET, snake, Self::MUT)),
-        );
-        let (sign, sign_mut) = (
-            quote! { fn #name(&self) -> Option<#attr> },
-            quote! { fn #name_mut(&mut self) -> &mut Option<#attr> },
-        );
+    pub fn new_tuple(
+        doc: Doc,
+        doc_mut: Doc,
+        name: String,
+        sign: impl Fn(&Str) -> TokenStream,
+        sign_mut: impl Fn(&Str) -> TokenStream,
+        body: Option<TokenStream>,
+        body_mut: Option<TokenStream>,
+    ) -> (Self, Self) {
+        let name_mut = format!("{}{}", name, Self::MUT);
+        let name = Str::new(&name);
+        let name_mut = Str::new(&name_mut);
+        let sign = sign(&name);
+        let sign_mut = sign_mut(&name_mut);
 
         (
-            Self::new(doc, name, sign, None),
-            Self::new(doc_mut, name_mut, sign_mut, None),
+            Self::new(doc, name, sign, body),
+            Self::new(doc_mut, name_mut, sign_mut, body_mut),
+        )
+    }
+
+    pub fn new_attr_get(attr: &Attr) -> (Self, Self) {
+        Self::new_tuple(
+            doc!("Gets `Option<{}>`.", attr),
+            doc!("Gets `&mut Option<{}>`.", attr),
+            format!("{}{}", Self::GET, attr.snake),
+            |name| quote! { fn #name(&self) -> Option<#attr> },
+            |name| quote! { fn #name(&mut self) -> &mut Option<#attr> },
+            None,
+            None,
         )
     }
 
     pub fn new_attr_set(attr: &Attr) -> (Self, Self) {
         let snake = &attr.snake;
 
-        let (doc, doc_mut) = (
+        Self::new_tuple(
             doc!("Sets `Option<{}>`.", attr),
             doc!("Sets `Option<{}>`, mutably.", attr),
-        );
-        let (name, name_mut) = (
-            Str::new(&format!("{}{}", Self::SET, snake)),
-            Str::new(&format!("{}{}{}", Self::SET, snake, Self::MUT)),
-        );
-        let (sign, sign_mut) = (
-            quote! { fn #name(self, #snake: impl Into<Option<#attr>>) -> Self::Output },
-            quote! { fn #name_mut(&mut self, #snake: impl Into<Option<#attr>>) },
-        );
-
-        (
-            Self::new(doc, name, sign, None),
-            Self::new(doc_mut, name_mut, sign_mut, None),
+            format!("{}{}", Self::SET, snake),
+            |name| quote! { fn #name(self, #snake: impl Into<Option<#attr>>) -> Self::Output },
+            |name| quote! { fn #name(&mut self, #snake: impl Into<Option<#attr>>) },
+            None,
+            None,
         )
     }
 
-    pub fn new_attr_none(attr: &Attr, set: &StylerFn, set_mut: &StylerFn) -> (Self, Self) {
+    pub fn new_attr_none(attr: &Attr) -> (Self, Self) {
         let none = Lay::NONE.to_lowercase();
-        let snake = &attr.snake;
+        let (set, set_mut) = (&attr.fn_set, &attr.fn_set_mut);
 
-        let (doc, doc_mut) = (
+        Self::new_tuple(
             doc!("`None`s `Option<{}>`.", attr),
             doc!("`None`s `Option<{}>`, mutably.", attr),
-        );
-        let (name, name_mut) = (
-            Str::new(&format!("{}_{}", none, snake)),
-            Str::new(&format!("{}_{}{}", none, snake, Self::MUT)),
-        );
-        let (sign, sign_mut) = (
-            quote! { fn #name(self) -> Self::Output },
-            quote! { fn #name_mut(&mut self) },
-        );
-        let (body, body_mut) = (quote! { self.#set(None) }, quote! { self.#set_mut(None); });
-
-        (
-            Self::new(doc, name, sign, Some(body)),
-            Self::new(doc_mut, name_mut, sign_mut, Some(body_mut)),
+            format!("{}_{}", none, attr.snake),
+            |name| quote! { fn #name(self) -> Self::Output },
+            |name| quote! { fn #name(&mut self) },
+            Some(quote! { self.#set(None) }),
+            Some(quote! { self.#set_mut(None); }),
         )
     }
 
@@ -222,26 +216,14 @@ impl StylerFn {
             ""
         };
 
-        let (doc, doc_mut) = (
+        Self::new_tuple(
             doc!("Sets `Some({})`.", wrapped),
             doc!("Sets `Some({})`, mutably.", wrapped),
-        );
-        let (name, name_mut) = (
-            Str::new(&format!("{}{}{}", on, Self::SET, snake)),
-            Str::new(&format!("{}{}{}{}", on, Self::SET, snake, Self::MUT)),
-        );
-        let (sign, sign_mut) = (
-            quote! { fn #name(self, #args) -> Self::Output },
-            quote! { fn #name_mut(&mut self, #args) },
-        );
-        let (body, body_mut) = (
-            quote! { self.#set(Some(#wrapped)) },
-            quote! { self.#set_mut(Some(#wrapped)); },
-        );
-
-        (
-            Self::new(doc, name, sign, Some(body)),
-            Self::new(doc_mut, name_mut, sign_mut, Some(body_mut)),
+            format!("{}{}{}", on, Self::SET, snake),
+            |name| quote! { fn #name(self, #args) -> Self::Output },
+            |name| quote! { fn #name(&mut self, #args) },
+            Some(quote! { self.#set(Some(#wrapped)) }),
+            Some(quote! { self.#set_mut(Some(#wrapped)); }),
         )
     }
 
@@ -275,65 +257,210 @@ impl Debug for StylerFn {
 }
 
 // -----------------------------------------------
-// VariantStyler
+// Styler
 // -----------------------------------------------
 
 #[derive(Clone, Default, Debug)]
-pub struct VariantStyler {
-    pub set:     Str,
-    pub set_mut: Str,
+pub struct Styler {
+    pub to_style:  StylerFn,
+    pub style:     StylerFn,
+    pub style_mut: StylerFn,
+    pub and:       StylerFn,
+    pub and_mut:   StylerFn,
+    pub or:        StylerFn,
+    pub or_mut:    StylerFn,
+    pub xor:       StylerFn,
+    pub xor_mut:   StylerFn,
+    pub dedup:     StylerFn,
+    pub dedup_mut: StylerFn,
+    pub reset:     StylerFn,
+    pub reset_mut: StylerFn,
 }
 
-impl VariantStyler {
-    pub fn new(ident: &Ident, on: bool) -> Self {
-        Self {
-            set:     Str::new(&format!(
-                "{}{}{}",
-                if on { AttrStyler::ON } else { "" },
-                AttrStyler::SET,
-                ident.snake,
-            )),
-            set_mut: Str::new(&format!(
-                "{}{}{}{}",
-                if on { AttrStyler::ON } else { "" },
-                AttrStyler::SET,
-                ident.snake,
-                AttrStyler::MUT,
-            )),
-        }
+type A<'a> = (&'a Str, &'a StylerFn, &'a StylerFn, &'a StylerFn, &'a Str);
+impl Styler {
+    pub fn new_tuple(
+        attributes: &[A],
+        doc: Doc,
+        doc_mut: Doc,
+        name: &str,
+        sign: impl Fn(&Str) -> TokenStream,
+        sign_mut: impl Fn(&Str) -> TokenStream,
+        body_inner: impl Fn(&A) -> TokenStream,
+        body_inner_mut: impl Fn(&A) -> TokenStream,
+        body: impl Fn(&mut dyn Iterator<Item = TokenStream>) -> TokenStream,
+        body_mut: impl Fn(&mut dyn Iterator<Item = TokenStream>) -> TokenStream,
+    ) -> (StylerFn, StylerFn) {
+        let name = name.to_string();
+        let body = body(&mut attributes.iter().map(body_inner));
+        let body_mut = body_mut(&mut attributes.iter().map(body_inner_mut));
+
+        StylerFn::new_tuple(
+            doc,
+            doc_mut,
+            name,
+            sign,
+            sign_mut,
+            Some(body),
+            Some(body_mut),
+        )
     }
-}
 
-// -----------------------------------------------
-// AttrStyler
-// -----------------------------------------------
+    pub fn new(attributes: &[Attr]) -> Self {
+        let attributes = attributes
+            .iter()
+            .map(|attribute| {
+                (
+                    &attribute.snake,
+                    &attribute.fn_get,
+                    &attribute.fn_set,
+                    &attribute.fn_set_mut,
+                    &attribute.reset.wrapped,
+                )
+            })
+            .collect::<Vec<_>>();
 
-#[derive(Clone, Default, Debug)]
-pub struct AttrStyler {
-    pub get:      Str,
-    pub get_mut:  Str,
-    pub set:      Str,
-    pub set_mut:  Str,
-    pub none:     Str,
-    pub none_mut: Str,
-}
+        let option = |op| {
+            let op = Str::new(op);
 
-impl AttrStyler {
-    pub fn new(ident: &Ident) -> Self {
-        let VariantStyler { set, set_mut } = VariantStyler::new(ident, false);
+            Self::new_tuple(
+                &attributes,
+                doc!("`Option::{}` fields.", op),
+                doc!("`Option::{}` fields, mutably.", op),
+                &op,
+                |name| {
+                    quote! {
+                        fn #name(self, other: &impl StylerIndex) -> <Self::Output as Styler>::Output
+                        where
+                            Self::Output: Styler<Output = Self::Output>
+                    }
+                },
+                |name| quote! { fn #name(&mut self, other: &impl StylerIndex) },
+                |(attribute, get, set, ..)| {
+                    quote! {
+                        let #attribute = output.#get().#op(other.#get());
+                        let output = output.#set(#attribute);
+                    }
+                },
+                |(_, get, _, set_mut, ..)| {
+                    quote! {
+                        self.#set_mut(self.#get().#op(other.#get()));
+                    }
+                },
+                |body| quote! { let output = self; #(#body)* output },
+                |body| quote! { #(#body)* },
+            )
+        };
+
+        let to_style = attributes
+            .iter()
+            .map(|(snake, get, ..)| quote! { #snake: self.#get() });
+        let to_style = StylerFn::new(
+            doc!("Returns a `Style`."),
+            Str::new("to_style"),
+            quote! { fn to_style(&self) -> Style },
+            Some(quote! { Style { #(#to_style,)* } }),
+        );
+
+        let (style, style_mut) = Self::new_tuple(
+            &attributes,
+            doc!("Applies `styler`'s styles."),
+            doc!("Applies `styler`'s styles, mutably."),
+            "style",
+            |name| {
+                quote! {
+                    fn #name(self, styler: &impl StylerIndex) -> <Self::Output as Styler>::Output
+                    where
+                        Self::Output: Styler<Output = Self::Output>
+                }
+            },
+            |name| quote! { fn #name(&mut self, styler: &impl StylerIndex) },
+            |(_, get, set, ..)| quote! { .#set(styler.#get()) },
+            |(_, get, _, set_mut, _)| quote! { self.#set_mut(styler.#get()); },
+            |body| quote! { self#(#body)* },
+            |body| quote! { #(#body)* },
+        );
+
+        let (dedup, dedup_mut) = Self::new_tuple(
+            &attributes,
+            doc!("Dedups (`None`s if identicals) fields."),
+            doc!("Dedups (`None`s if identicals) fields, mutably."),
+            "dedup",
+            |name| {
+                quote! {
+                    fn #name(mut self, before: &impl StylerIndex) -> Self
+                    where
+                        Self: Styler<Output = Self>
+                }
+            },
+            |name| quote! { fn #name(&mut self, before: &impl StylerIndex) },
+            |(_, get, set, ..)| {
+                quote! {
+                    if self.#get() == before.#get() {
+                        self = self.#set(None);
+                    }
+                }
+            },
+            |(_, get, _, set_mut, _)| {
+                quote! {
+                    if self.#get() == before.#get() {
+                        self.#set_mut(None);
+                    }
+                }
+            },
+            |body| quote! { #(#body)* self },
+            |body| quote! { #(#body)* },
+        );
+
+        let (reset, reset_mut) = Self::new_tuple(
+            &attributes,
+            doc!("Resets (sets to reset value) fields which are `Some`."),
+            doc!("Resets (sets to reset value) fields which are `Some`, mutably."),
+            "reset",
+            |name| {
+                quote! {
+                    fn #name(mut self) -> Self
+                    where
+                        Self: Styler<Output = Self>
+                }
+            },
+            |name| quote! { fn #name(&mut self) },
+            |(_, get, set, _, reset)| {
+                quote! {
+                    if let Some(_) = self.#get() {
+                        self = self.#set(Some(#reset));
+                    }
+                }
+            },
+            |(_, get, _, set_mut, reset)| {
+                quote! {
+                    if let Some(_) = self.#get() {
+                        self.#set_mut(Some(#reset));
+                    }
+                }
+            },
+            |body| quote! { #(#body)* self },
+            |body| quote! { #(#body)* },
+        );
+
+        let (and, and_mut) = option("and");
+        let (or, or_mut) = option("or");
+        let (xor, xor_mut) = option("xor");
 
         Self {
-            get: Str::new(&format!("{}{}", Self::GET, ident.snake)),
-            get_mut: Str::new(&format!("{}{}{}", Self::GET, ident.snake, Self::MUT)),
-            set,
-            set_mut,
-            none: Str::new(&format!("{}_{}", Lay::NONE.to_lowercase(), ident.snake)),
-            none_mut: Str::new(&format!(
-                "{}_{}{}",
-                Lay::NONE.to_lowercase(),
-                ident.snake,
-                Self::MUT,
-            )),
+            to_style,
+            style,
+            style_mut,
+            and,
+            and_mut,
+            or,
+            or_mut,
+            xor,
+            xor_mut,
+            dedup,
+            dedup_mut,
+            reset,
+            reset_mut,
         }
     }
 }
@@ -350,7 +477,6 @@ pub struct Variant {
     pub full:       Str, // Color::Ansi(ansi)
     pub wrapped:    Str, /* Color: Color::Ansi(ansi), Grounds: Foreground(Color::Ansi(ansi)),
                           * Attrs: Weight::Bold */
-    pub styler:     VariantStyler,
     pub fn_set:     StylerFn, // Do not use those fields on Color's variants,
     pub fn_set_mut: StylerFn, // they are defaulted. Use foreground/background instead.
 }
@@ -362,11 +488,7 @@ derefs!(self Variant {
 });
 
 impl Variant {
-    pub fn new(
-        name: Ident,
-        (parent, wrapper, on): (&str, Option<&str>, bool),
-        fields: &[&str],
-    ) -> Self {
+    pub fn new(name: Ident, (parent, wrapper): (&str, Option<&str>), fields: &[&str]) -> Self {
         let concat = |wrap, f: fn(&&str) -> String| {
             let r = fields.iter().map(f).collect::<Vec<_>>().join(", ");
             if wrap && r.len() > 0 {
@@ -386,7 +508,6 @@ impl Variant {
             || full.clone(),
             |wrapper| Str::new(&format!("{}({})", wrapper, full)),
         );
-        let styler = VariantStyler::new(&name, on);
 
         Self {
             name,
@@ -394,7 +515,6 @@ impl Variant {
             with_types,
             full,
             wrapped,
-            styler,
             fn_set: Default::default(),
             fn_set_mut: Default::default(),
         }
@@ -404,9 +524,8 @@ impl Variant {
         let variant = Self::new(
             name,
             match attr.ty {
-                AttrType::Foreground => (Lay::COLOR, Some(&attr), false),
-                AttrType::Background => (Lay::COLOR, Some(&attr), true),
-                AttrType::Attribute => (&attr, None, false),
+                AttrType::Foreground | AttrType::Background => (Lay::COLOR, Some(&attr)),
+                AttrType::Attribute => (&attr, None),
             },
             fields,
         );
@@ -444,7 +563,7 @@ impl Color {
         let variants = colors
             .clone()
             .into_iter()
-            .map(|(name, fields)| Variant::new(name, (Lay::COLOR, None, false), &fields))
+            .map(|(name, fields)| Variant::new(name, (Lay::COLOR, None), &fields))
             .collect::<Vec<_>>();
         let reset = variants.last().unwrap().clone();
 
@@ -473,7 +592,6 @@ pub struct Attr {
     pub name:        Ident,
     pub short:       Str,
     pub none:        Str,
-    pub styler:      AttrStyler,
     pub variants:    Vec<Variant>,
     pub reset:       Variant,
     pub fn_get:      StylerFn,
@@ -494,14 +612,12 @@ impl Attr {
     pub fn new(ty: AttrType, short: Str, name: Ident, variants: Vec<(Ident, Vec<&str>)>) -> Self {
         let new = || {
             let none = Str::new(&format!("{}{}", Lay::NONE, &name));
-            let styler = AttrStyler::new(&name);
 
             Self {
                 ty,
                 short,
                 name,
                 none,
-                styler,
                 variants: Default::default(),
                 reset: Default::default(),
                 fn_get: Default::default(),
@@ -514,22 +630,25 @@ impl Attr {
         };
 
         let attr = new();
+        let (fn_get, fn_get_mut) = StylerFn::new_attr_get(&attr);
+        let (fn_set, fn_set_mut) = StylerFn::new_attr_set(&attr);
+        let attr = Self {
+            fn_get,
+            fn_get_mut,
+            fn_set,
+            fn_set_mut,
+            ..attr
+        };
+        let (fn_none, fn_none_mut) = StylerFn::new_attr_none(&attr);
         let variants = variants
             .into_iter()
             .map(|(variant, fields)| Variant::new_attr(&attr, variant, &fields))
             .collect::<Vec<_>>();
         let reset = variants.last().unwrap().clone();
-        let (fn_get, fn_get_mut) = StylerFn::new_attr_get(&attr);
-        let (fn_set, fn_set_mut) = StylerFn::new_attr_set(&attr);
-        let (fn_none, fn_none_mut) = StylerFn::new_attr_none(&attr, &fn_set, &fn_set_mut);
 
         Self {
             variants,
             reset,
-            fn_get,
-            fn_get_mut,
-            fn_set,
-            fn_set_mut,
             fn_none,
             fn_none_mut,
             ..attr
@@ -571,6 +690,7 @@ pub struct Lay {
     pub attributes: Vec<Attr>,
     pub grounds:    Vec<Attr>,
     pub all:        Vec<Attr>,
+    pub styler:     Styler,
 }
 
 impl Lay {
@@ -602,6 +722,8 @@ impl Lay {
         let attributes = Attr::attributes(attributes);
         let all = [grounds.clone(), attributes.clone()].concat();
 
+        let styler = Styler::new(&all);
+
         Self {
             index: Ident::new(&[Self::INDEX]),
             reset: Ident::new(&[Self::RESET]),
@@ -612,6 +734,7 @@ impl Lay {
             attributes,
             grounds,
             all,
+            styler,
         }
     }
 }

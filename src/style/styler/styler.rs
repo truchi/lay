@@ -13,11 +13,6 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Foreground>`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output;
 
-    /// `None`s `Option<Foreground>`.
-    fn no_foreground(self) -> Self::Output {
-        self.foreground(None)
-    }
-
     /// Sets `Some(Foreground(Color::White))`.
     fn white(self) -> Self::Output {
         self.foreground(Some(Foreground(Color::White)))
@@ -115,11 +110,6 @@ pub trait Styler: StylerIndex + Sized {
 
     /// Sets `Option<Background>`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output;
-
-    /// `None`s `Option<Background>`.
-    fn no_background(self) -> Self::Output {
-        self.background(None)
-    }
 
     /// Sets `Some(Background(Color::White))`.
     fn on_white(self) -> Self::Output {
@@ -219,11 +209,6 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Weight>`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output;
 
-    /// `None`s `Option<Weight>`.
-    fn no_weight(self) -> Self::Output {
-        self.weight(None)
-    }
-
     /// Sets `Some(Weight::Bold)`.
     fn bold(self) -> Self::Output {
         self.weight(Some(Weight::Bold))
@@ -242,11 +227,6 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Slant>`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output;
 
-    /// `None`s `Option<Slant>`.
-    fn no_slant(self) -> Self::Output {
-        self.slant(None)
-    }
-
     /// Sets `Some(Slant::Italic)`.
     fn italic(self) -> Self::Output {
         self.slant(Some(Slant::Italic))
@@ -259,11 +239,6 @@ pub trait Styler: StylerIndex + Sized {
 
     /// Sets `Option<Underline>`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output;
-
-    /// `None`s `Option<Underline>`.
-    fn no_underline(self) -> Self::Output {
-        self.underline(None)
-    }
 
     /// Sets `Some(Underline::Underlined)`.
     fn underlined(self) -> Self::Output {
@@ -278,11 +253,6 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Strike>`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output;
 
-    /// `None`s `Option<Strike>`.
-    fn no_strike(self) -> Self::Output {
-        self.strike(None)
-    }
-
     /// Sets `Some(Strike::Striked)`.
     fn striked(self) -> Self::Output {
         self.strike(Some(Strike::Striked))
@@ -295,11 +265,6 @@ pub trait Styler: StylerIndex + Sized {
 
     /// Sets `Option<Overline>`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output;
-
-    /// `None`s `Option<Overline>`.
-    fn no_overline(self) -> Self::Output {
-        self.overline(None)
-    }
 
     /// Sets `Some(Overline::Overlined)`.
     fn overlined(self) -> Self::Output {
@@ -314,11 +279,6 @@ pub trait Styler: StylerIndex + Sized {
     /// Sets `Option<Invert>`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output;
 
-    /// `None`s `Option<Invert>`.
-    fn no_invert(self) -> Self::Output {
-        self.invert(None)
-    }
-
     /// Sets `Some(Invert::Inverted)`.
     fn inverted(self) -> Self::Output {
         self.invert(Some(Invert::Inverted))
@@ -331,11 +291,6 @@ pub trait Styler: StylerIndex + Sized {
 
     /// Sets `Option<Blink>`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output;
-
-    /// `None`s `Option<Blink>`.
-    fn no_blink(self) -> Self::Output {
-        self.blink(None)
-    }
 
     /// Sets `Some(Blink::Slow)`.
     fn slow(self) -> Self::Output {
@@ -354,11 +309,6 @@ pub trait Styler: StylerIndex + Sized {
 
     /// Sets `Option<Border>`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output;
-
-    /// `None`s `Option<Border>`.
-    fn no_border(self) -> Self::Output {
-        self.border(None)
-    }
 
     /// Sets `Some(Border::Circle)`.
     fn circle(self) -> Self::Output {

@@ -18,13 +18,6 @@ impl StylerFn {
     const SET: &'static str = "";
 }
 
-impl AttrStyler {
-    const GET: &'static str = "get_";
-    const MUT: &'static str = "_mut";
-    const ON: &'static str = "on_";
-    const SET: &'static str = "";
-}
-
 impl Variant {
     const TYPE: &'static str = "u8";
 }
@@ -84,7 +77,7 @@ pub fn generate() {
     if let Ok(profile) = std::env::var("PROFILE") {
         if profile == "debug" {
             let gen = Generation(Lay::new());
-            panic!("{:#?}", gen);
+            // panic!("{:#?}", gen.styler);
             println!("cargo:rerun-if-changed=build/mod.rs");
 
             write_part("style/mod.rs", "import_markers", gen.import_markers());
