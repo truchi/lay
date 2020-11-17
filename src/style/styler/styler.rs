@@ -10,6 +10,12 @@ pub trait Styler: StylerIndex + Sized {
     /// The resulting type of the setters.
     type Output;
 
+    // ================================================== //
+    // ================================================== //
+    // Foreground                                         //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Foreground>`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output;
 
@@ -107,6 +113,12 @@ pub trait Styler: StylerIndex + Sized {
     fn reset_color(self) -> Self::Output {
         self.foreground(Some(Foreground(Color::ResetColor)))
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Background                                         //
+    // ================================================== //
+    // ================================================== //
 
     /// Sets `Option<Background>`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output;
@@ -206,6 +218,12 @@ pub trait Styler: StylerIndex + Sized {
         self.background(Some(Background(Color::ResetColor)))
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Weight                                             //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Weight>`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output;
 
@@ -224,6 +242,12 @@ pub trait Styler: StylerIndex + Sized {
         self.weight(Some(Weight::ResetWeight))
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Slant                                              //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Slant>`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output;
 
@@ -236,6 +260,12 @@ pub trait Styler: StylerIndex + Sized {
     fn reset_slant(self) -> Self::Output {
         self.slant(Some(Slant::ResetSlant))
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Underline                                          //
+    // ================================================== //
+    // ================================================== //
 
     /// Sets `Option<Underline>`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output;
@@ -250,6 +280,12 @@ pub trait Styler: StylerIndex + Sized {
         self.underline(Some(Underline::ResetUnderline))
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Strike                                             //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Strike>`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output;
 
@@ -262,6 +298,12 @@ pub trait Styler: StylerIndex + Sized {
     fn reset_strike(self) -> Self::Output {
         self.strike(Some(Strike::ResetStrike))
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Overline                                           //
+    // ================================================== //
+    // ================================================== //
 
     /// Sets `Option<Overline>`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output;
@@ -276,6 +318,12 @@ pub trait Styler: StylerIndex + Sized {
         self.overline(Some(Overline::ResetOverline))
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Invert                                             //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Invert>`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output;
 
@@ -288,6 +336,12 @@ pub trait Styler: StylerIndex + Sized {
     fn reset_invert(self) -> Self::Output {
         self.invert(Some(Invert::ResetInvert))
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Blink                                              //
+    // ================================================== //
+    // ================================================== //
 
     /// Sets `Option<Blink>`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output;
@@ -307,6 +361,12 @@ pub trait Styler: StylerIndex + Sized {
         self.blink(Some(Blink::ResetBlink))
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Border                                             //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Border>`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output;
 
@@ -324,6 +384,12 @@ pub trait Styler: StylerIndex + Sized {
     fn reset_border(self) -> Self::Output {
         self.border(Some(Border::ResetBorder))
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Additional functions                               //
+    // ================================================== //
+    // ================================================== //
 
     /// Applies `styler`'s styles.
     fn style(self, styler: &impl StylerIndex) -> <Self::Output as Styler>::Output
@@ -348,26 +414,37 @@ pub trait Styler: StylerIndex + Sized {
         Self::Output: Styler<Output = Self::Output>,
     {
         let output = self;
+
         let foreground = output.get_foreground().and(other.get_foreground());
         let output = output.foreground(foreground);
+
         let background = output.get_background().and(other.get_background());
         let output = output.background(background);
+
         let weight = output.get_weight().and(other.get_weight());
         let output = output.weight(weight);
+
         let slant = output.get_slant().and(other.get_slant());
         let output = output.slant(slant);
+
         let underline = output.get_underline().and(other.get_underline());
         let output = output.underline(underline);
+
         let strike = output.get_strike().and(other.get_strike());
         let output = output.strike(strike);
+
         let overline = output.get_overline().and(other.get_overline());
         let output = output.overline(overline);
+
         let invert = output.get_invert().and(other.get_invert());
         let output = output.invert(invert);
+
         let blink = output.get_blink().and(other.get_blink());
         let output = output.blink(blink);
+
         let border = output.get_border().and(other.get_border());
         let output = output.border(border);
+
         output
     }
 
@@ -377,26 +454,37 @@ pub trait Styler: StylerIndex + Sized {
         Self::Output: Styler<Output = Self::Output>,
     {
         let output = self;
+
         let foreground = output.get_foreground().or(other.get_foreground());
         let output = output.foreground(foreground);
+
         let background = output.get_background().or(other.get_background());
         let output = output.background(background);
+
         let weight = output.get_weight().or(other.get_weight());
         let output = output.weight(weight);
+
         let slant = output.get_slant().or(other.get_slant());
         let output = output.slant(slant);
+
         let underline = output.get_underline().or(other.get_underline());
         let output = output.underline(underline);
+
         let strike = output.get_strike().or(other.get_strike());
         let output = output.strike(strike);
+
         let overline = output.get_overline().or(other.get_overline());
         let output = output.overline(overline);
+
         let invert = output.get_invert().or(other.get_invert());
         let output = output.invert(invert);
+
         let blink = output.get_blink().or(other.get_blink());
         let output = output.blink(blink);
+
         let border = output.get_border().or(other.get_border());
         let output = output.border(border);
+
         output
     }
 
@@ -406,26 +494,37 @@ pub trait Styler: StylerIndex + Sized {
         Self::Output: Styler<Output = Self::Output>,
     {
         let output = self;
+
         let foreground = output.get_foreground().xor(other.get_foreground());
         let output = output.foreground(foreground);
+
         let background = output.get_background().xor(other.get_background());
         let output = output.background(background);
+
         let weight = output.get_weight().xor(other.get_weight());
         let output = output.weight(weight);
+
         let slant = output.get_slant().xor(other.get_slant());
         let output = output.slant(slant);
+
         let underline = output.get_underline().xor(other.get_underline());
         let output = output.underline(underline);
+
         let strike = output.get_strike().xor(other.get_strike());
         let output = output.strike(strike);
+
         let overline = output.get_overline().xor(other.get_overline());
         let output = output.overline(overline);
+
         let invert = output.get_invert().xor(other.get_invert());
         let output = output.invert(invert);
+
         let blink = output.get_blink().xor(other.get_blink());
         let output = output.blink(blink);
+
         let border = output.get_border().xor(other.get_border());
         let output = output.border(border);
+
         output
     }
 
@@ -437,33 +536,43 @@ pub trait Styler: StylerIndex + Sized {
         if self.get_foreground() == before.get_foreground() {
             self = self.foreground(None);
         }
+
         if self.get_background() == before.get_background() {
             self = self.background(None);
         }
+
         if self.get_weight() == before.get_weight() {
             self = self.weight(None);
         }
+
         if self.get_slant() == before.get_slant() {
             self = self.slant(None);
         }
+
         if self.get_underline() == before.get_underline() {
             self = self.underline(None);
         }
+
         if self.get_strike() == before.get_strike() {
             self = self.strike(None);
         }
+
         if self.get_overline() == before.get_overline() {
             self = self.overline(None);
         }
+
         if self.get_invert() == before.get_invert() {
             self = self.invert(None);
         }
+
         if self.get_blink() == before.get_blink() {
             self = self.blink(None);
         }
+
         if self.get_border() == before.get_border() {
             self = self.border(None);
         }
+
         self
     }
 
@@ -475,33 +584,43 @@ pub trait Styler: StylerIndex + Sized {
         if let Some(_) = self.get_foreground() {
             self = self.foreground(Some(Foreground(Color::ResetColor)));
         }
+
         if let Some(_) = self.get_background() {
             self = self.background(Some(Background(Color::ResetColor)));
         }
+
         if let Some(_) = self.get_weight() {
             self = self.weight(Some(Weight::ResetWeight));
         }
+
         if let Some(_) = self.get_slant() {
             self = self.slant(Some(Slant::ResetSlant));
         }
+
         if let Some(_) = self.get_underline() {
             self = self.underline(Some(Underline::ResetUnderline));
         }
+
         if let Some(_) = self.get_strike() {
             self = self.strike(Some(Strike::ResetStrike));
         }
+
         if let Some(_) = self.get_overline() {
             self = self.overline(Some(Overline::ResetOverline));
         }
+
         if let Some(_) = self.get_invert() {
             self = self.invert(Some(Invert::ResetInvert));
         }
+
         if let Some(_) = self.get_blink() {
             self = self.blink(Some(Blink::ResetBlink));
         }
+
         if let Some(_) = self.get_border() {
             self = self.border(Some(Border::ResetBorder));
         }
+
         self
     }
 }

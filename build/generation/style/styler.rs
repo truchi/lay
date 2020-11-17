@@ -91,14 +91,24 @@ impl Generation {
         );
 
         let mapper = |f1: fn(&Attr) -> &StylerFn, f2: fn(&Variant) -> &StylerFn| {
-            move |attribute| {
+            move |attribute: &Attr| {
+                let comment = comment!(
+                    "{sep} //
+                    {sep} //
+                    {attribute}{spaces} //
+                    {sep} //
+                    {sep} //",
+                    sep = "=".repeat(50),
+                    attribute = attribute,
+                    spaces = " ".repeat(50 - attribute.len())
+                );
                 let set = f1(attribute).full();
                 let variants = attribute.variants.iter().map(|variant| {
                     let set = f2(variant).full();
                     quote! { #set #LINE_BREAK }
                 });
 
-                quote! { #set #LINE_BREAK #(#variants)* }
+                quote! { #comment #LINE_BREAK #set #LINE_BREAK #(#variants)* }
             }
         };
 
@@ -110,6 +120,17 @@ impl Generation {
             |attribute| &attribute.fn_set_mut,
             |variant| &variant.fn_set_mut,
         ));
+        let comment = "Additional functions";
+        let comment = comment!(
+            "{sep} //
+            {sep} //
+            {comment}{spaces} //
+            {sep} //
+            {sep} //",
+            sep = "=".repeat(50),
+            comment = comment,
+            spaces = " ".repeat(50 - comment.len())
+        );
 
         (
             quote! {
@@ -120,6 +141,7 @@ impl Generation {
                     /// The resulting type of the setters.
                     type Output; #LINE_BREAK
                     #(#setters)*
+                    #comment #LINE_BREAK
                     #style #LINE_BREAK
                     #and   #LINE_BREAK
                     #or    #LINE_BREAK
@@ -134,6 +156,7 @@ impl Generation {
                 /// A trait for setting `Option`al attributes on mutable styled types.
                 pub trait #styler_mut: #styler_index {
                     #(#setters_mut)*
+                    #comment #LINE_BREAK
                     #style_mut #LINE_BREAK
                     #and_mut   #LINE_BREAK
                     #or_mut    #LINE_BREAK

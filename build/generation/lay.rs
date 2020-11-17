@@ -349,7 +349,7 @@ impl Styler {
                 |(attribute, get, set, ..)| {
                     quote! {
                         let #attribute = output.#get().#op(other.#get());
-                        let output = output.#set(#attribute);
+                        let output = output.#set(#attribute); #LINE_BREAK
                     }
                 },
                 |(_, get, _, set_mut, ..)| {
@@ -357,7 +357,7 @@ impl Styler {
                         self.#set_mut(self.#get().#op(other.#get()));
                     }
                 },
-                |body| quote! { let output = self; #(#body)* output },
+                |body| quote! { let output = self; #LINE_BREAK #(#body)* output },
                 |body| quote! { #(#body)* },
             )
         };
@@ -408,14 +408,14 @@ impl Styler {
                 quote! {
                     if self.#get() == before.#get() {
                         self = self.#set(None);
-                    }
+                    } #LINE_BREAK
                 }
             },
             |(_, get, _, set_mut, _)| {
                 quote! {
                     if self.#get() == before.#get() {
                         self.#set_mut(None);
-                    }
+                    } #LINE_BREAK
                 }
             },
             |body| quote! { #(#body)* self },
@@ -439,14 +439,14 @@ impl Styler {
                 quote! {
                     if let Some(_) = self.#get() {
                         self = self.#set(Some(#reset));
-                    }
+                    } #LINE_BREAK
                 }
             },
             |(_, get, _, set_mut, reset)| {
                 quote! {
                     if let Some(_) = self.#get() {
                         self.#set_mut(Some(#reset));
-                    }
+                    } #LINE_BREAK
                 }
             },
             |body| quote! { #(#body)* self },

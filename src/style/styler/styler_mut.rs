@@ -7,6 +7,12 @@ use crate::*;
 
 /// A trait for setting `Option`al attributes on mutable styled types.
 pub trait StylerMut: StylerIndex {
+    // ================================================== //
+    // ================================================== //
+    // Foreground                                         //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Foreground>`, mutably.
     fn foreground_mut(&mut self, foreground: impl Into<Option<Foreground>>);
 
@@ -104,6 +110,12 @@ pub trait StylerMut: StylerIndex {
     fn reset_color_mut(&mut self) {
         self.foreground_mut(Some(Foreground(Color::ResetColor)));
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Background                                         //
+    // ================================================== //
+    // ================================================== //
 
     /// Sets `Option<Background>`, mutably.
     fn background_mut(&mut self, background: impl Into<Option<Background>>);
@@ -203,6 +215,12 @@ pub trait StylerMut: StylerIndex {
         self.background_mut(Some(Background(Color::ResetColor)));
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Weight                                             //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Weight>`, mutably.
     fn weight_mut(&mut self, weight: impl Into<Option<Weight>>);
 
@@ -221,6 +239,12 @@ pub trait StylerMut: StylerIndex {
         self.weight_mut(Some(Weight::ResetWeight));
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Slant                                              //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Slant>`, mutably.
     fn slant_mut(&mut self, slant: impl Into<Option<Slant>>);
 
@@ -233,6 +257,12 @@ pub trait StylerMut: StylerIndex {
     fn reset_slant_mut(&mut self) {
         self.slant_mut(Some(Slant::ResetSlant));
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Underline                                          //
+    // ================================================== //
+    // ================================================== //
 
     /// Sets `Option<Underline>`, mutably.
     fn underline_mut(&mut self, underline: impl Into<Option<Underline>>);
@@ -247,6 +277,12 @@ pub trait StylerMut: StylerIndex {
         self.underline_mut(Some(Underline::ResetUnderline));
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Strike                                             //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Strike>`, mutably.
     fn strike_mut(&mut self, strike: impl Into<Option<Strike>>);
 
@@ -259,6 +295,12 @@ pub trait StylerMut: StylerIndex {
     fn reset_strike_mut(&mut self) {
         self.strike_mut(Some(Strike::ResetStrike));
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Overline                                           //
+    // ================================================== //
+    // ================================================== //
 
     /// Sets `Option<Overline>`, mutably.
     fn overline_mut(&mut self, overline: impl Into<Option<Overline>>);
@@ -273,6 +315,12 @@ pub trait StylerMut: StylerIndex {
         self.overline_mut(Some(Overline::ResetOverline));
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Invert                                             //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Invert>`, mutably.
     fn invert_mut(&mut self, invert: impl Into<Option<Invert>>);
 
@@ -285,6 +333,12 @@ pub trait StylerMut: StylerIndex {
     fn reset_invert_mut(&mut self) {
         self.invert_mut(Some(Invert::ResetInvert));
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Blink                                              //
+    // ================================================== //
+    // ================================================== //
 
     /// Sets `Option<Blink>`, mutably.
     fn blink_mut(&mut self, blink: impl Into<Option<Blink>>);
@@ -304,6 +358,12 @@ pub trait StylerMut: StylerIndex {
         self.blink_mut(Some(Blink::ResetBlink));
     }
 
+    // ================================================== //
+    // ================================================== //
+    // Border                                             //
+    // ================================================== //
+    // ================================================== //
+
     /// Sets `Option<Border>`, mutably.
     fn border_mut(&mut self, border: impl Into<Option<Border>>);
 
@@ -321,6 +381,12 @@ pub trait StylerMut: StylerIndex {
     fn reset_border_mut(&mut self) {
         self.border_mut(Some(Border::ResetBorder));
     }
+
+    // ================================================== //
+    // ================================================== //
+    // Additional functions                               //
+    // ================================================== //
+    // ================================================== //
 
     /// Applies `styler`'s styles, mutably.
     fn style_mut(&mut self, styler: &impl StylerIndex) {
@@ -383,30 +449,39 @@ pub trait StylerMut: StylerIndex {
         if self.get_foreground() == before.get_foreground() {
             self.foreground_mut(None);
         }
+
         if self.get_background() == before.get_background() {
             self.background_mut(None);
         }
+
         if self.get_weight() == before.get_weight() {
             self.weight_mut(None);
         }
+
         if self.get_slant() == before.get_slant() {
             self.slant_mut(None);
         }
+
         if self.get_underline() == before.get_underline() {
             self.underline_mut(None);
         }
+
         if self.get_strike() == before.get_strike() {
             self.strike_mut(None);
         }
+
         if self.get_overline() == before.get_overline() {
             self.overline_mut(None);
         }
+
         if self.get_invert() == before.get_invert() {
             self.invert_mut(None);
         }
+
         if self.get_blink() == before.get_blink() {
             self.blink_mut(None);
         }
+
         if self.get_border() == before.get_border() {
             self.border_mut(None);
         }
@@ -417,30 +492,39 @@ pub trait StylerMut: StylerIndex {
         if let Some(_) = self.get_foreground() {
             self.foreground_mut(Some(Foreground(Color::ResetColor)));
         }
+
         if let Some(_) = self.get_background() {
             self.background_mut(Some(Background(Color::ResetColor)));
         }
+
         if let Some(_) = self.get_weight() {
             self.weight_mut(Some(Weight::ResetWeight));
         }
+
         if let Some(_) = self.get_slant() {
             self.slant_mut(Some(Slant::ResetSlant));
         }
+
         if let Some(_) = self.get_underline() {
             self.underline_mut(Some(Underline::ResetUnderline));
         }
+
         if let Some(_) = self.get_strike() {
             self.strike_mut(Some(Strike::ResetStrike));
         }
+
         if let Some(_) = self.get_overline() {
             self.overline_mut(Some(Overline::ResetOverline));
         }
+
         if let Some(_) = self.get_invert() {
             self.invert_mut(Some(Invert::ResetInvert));
         }
+
         if let Some(_) = self.get_blink() {
             self.blink_mut(Some(Blink::ResetBlink));
         }
+
         if let Some(_) = self.get_border() {
             self.border_mut(Some(Border::ResetBorder));
         }
