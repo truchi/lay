@@ -262,19 +262,23 @@ impl Debug for StylerFn {
 
 #[derive(Clone, Default, Debug)]
 pub struct Styler {
-    pub to_style:  StylerFn,
-    pub style:     StylerFn,
-    pub style_mut: StylerFn,
-    pub and:       StylerFn,
-    pub and_mut:   StylerFn,
-    pub or:        StylerFn,
-    pub or_mut:    StylerFn,
-    pub xor:       StylerFn,
-    pub xor_mut:   StylerFn,
-    pub dedup:     StylerFn,
-    pub dedup_mut: StylerFn,
-    pub reset:     StylerFn,
-    pub reset_mut: StylerFn,
+    pub styler:           Str,
+    pub styler_mut:       Str,
+    pub styler_index:     Str,
+    pub styler_index_mut: Str,
+    pub to_style:         StylerFn,
+    pub style:            StylerFn,
+    pub style_mut:        StylerFn,
+    pub and:              StylerFn,
+    pub and_mut:          StylerFn,
+    pub or:               StylerFn,
+    pub or_mut:           StylerFn,
+    pub xor:              StylerFn,
+    pub xor_mut:          StylerFn,
+    pub dedup:            StylerFn,
+    pub dedup_mut:        StylerFn,
+    pub reset:            StylerFn,
+    pub reset_mut:        StylerFn,
 }
 
 type A<'a> = (&'a Str, &'a StylerFn, &'a StylerFn, &'a StylerFn, &'a Str);
@@ -320,6 +324,12 @@ impl Styler {
             })
             .collect::<Vec<_>>();
 
+        let (styler, styler_mut) = (Str::new(Self::STYLER), Str::new(Self::STYLER_MUT));
+        let (styler_index, styler_index_mut) = (
+            Str::new(Self::STYLER_INDEX),
+            Str::new(Self::STYLER_INDEX_MUT),
+        );
+
         let option = |op| {
             let op = Str::new(op);
 
@@ -330,12 +340,12 @@ impl Styler {
                 &op,
                 |name| {
                     quote! {
-                        fn #name(self, other: &impl StylerIndex) -> <Self::Output as Styler>::Output
+                        fn #name(self, other: &impl #styler_index) -> <Self::Output as Styler>::Output
                         where
                             Self::Output: Styler<Output = Self::Output>
                     }
                 },
-                |name| quote! { fn #name(&mut self, other: &impl StylerIndex) },
+                |name| quote! { fn #name(&mut self, other: &impl #styler_index) },
                 |(attribute, get, set, ..)| {
                     quote! {
                         let #attribute = output.#get().#op(other.#get());
@@ -369,12 +379,12 @@ impl Styler {
             "style",
             |name| {
                 quote! {
-                    fn #name(self, styler: &impl StylerIndex) -> <Self::Output as Styler>::Output
+                    fn #name(self, styler: &impl #styler_index) -> <Self::Output as Styler>::Output
                     where
                         Self::Output: Styler<Output = Self::Output>
                 }
             },
-            |name| quote! { fn #name(&mut self, styler: &impl StylerIndex) },
+            |name| quote! { fn #name(&mut self, styler: &impl #styler_index) },
             |(_, get, set, ..)| quote! { .#set(styler.#get()) },
             |(_, get, _, set_mut, _)| quote! { self.#set_mut(styler.#get()); },
             |body| quote! { self#(#body)* },
@@ -388,12 +398,12 @@ impl Styler {
             "dedup",
             |name| {
                 quote! {
-                    fn #name(mut self, before: &impl StylerIndex) -> Self
+                    fn #name(mut self, before: &impl #styler_index) -> Self
                     where
                         Self: Styler<Output = Self>
                 }
             },
-            |name| quote! { fn #name(&mut self, before: &impl StylerIndex) },
+            |name| quote! { fn #name(&mut self, before: &impl #styler_index) },
             |(_, get, set, ..)| {
                 quote! {
                     if self.#get() == before.#get() {
@@ -448,6 +458,10 @@ impl Styler {
         let (xor, xor_mut) = option("xor");
 
         Self {
+            styler,
+            styler_mut,
+            styler_index,
+            styler_index_mut,
             to_style,
             style,
             style_mut,

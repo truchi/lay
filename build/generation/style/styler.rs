@@ -16,7 +16,13 @@ impl Generation {
     }
 
     pub fn styler_index(&self) -> (TokenStream, TokenStream) {
-        let to_style = &self.styler.to_style.full();
+        let Styler {
+            styler_index,
+            styler_index_mut,
+            to_style,
+            ..
+        } = &self.styler;
+        let to_style = to_style.full();
         let index = self
             .all
             .iter()
@@ -33,7 +39,7 @@ impl Generation {
                 use crate::*; #LINE_BREAK
 
                 /// A trait for getting `Option`al attributes on styled types.
-                pub trait StylerIndex {
+                pub trait #styler_index {
                     #(#index)* #LINE_BREAK
                     #to_style
                 }
@@ -42,7 +48,7 @@ impl Generation {
                 use crate::*; #LINE_BREAK
 
                 /// A trait for getting `Option`al attributes on mutable styled types.
-                pub trait StylerIndexMut {
+                pub trait #styler_index_mut {
                     #(#index_mut)*
                 }
             },
@@ -51,6 +57,9 @@ impl Generation {
 
     pub fn styler(&self) -> (TokenStream, TokenStream) {
         let (
+            styler,
+            styler_mut,
+            styler_index,
             style,
             style_mut,
             and,
@@ -64,6 +73,9 @@ impl Generation {
             reset,
             reset_mut,
         ) = (
+            &self.styler.styler,
+            &self.styler.styler_mut,
+            &self.styler.styler_index,
             &self.styler.style.full(),
             &self.styler.style_mut.full(),
             &self.styler.and.full(),
@@ -104,7 +116,7 @@ impl Generation {
                 use crate::*; #LINE_BREAK
 
                 /// A trait for setting `Option`al attributes on styled types.
-                pub trait Styler: StylerIndex + Sized {
+                pub trait #styler: #styler_index + Sized {
                     /// The resulting type of the setters.
                     type Output; #LINE_BREAK
                     #(#setters)*
@@ -120,7 +132,7 @@ impl Generation {
                 use crate::*; #LINE_BREAK
 
                 /// A trait for setting `Option`al attributes on mutable styled types.
-                pub trait StylerMut: StylerIndex {
+                pub trait #styler_mut: #styler_index {
                     #(#setters_mut)*
                     #style_mut #LINE_BREAK
                     #and_mut   #LINE_BREAK

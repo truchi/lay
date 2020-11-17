@@ -18,6 +18,13 @@ impl StylerFn {
     const SET: &'static str = "";
 }
 
+impl Styler {
+    const STYLER: &'static str = "Styler";
+    const STYLER_INDEX: &'static str = "StylerIndex";
+    const STYLER_INDEX_MUT: &'static str = "StylerIndexMut";
+    const STYLER_MUT: &'static str = "StylerMut";
+}
+
 impl Variant {
     const TYPE: &'static str = "u8";
 }
