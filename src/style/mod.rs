@@ -4,6 +4,7 @@ mod color;
 mod reset;
 mod style;
 mod styled;
+mod styled_impls;
 mod styler;
 
 pub use attributes::*;

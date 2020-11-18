@@ -122,6 +122,20 @@ pub fn generate() {
 
             write("style/backends/mod.rs", gen.mod_style_backends());
             write("style/backends/crossterm.rs", gen.backend_crossterm());
+
+            write(
+                "style/styled_impls.rs",
+                gen.impl_styler(
+                    quote! { use std::fmt::Display; },
+                    "Styled<T>",
+                    quote! { T: Display },
+                    "style",
+                    true,
+                    true,
+                    true,
+                    true,
+                ),
+            );
         }
     }
 }
