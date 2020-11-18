@@ -136,6 +136,10 @@ pub fn generate() {
                     true,
                 ),
             );
+            // write(
+            // "layer/fill_impls.rs",
+            // gen.impl_styler(quote! {}, "Fill", quote! {}, "cell", true, true,
+            // true, true), );
         }
     }
 }
