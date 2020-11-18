@@ -119,6 +119,9 @@ pub fn generate() {
                     gen.attr(attribute),
                 );
             }
+
+            write("style/backends/mod.rs", gen.mod_style_backends());
+            write("style/backends/crossterm.rs", gen.backend_crossterm());
         }
     }
 }
