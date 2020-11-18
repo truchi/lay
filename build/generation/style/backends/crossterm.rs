@@ -80,7 +80,16 @@ impl Generation {
             #comment_conversions
             #LINE_BREAK
 
-            /// Converts to `crossterm::style::Color`.
+            /// Converts `Reset` to `crossterm::style::Attribute::Reset`.
+            impl From<Reset> for crossterm::style::Attribute {
+                /// Converts to `crossterm::style::Attribute::Reset`.
+                fn from(_: Reset) -> Self {
+                    crossterm::style::Attribute::Reset
+                }
+            }
+            #LINE_BREAK
+
+            /// Converts `Color` to `crossterm::style::Color`.
             impl From<Color> for crossterm::style::Color {
                 /// Converts to `crossterm::style::Color`.
                 fn from(color: Color) -> Self {
