@@ -123,23 +123,31 @@ pub fn generate() {
             write("style/backends/mod.rs", gen.mod_style_backends());
             write("style/backends/crossterm.rs", gen.backend_crossterm());
 
+            let styled_impls = (
+                &Str::new("Styled<T>"),
+                &quote! { T: Display },
+                &Str::new("style"),
+            );
             write(
                 "style/styled_impls.rs",
-                gen.impl_styler(
-                    quote! { use std::fmt::Display; },
-                    "Styled<T>",
-                    quote! { T: Display },
-                    "style",
-                    true,
-                    true,
-                    true,
-                    true,
-                ),
+                concat(&[
+                    quote! {
+                        use crate::*;
+                        use std::fmt::Display;
+                        #LINE_BREAK
+                    },
+                    gen.impl_styler_index(styled_impls),
+                    gen.impl_styler_index_mut(styled_impls),
+                    gen.impl_styler(styled_impls),
+                    gen.impl_styler_mut(styled_impls),
+                ]),
             );
-            // write(
-            // "layer/fill_impls.rs",
-            // gen.impl_styler(quote! {}, "Fill", quote! {}, "cell", true, true,
-            // true, true), );
         }
     }
+}
+
+fn concat(streams: &[TokenStream]) -> TokenStream {
+    streams.iter().fold(quote! {}, |tokens, stream| {
+        quote! { #tokens #LINE_BREAK #stream }
+    })
 }
