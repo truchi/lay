@@ -141,10 +141,7 @@ impl From<Border> for crossterm::style::Attribute {
 impl Display for Foreground {
     /// `Display`s `Foreground` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetForegroundColor as Display>::fmt(
-            &crossterm::style::SetForegroundColor(self.0.into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetForegroundColor(self.0.into()), f)
     }
 }
 
@@ -152,10 +149,7 @@ impl Display for Foreground {
 impl Display for Background {
     /// `Display`s `Background` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetBackgroundColor as Display>::fmt(
-            &crossterm::style::SetBackgroundColor(self.0.into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetBackgroundColor(self.0.into()), f)
     }
 }
 
@@ -163,10 +157,7 @@ impl Display for Background {
 impl Display for Weight {
     /// `Display`s `Weight` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetAttribute as Display>::fmt(
-            &crossterm::style::SetAttribute((*self).into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
@@ -174,10 +165,7 @@ impl Display for Weight {
 impl Display for Slant {
     /// `Display`s `Slant` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetAttribute as Display>::fmt(
-            &crossterm::style::SetAttribute((*self).into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
@@ -185,10 +173,7 @@ impl Display for Slant {
 impl Display for Underline {
     /// `Display`s `Underline` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetAttribute as Display>::fmt(
-            &crossterm::style::SetAttribute((*self).into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
@@ -196,10 +181,7 @@ impl Display for Underline {
 impl Display for Strike {
     /// `Display`s `Strike` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetAttribute as Display>::fmt(
-            &crossterm::style::SetAttribute((*self).into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
@@ -207,10 +189,7 @@ impl Display for Strike {
 impl Display for Overline {
     /// `Display`s `Overline` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetAttribute as Display>::fmt(
-            &crossterm::style::SetAttribute((*self).into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
@@ -218,10 +197,7 @@ impl Display for Overline {
 impl Display for Invert {
     /// `Display`s `Invert` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetAttribute as Display>::fmt(
-            &crossterm::style::SetAttribute((*self).into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
@@ -229,10 +205,7 @@ impl Display for Invert {
 impl Display for Blink {
     /// `Display`s `Blink` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetAttribute as Display>::fmt(
-            &crossterm::style::SetAttribute((*self).into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
@@ -240,9 +213,6 @@ impl Display for Blink {
 impl Display for Border {
     /// `Display`s `Border` with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        <crossterm::style::SetAttribute as Display>::fmt(
-            &crossterm::style::SetAttribute((*self).into()),
-            f,
-        )
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }

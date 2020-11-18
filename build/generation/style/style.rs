@@ -34,7 +34,7 @@ impl Generation {
 
             quote! {
                 if let Some(#snake) = self.#get() {
-                    <#attribute as Display>::fmt(&#snake, f)?;
+                    Display::fmt(&#snake, f)?;
                 }
                 #LINE_BREAK
             }
