@@ -2,16 +2,23 @@ use crate::generation::*;
 
 impl Generation {
     pub fn mod_style_styler(&self) -> TokenStream {
+        let (styler, styler_mut, styler_index, styler_index_mut) = (
+            &self.styler.styler.snake,
+            &self.styler.styler_mut.snake,
+            &self.styler.styler_index.snake,
+            &self.styler.styler_index_mut.snake,
+        );
+
         quote! {
-            mod styler_index;
-            mod styler_index_mut;
-            mod styler;
-            mod styler_mut;
+            mod #styler_index;
+            mod #styler_index_mut;
+            mod #styler;
+            mod #styler_mut;
             #LINE_BREAK
-            pub use styler_index::*;
-            pub use styler_index_mut::*;
-            pub use styler::*;
-            pub use styler_mut::*;
+            pub use #styler_index::*;
+            pub use #styler_index_mut::*;
+            pub use #styler::*;
+            pub use #styler_mut::*;
         }
     }
 

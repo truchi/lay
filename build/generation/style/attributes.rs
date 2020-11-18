@@ -41,8 +41,8 @@ impl Generation {
         let from_color_doc = doc!("Returns `{}({})`.", ground, color);
         let from_color_option_doc = doc!("Returns `Some({}({}))`.", ground, color);
 
-        let styler_index = self.impl_styler_index(ground);
-        let styler = self.impl_styler(ground);
+        let styler_index = impl_styler_index(self, ground);
+        let styler = impl_styler(self, ground);
 
         quote! {
             use crate::*;
@@ -105,8 +105,8 @@ impl Generation {
 
         let default_doc = doc!("Returns `{}`.", reset);
 
-        let styler_index = self.impl_styler_index(attr);
-        let styler = self.impl_styler(attr);
+        let styler_index = impl_styler_index(self, attr);
+        let styler = impl_styler(self, attr);
 
         quote! {
             use crate::*;
@@ -133,61 +133,61 @@ impl Generation {
             #styler
         }
     }
+}
 
-    // ======= //
-    // Helpers //
-    // ======= //
+// ======= //
+// Helpers //
+// ======= //
 
-    fn impl_styler_index(&self, attribute: &Attr) -> TokenStream {
-        let styler_index = &self.styler.styler_index;
+fn impl_styler_index(lay: &Lay, attribute: &Attr) -> TokenStream {
+    let styler_index = &lay.styler.styler_index;
 
-        let getters = self.all.iter().map(|getter| {
-            let get = &getter.fn_get.sign;
-            let val = if attribute == getter {
-                quote! { Some(*self) }
-            } else {
-                quote! { None }
-            };
+    let getters = lay.all.iter().map(|getter| {
+        let get = &getter.fn_get.sign;
+        let val = if attribute == getter {
+            quote! { Some(*self) }
+        } else {
+            quote! { None }
+        };
 
-            quote! { #get { #val } }
-        });
+        quote! { #get { #val } }
+    });
 
-        quote! {
-            impl #styler_index for #attribute {
-                #(#getters)*
-            }
+    quote! {
+        impl #styler_index for #attribute {
+            #(#getters)*
         }
     }
+}
 
-    fn impl_styler(&self, attribute: &Attr) -> TokenStream {
-        let styler = &self.styler.styler;
+fn impl_styler(lay: &Lay, attribute: &Attr) -> TokenStream {
+    let styler = &lay.styler.styler;
 
-        let setters = self.all.iter().map(|setter| {
-            let snake = &setter.snake;
-            let set = &setter.fn_set.sign;
+    let setters = lay.all.iter().map(|setter| {
+        let snake = &setter.snake;
+        let set = &setter.fn_set.sign;
 
-            let fields = self.all.iter().map(|field| {
-                let s = &field.snake;
+        let fields = lay.all.iter().map(|field| {
+            let s = &field.snake;
 
-                if field == setter {
-                    quote! { #s: #snake.into() }
+            if field == setter {
+                quote! { #s: #snake.into() }
+            } else {
+                if attribute == field {
+                    quote! { #s: Some(self) }
                 } else {
-                    if attribute == field {
-                        quote! { #s: Some(self) }
-                    } else {
-                        quote! { #s: None }
-                    }
+                    quote! { #s: None }
                 }
-            });
-
-            quote! { #set { Style { #(#fields,)* } } }
+            }
         });
 
-        quote! {
-            impl #styler for #attribute {
-                type Output = Style;
-                #(#setters)*
-            }
+        quote! { #set { Style { #(#fields,)* } } }
+    });
+
+    quote! {
+        impl #styler for #attribute {
+            type Output = Style;
+            #(#setters)*
         }
     }
 }

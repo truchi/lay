@@ -3,12 +3,14 @@ mod backends;
 mod color;
 mod reset;
 mod style;
+mod styled;
 mod styler;
 
 pub use attributes::*;
 pub use color::*;
 pub use reset::*;
 pub use style::*;
+pub use styled::*;
 pub use styler::*;
 
 // @generate import_markers

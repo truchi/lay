@@ -262,10 +262,10 @@ impl Debug for StylerFn {
 
 #[derive(Clone, Default, Debug)]
 pub struct Styler {
-    pub styler:           Str,
-    pub styler_mut:       Str,
-    pub styler_index:     Str,
-    pub styler_index_mut: Str,
+    pub styler:           Ident,
+    pub styler_mut:       Ident,
+    pub styler_index:     Ident,
+    pub styler_index_mut: Ident,
     pub to_style:         StylerFn,
     pub style:            StylerFn,
     pub style_mut:        StylerFn,
@@ -324,10 +324,10 @@ impl Styler {
             })
             .collect::<Vec<_>>();
 
-        let (styler, styler_mut) = (Str::new(Self::STYLER), Str::new(Self::STYLER_MUT));
+        let (styler, styler_mut) = (Ident::new(Self::STYLER), Ident::new(Self::STYLER_MUT));
         let (styler_index, styler_index_mut) = (
-            Str::new(Self::STYLER_INDEX),
-            Str::new(Self::STYLER_INDEX_MUT),
+            Ident::new(Self::STYLER_INDEX),
+            Ident::new(Self::STYLER_INDEX_MUT),
         );
 
         let option = |op| {

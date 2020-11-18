@@ -19,10 +19,10 @@ impl StylerFn {
 }
 
 impl Styler {
-    const STYLER: &'static str = "Styler";
-    const STYLER_INDEX: &'static str = "StylerIndex";
-    const STYLER_INDEX_MUT: &'static str = "StylerIndexMut";
-    const STYLER_MUT: &'static str = "StylerMut";
+    const STYLER: &'static [&'static str] = &["Styler"];
+    const STYLER_INDEX: &'static [&'static str] = &["Styler", "Index"];
+    const STYLER_INDEX_MUT: &'static [&'static str] = &["Styler", "Index", "Mut"];
+    const STYLER_MUT: &'static [&'static str] = &["Styler", "Mut"];
 }
 
 impl Variant {
