@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
+use std::fmt::{Display, Error, Formatter};
 
 /// `Style`s.
 ///
@@ -53,6 +54,52 @@ impl Style {
         blink:      Some(Blink::ResetBlink),
         border:     Some(Border::ResetBorder),
     };
+}
+
+impl Display for Style {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        if let Some(foreground) = self.get_foreground() {
+            <Foreground as Display>::fmt(&foreground, f)?;
+        }
+
+        if let Some(background) = self.get_background() {
+            <Background as Display>::fmt(&background, f)?;
+        }
+
+        if let Some(weight) = self.get_weight() {
+            <Weight as Display>::fmt(&weight, f)?;
+        }
+
+        if let Some(slant) = self.get_slant() {
+            <Slant as Display>::fmt(&slant, f)?;
+        }
+
+        if let Some(underline) = self.get_underline() {
+            <Underline as Display>::fmt(&underline, f)?;
+        }
+
+        if let Some(strike) = self.get_strike() {
+            <Strike as Display>::fmt(&strike, f)?;
+        }
+
+        if let Some(overline) = self.get_overline() {
+            <Overline as Display>::fmt(&overline, f)?;
+        }
+
+        if let Some(invert) = self.get_invert() {
+            <Invert as Display>::fmt(&invert, f)?;
+        }
+
+        if let Some(blink) = self.get_blink() {
+            <Blink as Display>::fmt(&blink, f)?;
+        }
+
+        if let Some(border) = self.get_border() {
+            <Border as Display>::fmt(&border, f)?;
+        }
+
+        Ok(())
+    }
 }
 
 // ========================================================================== //

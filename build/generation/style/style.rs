@@ -28,6 +28,18 @@ impl Generation {
             .iter()
             .map(|(_, snake, reset)| quote! { #snake: Some(#reset) });
 
+        let display = self.all.iter().map(|attribute| {
+            let snake = &attribute.snake;
+            let get = &attribute.fn_get;
+
+            quote! {
+                if let Some(#snake) = self.#get() {
+                    <#attribute as Display>::fmt(&#snake, f)?;
+                }
+                #LINE_BREAK
+            }
+        });
+
         let from = attributes.iter().map(|(attribute, snake, _)| {
             let attributes = attributes.iter().map(|(_, s, _)| {
                 if s == snake {
@@ -79,6 +91,7 @@ impl Generation {
 
         quote! {
             use crate::*;
+            use std::fmt::{Display, Error, Formatter};
             #LINE_BREAK
 
             /// `Style`s.
@@ -104,6 +117,14 @@ impl Generation {
                 pub const RESET: Self = Self {
                     #(#reset,)*
                 };
+            }
+            #LINE_BREAK
+
+            impl Display for Style {
+                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                    #(#display)*
+                    Ok(())
+                }
             }
             #LINE_BREAK
 
