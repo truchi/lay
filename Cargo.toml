@@ -6,7 +6,7 @@ edition = "2018"
 build = "build/mod.rs"
 
 [features]
-default = ["backend-crossterm"]
+default = ["full", "backend-crossterm"]
 backend-crossterm = ["crossterm"]
 full = ["styler-idx", "styler-ops"]
 styler-idx = []

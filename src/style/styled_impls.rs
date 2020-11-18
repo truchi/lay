@@ -4,10 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
-use std::{
-    fmt::Display,
-    ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Not, Rem},
-};
+use std::fmt::Display;
 
 impl<T: Display> StylerIndex for Styled<T> {
     fn get_foreground(&self) -> Option<Foreground> {
@@ -189,6 +186,10 @@ impl<T: Display> StylerMut for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
+use std::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Rem};
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Foreground>`.
 impl<T: Display, Color: Into<Option<Foreground>>> Mul<Color> for Styled<T> {
     type Output = Self;
@@ -199,6 +200,7 @@ impl<T: Display, Color: Into<Option<Foreground>>> Mul<Color> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Background>`.
 impl<T: Display, Color: Into<Option<Background>>> Div<Color> for Styled<T> {
     type Output = Self;
@@ -209,6 +211,7 @@ impl<T: Display, Color: Into<Option<Background>>> Div<Color> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Weight>`.
 impl<T: Display> Add<Weight> for Styled<T> {
     type Output = Self;
@@ -219,6 +222,7 @@ impl<T: Display> Add<Weight> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Slant>`.
 impl<T: Display> Add<Slant> for Styled<T> {
     type Output = Self;
@@ -229,6 +233,7 @@ impl<T: Display> Add<Slant> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Underline>`.
 impl<T: Display> Add<Underline> for Styled<T> {
     type Output = Self;
@@ -239,6 +244,7 @@ impl<T: Display> Add<Underline> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Strike>`.
 impl<T: Display> Add<Strike> for Styled<T> {
     type Output = Self;
@@ -249,6 +255,7 @@ impl<T: Display> Add<Strike> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Overline>`.
 impl<T: Display> Add<Overline> for Styled<T> {
     type Output = Self;
@@ -259,6 +266,7 @@ impl<T: Display> Add<Overline> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Invert>`.
 impl<T: Display> Add<Invert> for Styled<T> {
     type Output = Self;
@@ -269,6 +277,7 @@ impl<T: Display> Add<Invert> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Blink>`.
 impl<T: Display> Add<Blink> for Styled<T> {
     type Output = Self;
@@ -279,6 +288,7 @@ impl<T: Display> Add<Blink> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Border>`.
 impl<T: Display> Add<Border> for Styled<T> {
     type Output = Self;
@@ -289,6 +299,7 @@ impl<T: Display> Add<Border> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// `Option::and` fields.
 impl<T: Display, Index: StylerIndex> BitAnd<&Index> for Styled<T> {
     type Output = <<Self as Styler>::Output as Styler>::Output;
@@ -299,6 +310,7 @@ impl<T: Display, Index: StylerIndex> BitAnd<&Index> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// `Option::or` fields.
 impl<T: Display, Index: StylerIndex> BitOr<&Index> for Styled<T> {
     type Output = <<Self as Styler>::Output as Styler>::Output;
@@ -309,6 +321,7 @@ impl<T: Display, Index: StylerIndex> BitOr<&Index> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// `Option::xor` fields.
 impl<T: Display, Index: StylerIndex> BitXor<&Index> for Styled<T> {
     type Output = <<Self as Styler>::Output as Styler>::Output;
@@ -319,6 +332,7 @@ impl<T: Display, Index: StylerIndex> BitXor<&Index> for Styled<T> {
     }
 }
 
+#[cfg(feature = "styler-ops")]
 /// Dedups (`None`s if identicals) fields.
 impl<T: Display, Index: StylerIndex> Rem<&Index> for Styled<T> {
     type Output = Self;
@@ -329,12 +343,139 @@ impl<T: Display, Index: StylerIndex> Rem<&Index> for Styled<T> {
     }
 }
 
-/// Resets (sets to reset value) fields which are `Some`.
-impl<T: Display> Not for Styled<T> {
-    type Output = Self;
+#[cfg(feature = "styler-ops")]
+use std::ops::{
+    AddAssign,
+    BitAndAssign,
+    BitOrAssign,
+    BitXorAssign,
+    DivAssign,
+    MulAssign,
+    RemAssign,
+};
 
-    /// Resets (sets to reset value) fields which are `Some`.
-    fn not(self) -> Self {
-        Styler::reset(self)
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Foreground>`, mutably.
+impl<T: Display, Color: Into<Option<Foreground>>> MulAssign<Color> for Styled<T> {
+    /// Sets `Option<Foreground>`, mutably.
+    fn mul_assign(&mut self, foreground: Color) {
+        StylerMut::foreground_mut(self, foreground)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Background>`, mutably.
+impl<T: Display, Color: Into<Option<Background>>> DivAssign<Color> for Styled<T> {
+    /// Sets `Option<Background>`, mutably.
+    fn div_assign(&mut self, background: Color) {
+        StylerMut::background_mut(self, background)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Weight>`, mutably.
+impl<T: Display> AddAssign<Weight> for Styled<T> {
+    /// Sets `Option<Weight>`, mutably.
+    fn add_assign(&mut self, weight: Weight) {
+        StylerMut::weight_mut(self, weight)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Slant>`, mutably.
+impl<T: Display> AddAssign<Slant> for Styled<T> {
+    /// Sets `Option<Slant>`, mutably.
+    fn add_assign(&mut self, slant: Slant) {
+        StylerMut::slant_mut(self, slant)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Underline>`, mutably.
+impl<T: Display> AddAssign<Underline> for Styled<T> {
+    /// Sets `Option<Underline>`, mutably.
+    fn add_assign(&mut self, underline: Underline) {
+        StylerMut::underline_mut(self, underline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Strike>`, mutably.
+impl<T: Display> AddAssign<Strike> for Styled<T> {
+    /// Sets `Option<Strike>`, mutably.
+    fn add_assign(&mut self, strike: Strike) {
+        StylerMut::strike_mut(self, strike)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Overline>`, mutably.
+impl<T: Display> AddAssign<Overline> for Styled<T> {
+    /// Sets `Option<Overline>`, mutably.
+    fn add_assign(&mut self, overline: Overline) {
+        StylerMut::overline_mut(self, overline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Invert>`, mutably.
+impl<T: Display> AddAssign<Invert> for Styled<T> {
+    /// Sets `Option<Invert>`, mutably.
+    fn add_assign(&mut self, invert: Invert) {
+        StylerMut::invert_mut(self, invert)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Blink>`, mutably.
+impl<T: Display> AddAssign<Blink> for Styled<T> {
+    /// Sets `Option<Blink>`, mutably.
+    fn add_assign(&mut self, blink: Blink) {
+        StylerMut::blink_mut(self, blink)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Border>`, mutably.
+impl<T: Display> AddAssign<Border> for Styled<T> {
+    /// Sets `Option<Border>`, mutably.
+    fn add_assign(&mut self, border: Border) {
+        StylerMut::border_mut(self, border)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::and` fields, mutably.
+impl<T: Display, Index: StylerIndex> BitAndAssign<&Index> for Styled<T> {
+    /// `Option::and` fields, mutably.
+    fn bitand_assign(&mut self, styler: &Index) {
+        StylerMut::and_mut(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::or` fields, mutably.
+impl<T: Display, Index: StylerIndex> BitOrAssign<&Index> for Styled<T> {
+    /// `Option::or` fields, mutably.
+    fn bitor_assign(&mut self, styler: &Index) {
+        StylerMut::or_mut(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::xor` fields, mutably.
+impl<T: Display, Index: StylerIndex> BitXorAssign<&Index> for Styled<T> {
+    /// `Option::xor` fields, mutably.
+    fn bitxor_assign(&mut self, styler: &Index) {
+        StylerMut::xor_mut(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Dedups (`None`s if identicals) fields, mutably.
+impl<T: Display, Index: StylerIndex> RemAssign<&Index> for Styled<T> {
+    /// Dedups (`None`s if identicals) fields, mutably.
+    fn rem_assign(&mut self, styler: &Index) {
+        StylerMut::dedup_mut(self, styler)
     }
 }
