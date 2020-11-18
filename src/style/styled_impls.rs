@@ -4,7 +4,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
-use std::fmt::Display;
+use std::{
+    fmt::Display,
+    ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Not, Rem},
+};
 
 impl<T: Display> StylerIndex for Styled<T> {
     fn get_foreground(&self) -> Option<Foreground> {
@@ -183,5 +186,155 @@ impl<T: Display> StylerMut for Styled<T> {
 
     fn border_mut(&mut self, border: impl Into<Option<Border>>) {
         StylerMut::border_mut(&mut self.style, border)
+    }
+}
+
+/// Sets `Option<Foreground>`.
+impl<T: Display, Color: Into<Option<Foreground>>> Mul<Color> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Foreground>`.
+    fn mul(self, foreground: Color) -> Self {
+        Styler::foreground(self, foreground)
+    }
+}
+
+/// Sets `Option<Background>`.
+impl<T: Display, Color: Into<Option<Background>>> Div<Color> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Background>`.
+    fn div(self, background: Color) -> Self {
+        Styler::background(self, background)
+    }
+}
+
+/// Sets `Option<Weight>`.
+impl<T: Display> Add<Weight> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Weight>`.
+    fn add(self, weight: Weight) -> Self {
+        Styler::weight(self, weight)
+    }
+}
+
+/// Sets `Option<Slant>`.
+impl<T: Display> Add<Slant> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Slant>`.
+    fn add(self, slant: Slant) -> Self {
+        Styler::slant(self, slant)
+    }
+}
+
+/// Sets `Option<Underline>`.
+impl<T: Display> Add<Underline> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Underline>`.
+    fn add(self, underline: Underline) -> Self {
+        Styler::underline(self, underline)
+    }
+}
+
+/// Sets `Option<Strike>`.
+impl<T: Display> Add<Strike> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Strike>`.
+    fn add(self, strike: Strike) -> Self {
+        Styler::strike(self, strike)
+    }
+}
+
+/// Sets `Option<Overline>`.
+impl<T: Display> Add<Overline> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Overline>`.
+    fn add(self, overline: Overline) -> Self {
+        Styler::overline(self, overline)
+    }
+}
+
+/// Sets `Option<Invert>`.
+impl<T: Display> Add<Invert> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Invert>`.
+    fn add(self, invert: Invert) -> Self {
+        Styler::invert(self, invert)
+    }
+}
+
+/// Sets `Option<Blink>`.
+impl<T: Display> Add<Blink> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Blink>`.
+    fn add(self, blink: Blink) -> Self {
+        Styler::blink(self, blink)
+    }
+}
+
+/// Sets `Option<Border>`.
+impl<T: Display> Add<Border> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Border>`.
+    fn add(self, border: Border) -> Self {
+        Styler::border(self, border)
+    }
+}
+
+/// `Option::and` fields.
+impl<T: Display, Index: StylerIndex> BitAnd<&Index> for Styled<T> {
+    type Output = <<Self as Styler>::Output as Styler>::Output;
+
+    /// `Option::and` fields.
+    fn bitand(self, styler: &Index) -> <<Self as Styler>::Output as Styler>::Output {
+        Styler::and(self, styler)
+    }
+}
+
+/// `Option::or` fields.
+impl<T: Display, Index: StylerIndex> BitOr<&Index> for Styled<T> {
+    type Output = <<Self as Styler>::Output as Styler>::Output;
+
+    /// `Option::or` fields.
+    fn bitor(self, styler: &Index) -> <<Self as Styler>::Output as Styler>::Output {
+        Styler::or(self, styler)
+    }
+}
+
+/// `Option::xor` fields.
+impl<T: Display, Index: StylerIndex> BitXor<&Index> for Styled<T> {
+    type Output = <<Self as Styler>::Output as Styler>::Output;
+
+    /// `Option::xor` fields.
+    fn bitxor(self, styler: &Index) -> <<Self as Styler>::Output as Styler>::Output {
+        Styler::xor(self, styler)
+    }
+}
+
+/// Dedups (`None`s if identicals) fields.
+impl<T: Display, Index: StylerIndex> Rem<&Index> for Styled<T> {
+    type Output = Self;
+
+    /// Dedups (`None`s if identicals) fields.
+    fn rem(self, styler: &Index) -> Self {
+        Styler::dedup(self, styler)
+    }
+}
+
+/// Resets (sets to reset value) fields which are `Some`.
+impl<T: Display> Not for Styled<T> {
+    type Output = Self;
+
+    /// Resets (sets to reset value) fields which are `Some`.
+    fn not(self) -> Self {
+        Styler::reset(self)
     }
 }

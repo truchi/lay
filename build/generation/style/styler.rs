@@ -162,7 +162,7 @@ impl Generation {
 
     pub fn impl_styler_index(
         &self,
-        (ty, bounds, field): (&Str, &TokenStream, &Str),
+        (ty, bounds, field): (&Str, &[TokenStream], &Str),
     ) -> TokenStream {
         let styler_index = &self.styler.styler_index;
 
@@ -173,7 +173,7 @@ impl Generation {
         });
 
         quote! {
-            impl<#bounds> #styler_index for #ty {
+            impl<#(#bounds)*> #styler_index for #ty {
                 #(#getters)*
             }
         }
@@ -181,7 +181,7 @@ impl Generation {
 
     pub fn impl_styler_index_mut(
         &self,
-        (ty, bounds, field): (&Str, &TokenStream, &Str),
+        (ty, bounds, field): (&Str, &[TokenStream], &Str),
     ) -> TokenStream {
         let styler_index_mut = &self.styler.styler_index_mut;
 
@@ -192,13 +192,13 @@ impl Generation {
         });
 
         quote! {
-            impl<#bounds> #styler_index_mut for #ty {
+            impl<#(#bounds)*> #styler_index_mut for #ty {
                 #(#getters)*
             }
         }
     }
 
-    pub fn impl_styler(&self, (ty, bounds, field): (&Str, &TokenStream, &Str)) -> TokenStream {
+    pub fn impl_styler(&self, (ty, bounds, field): (&Str, &[TokenStream], &Str)) -> TokenStream {
         let styler = &self.styler.styler;
 
         let setters = self.all.iter().map(|attribute| {
@@ -209,7 +209,7 @@ impl Generation {
         });
 
         quote! {
-            impl<#bounds> #styler for #ty {
+            impl<#(#bounds)*> #styler for #ty {
                 type Output = Self;
 
                 #(#setters)*
@@ -217,7 +217,10 @@ impl Generation {
         }
     }
 
-    pub fn impl_styler_mut(&self, (ty, bounds, field): (&Str, &TokenStream, &Str)) -> TokenStream {
+    pub fn impl_styler_mut(
+        &self,
+        (ty, bounds, field): (&Str, &[TokenStream], &Str),
+    ) -> TokenStream {
         let styler_mut = &self.styler.styler_mut;
 
         let setters = self.all.iter().map(|attribute| {
@@ -228,7 +231,7 @@ impl Generation {
         });
 
         quote! {
-            impl<#bounds> #styler_mut for #ty {
+            impl<#(#bounds)*> #styler_mut for #ty {
                 #(#setters)*
             }
         }

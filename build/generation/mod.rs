@@ -125,7 +125,7 @@ pub fn generate() {
 
             let styled_impls = (
                 &Str::new("Styled<T>"),
-                &quote! { T: Display },
+                &[quote! { T: Display }][..],
                 &Str::new("style"),
             );
             write(
@@ -134,12 +134,16 @@ pub fn generate() {
                     quote! {
                         use crate::*;
                         use std::fmt::Display;
+                        use std::ops::{Add, Div, Mul};
+                        use std::ops::{BitAnd, BitOr, BitXor};
+                        use std::ops::{Rem, Not};
                         #LINE_BREAK
                     },
                     gen.impl_styler_index(styled_impls),
                     gen.impl_styler_index_mut(styled_impls),
                     gen.impl_styler(styled_impls),
                     gen.impl_styler_mut(styled_impls),
+                    gen.impl_styler_ops(styled_impls),
                 ]),
             );
         }
