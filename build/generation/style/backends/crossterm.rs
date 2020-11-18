@@ -2,18 +2,28 @@ use crate::generation::*;
 
 impl Generation {
     pub fn backend_crossterm(&self) -> TokenStream {
-        let from_color_for_color = self.color.variants.iter().map(|color| {
-            let full = &color.full;
+        let color = &self.color;
+        let color_snake = &color.snake;
+        let reset = &self.reset;
+
+        let from_reset_doc = doc!(
+            "Converts `{}` to `crossterm::style::Attribute::Reset`.",
+            reset
+        );
+        let from_color_doc = doc!("Converts `{}` to `crossterm::style::Color`.", color);
+
+        let from_color_for_color = self.color.variants.iter().map(|c| {
+            let full = &c.full;
 
             // NOTE very dirty
-            let val = if &*color.pascal == "Rgb" {
+            let val = if &*c.pascal == "Rgb" {
                 quote! { Rgb { r, g, b } }
-            } else if &*color.pascal == "Ansi" {
+            } else if &*c.pascal == "Ansi" {
                 quote! { AnsiValue(ansi) }
-            } else if &*color.pascal == "ResetColor" {
+            } else if c.pascal == color.reset.pascal {
                 quote! { Reset }
             } else {
-                quote! { #color }
+                quote! { #c }
             };
 
             quote! { #full => Self::#val }
@@ -80,20 +90,20 @@ impl Generation {
             #comment_conversions
             #LINE_BREAK
 
-            /// Converts `Reset` to `crossterm::style::Attribute::Reset`.
-            impl From<Reset> for crossterm::style::Attribute {
-                /// Converts to `crossterm::style::Attribute::Reset`.
-                fn from(_: Reset) -> Self {
+            #from_reset_doc
+            impl From<#reset> for crossterm::style::Attribute {
+                #from_reset_doc
+                fn from(_: #reset) -> Self {
                     crossterm::style::Attribute::Reset
                 }
             }
             #LINE_BREAK
 
-            /// Converts `Color` to `crossterm::style::Color`.
-            impl From<Color> for crossterm::style::Color {
-                /// Converts to `crossterm::style::Color`.
-                fn from(color: Color) -> Self {
-                    match color {
+            #from_color_doc
+            impl From<#color> for crossterm::style::Color {
+                #from_color_doc
+                fn from(#color_snake: #color) -> Self {
+                    match #color_snake {
                         #(#from_color_for_color,)*
                     }
                 }
