@@ -340,9 +340,9 @@ impl Styler {
                 &op,
                 |name| {
                     quote! {
-                        fn #name(self, other: &impl #styler_index) -> <Self::Output as Styler>::Output
+                        fn #name(self, other: &impl #styler_index) -> <Self::Output as #styler>::Output
                         where
-                            Self::Output: Styler<Output = Self::Output>
+                            Self::Output: #styler<Output = Self::Output>
                     }
                 },
                 |name| quote! { fn #name(&mut self, other: &impl #styler_index) },
@@ -379,9 +379,9 @@ impl Styler {
             "style",
             |name| {
                 quote! {
-                    fn #name(self, styler: &impl #styler_index) -> <Self::Output as Styler>::Output
+                    fn #name(self, styler: &impl #styler_index) -> <Self::Output as #styler>::Output
                     where
-                        Self::Output: Styler<Output = Self::Output>
+                        Self::Output: #styler<Output = Self::Output>
                 }
             },
             |name| quote! { fn #name(&mut self, styler: &impl #styler_index) },
@@ -400,7 +400,7 @@ impl Styler {
                 quote! {
                     fn #name(mut self, before: &impl #styler_index) -> Self
                     where
-                        Self: Styler<Output = Self>
+                        Self: #styler<Output = Self>
                 }
             },
             |name| quote! { fn #name(&mut self, before: &impl #styler_index) },
@@ -431,7 +431,7 @@ impl Styler {
                 quote! {
                     fn #name(mut self) -> Self
                     where
-                        Self: Styler<Output = Self>
+                        Self: #styler<Output = Self>
                 }
             },
             |name| quote! { fn #name(&mut self) },
