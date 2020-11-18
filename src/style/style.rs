@@ -55,6 +55,12 @@ impl Style {
     };
 }
 
+// ========================================================================== //
+// ========================================================================== //
+// Conversions                                                                //
+// ========================================================================== //
+// ========================================================================== //
+
 /// Returns an empty `Style` with `Some(foreground)`.
 impl From<Foreground> for Style {
     /// Returns an empty `Style` with `Some(foreground)`.
@@ -242,5 +248,211 @@ impl From<Border> for Style {
             blink:      None,
             border:     Some(border),
         }
+    }
+}
+
+// ========================================================================== //
+// ========================================================================== //
+// Styler* traits                                                             //
+// ========================================================================== //
+// ========================================================================== //
+
+impl StylerIndex for Style {
+    fn get_foreground(&self) -> Option<Foreground> {
+        self.foreground
+    }
+
+    fn get_background(&self) -> Option<Background> {
+        self.background
+    }
+
+    fn get_weight(&self) -> Option<Weight> {
+        self.weight
+    }
+
+    fn get_slant(&self) -> Option<Slant> {
+        self.slant
+    }
+
+    fn get_underline(&self) -> Option<Underline> {
+        self.underline
+    }
+
+    fn get_strike(&self) -> Option<Strike> {
+        self.strike
+    }
+
+    fn get_overline(&self) -> Option<Overline> {
+        self.overline
+    }
+
+    fn get_invert(&self) -> Option<Invert> {
+        self.invert
+    }
+
+    fn get_blink(&self) -> Option<Blink> {
+        self.blink
+    }
+
+    fn get_border(&self) -> Option<Border> {
+        self.border
+    }
+}
+
+impl StylerIndexMut for Style {
+    fn get_foreground_mut(&mut self) -> &mut Option<Foreground> {
+        &mut self.foreground
+    }
+
+    fn get_background_mut(&mut self) -> &mut Option<Background> {
+        &mut self.background
+    }
+
+    fn get_weight_mut(&mut self) -> &mut Option<Weight> {
+        &mut self.weight
+    }
+
+    fn get_slant_mut(&mut self) -> &mut Option<Slant> {
+        &mut self.slant
+    }
+
+    fn get_underline_mut(&mut self) -> &mut Option<Underline> {
+        &mut self.underline
+    }
+
+    fn get_strike_mut(&mut self) -> &mut Option<Strike> {
+        &mut self.strike
+    }
+
+    fn get_overline_mut(&mut self) -> &mut Option<Overline> {
+        &mut self.overline
+    }
+
+    fn get_invert_mut(&mut self) -> &mut Option<Invert> {
+        &mut self.invert
+    }
+
+    fn get_blink_mut(&mut self) -> &mut Option<Blink> {
+        &mut self.blink
+    }
+
+    fn get_border_mut(&mut self) -> &mut Option<Border> {
+        &mut self.border
+    }
+}
+
+impl Styler for Style {
+    type Output = Self;
+
+    fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
+        Style {
+            foreground: foreground.into(),
+            ..self
+        }
+    }
+
+    fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
+        Style {
+            background: background.into(),
+            ..self
+        }
+    }
+
+    fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
+        Style {
+            weight: weight.into(),
+            ..self
+        }
+    }
+
+    fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
+        Style {
+            slant: slant.into(),
+            ..self
+        }
+    }
+
+    fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
+        Style {
+            underline: underline.into(),
+            ..self
+        }
+    }
+
+    fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
+        Style {
+            strike: strike.into(),
+            ..self
+        }
+    }
+
+    fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
+        Style {
+            overline: overline.into(),
+            ..self
+        }
+    }
+
+    fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
+        Style {
+            invert: invert.into(),
+            ..self
+        }
+    }
+
+    fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
+        Style {
+            blink: blink.into(),
+            ..self
+        }
+    }
+
+    fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
+        Style {
+            border: border.into(),
+            ..self
+        }
+    }
+}
+
+impl StylerMut for Style {
+    fn foreground_mut(&mut self, foreground: impl Into<Option<Foreground>>) {
+        self.foreground = foreground.into();
+    }
+
+    fn background_mut(&mut self, background: impl Into<Option<Background>>) {
+        self.background = background.into();
+    }
+
+    fn weight_mut(&mut self, weight: impl Into<Option<Weight>>) {
+        self.weight = weight.into();
+    }
+
+    fn slant_mut(&mut self, slant: impl Into<Option<Slant>>) {
+        self.slant = slant.into();
+    }
+
+    fn underline_mut(&mut self, underline: impl Into<Option<Underline>>) {
+        self.underline = underline.into();
+    }
+
+    fn strike_mut(&mut self, strike: impl Into<Option<Strike>>) {
+        self.strike = strike.into();
+    }
+
+    fn overline_mut(&mut self, overline: impl Into<Option<Overline>>) {
+        self.overline = overline.into();
+    }
+
+    fn invert_mut(&mut self, invert: impl Into<Option<Invert>>) {
+        self.invert = invert.into();
+    }
+
+    fn blink_mut(&mut self, blink: impl Into<Option<Blink>>) {
+        self.blink = blink.into();
+    }
+
+    fn border_mut(&mut self, border: impl Into<Option<Border>>) {
+        self.border = border.into();
     }
 }

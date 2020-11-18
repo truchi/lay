@@ -166,7 +166,7 @@ impl Generation {
             let snake = &setter.snake;
             let set = &setter.fn_set.sign;
 
-            let style = self.all.iter().map(|field| {
+            let fields = self.all.iter().map(|field| {
                 let s = &field.snake;
 
                 if field == setter {
@@ -180,7 +180,7 @@ impl Generation {
                 }
             });
 
-            quote! { #set { Style { #(#style,)* } } }
+            quote! { #set { Style { #(#fields,)* } } }
         });
 
         quote! {
