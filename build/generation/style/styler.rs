@@ -92,16 +92,7 @@ impl Generation {
 
         let mapper = |f1: fn(&Attr) -> &StylerFn, f2: fn(&Variant) -> &StylerFn| {
             move |attribute: &Attr| {
-                let comment = comment!(
-                    "{sep} //
-                    {sep} //
-                    {attribute}{spaces} //
-                    {sep} //
-                    {sep} //",
-                    sep = "=".repeat(50),
-                    attribute = attribute,
-                    spaces = " ".repeat(50 - attribute.len())
-                );
+                let comment = centered_comment!(76, "{}", attribute);
                 let set = f1(attribute).full();
                 let variants = attribute.variants.iter().map(|variant| {
                     let set = f2(variant).full();
@@ -120,17 +111,7 @@ impl Generation {
             |attribute| &attribute.fn_set_mut,
             |variant| &variant.fn_set_mut,
         ));
-        let comment = "Additional functions";
-        let comment = comment!(
-            "{sep} //
-            {sep} //
-            {comment}{spaces} //
-            {sep} //
-            {sep} //",
-            sep = "=".repeat(50),
-            comment = comment,
-            spaces = " ".repeat(50 - comment.len())
-        );
+        let comment = centered_comment!(76, "Additional functions");
 
         (
             quote! {

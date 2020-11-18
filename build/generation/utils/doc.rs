@@ -15,6 +15,30 @@ macro_rules! comment {
     ($($arg:tt)+) => { $crate::generation::utils::Doc::comment(format!($($arg)+)) };
 }
 
+macro_rules! centered_comment {
+    ($col:literal, $($arg:tt)+) => {{
+        let text = format!($($arg)+);
+        let len = $col - 6 - text.len();
+        let (left, right) = if len % 2 == 0 {
+            (len / 2, len / 2)
+        } else {
+            (len / 2, len / 2 + 1)
+        };
+
+        comment!(
+            "{sep} //
+            {sep} //
+            {left}{text}{right} //
+            {sep} //
+            {sep} //",
+            sep = "=".repeat($col - 6),
+            text = text,
+            left = " ".repeat(left),
+            right = " ".repeat(right),
+        )
+    }};
+}
+
 pub const COMMENT_START: &str = "__COMMENT_START__";
 pub const COMMENT_END: &str = "__COMMENT_END__";
 

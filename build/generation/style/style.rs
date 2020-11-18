@@ -74,29 +74,8 @@ impl Generation {
             quote! { #get { self.#snake = #snake.into(); } }
         });
 
-        let comment_conversions = "Conversions";
-        let comment_conversions = comment!(
-            "{sep} //
-            {sep} //
-            {comment_conversions}{spaces} //
-            {sep} //
-            {sep} //",
-            sep = "=".repeat(74),
-            comment_conversions = comment_conversions,
-            spaces = " ".repeat(74 - comment_conversions.len())
-        );
-
-        let comment_styler = "Styler* traits";
-        let comment_styler = comment!(
-            "{sep} //
-            {sep} //
-            {comment_styler}{spaces} //
-            {sep} //
-            {sep} //",
-            sep = "=".repeat(74),
-            comment_styler = comment_styler,
-            spaces = " ".repeat(74 - comment_styler.len())
-        );
+        let comment_conversions = centered_comment!(80, "Conversions");
+        let comment_styler = centered_comment!(80, "Styler* traits");
 
         quote! {
             use crate::*;

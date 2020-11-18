@@ -69,28 +69,8 @@ impl Generation {
             .iter()
             .map(|attribute| self.display_attribute(attribute));
 
-        let comment_conversions = "Conversions";
-        let comment_conversions = comment!(
-            "{sep} //
-            {sep} //
-            {comment_conversions}{spaces} //
-            {sep} //
-            {sep} //",
-            sep = "=".repeat(74),
-            comment_conversions = comment_conversions,
-            spaces = " ".repeat(74 - comment_conversions.len())
-        );
-        let comment_displays = "Displays";
-        let comment_displays = comment!(
-            "{sep} //
-            {sep} //
-            {comment_displays}{spaces} //
-            {sep} //
-            {sep} //",
-            sep = "=".repeat(74),
-            comment_displays = comment_displays,
-            spaces = " ".repeat(74 - comment_displays.len())
-        );
+        let comment_conversions = centered_comment!(80, "Conversions");
+        let comment_displays = centered_comment!(80, "Displays");
 
         quote! {
             use crate::*;
