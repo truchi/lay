@@ -145,6 +145,14 @@ impl From<Border> for crossterm::style::Attribute {
 // ========================================================================== //
 // ========================================================================== //
 
+/// `Display`s `Reset` with `crossterm`.
+impl Display for Reset {
+    /// `Display`s `Reset` with `crossterm`.
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
+    }
+}
+
 /// `Display`s `Foreground` with `crossterm`.
 impl Display for Foreground {
     /// `Display`s `Foreground` with `crossterm`.

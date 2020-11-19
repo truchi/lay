@@ -72,6 +72,7 @@ impl Generation {
             }
         });
 
+        let display_reset = self.display_reset();
         let display_foreground = self.display_ground(&self.foreground);
         let display_background = self.display_ground(&self.background);
         let display_attributes = self
@@ -115,6 +116,7 @@ impl Generation {
             #comment_displays
             #LINE_BREAK
 
+            #display_reset
             #display_foreground
             #display_background
             #(#display_attributes)*
@@ -150,6 +152,25 @@ impl Generation {
         quote! {
             #doc
             impl Display for #attribute {
+                #doc
+                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                    Display::fmt(
+                        &crossterm::style::SetAttribute((*self).into()),
+                        f,
+                    )
+                }
+            }
+            #LINE_BREAK
+        }
+    }
+
+    fn display_reset(&self) -> TokenStream {
+        let reset = &self.reset;
+        let doc = doc!("`Display`s `{}` with `crossterm`.", reset);
+
+        quote! {
+            #doc
+            impl Display for #reset {
                 #doc
                 fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
                     Display::fmt(
