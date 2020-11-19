@@ -1,0 +1,9 @@
+[package]
+name = "generation"
+version = "0.1.0"
+authors = ["Romain TRUCHI <romain.truchi.06@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+quote = "1.0"
+proc-macro2 = { version = "1.0", default-features = false }

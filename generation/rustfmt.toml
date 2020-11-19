@@ -1,0 +1,15 @@
+condense_wildcard_suffixes=true
+enum_discrim_align_threshold=20
+format_code_in_doc_comments=true
+format_macro_matchers=false
+imports_layout="HorizontalVertical"
+match_arm_blocks=false
+merge_imports=true
+# normalize_comments=true
+overflow_delimited_expr=true
+reorder_impl_items=true
+struct_field_align_threshold=20
+unstable_features=true
+use_field_init_shorthand=true
+use_try_shorthand=true
+wrap_comments=true
