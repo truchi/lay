@@ -33,10 +33,7 @@ impl Generation {
 
         // dir/backends/
         write(dir, "backends/crossterm.rs", self.backend_crossterm());
-        write(dir, "backends/mod.rs", quote! {
-            #[cfg(feature = "backend-crossterm")]
-            mod crossterm;
-        });
+        write(dir, "backends/mod.rs", self.mod_style_backends());
 
         // dir/styler/
         let (styler_index, styler_index_mut) = self.styler_index();
