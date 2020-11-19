@@ -101,25 +101,35 @@ impl Generation {
             &self.styler.reset_mut.full(),
         );
 
-        let mapper = |f1: fn(&Attr) -> &StylerFn, f2: fn(&Variant) -> &StylerFn| {
+        let mapper = |set: fn(&Attr) -> &StylerFn,
+                      none: fn(&Attr) -> &StylerFn,
+                      vset: fn(&Variant) -> &StylerFn| {
             move |attribute: &Attr| {
                 let comment = centered_comment!(76, "{}", attribute);
-                let set = f1(attribute).full();
+                let set = set(attribute).full();
                 let variants = attribute.variants.iter().map(|variant| {
-                    let set = f2(variant).full();
+                    let set = vset(variant).full();
                     quote! { #set #LINE_BREAK }
                 });
+                let none = none(attribute).full();
 
-                quote! { #comment #LINE_BREAK #set #LINE_BREAK #(#variants)* }
+                quote! {
+                    #comment #LINE_BREAK
+                    #set     #LINE_BREAK
+                    #none    #LINE_BREAK
+                    #(#variants)*
+                }
             }
         };
 
         let setters = self.all.iter().map(mapper(
             |attribute| &attribute.fn_set,
+            |attribute| &attribute.fn_none,
             |variant| &variant.fn_set,
         ));
         let setters_mut = self.all.iter().map(mapper(
             |attribute| &attribute.fn_set_mut,
+            |attribute| &attribute.fn_none_mut,
             |variant| &variant.fn_set_mut,
         ));
         let comment = centered_comment!(76, "Additional functions");
@@ -311,16 +321,16 @@ impl Generation {
             )
         };
 
-        let attributes = self.attributes.iter().map(|attribute| {
-            let set = if mutable {
-                &attribute.fn_set_mut
+        let attributes = self.all.iter().map(|attribute| {
+            let (set, none) = if mutable {
+                (&attribute.fn_set_mut, &attribute.fn_none_mut)
             } else {
-                &attribute.fn_set
+                (&attribute.fn_set, &attribute.fn_none)
             };
+
             let rhs = &attribute.name;
             let rhs_snake = &rhs.snake;
-
-            impl_op(
+            let yes = impl_op(
                 mutable,
                 &add,
                 &set.doc,
@@ -329,7 +339,24 @@ impl Generation {
                 Some(&rhs),
                 &output_self,
                 quote! { #the_trait::#set(self, #rhs_snake) },
-            )
+            );
+
+            let rhs = &Ident {
+                pascal: attribute.none.clone(),
+                snake:  Str::new("_"),
+            };
+            let no = impl_op(
+                mutable,
+                &add,
+                &none.doc,
+                ty,
+                bounds,
+                Some(&rhs),
+                &output_self,
+                quote! { #the_trait::#none(self) },
+            );
+
+            quote! { #yes #no }
         });
 
         let ops = |op, set: &StylerFn| {

@@ -16,6 +16,11 @@ pub trait StylerMut: StylerIndex {
     /// Sets `Option<Foreground>`, mutably.
     fn foreground_mut(&mut self, foreground: impl Into<Option<Foreground>>);
 
+    /// `None`s `Option<Foreground>`, mutably.
+    fn no_foreground_mut(&mut self) {
+        self.foreground_mut(None);
+    }
+
     /// Sets `Some(Foreground(Color::White))`, mutably.
     fn white_mut(&mut self) {
         self.foreground_mut(Some(Foreground(Color::White)));
@@ -119,6 +124,11 @@ pub trait StylerMut: StylerIndex {
 
     /// Sets `Option<Background>`, mutably.
     fn background_mut(&mut self, background: impl Into<Option<Background>>);
+
+    /// `None`s `Option<Background>`, mutably.
+    fn no_background_mut(&mut self) {
+        self.background_mut(None);
+    }
 
     /// Sets `Some(Background(Color::White))`, mutably.
     fn on_white_mut(&mut self) {
@@ -224,6 +234,11 @@ pub trait StylerMut: StylerIndex {
     /// Sets `Option<Weight>`, mutably.
     fn weight_mut(&mut self, weight: impl Into<Option<Weight>>);
 
+    /// `None`s `Option<Weight>`, mutably.
+    fn no_weight_mut(&mut self) {
+        self.weight_mut(None);
+    }
+
     /// Sets `Some(Weight::Bold)`, mutably.
     fn bold_mut(&mut self) {
         self.weight_mut(Some(Weight::Bold));
@@ -248,6 +263,11 @@ pub trait StylerMut: StylerIndex {
     /// Sets `Option<Slant>`, mutably.
     fn slant_mut(&mut self, slant: impl Into<Option<Slant>>);
 
+    /// `None`s `Option<Slant>`, mutably.
+    fn no_slant_mut(&mut self) {
+        self.slant_mut(None);
+    }
+
     /// Sets `Some(Slant::Italic)`, mutably.
     fn italic_mut(&mut self) {
         self.slant_mut(Some(Slant::Italic));
@@ -266,6 +286,11 @@ pub trait StylerMut: StylerIndex {
 
     /// Sets `Option<Underline>`, mutably.
     fn underline_mut(&mut self, underline: impl Into<Option<Underline>>);
+
+    /// `None`s `Option<Underline>`, mutably.
+    fn no_underline_mut(&mut self) {
+        self.underline_mut(None);
+    }
 
     /// Sets `Some(Underline::Underlined)`, mutably.
     fn underlined_mut(&mut self) {
@@ -286,6 +311,11 @@ pub trait StylerMut: StylerIndex {
     /// Sets `Option<Strike>`, mutably.
     fn strike_mut(&mut self, strike: impl Into<Option<Strike>>);
 
+    /// `None`s `Option<Strike>`, mutably.
+    fn no_strike_mut(&mut self) {
+        self.strike_mut(None);
+    }
+
     /// Sets `Some(Strike::Striked)`, mutably.
     fn striked_mut(&mut self) {
         self.strike_mut(Some(Strike::Striked));
@@ -304,6 +334,11 @@ pub trait StylerMut: StylerIndex {
 
     /// Sets `Option<Overline>`, mutably.
     fn overline_mut(&mut self, overline: impl Into<Option<Overline>>);
+
+    /// `None`s `Option<Overline>`, mutably.
+    fn no_overline_mut(&mut self) {
+        self.overline_mut(None);
+    }
 
     /// Sets `Some(Overline::Overlined)`, mutably.
     fn overlined_mut(&mut self) {
@@ -324,6 +359,11 @@ pub trait StylerMut: StylerIndex {
     /// Sets `Option<Invert>`, mutably.
     fn invert_mut(&mut self, invert: impl Into<Option<Invert>>);
 
+    /// `None`s `Option<Invert>`, mutably.
+    fn no_invert_mut(&mut self) {
+        self.invert_mut(None);
+    }
+
     /// Sets `Some(Invert::Inverted)`, mutably.
     fn inverted_mut(&mut self) {
         self.invert_mut(Some(Invert::Inverted));
@@ -342,6 +382,11 @@ pub trait StylerMut: StylerIndex {
 
     /// Sets `Option<Blink>`, mutably.
     fn blink_mut(&mut self, blink: impl Into<Option<Blink>>);
+
+    /// `None`s `Option<Blink>`, mutably.
+    fn no_blink_mut(&mut self) {
+        self.blink_mut(None);
+    }
 
     /// Sets `Some(Blink::Slow)`, mutably.
     fn slow_mut(&mut self) {
@@ -366,6 +411,11 @@ pub trait StylerMut: StylerIndex {
 
     /// Sets `Option<Border>`, mutably.
     fn border_mut(&mut self, border: impl Into<Option<Border>>);
+
+    /// `None`s `Option<Border>`, mutably.
+    fn no_border_mut(&mut self) {
+        self.border_mut(None);
+    }
 
     /// Sets `Some(Border::Circle)`, mutably.
     fn circle_mut(&mut self) {

@@ -212,6 +212,50 @@ impl<T: Display, Color: Into<Option<Background>>> Div<Color> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// Sets `Option<Foreground>`.
+impl<T: Display> Add<Foreground> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Foreground>`.
+    fn add(self, foreground: Foreground) -> Self {
+        Styler::foreground(self, foreground)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Foreground>`.
+impl<T: Display> Add<NoForeground> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Foreground>`.
+    fn add(self, _: NoForeground) -> Self {
+        Styler::no_foreground(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Background>`.
+impl<T: Display> Add<Background> for Styled<T> {
+    type Output = Self;
+
+    /// Sets `Option<Background>`.
+    fn add(self, background: Background) -> Self {
+        Styler::background(self, background)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Background>`.
+impl<T: Display> Add<NoBackground> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Background>`.
+    fn add(self, _: NoBackground) -> Self {
+        Styler::no_background(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Weight>`.
 impl<T: Display> Add<Weight> for Styled<T> {
     type Output = Self;
@@ -219,6 +263,17 @@ impl<T: Display> Add<Weight> for Styled<T> {
     /// Sets `Option<Weight>`.
     fn add(self, weight: Weight) -> Self {
         Styler::weight(self, weight)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Weight>`.
+impl<T: Display> Add<NoWeight> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Weight>`.
+    fn add(self, _: NoWeight) -> Self {
+        Styler::no_weight(self)
     }
 }
 
@@ -234,6 +289,17 @@ impl<T: Display> Add<Slant> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Slant>`.
+impl<T: Display> Add<NoSlant> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Slant>`.
+    fn add(self, _: NoSlant) -> Self {
+        Styler::no_slant(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Underline>`.
 impl<T: Display> Add<Underline> for Styled<T> {
     type Output = Self;
@@ -241,6 +307,17 @@ impl<T: Display> Add<Underline> for Styled<T> {
     /// Sets `Option<Underline>`.
     fn add(self, underline: Underline) -> Self {
         Styler::underline(self, underline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Underline>`.
+impl<T: Display> Add<NoUnderline> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Underline>`.
+    fn add(self, _: NoUnderline) -> Self {
+        Styler::no_underline(self)
     }
 }
 
@@ -256,6 +333,17 @@ impl<T: Display> Add<Strike> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Strike>`.
+impl<T: Display> Add<NoStrike> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Strike>`.
+    fn add(self, _: NoStrike) -> Self {
+        Styler::no_strike(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Overline>`.
 impl<T: Display> Add<Overline> for Styled<T> {
     type Output = Self;
@@ -263,6 +351,17 @@ impl<T: Display> Add<Overline> for Styled<T> {
     /// Sets `Option<Overline>`.
     fn add(self, overline: Overline) -> Self {
         Styler::overline(self, overline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Overline>`.
+impl<T: Display> Add<NoOverline> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Overline>`.
+    fn add(self, _: NoOverline) -> Self {
+        Styler::no_overline(self)
     }
 }
 
@@ -278,6 +377,17 @@ impl<T: Display> Add<Invert> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Invert>`.
+impl<T: Display> Add<NoInvert> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Invert>`.
+    fn add(self, _: NoInvert) -> Self {
+        Styler::no_invert(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Blink>`.
 impl<T: Display> Add<Blink> for Styled<T> {
     type Output = Self;
@@ -289,6 +399,17 @@ impl<T: Display> Add<Blink> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Blink>`.
+impl<T: Display> Add<NoBlink> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Blink>`.
+    fn add(self, _: NoBlink) -> Self {
+        Styler::no_blink(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Border>`.
 impl<T: Display> Add<Border> for Styled<T> {
     type Output = Self;
@@ -296,6 +417,17 @@ impl<T: Display> Add<Border> for Styled<T> {
     /// Sets `Option<Border>`.
     fn add(self, border: Border) -> Self {
         Styler::border(self, border)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Border>`.
+impl<T: Display> Add<NoBorder> for Styled<T> {
+    type Output = Self;
+
+    /// `None`s `Option<Border>`.
+    fn add(self, _: NoBorder) -> Self {
+        Styler::no_border(self)
     }
 }
 
@@ -384,11 +516,56 @@ impl<T: Display, Color: Into<Option<Background>>> DivAssign<Color> for Styled<T>
 }
 
 #[cfg(feature = "styler-ops")]
+/// Sets `Option<Foreground>`, mutably.
+impl<T: Display> AddAssign<Foreground> for Styled<T> {
+    /// Sets `Option<Foreground>`, mutably.
+    fn add_assign(&mut self, foreground: Foreground) {
+        StylerMut::foreground_mut(self, foreground)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Foreground>`, mutably.
+impl<T: Display> AddAssign<NoForeground> for Styled<T> {
+    /// `None`s `Option<Foreground>`, mutably.
+    fn add_assign(&mut self, _: NoForeground) {
+        StylerMut::no_foreground_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Background>`, mutably.
+impl<T: Display> AddAssign<Background> for Styled<T> {
+    /// Sets `Option<Background>`, mutably.
+    fn add_assign(&mut self, background: Background) {
+        StylerMut::background_mut(self, background)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Background>`, mutably.
+impl<T: Display> AddAssign<NoBackground> for Styled<T> {
+    /// `None`s `Option<Background>`, mutably.
+    fn add_assign(&mut self, _: NoBackground) {
+        StylerMut::no_background_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Weight>`, mutably.
 impl<T: Display> AddAssign<Weight> for Styled<T> {
     /// Sets `Option<Weight>`, mutably.
     fn add_assign(&mut self, weight: Weight) {
         StylerMut::weight_mut(self, weight)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Weight>`, mutably.
+impl<T: Display> AddAssign<NoWeight> for Styled<T> {
+    /// `None`s `Option<Weight>`, mutably.
+    fn add_assign(&mut self, _: NoWeight) {
+        StylerMut::no_weight_mut(self)
     }
 }
 
@@ -402,11 +579,29 @@ impl<T: Display> AddAssign<Slant> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Slant>`, mutably.
+impl<T: Display> AddAssign<NoSlant> for Styled<T> {
+    /// `None`s `Option<Slant>`, mutably.
+    fn add_assign(&mut self, _: NoSlant) {
+        StylerMut::no_slant_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Underline>`, mutably.
 impl<T: Display> AddAssign<Underline> for Styled<T> {
     /// Sets `Option<Underline>`, mutably.
     fn add_assign(&mut self, underline: Underline) {
         StylerMut::underline_mut(self, underline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Underline>`, mutably.
+impl<T: Display> AddAssign<NoUnderline> for Styled<T> {
+    /// `None`s `Option<Underline>`, mutably.
+    fn add_assign(&mut self, _: NoUnderline) {
+        StylerMut::no_underline_mut(self)
     }
 }
 
@@ -420,11 +615,29 @@ impl<T: Display> AddAssign<Strike> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Strike>`, mutably.
+impl<T: Display> AddAssign<NoStrike> for Styled<T> {
+    /// `None`s `Option<Strike>`, mutably.
+    fn add_assign(&mut self, _: NoStrike) {
+        StylerMut::no_strike_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Overline>`, mutably.
 impl<T: Display> AddAssign<Overline> for Styled<T> {
     /// Sets `Option<Overline>`, mutably.
     fn add_assign(&mut self, overline: Overline) {
         StylerMut::overline_mut(self, overline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Overline>`, mutably.
+impl<T: Display> AddAssign<NoOverline> for Styled<T> {
+    /// `None`s `Option<Overline>`, mutably.
+    fn add_assign(&mut self, _: NoOverline) {
+        StylerMut::no_overline_mut(self)
     }
 }
 
@@ -438,6 +651,15 @@ impl<T: Display> AddAssign<Invert> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Invert>`, mutably.
+impl<T: Display> AddAssign<NoInvert> for Styled<T> {
+    /// `None`s `Option<Invert>`, mutably.
+    fn add_assign(&mut self, _: NoInvert) {
+        StylerMut::no_invert_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Blink>`, mutably.
 impl<T: Display> AddAssign<Blink> for Styled<T> {
     /// Sets `Option<Blink>`, mutably.
@@ -447,11 +669,29 @@ impl<T: Display> AddAssign<Blink> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Blink>`, mutably.
+impl<T: Display> AddAssign<NoBlink> for Styled<T> {
+    /// `None`s `Option<Blink>`, mutably.
+    fn add_assign(&mut self, _: NoBlink) {
+        StylerMut::no_blink_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Border>`, mutably.
 impl<T: Display> AddAssign<Border> for Styled<T> {
     /// Sets `Option<Border>`, mutably.
     fn add_assign(&mut self, border: Border) {
         StylerMut::border_mut(self, border)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Border>`, mutably.
+impl<T: Display> AddAssign<NoBorder> for Styled<T> {
+    /// `None`s `Option<Border>`, mutably.
+    fn add_assign(&mut self, _: NoBorder) {
+        StylerMut::no_border_mut(self)
     }
 }
 

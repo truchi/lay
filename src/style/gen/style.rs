@@ -533,6 +533,50 @@ impl<Color: Into<Option<Background>>> Div<Color> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// Sets `Option<Foreground>`.
+impl Add<Foreground> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Foreground>`.
+    fn add(self, foreground: Foreground) -> Self {
+        Styler::foreground(self, foreground)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Foreground>`.
+impl Add<NoForeground> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Foreground>`.
+    fn add(self, _: NoForeground) -> Self {
+        Styler::no_foreground(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Background>`.
+impl Add<Background> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Background>`.
+    fn add(self, background: Background) -> Self {
+        Styler::background(self, background)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Background>`.
+impl Add<NoBackground> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Background>`.
+    fn add(self, _: NoBackground) -> Self {
+        Styler::no_background(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Weight>`.
 impl Add<Weight> for Style {
     type Output = Self;
@@ -540,6 +584,17 @@ impl Add<Weight> for Style {
     /// Sets `Option<Weight>`.
     fn add(self, weight: Weight) -> Self {
         Styler::weight(self, weight)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Weight>`.
+impl Add<NoWeight> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Weight>`.
+    fn add(self, _: NoWeight) -> Self {
+        Styler::no_weight(self)
     }
 }
 
@@ -555,6 +610,17 @@ impl Add<Slant> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Slant>`.
+impl Add<NoSlant> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Slant>`.
+    fn add(self, _: NoSlant) -> Self {
+        Styler::no_slant(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Underline>`.
 impl Add<Underline> for Style {
     type Output = Self;
@@ -562,6 +628,17 @@ impl Add<Underline> for Style {
     /// Sets `Option<Underline>`.
     fn add(self, underline: Underline) -> Self {
         Styler::underline(self, underline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Underline>`.
+impl Add<NoUnderline> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Underline>`.
+    fn add(self, _: NoUnderline) -> Self {
+        Styler::no_underline(self)
     }
 }
 
@@ -577,6 +654,17 @@ impl Add<Strike> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Strike>`.
+impl Add<NoStrike> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Strike>`.
+    fn add(self, _: NoStrike) -> Self {
+        Styler::no_strike(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Overline>`.
 impl Add<Overline> for Style {
     type Output = Self;
@@ -584,6 +672,17 @@ impl Add<Overline> for Style {
     /// Sets `Option<Overline>`.
     fn add(self, overline: Overline) -> Self {
         Styler::overline(self, overline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Overline>`.
+impl Add<NoOverline> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Overline>`.
+    fn add(self, _: NoOverline) -> Self {
+        Styler::no_overline(self)
     }
 }
 
@@ -599,6 +698,17 @@ impl Add<Invert> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Invert>`.
+impl Add<NoInvert> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Invert>`.
+    fn add(self, _: NoInvert) -> Self {
+        Styler::no_invert(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Blink>`.
 impl Add<Blink> for Style {
     type Output = Self;
@@ -610,6 +720,17 @@ impl Add<Blink> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Blink>`.
+impl Add<NoBlink> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Blink>`.
+    fn add(self, _: NoBlink) -> Self {
+        Styler::no_blink(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Border>`.
 impl Add<Border> for Style {
     type Output = Self;
@@ -617,6 +738,17 @@ impl Add<Border> for Style {
     /// Sets `Option<Border>`.
     fn add(self, border: Border) -> Self {
         Styler::border(self, border)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Border>`.
+impl Add<NoBorder> for Style {
+    type Output = Self;
+
+    /// `None`s `Option<Border>`.
+    fn add(self, _: NoBorder) -> Self {
+        Styler::no_border(self)
     }
 }
 
@@ -705,11 +837,56 @@ impl<Color: Into<Option<Background>>> DivAssign<Color> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// Sets `Option<Foreground>`, mutably.
+impl AddAssign<Foreground> for Style {
+    /// Sets `Option<Foreground>`, mutably.
+    fn add_assign(&mut self, foreground: Foreground) {
+        StylerMut::foreground_mut(self, foreground)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Foreground>`, mutably.
+impl AddAssign<NoForeground> for Style {
+    /// `None`s `Option<Foreground>`, mutably.
+    fn add_assign(&mut self, _: NoForeground) {
+        StylerMut::no_foreground_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Background>`, mutably.
+impl AddAssign<Background> for Style {
+    /// Sets `Option<Background>`, mutably.
+    fn add_assign(&mut self, background: Background) {
+        StylerMut::background_mut(self, background)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Background>`, mutably.
+impl AddAssign<NoBackground> for Style {
+    /// `None`s `Option<Background>`, mutably.
+    fn add_assign(&mut self, _: NoBackground) {
+        StylerMut::no_background_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Weight>`, mutably.
 impl AddAssign<Weight> for Style {
     /// Sets `Option<Weight>`, mutably.
     fn add_assign(&mut self, weight: Weight) {
         StylerMut::weight_mut(self, weight)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Weight>`, mutably.
+impl AddAssign<NoWeight> for Style {
+    /// `None`s `Option<Weight>`, mutably.
+    fn add_assign(&mut self, _: NoWeight) {
+        StylerMut::no_weight_mut(self)
     }
 }
 
@@ -723,11 +900,29 @@ impl AddAssign<Slant> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Slant>`, mutably.
+impl AddAssign<NoSlant> for Style {
+    /// `None`s `Option<Slant>`, mutably.
+    fn add_assign(&mut self, _: NoSlant) {
+        StylerMut::no_slant_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Underline>`, mutably.
 impl AddAssign<Underline> for Style {
     /// Sets `Option<Underline>`, mutably.
     fn add_assign(&mut self, underline: Underline) {
         StylerMut::underline_mut(self, underline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Underline>`, mutably.
+impl AddAssign<NoUnderline> for Style {
+    /// `None`s `Option<Underline>`, mutably.
+    fn add_assign(&mut self, _: NoUnderline) {
+        StylerMut::no_underline_mut(self)
     }
 }
 
@@ -741,11 +936,29 @@ impl AddAssign<Strike> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Strike>`, mutably.
+impl AddAssign<NoStrike> for Style {
+    /// `None`s `Option<Strike>`, mutably.
+    fn add_assign(&mut self, _: NoStrike) {
+        StylerMut::no_strike_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Overline>`, mutably.
 impl AddAssign<Overline> for Style {
     /// Sets `Option<Overline>`, mutably.
     fn add_assign(&mut self, overline: Overline) {
         StylerMut::overline_mut(self, overline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Overline>`, mutably.
+impl AddAssign<NoOverline> for Style {
+    /// `None`s `Option<Overline>`, mutably.
+    fn add_assign(&mut self, _: NoOverline) {
+        StylerMut::no_overline_mut(self)
     }
 }
 
@@ -759,6 +972,15 @@ impl AddAssign<Invert> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Invert>`, mutably.
+impl AddAssign<NoInvert> for Style {
+    /// `None`s `Option<Invert>`, mutably.
+    fn add_assign(&mut self, _: NoInvert) {
+        StylerMut::no_invert_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Blink>`, mutably.
 impl AddAssign<Blink> for Style {
     /// Sets `Option<Blink>`, mutably.
@@ -768,11 +990,29 @@ impl AddAssign<Blink> for Style {
 }
 
 #[cfg(feature = "styler-ops")]
+/// `None`s `Option<Blink>`, mutably.
+impl AddAssign<NoBlink> for Style {
+    /// `None`s `Option<Blink>`, mutably.
+    fn add_assign(&mut self, _: NoBlink) {
+        StylerMut::no_blink_mut(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 /// Sets `Option<Border>`, mutably.
 impl AddAssign<Border> for Style {
     /// Sets `Option<Border>`, mutably.
     fn add_assign(&mut self, border: Border) {
         StylerMut::border_mut(self, border)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `None`s `Option<Border>`, mutably.
+impl AddAssign<NoBorder> for Style {
+    /// `None`s `Option<Border>`, mutably.
+    fn add_assign(&mut self, _: NoBorder) {
+        StylerMut::no_border_mut(self)
     }
 }
 
