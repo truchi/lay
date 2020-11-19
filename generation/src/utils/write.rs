@@ -1,10 +1,8 @@
 use crate::*;
 use std::{
-    fs::{create_dir_all, read, File},
-    io::{prelude::*, Write},
+    fs::{create_dir_all, File},
+    io::Write,
     path::{Path, PathBuf},
-    process::{Command, Stdio},
-    str::from_utf8,
 };
 
 pub const LINE_BREAK: &str = "__LINE_BREAK__";
@@ -16,11 +14,6 @@ const HEADER: &str = "
     ////////////////////////////////////////////////////////////////////////////////
 ";
 
-const DECORATIONS: &str = "🚧";
-
-const TAG_START: &str = "\n// @generate";
-const TAG_END: &str = "\n// /generate";
-
 pub fn write(dir: &str, path: &str, content: TokenStream) {
     let content = format!("{}\n\n{}", HEADER, pre(content));
     let path = make_dir(dir, path);
@@ -29,51 +22,7 @@ pub fn write(dir: &str, path: &str, content: TokenStream) {
         .expect(&format!("Cannot create file: {:?}", path))
         .write_all(content.as_bytes())
         .expect(&format!("Cannot write in file: {:?}", path));
-
-    Command::new("rustfmt")
-        .arg(&path)
-        .output()
-        .expect(&format!("Cannot run rustfmt on file: {:?}", path));
 }
-
-pub fn write_part(dir: &str, path: &str, tag: &str, content: TokenStream) {
-    let path = make_dir(dir, path);
-    let file = read(&path).expect(&format!("Cannot read file: {:?}", path));
-    let file = from_utf8(&file).expect(&format!("Invalid UTF-8 in file: {:?}", file));
-
-    let tag_start = format!("{} {}", TAG_START, tag);
-    let tag_end = format!("{} {}", TAG_END, tag);
-
-    let start = file
-        .find(&tag_start)
-        .expect(&format!("Missing {:?} in file: {:?}", tag_start, path));
-    let before = &file[..start];
-    let after = &file[start..];
-
-    let end = after
-        .find(&tag_end)
-        .expect(&format!("Missing {:?} in file: {:?}", tag_end, path));
-    let after = &after[end + tag_end.len()..];
-
-    let content = pre(content);
-    let content = decorate(content.trim());
-    let content = format!("{}\n{}\n{}\n", tag_start, content.trim(), tag_end);
-    let content = before.to_string() + "\n" + &content + after;
-
-    File::create(&path)
-        .expect(&format!("Cannot create file: {:?}", path))
-        .write_all(content.as_bytes())
-        .expect(&format!("Cannot write in file: {:?}", path));
-
-    Command::new("rustfmt")
-        .arg(&path)
-        .output()
-        .expect(&format!("Cannot run rustfmt on file: {:?}", path));
-}
-
-// ======= //
-// Helpers //
-// ======= //
 
 fn pre(tokens: TokenStream) -> String {
     let string = tokens
@@ -93,75 +42,4 @@ fn make_dir(dir: &str, p: &str) -> PathBuf {
     create_dir_all(dir).expect(&format!("Cannot create location: {:?}", dir));
 
     path.to_path_buf()
-}
-
-fn decorate(content: &str) -> String {
-    // First, format
-    let content = format(&content);
-    // Add "//" at the end of each lines
-    let content: String = content
-        .lines()
-        .map(|line| format!("{} //\n", line))
-        .collect();
-    // Format again
-    let content = format(&content);
-
-    // Remove unwanted empty lines,
-    // and get lines max length
-    let (content, max, _) = content.lines().fold(
-        (String::with_capacity(content.len()), 0, None),
-        |(mut content, max, prev_comment), line| {
-            let comment = line.find("//");
-
-            if line.trim() == "//" {
-                if prev_comment.is_some() {
-                    // Regular empty line
-                    // Don't show decorations
-                    content.push_str("\n");
-                } else {
-                    // This empty line was created by rustfmt
-                    // Replace with nothing
-                }
-
-                (content, max, comment)
-            } else {
-                content.push_str(line);
-                content.push_str("\n");
-
-                (content, max.max(line.len()), comment)
-            }
-        },
-    );
-
-    // Add decorations at the end of non empty lines
-    content
-        .lines()
-        .map(|line| match line.rfind("//") {
-            Some(x) if x == line.len() - 2 =>
-                format!("{}{} {}\n", line, " ".repeat(max - line.len()), DECORATIONS),
-            _ => format!("{}\n", line),
-        })
-        .collect()
-}
-
-/// Formats with rustfmt without writing to file
-fn format(unformatted: &str) -> String {
-    let fmt = Command::new("rustfmt")
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Cannot spawn rustfmt");
-
-    fmt.stdin
-        .unwrap()
-        .write_all(unformatted.as_bytes())
-        .expect("Cannot write to rustfmt stdin");
-
-    let mut formatted = String::with_capacity(unformatted.len());
-    fmt.stdout
-        .unwrap()
-        .read_to_string(&mut formatted)
-        .expect("Cannot read rustfmt stdout");
-
-    formatted
 }

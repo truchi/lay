@@ -1,3 +1,6 @@
 #!/bin/sh
 
-cd generation && cargo run --release
+cd generation
+cargo run "$1" 
+cd ..
+rustfmt src/*.rs
