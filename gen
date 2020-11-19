@@ -1,6 +1,4 @@
 #!/bin/sh
 
-cd generation
-cargo run "$1" 
-cd ..
+(cd generation && cargo run --quiet "$1")
 rustfmt src/*.rs

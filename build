@@ -1,0 +1,26 @@
+#!/bin/sh
+
+pretty_print() {
+  TEXT=$1
+  BLUE='\033[0;34m'
+  NC='\033[0m'
+
+  echo "$BLUE>> $TEXT$NC"
+}
+
+pretty_print "Generation"
+./gen --release
+
+pretty_print "Build"
+cargo build --release --quiet
+
+pretty_print "Tests"
+cargo test --release --quiet
+
+pretty_print "Doc"
+cargo doc --release --quiet
+echo "file:$PWD/target/doc/lay/index.html"
+
+pretty_print "Generation doc"
+(cd generation && cargo doc --release --quiet)
+echo "file:$PWD/generation/target/doc/generation/index.html"
