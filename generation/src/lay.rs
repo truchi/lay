@@ -604,7 +604,6 @@ pub enum AttrType {
 pub struct Attr {
     pub ty:          AttrType,
     pub name:        Ident,
-    pub short:       Str,
     pub none:        Str,
     pub variants:    Vec<Variant>,
     pub reset:       Variant,
@@ -623,13 +622,12 @@ derefs!(self Attr {
 });
 
 impl Attr {
-    pub fn new(ty: AttrType, short: Str, name: Ident, variants: Vec<(Ident, Vec<&str>)>) -> Self {
+    pub fn new(ty: AttrType, name: Ident, variants: Vec<(Ident, Vec<&str>)>) -> Self {
         let new = || {
             let none = Str::new(&format!("{}{}", Lay::NONE, &name));
 
             Self {
                 ty,
-                short,
                 name,
                 none,
                 variants: Default::default(),
@@ -670,21 +668,19 @@ impl Attr {
     }
 
     pub fn grounds(colors: Vec<(Ident, Vec<&str>)>) -> (Self, Self) {
-        let fg = Str::new(Lay::FOREGROUND.0);
-        let foreground = Ident::new(&[Lay::FOREGROUND.1]);
-        let foreground = Attr::new(AttrType::Foreground, fg, foreground, colors.clone());
+        let foreground = Ident::new(&[Lay::FOREGROUND]);
+        let foreground = Attr::new(AttrType::Foreground, foreground, colors.clone());
 
-        let bg = Str::new(Lay::BACKGROUND.0);
-        let background = Ident::new(&[Lay::BACKGROUND.1]);
-        let background = Attr::new(AttrType::Background, bg, background, colors);
+        let background = Ident::new(&[Lay::BACKGROUND]);
+        let background = Attr::new(AttrType::Background, background, colors);
 
         (foreground, background)
     }
 
-    pub fn attributes(attributes: Vec<(Str, Ident, Vec<(Ident, Vec<&str>)>)>) -> Vec<Self> {
+    pub fn attributes(attributes: Vec<(Ident, Vec<(Ident, Vec<&str>)>)>) -> Vec<Self> {
         attributes
             .into_iter()
-            .map(|(short, name, fields)| Attr::new(AttrType::Attribute, short, name, fields))
+            .map(|(name, fields)| Attr::new(AttrType::Attribute, name, fields))
             .collect()
     }
 }
@@ -721,10 +717,9 @@ impl Lay {
             .chain(vec![(Ident::new(&[Self::RESET, Self::COLOR]), vec![])])
             .collect::<Vec<_>>();
 
-        let attributes: Vec<(Str, Ident, Vec<(Ident, Vec<&str>)>)> = Self::ATTRIBUTES
+        let attributes: Vec<(Ident, Vec<(Ident, Vec<&str>)>)> = Self::ATTRIBUTES
             .iter()
-            .map(|(short, name, variants)| {
-                let short = Str::new(short);
+            .map(|(name, variants)| {
                 let name = Ident::new(&[name]);
 
                 let variants = variants
@@ -733,7 +728,7 @@ impl Lay {
                     .chain(vec![(Ident::new(&[Self::RESET, &name]), vec![])])
                     .collect();
 
-                (short, name, variants)
+                (name, variants)
             })
             .collect::<Vec<_>>();
 

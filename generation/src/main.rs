@@ -30,17 +30,17 @@ impl Variant {
 }
 
 impl Lay {
-    const ATTRIBUTES: &'static [(&'static str, &'static str, &'static [&'static str])] = &[
-        ("Wgt", "Weight", &["Bold", "Light"]),
-        ("Slt", "Slant", &["Italic"]),
-        ("Udl", "Underline", &["Underlined"]),
-        ("Str", "Strike", &["Striked"]),
-        ("Ovl", "Overline", &["Overlined"]),
-        ("Inv", "Invert", &["Inverted"]),
-        ("Blk", "Blink", &["Slow", "Fast"]),
-        ("Brd", "Border", &["Circle", "Frame"]),
+    const ATTRIBUTES: &'static [(&'static str, &'static [&'static str])] = &[
+        ("Weight", &["Bold", "Light"]),
+        ("Slant", &["Italic"]),
+        ("Underline", &["Underlined"]),
+        ("Strike", &["Striked"]),
+        ("Overline", &["Overlined"]),
+        ("Invert", &["Inverted"]),
+        ("Blink", &["Slow", "Fast"]),
+        ("Border", &["Circle", "Frame"]),
     ];
-    const BACKGROUND: (&'static str, &'static str) = ("Bg", "Background");
+    const BACKGROUND: &'static str = "Background";
     const COLOR: &'static str = "Color";
     const COLORS: &'static [(&'static [&'static str], &'static [&'static str])] = &[
         (&["White"], &[]),
@@ -62,7 +62,7 @@ impl Lay {
         (&["Rgb"], &["r", "g", "b"]),
         (&["Ansi"], &["ansi"]),
     ];
-    const FOREGROUND: (&'static str, &'static str) = ("Fg", "Foreground");
+    const FOREGROUND: &'static str = "Foreground";
     const INDEX: &'static str = "I";
     const NONE: &'static str = "No";
     const RESET: &'static str = "Reset";

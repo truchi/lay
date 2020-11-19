@@ -17,22 +17,6 @@ pub use reset::*;
 pub use style::*;
 pub use styler::*;
 
-#[cfg(feature = "styler-idx")]
-pub mod i;
-#[cfg(feature = "styler-idx")]
-pub use i::{
-    Background as Bg,
-    Blink as Blk,
-    Border as Brd,
-    Foreground as Fg,
-    Invert as Inv,
-    Overline as Ovl,
-    Slant as Slt,
-    Strike as Str,
-    Underline as Udl,
-    Weight as Wgt,
-};
-
 #[cfg(feature = "styler-ops")]
 pub mod no;
 #[cfg(feature = "styler-ops")]
