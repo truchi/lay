@@ -70,7 +70,7 @@ impl Lay {
 
 /// Generation
 #[derive(Clone, Debug)]
-pub struct Generation(Lay);
+struct Generation(Lay);
 
 impl Deref for Generation {
     type Target = Lay;
@@ -88,46 +88,65 @@ fn main() {
     let gen = Generation(Lay::new());
     // panic!("{:#?}", gen);
 
-    // style/attributes/
+    // style/gen/attributes/
     for ground in &gen.grounds {
         write(
             dir,
-            &format!("style/attributes/{}.rs", ground.snake),
+            &format!("style/gen/attributes/{}.rs", ground.snake),
             gen.ground(ground),
         );
     }
     for attribute in &gen.attributes {
         write(
             dir,
-            &format!("style/attributes/{}.rs", attribute.snake),
+            &format!("style/gen/attributes/{}.rs", attribute.snake),
             gen.attr(attribute),
         );
     }
     write(
         dir,
-        &format!("style/attributes/mod.rs"),
+        &format!("style/gen/attributes/mod.rs"),
         gen.mod_style_attributes(),
     );
 
-    // style/backends/
-    write(dir, "style/backends/crossterm.rs", gen.backend_crossterm());
-    write(dir, "style/backends/mod.rs", gen.mod_style_backends());
+    // style/gen/backends/
+    write(
+        dir,
+        "style/gen/backends/crossterm.rs",
+        gen.backend_crossterm(),
+    );
+    write(dir, "style/gen/backends/mod.rs", quote! {
+        #[cfg(feature = "backend-crossterm")]
+        mod crossterm;
+    });
 
-    // style/styler/
+    // style/gen/styler/
     let (styler_index, styler_index_mut) = gen.styler_index();
     let (styler, styler_mut) = gen.styler();
-    write(dir, "style/styler/styler_index.rs", styler_index);
-    write(dir, "style/styler/styler_index_mut.rs", styler_index_mut);
-    write(dir, "style/styler/styler.rs", styler);
-    write(dir, "style/styler/styler_mut.rs", styler_mut);
-    write(dir, "style/styler/mod.rs", gen.mod_style_styler());
+    write(dir, "style/gen/styler/styler_index.rs", styler_index);
+    write(
+        dir,
+        "style/gen/styler/styler_index_mut.rs",
+        styler_index_mut,
+    );
+    write(dir, "style/gen/styler/styler.rs", styler);
+    write(dir, "style/gen/styler/styler_mut.rs", styler_mut);
+    write(dir, "style/gen/styler/mod.rs", gen.mod_style_styler());
 
-    // style/
-    write(dir, &format!("style/{}.rs", gen.color.snake), gen.color());
-    write(dir, &format!("style/{}.rs", gen.reset.snake), gen.reset());
-    write(dir, &format!("style/{}.rs", gen.index.snake), gen.i());
-    write(dir, &format!("style/{}.rs", gen.none.snake), gen.no());
-    write(dir, "style/style.rs", gen.style());
+    // style/gen/
+    write(
+        dir,
+        &format!("style/gen/{}.rs", gen.color.snake),
+        gen.color(),
+    );
+    write(
+        dir,
+        &format!("style/gen/{}.rs", gen.reset.snake),
+        gen.reset(),
+    );
+    write(dir, &format!("style/gen/{}.rs", gen.index.snake), gen.i());
+    write(dir, &format!("style/gen/{}.rs", gen.none.snake), gen.no());
+    write(dir, "style/gen/style.rs", gen.style());
     let styled_impls = (
         &Str::new("Styled<T>"),
         &[quote! { T: Display }][..],
@@ -135,7 +154,7 @@ fn main() {
     );
     write(
         dir,
-        "style/styled_impls.rs",
+        "style/gen/styled_impls.rs",
         concat(&[
             quote! {
                 use crate::*;
@@ -152,7 +171,30 @@ fn main() {
             gen.impl_styler_ops(styled_impls, true),
         ]),
     );
-    write_part(dir, "style/mod.rs", "import_markers", gen.import_markers());
+    write(
+        dir,
+        "style/gen/mod.rs",
+        concat(&[
+            quote! {
+                pub mod attributes;
+                mod backends;
+                mod color;
+                mod reset;
+                mod style;
+                mod styled_impls;
+                mod styler;
+                #LINE_BREAK
+
+                pub use attributes::*;
+                pub use color::*;
+                pub use reset::*;
+                pub use style::*;
+                pub use styler::*;
+                #LINE_BREAK
+            },
+            gen.import_markers(),
+        ]),
+    );
 }
 
 fn concat(streams: &[TokenStream]) -> TokenStream {

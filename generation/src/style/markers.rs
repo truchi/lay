@@ -7,7 +7,6 @@ impl Generation {
             .iter()
             .map(|attribute| (&attribute.name.pascal, &attribute.short, &attribute.none))
             .collect::<Vec<_>>();
-        //
 
         let make = |feature, mod_name, exports: &mut dyn Iterator<Item = _>| {
             let exports = exports.map(|(attribute, export)| quote! { #attribute as #export });
