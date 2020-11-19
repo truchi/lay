@@ -86,12 +86,18 @@ impl Generation {
             quote! { #get { self.#snake = #snake.into(); } }
         });
 
+        let style_impls = (&Str::new("Style"), &[][..], &Str::new(""));
+        let styler_ops = self.impl_styler_ops(style_impls, false);
+        let styler_mut_ops = self.impl_styler_ops(style_impls, true);
+
         let comment_conversions = centered_comment!(80, "Conversions");
         let comment_styler = centered_comment!(80, "Styler* traits");
 
         quote! {
             use crate::*;
             use std::fmt::{Display, Error, Formatter};
+            // FIXME
+            use std::ops::Not;
             #LINE_BREAK
 
             /// `Style`s.
@@ -157,6 +163,9 @@ impl Generation {
                 #(#impl_styler_mut)*
             }
             #LINE_BREAK
+
+            #styler_ops
+            #styler_mut_ops
         }
     }
 }

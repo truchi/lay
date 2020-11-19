@@ -4,7 +4,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
-use std::fmt::{Display, Error, Formatter};
+use std::{
+    fmt::{Display, Error, Formatter},
+    ops::Not,
+};
 
 /// `Style`s.
 ///
@@ -501,5 +504,322 @@ impl StylerMut for Style {
 
     fn border_mut(&mut self, border: impl Into<Option<Border>>) {
         self.border = border.into();
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+use std::ops::{Add, BitAnd, BitOr, BitXor, Div, Mul, Rem};
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Foreground>`.
+impl<Color: Into<Option<Foreground>>> Mul<Color> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Foreground>`.
+    fn mul(self, foreground: Color) -> Self {
+        Styler::foreground(self, foreground)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Background>`.
+impl<Color: Into<Option<Background>>> Div<Color> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Background>`.
+    fn div(self, background: Color) -> Self {
+        Styler::background(self, background)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Weight>`.
+impl Add<Weight> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Weight>`.
+    fn add(self, weight: Weight) -> Self {
+        Styler::weight(self, weight)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Slant>`.
+impl Add<Slant> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Slant>`.
+    fn add(self, slant: Slant) -> Self {
+        Styler::slant(self, slant)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Underline>`.
+impl Add<Underline> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Underline>`.
+    fn add(self, underline: Underline) -> Self {
+        Styler::underline(self, underline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Strike>`.
+impl Add<Strike> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Strike>`.
+    fn add(self, strike: Strike) -> Self {
+        Styler::strike(self, strike)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Overline>`.
+impl Add<Overline> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Overline>`.
+    fn add(self, overline: Overline) -> Self {
+        Styler::overline(self, overline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Invert>`.
+impl Add<Invert> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Invert>`.
+    fn add(self, invert: Invert) -> Self {
+        Styler::invert(self, invert)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Blink>`.
+impl Add<Blink> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Blink>`.
+    fn add(self, blink: Blink) -> Self {
+        Styler::blink(self, blink)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Border>`.
+impl Add<Border> for Style {
+    type Output = Self;
+
+    /// Sets `Option<Border>`.
+    fn add(self, border: Border) -> Self {
+        Styler::border(self, border)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::and` fields.
+impl<Index: StylerIndex> BitAnd<&Index> for Style {
+    type Output = <<Self as Styler>::Output as Styler>::Output;
+
+    /// `Option::and` fields.
+    fn bitand(self, styler: &Index) -> <<Self as Styler>::Output as Styler>::Output {
+        Styler::and(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::or` fields.
+impl<Index: StylerIndex> BitOr<&Index> for Style {
+    type Output = <<Self as Styler>::Output as Styler>::Output;
+
+    /// `Option::or` fields.
+    fn bitor(self, styler: &Index) -> <<Self as Styler>::Output as Styler>::Output {
+        Styler::or(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::xor` fields.
+impl<Index: StylerIndex> BitXor<&Index> for Style {
+    type Output = <<Self as Styler>::Output as Styler>::Output;
+
+    /// `Option::xor` fields.
+    fn bitxor(self, styler: &Index) -> <<Self as Styler>::Output as Styler>::Output {
+        Styler::xor(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Dedups (`None`s if identicals) fields.
+impl<Index: StylerIndex> Rem<&Index> for Style {
+    type Output = Self;
+
+    /// Dedups (`None`s if identicals) fields.
+    fn rem(self, styler: &Index) -> Self {
+        Styler::dedup(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Resets (sets to reset value) fields which are `Some`.
+impl Not for Style {
+    type Output = Self;
+
+    /// Resets (sets to reset value) fields which are `Some`.
+    fn not(self) -> Self {
+        Styler::reset(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+use std::ops::{
+    AddAssign,
+    BitAndAssign,
+    BitOrAssign,
+    BitXorAssign,
+    DivAssign,
+    MulAssign,
+    RemAssign,
+};
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Foreground>`, mutably.
+impl<Color: Into<Option<Foreground>>> MulAssign<Color> for Style {
+    /// Sets `Option<Foreground>`, mutably.
+    fn mul_assign(&mut self, foreground: Color) {
+        StylerMut::foreground_mut(self, foreground)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Background>`, mutably.
+impl<Color: Into<Option<Background>>> DivAssign<Color> for Style {
+    /// Sets `Option<Background>`, mutably.
+    fn div_assign(&mut self, background: Color) {
+        StylerMut::background_mut(self, background)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Weight>`, mutably.
+impl AddAssign<Weight> for Style {
+    /// Sets `Option<Weight>`, mutably.
+    fn add_assign(&mut self, weight: Weight) {
+        StylerMut::weight_mut(self, weight)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Slant>`, mutably.
+impl AddAssign<Slant> for Style {
+    /// Sets `Option<Slant>`, mutably.
+    fn add_assign(&mut self, slant: Slant) {
+        StylerMut::slant_mut(self, slant)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Underline>`, mutably.
+impl AddAssign<Underline> for Style {
+    /// Sets `Option<Underline>`, mutably.
+    fn add_assign(&mut self, underline: Underline) {
+        StylerMut::underline_mut(self, underline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Strike>`, mutably.
+impl AddAssign<Strike> for Style {
+    /// Sets `Option<Strike>`, mutably.
+    fn add_assign(&mut self, strike: Strike) {
+        StylerMut::strike_mut(self, strike)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Overline>`, mutably.
+impl AddAssign<Overline> for Style {
+    /// Sets `Option<Overline>`, mutably.
+    fn add_assign(&mut self, overline: Overline) {
+        StylerMut::overline_mut(self, overline)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Invert>`, mutably.
+impl AddAssign<Invert> for Style {
+    /// Sets `Option<Invert>`, mutably.
+    fn add_assign(&mut self, invert: Invert) {
+        StylerMut::invert_mut(self, invert)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Blink>`, mutably.
+impl AddAssign<Blink> for Style {
+    /// Sets `Option<Blink>`, mutably.
+    fn add_assign(&mut self, blink: Blink) {
+        StylerMut::blink_mut(self, blink)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Sets `Option<Border>`, mutably.
+impl AddAssign<Border> for Style {
+    /// Sets `Option<Border>`, mutably.
+    fn add_assign(&mut self, border: Border) {
+        StylerMut::border_mut(self, border)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::and` fields, mutably.
+impl<Index: StylerIndex> BitAndAssign<&Index> for Style {
+    /// `Option::and` fields, mutably.
+    fn bitand_assign(&mut self, styler: &Index) {
+        StylerMut::and_mut(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::or` fields, mutably.
+impl<Index: StylerIndex> BitOrAssign<&Index> for Style {
+    /// `Option::or` fields, mutably.
+    fn bitor_assign(&mut self, styler: &Index) {
+        StylerMut::or_mut(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// `Option::xor` fields, mutably.
+impl<Index: StylerIndex> BitXorAssign<&Index> for Style {
+    /// `Option::xor` fields, mutably.
+    fn bitxor_assign(&mut self, styler: &Index) {
+        StylerMut::xor_mut(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Dedups (`None`s if identicals) fields, mutably.
+impl<Index: StylerIndex> RemAssign<&Index> for Style {
+    /// Dedups (`None`s if identicals) fields, mutably.
+    fn rem_assign(&mut self, styler: &Index) {
+        StylerMut::dedup_mut(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Resets (sets to reset value) fields which are `Some`, mutably.
+impl Not for &mut Style {
+    type Output = Self;
+
+    /// Resets (sets to reset value) fields which are `Some`, mutably.
+    fn not(self) -> Self {
+        StylerMut::reset_mut(self);
+        self
     }
 }
