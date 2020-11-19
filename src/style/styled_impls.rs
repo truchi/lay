@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
-use std::fmt::Display;
+use std::{fmt::Display, ops::Not};
 
 impl<T: Display> StylerIndex for Styled<T> {
     fn get_foreground(&self) -> Option<Foreground> {
@@ -344,6 +344,17 @@ impl<T: Display, Index: StylerIndex> Rem<&Index> for Styled<T> {
 }
 
 #[cfg(feature = "styler-ops")]
+/// Resets (sets to reset value) fields which are `Some`.
+impl<T: Display> Not for Styled<T> {
+    type Output = Self;
+
+    /// Resets (sets to reset value) fields which are `Some`.
+    fn not(self) -> Self {
+        Styler::reset(self)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
 use std::ops::{
     AddAssign,
     BitAndAssign,
@@ -477,5 +488,17 @@ impl<T: Display, Index: StylerIndex> RemAssign<&Index> for Styled<T> {
     /// Dedups (`None`s if identicals) fields, mutably.
     fn rem_assign(&mut self, styler: &Index) {
         StylerMut::dedup_mut(self, styler)
+    }
+}
+
+#[cfg(feature = "styler-ops")]
+/// Resets (sets to reset value) fields which are `Some`, mutably.
+impl<T: Display> Not for &mut Styled<T> {
+    type Output = Self;
+
+    /// Resets (sets to reset value) fields which are `Some`, mutably.
+    fn not(self) -> Self {
+        StylerMut::reset_mut(self);
+        self
     }
 }

@@ -134,14 +134,16 @@ pub fn generate() {
                     quote! {
                         use crate::*;
                         use std::fmt::Display;
+                        // FIXME
+                        use std::ops::Not;
                         #LINE_BREAK
                     },
                     gen.impl_styler_index(styled_impls),
                     gen.impl_styler_index_mut(styled_impls),
                     gen.impl_styler(styled_impls),
                     gen.impl_styler_mut(styled_impls),
-                    gen.impl_styler_mut_ops(styled_impls, false),
-                    gen.impl_styler_mut_ops(styled_impls, true),
+                    gen.impl_styler_ops(styled_impls, false),
+                    gen.impl_styler_ops(styled_impls, true),
                 ]),
             );
         }

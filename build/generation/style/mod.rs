@@ -5,4 +5,3 @@ mod markers;
 mod reset;
 mod style;
 mod styler;
-mod styler_ops;
