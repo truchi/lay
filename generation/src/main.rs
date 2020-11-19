@@ -1,6 +1,5 @@
 #[macro_use]
 mod utils;
-#[macro_use]
 mod lay;
 
 mod style;
