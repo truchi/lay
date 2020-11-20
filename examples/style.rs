@@ -31,7 +31,7 @@ to work with terminal CSIs and styled types.{reset}",
 
     println!("{}", PART_1); // ;)
 
-    // Heads up!
+    // > Heads up!
     //
     // This doc is generated from the `style` example.
     // Run it to print the code blocks along with the comments!
@@ -71,8 +71,8 @@ to work with terminal CSIs and styled types.{reset}",
 
     // Note that the `Color` enum does not `Display` by itself.
     //
-    //         In addition, we provide the `Reset` type which represents the CSI
-    //         to reset all colors/attributes:
+    // In addition, we provide the `Reset` type which represents the CSI
+    // to reset all colors/attributes:
     println!(
         "{}{}{}Multiple attributes, one reset.{} Not styled.",
         Foreground(Red),
@@ -99,7 +99,7 @@ to work with terminal CSIs and styled types.{reset}",
 
     // ## `Styler`
     //
-    // The `Styler` trait is at the heart of styles. It defines getters
+    // The [`crate::Styler`] trait is at the heart of styles. It defines getters
     // and setters for types with `Option`al attributes:
 
     let style = Style::default().red().on_green().bold().reset_blink();

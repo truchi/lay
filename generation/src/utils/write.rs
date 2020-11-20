@@ -7,6 +7,7 @@ use std::{
 };
 
 pub const LINE_BREAK: &str = "__LINE_BREAK__";
+pub const DOUBLE_QUOTE: &str = "__DOUBLE_QUOTE__";
 
 const HEADER: &str = "
     ////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,8 @@ pub fn write(dir: &str, path: &str, content: TokenStream) {
 pub fn pre(tokens: TokenStream) -> String {
     let string = tokens
         .to_string()
-        .replace(&format!(r#""{}""#, LINE_BREAK), "\n\n");
+        .replace(&format!(r#""{}""#, LINE_BREAK), "\n\n")
+        .replace(DOUBLE_QUOTE, r#"""#);
 
     Doc::replace(string)
 }

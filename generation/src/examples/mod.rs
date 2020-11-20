@@ -69,29 +69,39 @@ fn generate_doc(dir: &str, file: &str, parts: Vec<Vec<(String, TokenStream)>>) {
     let mod_name = Str::new(file);
     let file_name = &format!("{}.doc.rs", file);
 
-    let parts = parts
+    let doc = parts
         .into_iter()
         .map(|part| {
-            // let part = part
-            // .into_iter()
-            // .map(|(comment, code)| {
-            // doc!(
-            // "{}```
-            // # use lay::*;
-            // {}
-            // ```",
-            // comment,
-            // pre(code)
-            // )
-            // })
-            // .map(|doc| doc)
-            // .collect::<String>();
-            panic!("{:#?}", part);
+            part.into_iter()
+                .map(|(comment, code)| {
+                    let comment = doc!("{}", comment);
+
+                    let code = if code.is_empty() {
+                        code
+                    } else {
+                        let code = doc!(
+                            "```\n# use lay::*;\n{}\n```",
+                            pre(code).replace(r#"""#, DOUBLE_QUOTE).trim()
+                        );
+
+                        quote! {
+                            #code
+                            ///
+                        }
+                    };
+
+                    quote! {
+                        #comment
+                        ///
+                        #code
+                    }
+                })
+                .collect::<TokenStream>()
         })
-        .collect::<Vec<_>>();
+        .collect::<TokenStream>();
 
     write(dir, file_name, quote! {
-        /// Lalalalla
+        #doc
         pub mod #mod_name;
         pub use #mod_name::*;
     });

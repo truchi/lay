@@ -95,9 +95,9 @@ fn main() {
     examples_dir.push("examples/");
     gen.generate_examples(examples_dir.to_str().expect("Cannot convert dir to str"));
 
-    // let mut docs_dir = dir.to_path_buf();
-    // docs_dir.push("src/");
-    // gen.generate_docs(docs_dir.to_str().expect("Cannot convert dir to str"));
+    let mut docs_dir = dir.to_path_buf();
+    docs_dir.push("src/");
+    gen.generate_docs(docs_dir.to_str().expect("Cannot convert dir to str"));
 }
 
 fn concat(streams: &[TokenStream]) -> TokenStream {

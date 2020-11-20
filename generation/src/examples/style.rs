@@ -30,7 +30,7 @@ to work with terminal CSIs and styled types.{reset}",
             )],
             vec![(
                 format!(
-                    "Heads up!
+                    "> Heads up!
 
                     This doc is generated from the `style` example.
                     Run it to print the code blocks along with the comments!
@@ -74,7 +74,7 @@ to work with terminal CSIs and styled types.{reset}",
                 (
                     format!(
                         "Note that the `Color` enum does not `Display` by itself.
-                
+
                         In addition, we provide the `Reset` type which represents the CSI
                         to reset all colors/attributes:"
                     ),
@@ -107,7 +107,7 @@ to work with terminal CSIs and styled types.{reset}",
                     format!(
                         "## `Styler`
 
-                        The `Styler` trait is at the heart of styles. It defines getters
+                        The [`crate::Styler`] trait is at the heart of styles. It defines getters
                         and setters for types with `Option`al attributes:"
                     ),
                     quote! {
