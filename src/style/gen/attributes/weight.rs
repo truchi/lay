@@ -6,9 +6,10 @@
 use crate::*;
 pub use Weight::*;
 
-/// `Weight` (`Bold`, `Light`, `ResetWeight`).
+/// [`Weight`](crate::Weight) (`Bold`, `Light`, `ResetWeight`).
 ///
-/// Prints the corresponding CSI to the terminal when `Display`ed.  
+/// Prints the corresponding CSI to the terminal when `Display`ed.
+///
 /// `Default`s to `Weight::ResetWeight`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Weight {

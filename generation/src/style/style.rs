@@ -49,7 +49,10 @@ impl Generation {
                 }
             });
 
-            let doc = doc!("Returns an empty `Style` with `Some({})`.", snake);
+            let doc = doc!(
+                "Returns an empty [`Style`](crate::Style) with `Some({})`.",
+                snake
+            );
 
             quote! {
                 #doc
@@ -100,13 +103,13 @@ impl Generation {
             use std::ops::Not;
             #LINE_BREAK
 
-            /// `Style`s.
+            /// [`Style`](crate::Style)s.
             ///
-            /// A straightforward implementation of `Styler`.
+            /// A straightforward implementation of [`Styler`](crate::Styler).
             ///
             /// `Display`s the corresponding CSIs to the terminal.
             ///
-            /// `Default`s as an empty `Style` (all fields set to `None`).
+            /// `Default`s as an empty [`Style`](crate::Style) (all fields set to `None`).
             #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
             pub struct Style {
                 #(#style,)*
@@ -114,12 +117,12 @@ impl Generation {
             #LINE_BREAK
 
             impl Style {
-                /// A `Style` with fields set to `None`.
+                /// A [`Style`](crate::Style) with fields set to `None`.
                 pub const NONE: Self = Self {
                     #(#none,)*
                 };
 
-                /// A `Style` with fields set to their reset value.
+                /// A [`Style`](crate::Style) with fields set to their reset value.
                 pub const RESET: Self = Self {
                     #(#reset,)*
                 };

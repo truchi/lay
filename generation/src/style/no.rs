@@ -18,7 +18,7 @@ impl Generation {
 
     pub fn no(&self) -> TokenStream {
         let markers = self.all.iter().map(|attribute| {
-            let doc = doc!("`None`s `{}`.", attribute);
+            let doc = doc!("`None`s [`{a}`](crate::{a}).", a = attribute);
 
             quote! {
                 #doc
@@ -29,7 +29,7 @@ impl Generation {
         });
 
         quote! {
-            //! Attributes `None`rs.
+            //! [`attributes`](crate::attributes) `None`rs.
             #LINE_BREAK
 
             #(#markers)*

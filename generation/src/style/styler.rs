@@ -49,7 +49,7 @@ impl Generation {
             quote! {
                 use crate::*; #LINE_BREAK
 
-                /// A trait for getting `Option`al attributes on styled types.
+                /// `Option`al [`attributes`](crate::attributes) getters.
                 pub trait #styler_index {
                     #(#index)* #LINE_BREAK
                     #to_style
@@ -58,7 +58,7 @@ impl Generation {
             quote! {
                 use crate::*; #LINE_BREAK
 
-                /// A trait for getting `Option`al attributes on mutable styled types.
+                /// `Option`al [`attributes`](crate::attributes) getters, mutably.
                 pub trait #styler_index_mut {
                     #(#index_mut)*
                 }
@@ -138,7 +138,7 @@ impl Generation {
             quote! {
                 use crate::*; #LINE_BREAK
 
-                /// A trait for setting `Option`al attributes on styled types.
+                /// `Option`al [`attributes`](crate::attributes) setters.
                 pub trait #styler: #styler_index + Sized {
                     /// The resulting type of the setters.
                     type Output; #LINE_BREAK
@@ -155,7 +155,7 @@ impl Generation {
             quote! {
                 use crate::*; #LINE_BREAK
 
-                /// A trait for setting `Option`al attributes on mutable styled types.
+                /// `Option`al [`attributes`](crate::attributes) setters, mutably.
                 pub trait #styler_mut: #styler_index {
                     #(#setters_mut)*
                     #comment #LINE_BREAK

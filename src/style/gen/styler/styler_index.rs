@@ -5,7 +5,7 @@
 
 use crate::*;
 
-/// A trait for getting `Option`al attributes on styled types.
+/// `Option`al [`attributes`](crate::attributes) getters.
 pub trait StylerIndex {
     /// Gets `Option<Foreground>`.
     fn get_foreground(&self) -> Option<Foreground>;

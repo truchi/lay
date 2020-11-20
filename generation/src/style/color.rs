@@ -9,15 +9,13 @@ impl Generation {
         let reset_color = &color.reset.full;
 
         let decl_doc = doc!(
-            "A `{color}` for `{foreground}` and `{background}`.
+            "A [`{color}`](crate::{color}) for [`{fg}`](crate::{fg}) and [`{bg}`](crate::{bg}).
 
-            To be used with `{foreground}` and `{background}`
-            (a `{color}` on its own does not `Display`).  
-            `Default`s to `{reset_color}`.",
+            To be used with [`{fg}`](crate::{fg}) and [`{bg}`](crate::{bg}),
+            as a [`{color}`](crate::{color}) does not `Display` on its own.",
             color = color,
-            reset_color = reset_color,
-            foreground = foreground,
-            background = background,
+            fg = foreground,
+            bg = background,
         );
 
         let default_doc = doc!("Returns `{}`.", reset_color);

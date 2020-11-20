@@ -5,9 +5,10 @@
 
 use crate::*;
 
-/// A `Background` `Color`.
+/// A [`Background`](crate::Background) [`Color`](crate::Color).
 ///
-/// Prints the corresponding CSI to the terminal when `Display`ed.  
+/// Prints the corresponding CSI to the terminal when `Display`ed.
+///
 /// `Default`s to `Background(Color::ResetColor)`, user's default terminal's
 /// background color.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]

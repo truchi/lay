@@ -5,7 +5,7 @@
 
 use crate::*;
 
-/// A trait for setting `Option`al attributes on styled types.
+/// `Option`al [`attributes`](crate::attributes) setters.
 pub trait Styler: StylerIndex + Sized {
     /// The resulting type of the setters.
     type Output;

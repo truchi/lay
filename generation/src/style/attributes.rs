@@ -5,7 +5,7 @@ impl Generation {
         let doc = self
             .all
             .iter()
-            .map(|attribute| format!("`{}`", attribute))
+            .map(|attribute| format!("[`{a}`](crate::{a})", a = attribute))
             .collect::<Vec<_>>()
             .join(", ");
         let doc = idoc!("Attributes ({}).", doc);
@@ -28,9 +28,10 @@ impl Generation {
         let reset = &ground.reset.wrapped;
 
         let decl_doc = doc!(
-            "A `{ground}` `{color}`.
+            "A [`{ground}`](crate::{ground}) [`{color}`](crate::{color}).
 
-            Prints the corresponding CSI to the terminal when `Display`ed.  
+            Prints the corresponding CSI to the terminal when `Display`ed.
+
             `Default`s to `{reset}`, user's default terminal's {ground_snake} color.",
             ground = ground,
             ground_snake = ground.snake,
@@ -90,9 +91,10 @@ impl Generation {
         let reset = &attr.reset.full;
 
         let decl_doc = doc!(
-            "`{attr}` ({variants}).
+            "[`{attr}`](crate::{attr}) ({variants}).
 
-            Prints the corresponding CSI to the terminal when `Display`ed.  
+            Prints the corresponding CSI to the terminal when `Display`ed.
+
             `Default`s to `{reset}`, the unsetting CSI.",
             attr = attr,
             reset = reset,

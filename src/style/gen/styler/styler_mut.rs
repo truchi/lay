@@ -5,7 +5,7 @@
 
 use crate::*;
 
-/// A trait for setting `Option`al attributes on mutable styled types.
+/// `Option`al [`attributes`](crate::attributes) setters, mutably.
 pub trait StylerMut: StylerIndex {
     // ====================================================================== //
     // ====================================================================== //

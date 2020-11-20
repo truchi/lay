@@ -3,44 +3,44 @@
 // 🚧🚧🚧🚧🚧🚧🚧🚧           ⛔ DO NOT MODIFY! ⛔           🚧🚧🚧🚧🚧🚧🚧🚧 //
 ////////////////////////////////////////////////////////////////////////////////
 
-//! Attributes `None`rs.
+//! [`attributes`](crate::attributes) `None`rs.
 
-/// `None`s `Foreground`.
+/// `None`s [`Foreground`](crate::Foreground).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Foreground;
 
-/// `None`s `Background`.
+/// `None`s [`Background`](crate::Background).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Background;
 
-/// `None`s `Weight`.
+/// `None`s [`Weight`](crate::Weight).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Weight;
 
-/// `None`s `Slant`.
+/// `None`s [`Slant`](crate::Slant).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Slant;
 
-/// `None`s `Underline`.
+/// `None`s [`Underline`](crate::Underline).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Underline;
 
-/// `None`s `Strike`.
+/// `None`s [`Strike`](crate::Strike).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Strike;
 
-/// `None`s `Overline`.
+/// `None`s [`Overline`](crate::Overline).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Overline;
 
-/// `None`s `Invert`.
+/// `None`s [`Invert`](crate::Invert).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Invert;
 
-/// `None`s `Blink`.
+/// `None`s [`Blink`](crate::Blink).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Blink;
 
-/// `None`s `Border`.
+/// `None`s [`Border`](crate::Border).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Border;

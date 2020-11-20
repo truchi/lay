@@ -5,11 +5,12 @@
 
 pub use Color::*;
 
-/// A `Color` for `Foreground` and `Background`.
+/// A [`Color`](crate::Color) for [`Foreground`](crate::Foreground) and
+/// [`Background`](crate::Background).
 ///
-/// To be used with `Foreground` and `Background`
-/// (a `Color` on its own does not `Display`).  
-/// `Default`s to `Color::ResetColor`.
+/// To be used with [`Foreground`](crate::Foreground) and
+/// [`Background`](crate::Background), as a [`Color`](crate::Color) does not
+/// `Display` on its own.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Color {
     White,

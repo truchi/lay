@@ -9,13 +9,13 @@ use std::{
     ops::Not,
 };
 
-/// `Style`s.
+/// [`Style`](crate::Style)s.
 ///
-/// A straightforward implementation of `Styler`.
+/// A straightforward implementation of [`Styler`](crate::Styler).
 ///
 /// `Display`s the corresponding CSIs to the terminal.
 ///
-/// `Default`s as an empty `Style` (all fields set to `None`).
+/// `Default`s as an empty [`Style`](crate::Style) (all fields set to `None`).
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub struct Style {
     pub foreground: Option<Foreground>,
@@ -31,7 +31,7 @@ pub struct Style {
 }
 
 impl Style {
-    /// A `Style` with fields set to `None`.
+    /// A [`Style`](crate::Style) with fields set to `None`.
     pub const NONE: Self = Self {
         foreground: None,
         background: None,
@@ -44,7 +44,7 @@ impl Style {
         blink:      None,
         border:     None,
     };
-    /// A `Style` with fields set to their reset value.
+    /// A [`Style`](crate::Style) with fields set to their reset value.
     pub const RESET: Self = Self {
         foreground: Some(Foreground(Color::ResetColor)),
         background: Some(Background(Color::ResetColor)),
@@ -111,9 +111,9 @@ impl Display for Style {
 // ========================================================================== //
 // ========================================================================== //
 
-/// Returns an empty `Style` with `Some(foreground)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(foreground)`.
 impl From<Foreground> for Style {
-    /// Returns an empty `Style` with `Some(foreground)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(foreground)`.
     fn from(foreground: Foreground) -> Self {
         Self {
             foreground: Some(foreground),
@@ -130,9 +130,9 @@ impl From<Foreground> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(background)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(background)`.
 impl From<Background> for Style {
-    /// Returns an empty `Style` with `Some(background)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(background)`.
     fn from(background: Background) -> Self {
         Self {
             foreground: None,
@@ -149,9 +149,9 @@ impl From<Background> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(weight)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(weight)`.
 impl From<Weight> for Style {
-    /// Returns an empty `Style` with `Some(weight)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(weight)`.
     fn from(weight: Weight) -> Self {
         Self {
             foreground: None,
@@ -168,9 +168,9 @@ impl From<Weight> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(slant)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(slant)`.
 impl From<Slant> for Style {
-    /// Returns an empty `Style` with `Some(slant)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(slant)`.
     fn from(slant: Slant) -> Self {
         Self {
             foreground: None,
@@ -187,9 +187,9 @@ impl From<Slant> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(underline)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(underline)`.
 impl From<Underline> for Style {
-    /// Returns an empty `Style` with `Some(underline)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(underline)`.
     fn from(underline: Underline) -> Self {
         Self {
             foreground: None,
@@ -206,9 +206,9 @@ impl From<Underline> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(strike)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(strike)`.
 impl From<Strike> for Style {
-    /// Returns an empty `Style` with `Some(strike)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(strike)`.
     fn from(strike: Strike) -> Self {
         Self {
             foreground: None,
@@ -225,9 +225,9 @@ impl From<Strike> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(overline)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(overline)`.
 impl From<Overline> for Style {
-    /// Returns an empty `Style` with `Some(overline)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(overline)`.
     fn from(overline: Overline) -> Self {
         Self {
             foreground: None,
@@ -244,9 +244,9 @@ impl From<Overline> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(invert)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(invert)`.
 impl From<Invert> for Style {
-    /// Returns an empty `Style` with `Some(invert)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(invert)`.
     fn from(invert: Invert) -> Self {
         Self {
             foreground: None,
@@ -263,9 +263,9 @@ impl From<Invert> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(blink)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(blink)`.
 impl From<Blink> for Style {
-    /// Returns an empty `Style` with `Some(blink)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(blink)`.
     fn from(blink: Blink) -> Self {
         Self {
             foreground: None,
@@ -282,9 +282,9 @@ impl From<Blink> for Style {
     }
 }
 
-/// Returns an empty `Style` with `Some(border)`.
+/// Returns an empty [`Style`](crate::Style) with `Some(border)`.
 impl From<Border> for Style {
-    /// Returns an empty `Style` with `Some(border)`.
+    /// Returns an empty [`Style`](crate::Style) with `Some(border)`.
     fn from(border: Border) -> Self {
         Self {
             foreground: None,

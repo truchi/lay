@@ -6,9 +6,10 @@
 use crate::*;
 pub use Border::*;
 
-/// `Border` (`Circle`, `Frame`, `ResetBorder`).
+/// [`Border`](crate::Border) (`Circle`, `Frame`, `ResetBorder`).
 ///
-/// Prints the corresponding CSI to the terminal when `Display`ed.  
+/// Prints the corresponding CSI to the terminal when `Display`ed.
+///
 /// `Default`s to `Border::ResetBorder`, the unsetting CSI.
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
 pub enum Border {

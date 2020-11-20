@@ -9,13 +9,13 @@ use lay::*;
 pub fn main() {
     println!("{}", PART_0); // ;)
 
-    // Styling utilities.
+    // # Styling utilities.
     //
     // This module contains utilities
     // to work with terminal CSIs and styled types.
 
     println!(
-        "{on_black}{green}{blink}{weight}Styling utilities.{reset_blink}
+        "{on_black}{green}{blink}{weight}# Styling utilities.{reset_blink}
 
 {blue}{slant}This module contains utilities
 to work with terminal CSIs and styled types.{reset}",
@@ -31,7 +31,7 @@ to work with terminal CSIs and styled types.{reset}",
 
     println!("{}", PART_1); // ;)
 
-    // > Heads up!
+    // > **Heads up!**
     //
     // This doc is generated from the `style` example.
     // Run it to print the code blocks along with the comments!
@@ -40,25 +40,31 @@ to work with terminal CSIs and styled types.{reset}",
 
     println!("{}", PART_2); // ;)
 
-    // # Colors and attributes
+    // ## Color
+    //
+    // The [`crate::Color`] enum is surely no surprises for you!
+    //
+    // It lists all the available colors of the terminal, with dark variants,
+    // and with `Rgb`, `Ansi` and `ResetColor` variants.
+    //
+    // It does not `Display`s by itself though. Read on!
+
+    println!("{}", PART_3); // ;)
+
+    // ## Attributes
     //
     // You can use the following types to print CSIs to the terminal:
-    // - Colors (tuple structs):
-    //   - `Foreground`: `Foreground(Color)`
-    //   - `Background`: `Background(Color)`
-    // - Attributes (enums):
-    //   - `Weight`: `Bold`, `Light`, `ResetWeight`
-    //   - `Slant`: `Italic`, `ResetSlant`
-    //   - `Blink`: `Slow`, `Fast`, `ResetBlink`
-    //   - `Invert`: `Inverted`, `ResetInvert`
-    //   - `Strike`: `Striked`, `ResetStrike`
-    //   - `Underline`: `Underlined`, `ResetUnderline`
-    //   - `Overline`: `Overlined`, `ResetOverline`
-    //   - `Border`: `Frame`, `Circle`, `ResetBorder`
-    //
-    // All those types `Default` to their reset value: colors default to the user's
-    // terminal default foreground/background color, attributes default to the
-    // unsetting CSI.
+    // - [`crate::Foreground`] tuple struct: `Foreground(Color)`
+    // - [`crate::Background`] tuple struct: `Background(Color)`
+    // - [`crate::Weight`] enum: `Bold`, `Light`, `ResetWeight`
+    // - [`crate::Slant`] enum: `Italic`, `ResetSlant`
+    // - [`crate::Blink`] enum: `Slow`, `Fast`, `ResetBlink`
+    // - [`crate::Invert`] enum: `Inverted`, `ResetInvert`
+    // - [`crate::Strike`] enum: `Striked`, `ResetStrike`
+    // - [`crate::Underline`] enum: `Underlined`, `ResetUnderline`
+    // - [`crate::Overline`] enum: `Overlined`, `ResetOverline`
+    // - [`crate::Border`] enum: `Frame`, `Circle`, `ResetBorder`
+    // - [`crate::Reset`] unit struct
     //
     // They `Display` the CSI they represent. Some basic examples:
     println!("{}Red.{} Not red.", Foreground(Red), Foreground(ResetColor));
@@ -68,11 +74,6 @@ to work with terminal CSIs and styled types.{reset}",
         Background(ResetColor)
     );
     println!("{}Bold{}. Not bold.", Bold, ResetWeight);
-
-    // Note that the `Color` enum does not `Display` by itself.
-    //
-    // In addition, we provide the `Reset` type which represents the CSI
-    // to reset all colors/attributes:
     println!(
         "{}{}{}Multiple attributes, one reset.{} Not styled.",
         Foreground(Red),
@@ -81,23 +82,21 @@ to work with terminal CSIs and styled types.{reset}",
         Reset
     );
 
-    println!("{}", PART_3); // ;)
+    println!("{}", PART_4); // ;)
 
     // Easy, right?
 
-    println!("{}", PART_4); // ;)
-
-    // # Styling
-    //
-    // (We will refer to both colors and attributes as 'attributes'.)
-    //
-    // We want to individually wrap styling attributes with `Option`s to
-    // convey ideas such as 'undefined' (display no CSI) or
-    // 'inherit' (inherit from some parent attribute, if any).
-
     println!("{}", PART_5); // ;)
 
-    // ## `Styler`
+    // ## Styling
+    //
+    // We want to individually wrap styling attributes with `Option`s
+    // to convey ideas such as 'undefined' (display no CSI)
+    // or 'inherit' (inherit from some parent attribute, if any).
+
+    println!("{}", PART_6); // ;)
+
+    // ### `Styler`
     //
     // The [`crate::Styler`] trait is at the heart of styles. It defines getters
     // and setters for types with `Option`al attributes:
