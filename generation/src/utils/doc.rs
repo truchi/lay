@@ -42,27 +42,37 @@ macro_rules! centered_comment {
 pub const COMMENT_START: &str = "__COMMENT_START__";
 pub const COMMENT_END: &str = "__COMMENT_END__";
 
-#[derive(Clone, Default, Debug)]
-pub struct Doc(TokenStream);
+#[derive(Clone, Debug)]
+// pub struct Doc(TokenStream);
+pub enum Doc {
+    Inner(Vec<String>),
+    Outer(Vec<String>),
+    Comment(Vec<String>),
+}
 
 impl Doc {
     pub fn inner(string: String) -> Self {
-        let lines = dedent(&string.trim()).map(|line| format!(" {}", line));
-
-        Self(quote! { #(#![doc = #lines])* })
+        Self::Inner(
+            dedent(&string.trim())
+                .map(|line| format!(" {}", line))
+                .collect(),
+        )
     }
 
     pub fn outer(string: String) -> Self {
-        let lines = dedent(&string.trim()).map(|line| format!(" {}", line));
-
-        Self(quote! { #(#[doc = #lines])* })
+        Self::Outer(
+            dedent(&string.trim())
+                .map(|line| format!(" {}", line))
+                .collect(),
+        )
     }
 
     pub fn comment(string: String) -> Self {
-        let lines =
-            dedent(&string.trim()).map(|line| format!("{}{}{}", COMMENT_START, line, COMMENT_END));
-
-        Self(quote! { #(#lines)* })
+        Self::Comment(
+            dedent(&string.trim())
+                .map(|line| format!("{}{}{}", COMMENT_START, line, COMMENT_END))
+                .collect(),
+        )
     }
 
     pub fn replace(string: String) -> String {
@@ -85,10 +95,17 @@ impl ToTokens for Doc {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         use proc_macro2::*;
 
-        tokens.append(TokenTree::Group(Group::new(
-            Delimiter::None,
-            self.0.clone(),
-        )));
+        tokens.append(TokenTree::Group(Group::new(Delimiter::None, match self {
+            Self::Inner(lines) => quote! { #(#![doc = #lines])* },
+            Self::Outer(lines) => quote! { #(#[doc = #lines])* },
+            Self::Comment(lines) => quote! { #(#lines)* },
+        })));
+    }
+}
+
+impl Default for Doc {
+    fn default() -> Self {
+        Self::Outer(vec![])
     }
 }
 
