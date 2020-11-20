@@ -1,4 +1,5 @@
 #!/bin/sh
 
 (cd generation && cargo run --quiet "$1")
-rustfmt src/*.rs
+rustfmt src/**.rs
+rustfmt examples/**.rs

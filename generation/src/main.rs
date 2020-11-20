@@ -2,6 +2,7 @@
 mod utils;
 mod lay;
 
+mod examples;
 mod style;
 
 use lay::*;
@@ -89,10 +90,22 @@ fn main() {
     let mut style_dir = dir.to_path_buf();
     style_dir.push("src/style/gen/");
     gen.generate_style(style_dir.to_str().expect("Cannot convert dir to str"));
+
+    let mut examples_dir = dir.to_path_buf();
+    examples_dir.push("examples/");
+    gen.generate_examples(examples_dir.to_str().expect("Cannot convert dir to str"));
+
+    // let mut docs_dir = dir.to_path_buf();
+    // docs_dir.push("src/");
+    // gen.generate_docs(docs_dir.to_str().expect("Cannot convert dir to str"));
 }
 
 fn concat(streams: &[TokenStream]) -> TokenStream {
     streams.iter().fold(quote! {}, |tokens, stream| {
-        quote! { #tokens #LINE_BREAK #stream }
+        if stream.is_empty() {
+            tokens
+        } else {
+            quote! { #tokens #LINE_BREAK #stream }
+        }
     })
 }

@@ -1,3 +1,1 @@
-pub mod style;
-
-pub use style::*;
+include!("style.doc.rs");
