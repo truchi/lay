@@ -9,7 +9,9 @@ mod styler;
 use crate::*;
 
 impl Generation {
-    pub fn generate_style(&self, dir: &str) {
+    pub fn generate_style(&self) {
+        let dir = &self.style;
+
         // dir/attributes/
         for ground in &self.grounds {
             write(

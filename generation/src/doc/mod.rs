@@ -1,23 +1,23 @@
 use crate::*;
 
 macro_rules! generate_doc {
-    ($src:ident, $examples:ident, $name:literal) => {
-        generate_doc($src, $examples, $name, include_str!($name));
+    ($self:ident, $name:literal) => {
+        generate_doc($self, $name, include_str!($name));
     };
 }
 
 impl Generation {
-    pub fn generate_docs(&self, src: &str, examples: &str) {
-        generate_doc!(src, examples, "style.doc.rs");
+    pub fn generate_docs(&self) {
+        generate_doc!(self, "style.doc.rs");
     }
 }
 
-fn generate_doc(src: &str, examples: &str, name: &str, doc: &str) {
-    write(src, name, doc);
+fn generate_doc(gen: &Generation, name: &str, doc: &str) {
+    write(&gen.src, name, doc);
 
     for (name, code) in get_code_blocks(&doc) {
         write(
-            examples,
+            &gen.examples,
             &format!("{}.rs", name),
             format!("fn main() {{ {} }}", code),
         );

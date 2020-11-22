@@ -2,7 +2,7 @@ use crate::*;
 use std::{
     fs::{create_dir_all, File},
     io::Write,
-    path::{Path, PathBuf},
+    path::Path,
 };
 
 pub const LINE_BREAK: &str = "__LINE_BREAK__";
@@ -15,7 +15,7 @@ const HEADER: &str = "
     ////////////////////////////////////////////////////////////////////////////////
 ";
 
-pub fn write(dir: &str, path: &str, content: impl ToString) {
+pub fn write(dir: &PathBuf, path: &str, content: impl ToString) {
     let content = format!("{}\n\n{}", HEADER, pre(content));
     let path = make_dir(dir, path);
 
@@ -34,8 +34,12 @@ pub fn pre(tokens: impl ToString) -> String {
     Doc::replace(string)
 }
 
-fn make_dir(dir: &str, p: &str) -> PathBuf {
-    let path = dir.to_string() + p;
+fn make_dir(dir: &PathBuf, p: &str) -> PathBuf {
+    let path = dir
+        .to_str()
+        .expect("Cannot convert PathBuf to str")
+        .to_string()
+        + p;
     let path = Path::new(&path);
     let dir = path
         .parent()

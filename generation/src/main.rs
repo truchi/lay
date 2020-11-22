@@ -8,7 +8,7 @@ mod style;
 use lay::*;
 use proc_macro2::TokenStream;
 use quote::quote;
-use std::ops::Deref;
+use std::{ops::Deref, path::PathBuf};
 use utils::*;
 
 impl StylerFn {
@@ -70,35 +70,42 @@ impl Lay {
 
 /// Generation
 #[derive(Clone, Debug)]
-struct Generation(Lay);
+struct Generation {
+    lay:      Lay,
+    root:     PathBuf,
+    examples: PathBuf,
+    src:      PathBuf,
+    style:    PathBuf,
+}
 
 impl Deref for Generation {
     type Target = Lay;
 
     fn deref(&self) -> &Lay {
-        &self.0
+        &self.lay
     }
 }
 
 fn main() {
     let cwd = std::env::current_dir().expect("Cannot get current directory");
-    let root = cwd.parent().expect("Cannot get cwd's parent");
+    let root = cwd.parent().expect("Cannot get cwd's parent").to_path_buf();
+    let mut src = root.to_path_buf();
+    let mut examples = root.to_path_buf();
+    let mut style = root.to_path_buf();
+    src.push("src/");
+    examples.push("examples/");
+    style.push("src/style/gen/");
 
-    let gen = Generation(Lay::new());
-    // panic!("{:#?}", gen);
+    let gen = Generation {
+        lay: Lay::new(),
+        root,
+        examples,
+        src,
+        style,
+    };
 
-    let mut style_dir = root.to_path_buf();
-    style_dir.push("src/style/gen/");
-    gen.generate_style(style_dir.to_str().expect("Cannot convert dir to str"));
-
-    let mut src_dir = root.to_path_buf();
-    let mut examples_dir = root.to_path_buf();
-    src_dir.push("src/");
-    examples_dir.push("examples/");
-    gen.generate_docs(
-        src_dir.to_str().expect("Cannot convert dir to str"),
-        examples_dir.to_str().expect("Cannot convert dir to str"),
-    );
+    gen.generate_style();
+    gen.generate_docs();
 }
 
 fn concat(streams: &[TokenStream]) -> TokenStream {
