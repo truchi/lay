@@ -2,7 +2,7 @@
 mod utils;
 mod lay;
 
-mod examples;
+mod doc;
 mod style;
 
 use lay::*;
@@ -82,22 +82,23 @@ impl Deref for Generation {
 
 fn main() {
     let cwd = std::env::current_dir().expect("Cannot get current directory");
-    let dir = cwd.parent().expect("Cannot get cwd's parent");
+    let root = cwd.parent().expect("Cannot get cwd's parent");
 
     let gen = Generation(Lay::new());
     // panic!("{:#?}", gen);
 
-    let mut style_dir = dir.to_path_buf();
+    let mut style_dir = root.to_path_buf();
     style_dir.push("src/style/gen/");
     gen.generate_style(style_dir.to_str().expect("Cannot convert dir to str"));
 
-    let mut examples_dir = dir.to_path_buf();
+    let mut src_dir = root.to_path_buf();
+    let mut examples_dir = root.to_path_buf();
+    src_dir.push("src/");
     examples_dir.push("examples/");
-    gen.generate_examples(examples_dir.to_str().expect("Cannot convert dir to str"));
-
-    let mut docs_dir = dir.to_path_buf();
-    docs_dir.push("src/");
-    gen.generate_docs(docs_dir.to_str().expect("Cannot convert dir to str"));
+    gen.generate_docs(
+        src_dir.to_str().expect("Cannot convert dir to str"),
+        examples_dir.to_str().expect("Cannot convert dir to str"),
+    );
 }
 
 fn concat(streams: &[TokenStream]) -> TokenStream {

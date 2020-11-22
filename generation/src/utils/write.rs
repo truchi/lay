@@ -1,9 +1,8 @@
 use crate::*;
 use std::{
     fs::{create_dir_all, File},
-    io::{prelude::*, Write},
+    io::Write,
     path::{Path, PathBuf},
-    process::{Command, Stdio},
 };
 
 pub const LINE_BREAK: &str = "__LINE_BREAK__";
@@ -16,7 +15,7 @@ const HEADER: &str = "
     ////////////////////////////////////////////////////////////////////////////////
 ";
 
-pub fn write(dir: &str, path: &str, content: TokenStream) {
+pub fn write(dir: &str, path: &str, content: impl ToString) {
     let content = format!("{}\n\n{}", HEADER, pre(content));
     let path = make_dir(dir, path);
 
@@ -26,7 +25,7 @@ pub fn write(dir: &str, path: &str, content: TokenStream) {
         .expect(&format!("Cannot write in file: {:?}", path));
 }
 
-pub fn pre(tokens: TokenStream) -> String {
+pub fn pre(tokens: impl ToString) -> String {
     let string = tokens
         .to_string()
         .replace(&format!(r#""{}""#, LINE_BREAK), "\n\n")
@@ -45,26 +44,4 @@ fn make_dir(dir: &str, p: &str) -> PathBuf {
     create_dir_all(dir).expect(&format!("Cannot create location: {:?}", dir));
 
     path.to_path_buf()
-}
-
-/// Formats with rustfmt without writing to file
-pub fn format(unformatted: &str) -> String {
-    let fmt = Command::new("rustfmt")
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Cannot spawn rustfmt");
-
-    fmt.stdin
-        .unwrap()
-        .write_all(unformatted.as_bytes())
-        .expect("Cannot write to rustfmt stdin");
-
-    let mut formatted = String::with_capacity(unformatted.len());
-    fmt.stdout
-        .unwrap()
-        .read_to_string(&mut formatted)
-        .expect("Cannot read rustfmt stdout");
-
-    formatted
 }
