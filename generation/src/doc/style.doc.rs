@@ -20,12 +20,26 @@
 /// ```
 /// $ `cargo run --quiet --example style01`
 ///
+/// - [Color](crate::style#color)
+/// - [Attributes](crate::style#attributes)
+/// - [Reset](crate::style#reset)
+/// - [Styling](crate::style#styling)
+///   - [Style](crate::style#style)
+///   - [Styler](crate::style#styler)
+///
 /// ## Color
 ///
 /// The [`Color`](crate::Color) enum is surely no surprises for you!
 ///
 /// It lists all the available colors of the terminal, with dark variants,
 /// and with `Rgb`, `Ansi` and `ResetColor` variants.
+///
+/// As all enums in [`lay`](crate), its variants are re-exported:
+///
+/// ```
+/// # use lay::*;
+/// assert_eq!(White, Color::White);
+/// ```
 ///
 /// It does not `Display`s by itself though. Read on!
 ///
@@ -42,7 +56,6 @@
 /// - [`Underline`](crate::Underline) enum: `Underlined`, `ResetUnderline`
 /// - [`Overline`](crate::Overline) enum: `Overlined`, `ResetOverline`
 /// - [`Border`](crate::Border) enum: `Frame`, `Circle`, `ResetBorder`
-/// - [`Reset`](crate::Reset) unit struct
 ///
 /// They `Display` the CSI they represent. Some basic examples:
 ///
@@ -55,6 +68,19 @@
 ///     Background(ResetColor)
 /// );
 /// println!("{}Bold{}. Not bold.", Bold, ResetWeight);
+/// ```
+/// $ `cargo run --quiet --example style02`
+///
+/// ## Reset
+///
+/// The [`Reset`](crate::Reset) unit struct will reset all attributes
+/// sent to the screen.
+///
+/// Note that "reseting" ([`Reset`](crate::Reset) and `Reset*` variants) means
+/// going back to the user's default attribute(s).
+///
+/// ```
+/// # use lay::*;
 /// println!(
 ///     "{}{}{}Multiple attributes, one reset.{} Not styled.",
 ///     Foreground(Red),
@@ -63,7 +89,7 @@
 ///     Reset
 /// );
 /// ```
-/// $ `cargo run --quiet --example style02`
+/// $ `cargo run --quiet --example style03`
 ///
 /// Easy, right?
 ///
@@ -72,6 +98,39 @@
 /// We want to individually wrap styling attributes with `Option`s
 /// to convey ideas such as 'undefined' (display no CSI)
 /// or 'inherit' (inherit from some parent attribute, if any).
+///
+/// ### `Style`
+///
+/// Enter the [`Style`](crate::Style) type. A [`Style`](crate::Style) holds an
+/// `Option` for each attribute. It also comes with
+/// a [`NONE`](crate::Style::NONE) (aka `Default`) and
+/// a [`RESET`](crate::Style::RESET) consts.
+///
+/// ```
+/// # use lay::*;
+/// let style = Style {
+///     foreground: Some(Foreground(White)),
+///     background: Some(Background(Black)),
+///     weight: Some(Bold),
+///     slant: Some(Italic),
+///     ..Style::NONE
+/// };
+///
+/// println!("{}Printing with style", style);
+/// ```
+/// $ `cargo run --quiet --example style04`
+///
+/// The `Styler*` trait and `std::ops::*` make it easier to declare and use
+/// [`Style`](crate::Style)s. Here's a foretaste:
+///
+/// ```
+/// # use lay::*;
+/// // FIXME
+/// let style = White / Black * Bold * Italic;
+///
+/// println!("{}Declaring with style", style);
+/// ```
+/// $ `cargo run --quiet --example style05`
 ///
 /// ### `Styler`
 ///

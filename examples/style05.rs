@@ -5,11 +5,8 @@
 
 fn main() {
     use lay::*;
-    println!("{}Red.{} Not red.", Foreground(Red), Foreground(ResetColor));
-    println!(
-        "{}On Green{}. Not on green.",
-        Background(Green),
-        Background(ResetColor)
-    );
-    println!("{}Bold{}. Not bold.", Bold, ResetWeight);
+    // FIXME
+    let style = White / Black * Bold * Italic;
+
+    println!("{}Declaring with style", style);
 }

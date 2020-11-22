@@ -5,11 +5,11 @@
 
 fn main() {
     use lay::*;
-    println!("{}Red.{} Not red.", Foreground(Red), Foreground(ResetColor));
     println!(
-        "{}On Green{}. Not on green.",
+        "{}{}{}Multiple attributes, one reset.{} Not styled.",
+        Foreground(Red),
         Background(Green),
-        Background(ResetColor)
+        Bold,
+        Reset
     );
-    println!("{}Bold{}. Not bold.", Bold, ResetWeight);
 }

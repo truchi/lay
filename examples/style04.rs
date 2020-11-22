@@ -5,11 +5,13 @@
 
 fn main() {
     use lay::*;
-    println!("{}Red.{} Not red.", Foreground(Red), Foreground(ResetColor));
-    println!(
-        "{}On Green{}. Not on green.",
-        Background(Green),
-        Background(ResetColor)
-    );
-    println!("{}Bold{}. Not bold.", Bold, ResetWeight);
+    let style = Style {
+        foreground: Some(Foreground(White)),
+        background: Some(Background(Black)),
+        weight: Some(Bold),
+        slant: Some(Italic),
+        ..Style::NONE
+    };
+
+    println!("{}Printing with style", style);
 }
