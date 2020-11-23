@@ -42,7 +42,7 @@ impl Lay {
         let attributes = Attr::attributes(attributes);
         let all = [grounds.clone(), attributes.clone()].concat();
 
-        let styler = Styler::new(&all);
+        let styler = Styler::new();
 
         Self {
             index: Ident::new(&[Self::INDEX]),

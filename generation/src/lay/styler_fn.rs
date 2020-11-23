@@ -6,17 +6,11 @@ pub struct StylerFn {
     pub doc:  Doc,
     pub name: Str,
     pub sign: TokenStream,
-    pub body: Option<TokenStream>,
 }
 
 impl StylerFn {
-    pub fn new(doc: Doc, name: Str, sign: TokenStream, body: Option<TokenStream>) -> Self {
-        Self {
-            doc,
-            name,
-            sign,
-            body,
-        }
+    pub fn new(doc: Doc, name: Str, sign: TokenStream) -> Self {
+        Self { doc, name, sign }
     }
 
     pub fn new_tuple(
@@ -25,8 +19,6 @@ impl StylerFn {
         name: String,
         sign: impl Fn(&Str) -> TokenStream,
         sign_mut: impl Fn(&Str) -> TokenStream,
-        body: Option<TokenStream>,
-        body_mut: Option<TokenStream>,
     ) -> (Self, Self) {
         let name_mut = format!("{}{}", name, Self::MUT);
         let name = Str::new(&name);
@@ -35,8 +27,8 @@ impl StylerFn {
         let sign_mut = sign_mut(&name_mut);
 
         (
-            Self::new(doc, name, sign, body),
-            Self::new(doc_mut, name_mut, sign_mut, body_mut),
+            Self::new(doc, name, sign),
+            Self::new(doc_mut, name_mut, sign_mut),
         )
     }
 
@@ -47,8 +39,6 @@ impl StylerFn {
             format!("{}{}", Self::GET, attr.snake),
             |name| quote! { fn #name(&self) -> Option<#attr> },
             |name| quote! { fn #name(&mut self) -> &mut Option<#attr> },
-            None,
-            None,
         )
     }
 
@@ -61,14 +51,11 @@ impl StylerFn {
             format!("{}{}", Self::SET, snake),
             |name| quote! { fn #name(self, #snake: impl Into<Option<#attr>>) -> Self::Output },
             |name| quote! { fn #name(&mut self, #snake: impl Into<Option<#attr>>) },
-            None,
-            None,
         )
     }
 
     pub fn new_attr_none(attr: &Attr) -> (Self, Self) {
         let none = Lay::NONE.to_lowercase();
-        let (set, set_mut) = (&attr.fn_set, &attr.fn_set_mut);
 
         Self::new_tuple(
             doc!("`None`s `Option<{}>`.", attr),
@@ -76,13 +63,10 @@ impl StylerFn {
             format!("{}_{}", none, attr.snake),
             |name| quote! { fn #name(self) -> Self::Output },
             |name| quote! { fn #name(&mut self) },
-            Some(quote! { self.#set(None) }),
-            Some(quote! { self.#set_mut(None); }),
         )
     }
 
     pub fn new_variant_set(attr: &Attr, variant: &Variant) -> (Self, Self) {
-        let (set, set_mut) = (&attr.fn_set, &attr.fn_set_mut);
         let snake = &variant.snake;
         let wrapped = &variant.wrapped;
         let args = &variant.args;
@@ -98,25 +82,7 @@ impl StylerFn {
             format!("{}{}{}", on, Self::SET, snake),
             |name| quote! { fn #name(self, #args) -> Self::Output },
             |name| quote! { fn #name(&mut self, #args) },
-            Some(quote! { self.#set(Some(#wrapped)) }),
-            Some(quote! { self.#set_mut(Some(#wrapped)); }),
         )
-    }
-
-    pub fn full(&self) -> TokenStream {
-        let doc = &self.doc;
-        let sign = &self.sign;
-        let body = if let Some(body) = &self.body {
-            quote! { { #body } }
-        } else {
-            quote! { ; }
-        };
-
-        quote! {
-            #doc
-            #sign
-            #body
-        }
     }
 }
 
@@ -128,6 +94,6 @@ derefs!(self StylerFn {
 
 impl Debug for StylerFn {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}", self.full().to_string())
+        write!(f, "{}", self.sign.to_string())
     }
 }
