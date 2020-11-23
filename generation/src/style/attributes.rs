@@ -146,13 +146,13 @@ fn impl_styler_index(lay: &Lay, attribute: &Attr) -> TokenStream {
 
     let getters = lay.all.iter().map(|getter| {
         let get = &getter.fn_get.sign;
-        let val = if attribute == getter {
-            quote! { Some(*self) }
+        let (doc, val) = if attribute == getter {
+            (doc!("Returns `Some(self)`."), quote! { Some(*self) })
         } else {
-            quote! { None }
+            (doc!("Returns `None`."), quote! { None })
         };
 
-        quote! { #get { #val } }
+        quote! { #doc #get { #val } }
     });
 
     quote! {
@@ -169,6 +169,16 @@ fn impl_styler(lay: &Lay, attribute: &Attr) -> TokenStream {
         let snake = &setter.snake;
         let set = &setter.fn_set.sign;
 
+        let doc = if attribute == setter {
+            doc!("Returns a `Style` with `{}`.", snake)
+        } else {
+            doc!(
+                "Returns a `Style` with `{}` (self) and `{}`.",
+                attribute.snake,
+                snake
+            )
+        };
+
         let fields = lay.all.iter().map(|field| {
             let s = &field.snake;
 
@@ -183,7 +193,7 @@ fn impl_styler(lay: &Lay, attribute: &Attr) -> TokenStream {
             }
         });
 
-        quote! { #set { Style { #(#fields,)* } } }
+        quote! { #doc #set { Style { #(#fields,)* } } }
     });
 
     quote! {

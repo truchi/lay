@@ -70,22 +70,22 @@ impl Generation {
 
         let impl_styler_index = self.all.iter().map(|attribute| {
             let snake = &attribute.snake;
-            let get = &attribute.fn_get.sign;
+            let get = &attribute.fn_get.full;
             quote! { #get { self.#snake } }
         });
         let impl_styler_index_mut = self.all.iter().map(|attribute| {
             let snake = &attribute.snake;
-            let get = &attribute.fn_get_mut.sign;
+            let get = &attribute.fn_get_mut.full;
             quote! { #get { &mut self.#snake } }
         });
         let impl_styler = self.all.iter().map(|attribute| {
             let snake = &attribute.snake;
-            let get = &attribute.fn_set.sign;
+            let get = &attribute.fn_set.full;
             quote! { #get { Style { #snake: #snake.into(), ..self } } }
         });
         let impl_styler_mut = self.all.iter().map(|attribute| {
             let snake = &attribute.snake;
-            let get = &attribute.fn_set_mut.sign;
+            let get = &attribute.fn_set_mut.full;
             quote! { #get { self.#snake = #snake.into(); } }
         });
 

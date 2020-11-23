@@ -26,42 +26,52 @@ impl Default for Overline {
 }
 
 impl StylerIndex for Overline {
+    /// Returns `None`.
     fn get_foreground(&self) -> Option<Foreground> {
         None
     }
 
+    /// Returns `None`.
     fn get_background(&self) -> Option<Background> {
         None
     }
 
+    /// Returns `None`.
     fn get_weight(&self) -> Option<Weight> {
         None
     }
 
+    /// Returns `None`.
     fn get_slant(&self) -> Option<Slant> {
         None
     }
 
+    /// Returns `None`.
     fn get_underline(&self) -> Option<Underline> {
         None
     }
 
+    /// Returns `None`.
     fn get_strike(&self) -> Option<Strike> {
         None
     }
 
+    /// Returns `Some(self)`.
     fn get_overline(&self) -> Option<Overline> {
         Some(*self)
     }
 
+    /// Returns `None`.
     fn get_invert(&self) -> Option<Invert> {
         None
     }
 
+    /// Returns `None`.
     fn get_blink(&self) -> Option<Blink> {
         None
     }
 
+    /// Returns `None`.
     fn get_border(&self) -> Option<Border> {
         None
     }
@@ -70,6 +80,7 @@ impl StylerIndex for Overline {
 impl Styler for Overline {
     type Output = Style;
 
+    /// Returns a `Style` with `overline` (self) and `foreground`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
         Style {
             foreground: foreground.into(),
@@ -85,6 +96,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline` (self) and `background`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
         Style {
             foreground: None,
@@ -100,6 +112,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline` (self) and `weight`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
         Style {
             foreground: None,
@@ -115,6 +128,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline` (self) and `slant`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
         Style {
             foreground: None,
@@ -130,6 +144,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline` (self) and `underline`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
         Style {
             foreground: None,
@@ -145,6 +160,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline` (self) and `strike`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
         Style {
             foreground: None,
@@ -160,6 +176,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
         Style {
             foreground: None,
@@ -175,6 +192,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline` (self) and `invert`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
         Style {
             foreground: None,
@@ -190,6 +208,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline` (self) and `blink`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
         Style {
             foreground: None,
@@ -205,6 +224,7 @@ impl Styler for Overline {
         }
     }
 
+    /// Returns a `Style` with `overline` (self) and `border`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
         Style {
             foreground: None,

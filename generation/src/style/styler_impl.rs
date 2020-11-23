@@ -9,8 +9,8 @@ impl Generation {
 
         let getters = self.all.iter().map(|attribute| {
             let get = &attribute.fn_get;
-            let get_sign = &get.sign;
-            quote! { #get_sign { #styler_index::#get(&self.#field) } }
+            let full = &get.full;
+            quote! { #full { #styler_index::#get(&self.#field) } }
         });
 
         quote! {
@@ -28,8 +28,8 @@ impl Generation {
 
         let getters = self.all.iter().map(|attribute| {
             let get = &attribute.fn_get_mut;
-            let get_sign = &get.sign;
-            quote! { #get_sign { #styler_index_mut::#get(&mut self.#field) } }
+            let full = &get.full;
+            quote! { #full { #styler_index_mut::#get(&mut self.#field) } }
         });
 
         quote! {
@@ -43,10 +43,10 @@ impl Generation {
         let styler = &self.styler.styler;
 
         let setters = self.all.iter().map(|attribute| {
-            let set = &attribute.fn_set;
-            let set_sign = &set.sign;
             let snake = &attribute.snake;
-            quote! { #set_sign { #styler::#set(self.#field, #snake); self } }
+            let set = &attribute.fn_set;
+            let full = &set.full;
+            quote! { #full { #styler::#set(self.#field, #snake); self } }
         });
 
         quote! {
@@ -65,10 +65,10 @@ impl Generation {
         let styler_mut = &self.styler.styler_mut;
 
         let setters = self.all.iter().map(|attribute| {
-            let set = &attribute.fn_set_mut;
-            let set_sign = &set.sign;
             let snake = &attribute.snake;
-            quote! { #set_sign { #styler_mut::#set(&mut self.#field, #snake) } }
+            let set = &attribute.fn_set_mut;
+            let full = &set.full;
+            quote! { #full { #styler_mut::#set(&mut self.#field, #snake) } }
         });
 
         quote! {

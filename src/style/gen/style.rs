@@ -308,84 +308,104 @@ impl From<Border> for Style {
 // ========================================================================== //
 
 impl StylerIndex for Style {
+    /// Gets `Option<Foreground>`.
     fn get_foreground(&self) -> Option<Foreground> {
         self.foreground
     }
 
+    /// Gets `Option<Background>`.
     fn get_background(&self) -> Option<Background> {
         self.background
     }
 
+    /// Gets `Option<Weight>`.
     fn get_weight(&self) -> Option<Weight> {
         self.weight
     }
 
+    /// Gets `Option<Slant>`.
     fn get_slant(&self) -> Option<Slant> {
         self.slant
     }
 
+    /// Gets `Option<Underline>`.
     fn get_underline(&self) -> Option<Underline> {
         self.underline
     }
 
+    /// Gets `Option<Strike>`.
     fn get_strike(&self) -> Option<Strike> {
         self.strike
     }
 
+    /// Gets `Option<Overline>`.
     fn get_overline(&self) -> Option<Overline> {
         self.overline
     }
 
+    /// Gets `Option<Invert>`.
     fn get_invert(&self) -> Option<Invert> {
         self.invert
     }
 
+    /// Gets `Option<Blink>`.
     fn get_blink(&self) -> Option<Blink> {
         self.blink
     }
 
+    /// Gets `Option<Border>`.
     fn get_border(&self) -> Option<Border> {
         self.border
     }
 }
 
 impl StylerIndexMut for Style {
+    /// Gets `&mut Option<Foreground>`.
     fn get_foreground_mut(&mut self) -> &mut Option<Foreground> {
         &mut self.foreground
     }
 
+    /// Gets `&mut Option<Background>`.
     fn get_background_mut(&mut self) -> &mut Option<Background> {
         &mut self.background
     }
 
+    /// Gets `&mut Option<Weight>`.
     fn get_weight_mut(&mut self) -> &mut Option<Weight> {
         &mut self.weight
     }
 
+    /// Gets `&mut Option<Slant>`.
     fn get_slant_mut(&mut self) -> &mut Option<Slant> {
         &mut self.slant
     }
 
+    /// Gets `&mut Option<Underline>`.
     fn get_underline_mut(&mut self) -> &mut Option<Underline> {
         &mut self.underline
     }
 
+    /// Gets `&mut Option<Strike>`.
     fn get_strike_mut(&mut self) -> &mut Option<Strike> {
         &mut self.strike
     }
 
+    /// Gets `&mut Option<Overline>`.
     fn get_overline_mut(&mut self) -> &mut Option<Overline> {
         &mut self.overline
     }
 
+    /// Gets `&mut Option<Invert>`.
     fn get_invert_mut(&mut self) -> &mut Option<Invert> {
         &mut self.invert
     }
 
+    /// Gets `&mut Option<Blink>`.
     fn get_blink_mut(&mut self) -> &mut Option<Blink> {
         &mut self.blink
     }
 
+    /// Gets `&mut Option<Border>`.
     fn get_border_mut(&mut self) -> &mut Option<Border> {
         &mut self.border
     }
@@ -394,6 +414,7 @@ impl StylerIndexMut for Style {
 impl Styler for Style {
     type Output = Self;
 
+    /// Sets `Option<Foreground>`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
         Style {
             foreground: foreground.into(),
@@ -401,6 +422,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Background>`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
         Style {
             background: background.into(),
@@ -408,6 +430,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Weight>`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
         Style {
             weight: weight.into(),
@@ -415,6 +438,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Slant>`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
         Style {
             slant: slant.into(),
@@ -422,6 +446,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Underline>`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
         Style {
             underline: underline.into(),
@@ -429,6 +454,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Strike>`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
         Style {
             strike: strike.into(),
@@ -436,6 +462,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Overline>`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
         Style {
             overline: overline.into(),
@@ -443,6 +470,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Invert>`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
         Style {
             invert: invert.into(),
@@ -450,6 +478,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Blink>`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
         Style {
             blink: blink.into(),
@@ -457,6 +486,7 @@ impl Styler for Style {
         }
     }
 
+    /// Sets `Option<Border>`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
         Style {
             border: border.into(),
@@ -466,42 +496,52 @@ impl Styler for Style {
 }
 
 impl StylerMut for Style {
+    /// Sets `Option<Foreground>`, mutably.
     fn foreground_mut(&mut self, foreground: impl Into<Option<Foreground>>) {
         self.foreground = foreground.into();
     }
 
+    /// Sets `Option<Background>`, mutably.
     fn background_mut(&mut self, background: impl Into<Option<Background>>) {
         self.background = background.into();
     }
 
+    /// Sets `Option<Weight>`, mutably.
     fn weight_mut(&mut self, weight: impl Into<Option<Weight>>) {
         self.weight = weight.into();
     }
 
+    /// Sets `Option<Slant>`, mutably.
     fn slant_mut(&mut self, slant: impl Into<Option<Slant>>) {
         self.slant = slant.into();
     }
 
+    /// Sets `Option<Underline>`, mutably.
     fn underline_mut(&mut self, underline: impl Into<Option<Underline>>) {
         self.underline = underline.into();
     }
 
+    /// Sets `Option<Strike>`, mutably.
     fn strike_mut(&mut self, strike: impl Into<Option<Strike>>) {
         self.strike = strike.into();
     }
 
+    /// Sets `Option<Overline>`, mutably.
     fn overline_mut(&mut self, overline: impl Into<Option<Overline>>) {
         self.overline = overline.into();
     }
 
+    /// Sets `Option<Invert>`, mutably.
     fn invert_mut(&mut self, invert: impl Into<Option<Invert>>) {
         self.invert = invert.into();
     }
 
+    /// Sets `Option<Blink>`, mutably.
     fn blink_mut(&mut self, blink: impl Into<Option<Blink>>) {
         self.blink = blink.into();
     }
 
+    /// Sets `Option<Border>`, mutably.
     fn border_mut(&mut self, border: impl Into<Option<Border>>) {
         self.border = border.into();
     }
