@@ -217,4 +217,30 @@ impl Styler {
             reset_mut,
         }
     }
+
+    pub fn op(&self, op: &str) -> (StylerFn, StylerFn) {
+        let (styler_index, styler) = (&self.styler_index, &self.styler);
+        let name = Str::new(op);
+        let name_mut = Str::new(&format!("{}{}", op, StylerFn::MUT));
+
+        (
+            StylerFn {
+                doc: doc!("`Option::{}` fields.", op),
+                sign: quote! {
+                    fn #name(self, other: &impl #styler_index)
+                    -> <Self::Output as #styler>::Output
+                    where
+                        Self::Output: #styler<Output = Self::Output>
+                },
+                name,
+                body: None,
+            },
+            StylerFn {
+                doc:  doc!("`Option::{}` fields, mutably.", op),
+                sign: quote! { fn #name_mut(&mut self, other: &impl #styler_index) },
+                name: name_mut,
+                body: None,
+            },
+        )
+    }
 }

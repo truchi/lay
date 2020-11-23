@@ -30,20 +30,21 @@ impl Generation {
         let Styler {
             styler_index,
             styler_index_mut,
-            to_style,
             ..
         } = &self.styler;
-        let to_style = to_style.full();
+        let to_style = impl_to_style(self);
         let index = self
             .all
             .iter()
-            .map(|attribute| attribute.fn_get.full())
-            .map(|t| quote! { #t #LINE_BREAK });
+            .map(|attribute| &attribute.fn_get)
+            .map(|get| (&get.doc, &get.sign))
+            .map(|(doc, sign)| quote! { #doc #sign; #LINE_BREAK });
         let index_mut = self
             .all
             .iter()
-            .map(|attribute| attribute.fn_get_mut.full())
-            .map(|t| quote! { #t #LINE_BREAK });
+            .map(|attribute| &attribute.fn_get_mut)
+            .map(|get| (&get.doc, &get.sign))
+            .map(|(doc, sign)| quote! { #doc #sign; #LINE_BREAK });
 
         (
             quote! {
@@ -51,7 +52,7 @@ impl Generation {
 
                 /// `Option`al [`attributes`](crate::attributes) getters.
                 pub trait #styler_index {
-                    #(#index)* #LINE_BREAK
+                    #(#index)*
                     #to_style
                 }
             },
@@ -67,71 +68,19 @@ impl Generation {
     }
 
     pub fn styler(&self) -> (TokenStream, TokenStream) {
-        let (
-            styler,
-            styler_mut,
-            styler_index,
-            style,
-            style_mut,
-            and,
-            and_mut,
-            or,
-            or_mut,
-            xor,
-            xor_mut,
-            dedup,
-            dedup_mut,
-            reset,
-            reset_mut,
-        ) = (
+        let (styler_index, styler, styler_mut) = (
+            &self.styler.styler_index,
             &self.styler.styler,
             &self.styler.styler_mut,
-            &self.styler.styler_index,
-            &self.styler.style.full(),
-            &self.styler.style_mut.full(),
-            &self.styler.and.full(),
-            &self.styler.and_mut.full(),
-            &self.styler.or.full(),
-            &self.styler.or_mut.full(),
-            &self.styler.xor.full(),
-            &self.styler.xor_mut.full(),
-            &self.styler.dedup.full(),
-            &self.styler.dedup_mut.full(),
-            &self.styler.reset.full(),
-            &self.styler.reset_mut.full(),
         );
 
-        let mapper = |set: fn(&Attr) -> &StylerFn,
-                      none: fn(&Attr) -> &StylerFn,
-                      vset: fn(&Variant) -> &StylerFn| {
-            move |attribute: &Attr| {
-                let comment = centered_comment!(76, "{}", attribute);
-                let set = set(attribute).full();
-                let variants = attribute.variants.iter().map(|variant| {
-                    let set = vset(variant).full();
-                    quote! { #set #LINE_BREAK }
-                });
-                let none = none(attribute).full();
-
-                quote! {
-                    #comment #LINE_BREAK
-                    #set     #LINE_BREAK
-                    #none    #LINE_BREAK
-                    #(#variants)*
-                }
-            }
-        };
-
-        let setters = self.all.iter().map(mapper(
-            |attribute| &attribute.fn_set,
-            |attribute| &attribute.fn_none,
-            |variant| &variant.fn_set,
-        ));
-        let setters_mut = self.all.iter().map(mapper(
-            |attribute| &attribute.fn_set_mut,
-            |attribute| &attribute.fn_none_mut,
-            |variant| &variant.fn_set_mut,
-        ));
+        let (setters, setters_mut) = impl_attributes(self);
+        let (style, style_mut) = impl_style(self);
+        let (and, and_mut) = impl_op(self, "and");
+        let (or, or_mut) = impl_op(self, "or");
+        let (xor, xor_mut) = impl_op(self, "xor");
+        let (dedup, dedup_mut) = impl_dedup(self);
+        let (reset, reset_mut) = impl_reset(self);
         let comment = centered_comment!(76, "Additional functions");
 
         (
@@ -142,14 +91,14 @@ impl Generation {
                 pub trait #styler: #styler_index + Sized {
                     /// The resulting type of the setters.
                     type Output; #LINE_BREAK
-                    #(#setters)*
+                    #setters
                     #comment #LINE_BREAK
-                    #style #LINE_BREAK
-                    #and   #LINE_BREAK
-                    #or    #LINE_BREAK
-                    #xor   #LINE_BREAK
-                    #dedup #LINE_BREAK
-                    #reset #LINE_BREAK
+                    #style   #LINE_BREAK
+                    #and     #LINE_BREAK
+                    #or      #LINE_BREAK
+                    #xor     #LINE_BREAK
+                    #dedup   #LINE_BREAK
+                    #reset   #LINE_BREAK
                 }
             },
             quote! {
@@ -157,8 +106,8 @@ impl Generation {
 
                 /// `Option`al [`attributes`](crate::attributes) setters, mutably.
                 pub trait #styler_mut: #styler_index {
-                    #(#setters_mut)*
-                    #comment #LINE_BREAK
+                    #setters_mut
+                    #comment   #LINE_BREAK
                     #style_mut #LINE_BREAK
                     #and_mut   #LINE_BREAK
                     #or_mut    #LINE_BREAK
@@ -169,349 +118,176 @@ impl Generation {
             },
         )
     }
-
-    // =============== //
-    // Implementations //
-    // =============== //
-
-    pub fn impl_styler_index(
-        &self,
-        (ty, bounds, field): (&Str, &[TokenStream], &Str),
-    ) -> TokenStream {
-        let styler_index = &self.styler.styler_index;
-
-        let getters = self.all.iter().map(|attribute| {
-            let get = &attribute.fn_get;
-            let get_sign = &get.sign;
-            quote! { #get_sign { #styler_index::#get(&self.#field) } }
-        });
-
-        quote! {
-            impl<#(#bounds)*> #styler_index for #ty {
-                #(#getters)*
-            }
-        }
-    }
-
-    pub fn impl_styler_index_mut(
-        &self,
-        (ty, bounds, field): (&Str, &[TokenStream], &Str),
-    ) -> TokenStream {
-        let styler_index_mut = &self.styler.styler_index_mut;
-
-        let getters = self.all.iter().map(|attribute| {
-            let get = &attribute.fn_get_mut;
-            let get_sign = &get.sign;
-            quote! { #get_sign { #styler_index_mut::#get(&mut self.#field) } }
-        });
-
-        quote! {
-            impl<#(#bounds)*> #styler_index_mut for #ty {
-                #(#getters)*
-            }
-        }
-    }
-
-    pub fn impl_styler(&self, (ty, bounds, field): (&Str, &[TokenStream], &Str)) -> TokenStream {
-        let styler = &self.styler.styler;
-
-        let setters = self.all.iter().map(|attribute| {
-            let set = &attribute.fn_set;
-            let set_sign = &set.sign;
-            let snake = &attribute.snake;
-            quote! { #set_sign { #styler::#set(self.#field, #snake); self } }
-        });
-
-        quote! {
-            impl<#(#bounds)*> #styler for #ty {
-                type Output = Self;
-
-                #(#setters)*
-            }
-        }
-    }
-
-    pub fn impl_styler_mut(
-        &self,
-        (ty, bounds, field): (&Str, &[TokenStream], &Str),
-    ) -> TokenStream {
-        let styler_mut = &self.styler.styler_mut;
-
-        let setters = self.all.iter().map(|attribute| {
-            let set = &attribute.fn_set_mut;
-            let set_sign = &set.sign;
-            let snake = &attribute.snake;
-            quote! { #set_sign { #styler_mut::#set(&mut self.#field, #snake) } }
-        });
-
-        quote! {
-            impl<#(#bounds)*> #styler_mut for #ty {
-                #(#setters)*
-            }
-        }
-    }
-
-    // ========================= //
-    // Operation implementations //
-    // ========================= //
-
-    pub fn impl_styler_ops(
-        &self,
-        (ty, bounds, _): (&Str, &[TokenStream], &Str),
-        mutable: bool,
-    ) -> TokenStream {
-        let (styler, styler_index) = (&self.styler.styler, &self.styler.styler_index);
-        let styler_snake = &styler.snake;
-
-        let (add, mul, div, bitand, bitor, bitxor, rem, not) = ops_names(mutable);
-        let (the_trait, output_self, output_output, and, or, xor, dedup, reset) = if mutable {
-            (
-                &self.styler.styler_mut,
-                None,
-                None,
-                &self.styler.and_mut,
-                &self.styler.or_mut,
-                &self.styler.xor_mut,
-                &self.styler.dedup_mut,
-                &self.styler.reset_mut,
-            )
-        } else {
-            (
-                &self.styler.styler,
-                Some(quote! { Self }),
-                Some(quote! { <<Self as #styler>::Output as #styler>::Output }),
-                &self.styler.and,
-                &self.styler.or,
-                &self.styler.xor,
-                &self.styler.dedup,
-                &self.styler.reset,
-            )
-        };
-
-        let rhs = Ident {
-            pascal: Str::new("&Index"),
-            snake:  styler_snake.clone(),
-        };
-        let mut bounds_with_rhs = bounds.to_vec();
-        bounds_with_rhs.push(quote! { Index: #styler_index });
-
-        let ground = |op, ground: &Attr| {
-            let set = if mutable {
-                &ground.fn_set_mut
-            } else {
-                &ground.fn_set
-            };
-            let rhs_snake = &ground.snake;
-            let rhs = Ident {
-                pascal: Str::new("Color"),
-                snake:  rhs_snake.clone(),
-            };
-            let mut bounds = bounds.to_vec();
-            bounds.push(quote! { #rhs: Into<Option<#ground>> });
-
-            impl_op(
-                mutable,
-                op,
-                &set.doc,
-                ty,
-                &bounds,
-                Some(&rhs),
-                &output_self,
-                quote! { #the_trait::#set(self, #rhs_snake) },
-            )
-        };
-
-        let attributes = self.all.iter().map(|attribute| {
-            let (set, none) = if mutable {
-                (&attribute.fn_set_mut, &attribute.fn_none_mut)
-            } else {
-                (&attribute.fn_set, &attribute.fn_none)
-            };
-
-            let rhs = &attribute.name;
-            let rhs_snake = &rhs.snake;
-            let yes = impl_op(
-                mutable,
-                &add,
-                &set.doc,
-                ty,
-                bounds,
-                Some(&rhs),
-                &output_self,
-                quote! { #the_trait::#set(self, #rhs_snake) },
-            );
-
-            let rhs = &Ident {
-                pascal: attribute.none.clone(),
-                snake:  Str::new("_"),
-            };
-            let no = impl_op(
-                mutable,
-                &add,
-                &none.doc,
-                ty,
-                bounds,
-                Some(&rhs),
-                &output_self,
-                quote! { #the_trait::#none(self) },
-            );
-
-            quote! { #yes #no }
-        });
-
-        let ops = |op, set: &StylerFn| {
-            impl_op(
-                mutable,
-                op,
-                &set.doc,
-                ty,
-                &bounds_with_rhs,
-                Some(&rhs),
-                &output_output,
-                quote! { #the_trait::#set(self, #styler_snake) },
-            )
-        };
-
-        let foreground = ground(&mul, &self.foreground);
-        let background = ground(&div, &self.background);
-        let and = ops(&bitand, &and);
-        let or = ops(&bitor, &or);
-        let xor = ops(&bitxor, &xor);
-
-        let dedup = impl_op(
-            mutable,
-            &rem,
-            &dedup.doc,
-            ty,
-            &bounds_with_rhs,
-            Some(&rhs),
-            &output_self,
-            quote! { #the_trait::#dedup(self, #styler_snake) },
-        );
-
-        let reset = if mutable {
-            impl_op(
-                false,
-                &not,
-                &reset.doc,
-                &Str::new(&format!("&mut {}", ty)),
-                &bounds,
-                None,
-                &Some(quote! { Self }),
-                quote! { #the_trait::#reset(self); self },
-            )
-        } else {
-            impl_op(
-                false,
-                &not,
-                &reset.doc,
-                ty,
-                &bounds,
-                None,
-                &Some(quote! { Self }),
-                quote! { #the_trait::#reset(self) },
-            )
-        };
-
-        quote! {
-            #[cfg(feature = "styler-ops")]
-            use std::ops::{#add, #div, #mul, #bitand, #bitor, #bitxor, #rem};
-            #LINE_BREAK
-
-            #foreground #background
-            #(#attributes)*
-            #and #or #xor
-            #dedup #reset
-        }
-    }
 }
 
-// ======= //
-// Helpers //
-// ======= //
+// ================ //
+// Provided methods //
+// ================ //
 
-fn impl_op(
-    mutable: bool,
-    op: &Ident,
-    doc: &Doc,
-    ty: &Str,
-    bounds: &[TokenStream],
-    rhs: Option<&Ident>,
-    output: &Option<TokenStream>,
-    body: TokenStream,
-) -> TokenStream {
-    let self_arg = if mutable {
-        quote! { &mut self }
-    } else {
-        quote! { self }
+fn impl_to_style(lay: &Lay) -> TokenStream {
+    let to_style = &lay.styler.to_style;
+    let doc = &to_style.doc;
+    let sign = &to_style.sign;
+    let style = lay
+        .all
+        .iter()
+        .map(|attribute| (&attribute.snake, &attribute.fn_get))
+        .map(|(snake, get)| quote! { #snake: self.#get() });
+
+    quote! { #doc #sign { Style { #(#style),* } }}
+}
+
+fn impl_attributes(lay: &Lay) -> (TokenStream, TokenStream) {
+    let mapper = |set: fn(&Attr) -> &StylerFn,
+                  none: fn(&Attr) -> &StylerFn,
+                  vset: fn(&Variant) -> &StylerFn| {
+        move |attribute: &Attr| {
+            let comment = centered_comment!(76, "{}", attribute);
+            let set = set(attribute);
+            let none = none(attribute);
+            let (set_doc, set_sign) = (&set.doc, &set.sign);
+            let (none_doc, none_sign) = (&none.doc, &none.sign);
+
+            let variants = attribute.variants.iter().map(|variant| {
+                let variant_set = vset(variant);
+                let (variant_doc, variant_sign) = (&variant_set.doc, &variant_set.sign);
+                let wrapped = &variant.wrapped;
+
+                quote! { #variant_doc #variant_sign { self.#set(Some(#wrapped)) } #LINE_BREAK }
+            });
+
+            quote! {
+                #comment             #LINE_BREAK
+                #set_doc  #set_sign; #LINE_BREAK
+                #none_doc #none_sign { self.#set(None) } #LINE_BREAK
+                #(#variants)*
+            }
+        }
     };
-    let op_snake = &op.snake;
-    let arg = rhs.as_ref().map(|rhs| {
-        let rhs_snake = &rhs.snake;
 
-        quote! { #rhs_snake: #rhs }
-    });
-    let output = output.as_ref();
-    let ret = output.map(|output| quote! { -> #output });
-    let output = output.map(|output| quote! { type Output = #output; });
+    let setters = lay.all.iter().map(mapper(
+        |attribute| &attribute.fn_set,
+        |attribute| &attribute.fn_none,
+        |variant| &variant.fn_set,
+    ));
+    let setters_mut = lay.all.iter().map(mapper(
+        |attribute| &attribute.fn_set_mut,
+        |attribute| &attribute.fn_none_mut,
+        |variant| &variant.fn_set_mut,
+    ));
 
-    quote! {
-        #[cfg(feature = "styler-ops")]
-        #doc
-        impl<#(#bounds),*> #op<#rhs> for #ty {
-            #output
-
-            #doc
-            fn #op_snake(#self_arg, #arg) #ret {
-                #body
-            }
-        }
-        #LINE_BREAK
-    }
+    (quote! { #(#setters)* }, quote! { #(#setters_mut)* })
 }
 
-fn ops_names(mutable: bool) -> (Ident, Ident, Ident, Ident, Ident, Ident, Ident, Ident) {
-    let not = Ident::new(&["Not"]);
+fn impl_style(lay: &Lay) -> (TokenStream, TokenStream) {
+    let (style, style_mut) = (&lay.styler.style, &lay.styler.style_mut);
+    let (doc, sign) = (&style.doc, &style.sign);
+    let (doc_mut, sign_mut) = (&style_mut.doc, &style_mut.sign);
 
-    if mutable {
-        (
-            Ident::new(&["Add", "Assign"]),
-            Ident::new(&["Mul", "Assign"]),
-            Ident::new(&["Div", "Assign"]),
-            Ident {
-                pascal: Str::new("BitAndAssign"),
-                snake:  Str::new("bitand_assign"),
-            },
-            Ident {
-                pascal: Str::new("BitOrAssign"),
-                snake:  Str::new("bitor_assign"),
-            },
-            Ident {
-                pascal: Str::new("BitXorAssign"),
-                snake:  Str::new("bitxor_assign"),
-            },
-            Ident::new(&["Rem", "Assign"]),
-            not,
-        )
-    } else {
-        (
-            Ident::new(&["Add"]),
-            Ident::new(&["Mul"]),
-            Ident::new(&["Div"]),
-            Ident {
-                pascal: Str::new("BitAnd"),
-                snake:  Str::new("bitand"),
-            },
-            Ident {
-                pascal: Str::new("BitOr"),
-                snake:  Str::new("bitor"),
-            },
-            Ident {
-                pascal: Str::new("BitXor"),
-                snake:  Str::new("bitxor"),
-            },
-            Ident::new(&["Rem"]),
-            not,
-        )
-    }
+    let body = lay
+        .all
+        .iter()
+        .map(|attribute| (&attribute.fn_get, &attribute.fn_set))
+        .map(|(get, set)| quote! { .#set(styler.#get()) });
+    let body_mut = lay
+        .all
+        .iter()
+        .map(|attribute| (&attribute.fn_get, &attribute.fn_set_mut))
+        .map(|(get, set_mut)| quote! { self.#set_mut(styler.#get()); });
+
+    (
+        quote! { #doc #sign { self#(#body)* }},
+        quote! { #doc_mut #sign_mut { #(#body_mut)* } },
+    )
+}
+
+fn impl_op(lay: &Lay, op: &str) -> (TokenStream, TokenStream) {
+    let (op, op_mut) = lay.styler.op(op);
+    let (doc, sign) = (&op.doc, &op.sign);
+    let (doc_mut, sign_mut) = (&op_mut.doc, &op_mut.sign);
+
+    let body = lay
+        .all
+        .iter()
+        .map(|attribute| (&attribute.snake, &attribute.fn_get, &attribute.fn_set))
+        .map(|(snake, get, set)| {
+            quote! {
+                let #snake = output.#get().#op(other.#get());
+                let output = output.#set(#snake); #LINE_BREAK
+            }
+        });
+    let body_mut = lay
+        .all
+        .iter()
+        .map(|attribute| (&attribute.fn_get, &attribute.fn_set_mut))
+        .map(|(get, set_mut)| quote! { self.#set_mut(self.#get().#op(other.#get())); });
+
+    (
+        quote! { #doc #sign { let output = self; #LINE_BREAK #(#body)* output }},
+        quote! { #doc_mut #sign_mut { #(#body_mut)* } },
+    )
+}
+
+fn impl_dedup(lay: &Lay) -> (TokenStream, TokenStream) {
+    let (dedup, dedup_mut) = (&lay.styler.dedup, &lay.styler.dedup_mut);
+    let (doc, sign) = (&dedup.doc, &dedup.sign);
+    let (doc_mut, sign_mut) = (&dedup_mut.doc, &dedup_mut.sign);
+
+    let body = lay
+        .all
+        .iter()
+        .map(|attribute| (&attribute.fn_get, &attribute.fn_set))
+        .map(|(get, set)| {
+            quote! {
+                if self.#get() == before.#get() { self = self.#set(None); }
+                #LINE_BREAK
+            }
+        });
+    let body_mut = lay
+        .all
+        .iter()
+        .map(|attribute| (&attribute.fn_get, &attribute.fn_set_mut))
+        .map(|(get, set_mut)| {
+            quote! {
+                if self.#get() == before.#get() { self.#set_mut(None); }
+                #LINE_BREAK
+            }
+        });
+
+    (
+        quote! { #doc #sign { #(#body)* self } },
+        quote! { #doc_mut #sign_mut { #(#body_mut)* } },
+    )
+}
+
+fn impl_reset(lay: &Lay) -> (TokenStream, TokenStream) {
+    let (reset, reset_mut) = (&lay.styler.reset, &lay.styler.reset_mut);
+    let (doc, sign) = (&reset.doc, &reset.sign);
+    let (doc_mut, sign_mut) = (&reset_mut.doc, &reset_mut.sign);
+
+    let body = lay
+        .all
+        .iter()
+        .map(|attr| (&attr.fn_get, &attr.fn_set, &attr.reset.wrapped))
+        .map(|(get, set, reset)| {
+            quote! {
+                if let Some(_) = self.#get() { self = self.#set(Some(#reset)); }
+                #LINE_BREAK
+            }
+        });
+    let body_mut = lay
+        .all
+        .iter()
+        .map(|attr| (&attr.fn_get, &attr.fn_set_mut, &attr.reset.wrapped))
+        .map(|(get, set_mut, reset)| {
+            quote! {
+                if let Some(_) = self.#get() { self.#set_mut(Some(#reset)); }
+                #LINE_BREAK
+            }
+        });
+
+    (
+        quote! { #doc #sign { #(#body)* self } },
+        quote! { #doc_mut #sign_mut { #(#body_mut)* } },
+    )
 }
