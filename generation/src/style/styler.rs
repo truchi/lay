@@ -36,15 +36,13 @@ impl Generation {
         let index = self
             .all
             .iter()
-            .map(|attribute| &attribute.fn_get)
-            .map(|get| (&get.doc, &get.sign))
-            .map(|(doc, sign)| quote! { #doc #sign; #LINE_BREAK });
+            .map(|attribute| &attribute.fn_get.full)
+            .map(|full| quote! { #full; #LINE_BREAK });
         let index_mut = self
             .all
             .iter()
-            .map(|attribute| &attribute.fn_get_mut)
-            .map(|get| (&get.doc, &get.sign))
-            .map(|(doc, sign)| quote! { #doc #sign; #LINE_BREAK });
+            .map(|attribute| &attribute.fn_get_mut.full)
+            .map(|full| quote! { #full; #LINE_BREAK });
 
         (
             quote! {
@@ -126,15 +124,14 @@ impl Generation {
 
 fn impl_to_style(lay: &Lay) -> TokenStream {
     let to_style = &lay.styler.to_style;
-    let doc = &to_style.doc;
-    let sign = &to_style.sign;
+    let full = &to_style.full;
     let style = lay
         .all
         .iter()
         .map(|attribute| (&attribute.snake, &attribute.fn_get))
         .map(|(snake, get)| quote! { #snake: self.#get() });
 
-    quote! { #doc #sign { Style { #(#style),* } }}
+    quote! { #full { Style { #(#style),* } }}
 }
 
 fn impl_attributes(lay: &Lay) -> (TokenStream, TokenStream) {
@@ -145,21 +142,21 @@ fn impl_attributes(lay: &Lay) -> (TokenStream, TokenStream) {
             let comment = centered_comment!(76, "{}", attribute);
             let set = set(attribute);
             let none = none(attribute);
-            let (set_doc, set_sign) = (&set.doc, &set.sign);
-            let (none_doc, none_sign) = (&none.doc, &none.sign);
+            let set_full = &set.full;
+            let none_full = &none.full;
 
             let variants = attribute.variants.iter().map(|variant| {
                 let variant_set = vset(variant);
-                let (variant_doc, variant_sign) = (&variant_set.doc, &variant_set.sign);
+                let variant_full = &variant_set.full;
                 let wrapped = &variant.wrapped;
 
-                quote! { #variant_doc #variant_sign { self.#set(Some(#wrapped)) } #LINE_BREAK }
+                quote! { #variant_full { self.#set(Some(#wrapped)) } #LINE_BREAK }
             });
 
             quote! {
-                #comment             #LINE_BREAK
-                #set_doc  #set_sign; #LINE_BREAK
-                #none_doc #none_sign { self.#set(None) } #LINE_BREAK
+                #comment                       #LINE_BREAK
+                #set_full;                     #LINE_BREAK
+                #none_full { self.#set(None) } #LINE_BREAK
                 #(#variants)*
             }
         }
@@ -181,8 +178,8 @@ fn impl_attributes(lay: &Lay) -> (TokenStream, TokenStream) {
 
 fn impl_style(lay: &Lay) -> (TokenStream, TokenStream) {
     let (style, style_mut) = (&lay.styler.style, &lay.styler.style_mut);
-    let (doc, sign) = (&style.doc, &style.sign);
-    let (doc_mut, sign_mut) = (&style_mut.doc, &style_mut.sign);
+    let full = &style.full;
+    let full_mut = &style_mut.full;
 
     let body = lay
         .all
@@ -196,15 +193,15 @@ fn impl_style(lay: &Lay) -> (TokenStream, TokenStream) {
         .map(|(get, set_mut)| quote! { self.#set_mut(styler.#get()); });
 
     (
-        quote! { #doc #sign { self#(#body)* }},
-        quote! { #doc_mut #sign_mut { #(#body_mut)* } },
+        quote! { #full { self#(#body)* }},
+        quote! { #full_mut { #(#body_mut)* } },
     )
 }
 
 fn impl_op(lay: &Lay, op: &str) -> (TokenStream, TokenStream) {
     let (op, op_mut) = lay.styler.op(op);
-    let (doc, sign) = (&op.doc, &op.sign);
-    let (doc_mut, sign_mut) = (&op_mut.doc, &op_mut.sign);
+    let full = &op.full;
+    let full_mut = &op_mut.full;
 
     let body = lay
         .all
@@ -223,15 +220,15 @@ fn impl_op(lay: &Lay, op: &str) -> (TokenStream, TokenStream) {
         .map(|(get, set_mut)| quote! { self.#set_mut(self.#get().#op(other.#get())); });
 
     (
-        quote! { #doc #sign { let output = self; #LINE_BREAK #(#body)* output }},
-        quote! { #doc_mut #sign_mut { #(#body_mut)* } },
+        quote! { #full { let output = self; #LINE_BREAK #(#body)* output }},
+        quote! { #full_mut { #(#body_mut)* } },
     )
 }
 
 fn impl_dedup(lay: &Lay) -> (TokenStream, TokenStream) {
     let (dedup, dedup_mut) = (&lay.styler.dedup, &lay.styler.dedup_mut);
-    let (doc, sign) = (&dedup.doc, &dedup.sign);
-    let (doc_mut, sign_mut) = (&dedup_mut.doc, &dedup_mut.sign);
+    let full = &dedup.full;
+    let full_mut = &dedup_mut.full;
 
     let body = lay
         .all
@@ -255,15 +252,15 @@ fn impl_dedup(lay: &Lay) -> (TokenStream, TokenStream) {
         });
 
     (
-        quote! { #doc #sign { #(#body)* self } },
-        quote! { #doc_mut #sign_mut { #(#body_mut)* } },
+        quote! { #full { #(#body)* self } },
+        quote! { #full_mut { #(#body_mut)* } },
     )
 }
 
 fn impl_reset(lay: &Lay) -> (TokenStream, TokenStream) {
     let (reset, reset_mut) = (&lay.styler.reset, &lay.styler.reset_mut);
-    let (doc, sign) = (&reset.doc, &reset.sign);
-    let (doc_mut, sign_mut) = (&reset_mut.doc, &reset_mut.sign);
+    let full = &reset.full;
+    let full_mut = &reset_mut.full;
 
     let body = lay
         .all
@@ -287,7 +284,7 @@ fn impl_reset(lay: &Lay) -> (TokenStream, TokenStream) {
         });
 
     (
-        quote! { #doc #sign { #(#body)* self } },
-        quote! { #doc_mut #sign_mut { #(#body_mut)* } },
+        quote! { #full { #(#body)* self } },
+        quote! { #full_mut { #(#body_mut)* } },
     )
 }

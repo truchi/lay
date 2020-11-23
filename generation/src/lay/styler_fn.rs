@@ -6,14 +6,21 @@ pub struct StylerFn {
     pub doc:  Doc,
     pub name: Str,
     pub sign: TokenStream,
+    pub full: TokenStream,
 }
 
 impl StylerFn {
     pub fn new(doc: Doc, name: &str, sign: TokenStream) -> Self {
         let name = Str::new(name);
         let sign = quote! { fn #name #sign };
+        let full = quote! { #doc #sign };
 
-        Self { doc, name, sign }
+        Self {
+            doc,
+            name,
+            sign,
+            full,
+        }
     }
 
     pub fn new_tuple(
