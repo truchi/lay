@@ -5,13 +5,11 @@
 
 fn main() {
     use lay::*;
-    let style = Style {
+    println!("{}Printing with style.", Style {
         foreground: Some(Foreground(White)),
         background: Some(Background(Black)),
         weight: Some(Bold),
         slant: Some(Italic),
         ..Style::NONE
-    };
-
-    println!("{}Printing with style", style);
+    });
 }

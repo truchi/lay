@@ -5,8 +5,8 @@
 
 fn main() {
     use lay::*;
-    // FIXME
-    let style = White / Black * Bold * Italic;
-
-    println!("{}Declaring with style", style);
+    println!(
+        "{}Declaring with style",
+        Style::NONE.white().on_black().bold().italic() // Same as above
+    );
 }
