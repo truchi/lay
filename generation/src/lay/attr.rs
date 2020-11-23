@@ -12,7 +12,6 @@ pub enum AttrType {
 pub struct Attr {
     pub ty:          AttrType,
     pub name:        Ident,
-    pub none:        Str,
     pub variants:    Vec<Variant>,
     pub reset:       Variant,
     pub fn_get:      StylerFn,
@@ -31,22 +30,17 @@ derefs!(self Attr {
 
 impl Attr {
     pub fn new(ty: AttrType, name: Ident, variants: Vec<(Ident, Vec<&str>)>) -> Self {
-        let new = || {
-            let none = Str::new(&format!("{}{}", Lay::NONE, &name));
-
-            Self {
-                ty,
-                name,
-                none,
-                variants: Default::default(),
-                reset: Default::default(),
-                fn_get: Default::default(),
-                fn_get_mut: Default::default(),
-                fn_set: Default::default(),
-                fn_set_mut: Default::default(),
-                fn_none: Default::default(),
-                fn_none_mut: Default::default(),
-            }
+        let new = || Self {
+            ty,
+            name,
+            variants: Default::default(),
+            reset: Default::default(),
+            fn_get: Default::default(),
+            fn_get_mut: Default::default(),
+            fn_set: Default::default(),
+            fn_set_mut: Default::default(),
+            fn_none: Default::default(),
+            fn_none_mut: Default::default(),
         };
 
         let attr = new();

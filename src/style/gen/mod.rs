@@ -16,19 +16,3 @@ pub use color::*;
 pub use reset::*;
 pub use style::*;
 pub use styler::*;
-
-#[cfg(feature = "styler-ops")]
-pub mod no;
-#[cfg(feature = "styler-ops")]
-pub use no::{
-    Background as NoBackground,
-    Blink as NoBlink,
-    Border as NoBorder,
-    Foreground as NoForeground,
-    Invert as NoInvert,
-    Overline as NoOverline,
-    Slant as NoSlant,
-    Strike as NoStrike,
-    Underline as NoUnderline,
-    Weight as NoWeight,
-};

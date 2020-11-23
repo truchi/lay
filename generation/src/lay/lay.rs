@@ -4,7 +4,6 @@ use crate::*;
 pub struct Lay {
     pub index:      Ident,
     pub reset:      Ident,
-    pub none:       Ident,
     pub color:      Color,
     pub foreground: Attr,
     pub background: Attr,
@@ -47,7 +46,6 @@ impl Lay {
         Self {
             index: Ident::new(&[Self::INDEX]),
             reset: Ident::new(&[Self::RESET]),
-            none: Ident::new(&[Self::NONE]),
             color: Color::new(colors),
             foreground,
             background,

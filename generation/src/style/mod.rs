@@ -1,12 +1,10 @@
 mod attributes;
 mod backends;
 mod color;
-mod no;
 mod reset;
 mod style;
 mod styler;
 mod styler_impl;
-mod styler_ops_impl;
 
 use crate::*;
 
@@ -51,33 +49,29 @@ impl Generation {
         // dir/
         write(dir, &format!("{}.rs", self.color.snake), self.color());
         write(dir, &format!("{}.rs", self.reset.snake), self.reset());
-        write(dir, &format!("{}.rs", self.none.snake), self.no());
         write(dir, "style.rs", self.style());
         write(dir, "styled_impls.rs", self.styled_impls());
         write(dir, "mod.rs", self.mod_style());
     }
 
     pub fn mod_style(&self) -> TokenStream {
-        concat(&[
-            quote! {
-                pub mod attributes;
-                mod backends;
-                mod color;
-                mod reset;
-                mod style;
-                mod styled_impls;
-                mod styler;
-                #LINE_BREAK
+        quote! {
+            pub mod attributes;
+            mod backends;
+            mod color;
+            mod reset;
+            mod style;
+            mod styled_impls;
+            mod styler;
+            #LINE_BREAK
 
-                pub use attributes::*;
-                pub use color::*;
-                pub use reset::*;
-                pub use style::*;
-                pub use styler::*;
-                #LINE_BREAK
-            },
-            self.import_no(),
-        ])
+            pub use attributes::*;
+            pub use color::*;
+            pub use reset::*;
+            pub use style::*;
+            pub use styler::*;
+            #LINE_BREAK
+        }
     }
 
     pub fn styled_impls(&self) -> TokenStream {
@@ -91,16 +85,12 @@ impl Generation {
             quote! {
                 use crate::*;
                 use std::fmt::Display;
-                // FIXME
-                use std::ops::Not;
                 #LINE_BREAK
             },
             self.impl_styler_index(styled_impls),
             self.impl_styler_index_mut(styled_impls),
             self.impl_styler(styled_impls),
             self.impl_styler_mut(styled_impls),
-            self.impl_styler_ops(styled_impls, false),
-            self.impl_styler_ops(styled_impls, true),
         ])
     }
 }
