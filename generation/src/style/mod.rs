@@ -50,7 +50,7 @@ impl Generation {
         write(dir, &format!("{}.rs", self.color.snake), self.color());
         write(dir, &format!("{}.rs", self.reset.snake), self.reset());
         write(dir, "style.rs", self.style());
-        write(dir, "styled_impls.rs", self.styled_impls());
+        write(dir, "styled.rs", self.styled_impls());
         write(dir, "mod.rs", self.mod_style());
     }
 
@@ -61,7 +61,7 @@ impl Generation {
             mod color;
             mod reset;
             mod style;
-            mod styled_impls;
+            mod styled;
             mod styler;
             #LINE_BREAK
 

@@ -8,7 +8,7 @@ mod backends;
 mod color;
 mod reset;
 mod style;
-mod styled_impls;
+mod styled;
 mod styler;
 
 pub use attributes::*;
