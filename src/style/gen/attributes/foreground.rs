@@ -97,15 +97,7 @@ impl Styler for Foreground {
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
         Style {
             foreground: foreground.into(),
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     None,
-            blink:      None,
-            border:     None,
+            ..Style::NONE
         }
     }
 
@@ -114,14 +106,7 @@ impl Styler for Foreground {
         Style {
             foreground: Some(self),
             background: background.into(),
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     None,
-            blink:      None,
-            border:     None,
+            ..Style::NONE
         }
     }
 
@@ -129,15 +114,8 @@ impl Styler for Foreground {
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
         Style {
             foreground: Some(self),
-            background: None,
-            weight:     weight.into(),
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     None,
-            blink:      None,
-            border:     None,
+            weight: weight.into(),
+            ..Style::NONE
         }
     }
 
@@ -145,15 +123,8 @@ impl Styler for Foreground {
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
         Style {
             foreground: Some(self),
-            background: None,
-            weight:     None,
-            slant:      slant.into(),
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     None,
-            blink:      None,
-            border:     None,
+            slant: slant.into(),
+            ..Style::NONE
         }
     }
 
@@ -161,15 +132,8 @@ impl Styler for Foreground {
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
         Style {
             foreground: Some(self),
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  underline.into(),
-            strike:     None,
-            overline:   None,
-            invert:     None,
-            blink:      None,
-            border:     None,
+            underline: underline.into(),
+            ..Style::NONE
         }
     }
 
@@ -177,15 +141,8 @@ impl Styler for Foreground {
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
         Style {
             foreground: Some(self),
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     strike.into(),
-            overline:   None,
-            invert:     None,
-            blink:      None,
-            border:     None,
+            strike: strike.into(),
+            ..Style::NONE
         }
     }
 
@@ -193,15 +150,8 @@ impl Styler for Foreground {
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
         Style {
             foreground: Some(self),
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   overline.into(),
-            invert:     None,
-            blink:      None,
-            border:     None,
+            overline: overline.into(),
+            ..Style::NONE
         }
     }
 
@@ -209,15 +159,8 @@ impl Styler for Foreground {
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
         Style {
             foreground: Some(self),
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     invert.into(),
-            blink:      None,
-            border:     None,
+            invert: invert.into(),
+            ..Style::NONE
         }
     }
 
@@ -225,15 +168,8 @@ impl Styler for Foreground {
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
         Style {
             foreground: Some(self),
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     None,
-            blink:      blink.into(),
-            border:     None,
+            blink: blink.into(),
+            ..Style::NONE
         }
     }
 
@@ -241,15 +177,8 @@ impl Styler for Foreground {
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
         Style {
             foreground: Some(self),
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     None,
-            blink:      None,
-            border:     border.into(),
+            border: border.into(),
+            ..Style::NONE
         }
     }
 }

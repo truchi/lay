@@ -83,160 +83,89 @@ impl Styler for Invert {
     /// Returns a `Style` with `invert` (self) and `foreground`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
         Style {
+            invert: Some(self),
             foreground: foreground.into(),
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     Some(self),
-            blink:      None,
-            border:     None,
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert` (self) and `background`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
         Style {
-            foreground: None,
+            invert: Some(self),
             background: background.into(),
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     Some(self),
-            blink:      None,
-            border:     None,
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert` (self) and `weight`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
         Style {
-            foreground: None,
-            background: None,
-            weight:     weight.into(),
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     Some(self),
-            blink:      None,
-            border:     None,
+            invert: Some(self),
+            weight: weight.into(),
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert` (self) and `slant`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
         Style {
-            foreground: None,
-            background: None,
-            weight:     None,
-            slant:      slant.into(),
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     Some(self),
-            blink:      None,
-            border:     None,
+            invert: Some(self),
+            slant: slant.into(),
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert` (self) and `underline`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
         Style {
-            foreground: None,
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  underline.into(),
-            strike:     None,
-            overline:   None,
-            invert:     Some(self),
-            blink:      None,
-            border:     None,
+            invert: Some(self),
+            underline: underline.into(),
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert` (self) and `strike`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
         Style {
-            foreground: None,
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     strike.into(),
-            overline:   None,
-            invert:     Some(self),
-            blink:      None,
-            border:     None,
+            invert: Some(self),
+            strike: strike.into(),
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert` (self) and `overline`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
         Style {
-            foreground: None,
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   overline.into(),
-            invert:     Some(self),
-            blink:      None,
-            border:     None,
+            invert: Some(self),
+            overline: overline.into(),
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
         Style {
-            foreground: None,
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     invert.into(),
-            blink:      None,
-            border:     None,
+            invert: invert.into(),
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert` (self) and `blink`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
         Style {
-            foreground: None,
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     Some(self),
-            blink:      blink.into(),
-            border:     None,
+            invert: Some(self),
+            blink: blink.into(),
+            ..Style::NONE
         }
     }
 
     /// Returns a `Style` with `invert` (self) and `border`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
         Style {
-            foreground: None,
-            background: None,
-            weight:     None,
-            slant:      None,
-            underline:  None,
-            strike:     None,
-            overline:   None,
-            invert:     Some(self),
-            blink:      None,
-            border:     border.into(),
+            invert: Some(self),
+            border: border.into(),
+            ..Style::NONE
         }
     }
 }

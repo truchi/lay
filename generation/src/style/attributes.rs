@@ -163,37 +163,33 @@ fn impl_styler_index(lay: &Lay, attribute: &Attr) -> TokenStream {
 }
 
 fn impl_styler(lay: &Lay, attribute: &Attr) -> TokenStream {
+    let attribute_snake = &attribute.snake;
     let styler = &lay.styler.styler;
 
     let setters = lay.all.iter().map(|setter| {
         let snake = &setter.snake;
         let set = &setter.fn_set.sign;
 
-        let doc = if attribute == setter {
-            doc!("Returns a `Style` with `{}`.", snake)
+        let (doc, fields) = if attribute == setter {
+            (
+                doc!("Returns a `Style` with `{}`.", snake),
+                quote! { #snake: #snake.into(), },
+            )
         } else {
-            doc!(
-                "Returns a `Style` with `{}` (self) and `{}`.",
-                attribute.snake,
-                snake
+            (
+                doc!(
+                    "Returns a `Style` with `{}` (self) and `{}`.",
+                    attribute_snake,
+                    snake
+                ),
+                quote! {
+                    #attribute_snake: Some(self),
+                    #snake: #snake.into(),
+                },
             )
         };
 
-        let fields = lay.all.iter().map(|field| {
-            let s = &field.snake;
-
-            if field == setter {
-                quote! { #s: #snake.into() }
-            } else {
-                if attribute == field {
-                    quote! { #s: Some(self) }
-                } else {
-                    quote! { #s: None }
-                }
-            }
-        });
-
-        quote! { #doc #set { Style { #(#fields,)* } } }
+        quote! { #doc #set { Style { #fields ..Style::NONE } } }
     });
 
     quote! {
