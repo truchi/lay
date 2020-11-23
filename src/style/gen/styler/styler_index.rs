@@ -5,7 +5,7 @@
 
 use crate::*;
 
-/// `Option`al [`attributes`](crate::attributes) getters.
+/// `Option`al attributes getters.
 pub trait StylerIndex {
     /// Gets `Option<Foreground>`.
     fn get_foreground(&self) -> Option<Foreground>;

@@ -56,7 +56,7 @@ impl Generation {
 
     pub fn mod_style(&self) -> TokenStream {
         quote! {
-            pub mod attributes;
+            mod attributes;
             mod backends;
             mod color;
             mod reset;

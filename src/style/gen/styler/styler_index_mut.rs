@@ -5,7 +5,7 @@
 
 use crate::*;
 
-/// `Option`al [`attributes`](crate::attributes) getters, mutably.
+/// `Option`al attributes getters, mutably.
 pub trait StylerIndexMut {
     /// Gets `&mut Option<Foreground>`.
     fn get_foreground_mut(&mut self) -> &mut Option<Foreground>;
