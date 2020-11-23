@@ -26,11 +26,9 @@ impl Styler {
         doc: Doc,
         doc_mut: Doc,
         name: &str,
-        sign: impl Fn(&Str) -> TokenStream,
-        sign_mut: impl Fn(&Str) -> TokenStream,
+        sign: TokenStream,
+        sign_mut: TokenStream,
     ) -> (StylerFn, StylerFn) {
-        let name = name.to_string();
-
         StylerFn::new_tuple(doc, doc_mut, name, sign, sign_mut)
     }
 
@@ -48,63 +46,57 @@ impl Styler {
                 doc!("`Option::{}` fields.", op),
                 doc!("`Option::{}` fields, mutably.", op),
                 &op,
-                |name| {
-                    quote! {
-                        fn #name(self, other: &impl #styler_index) -> <Self::Output as #styler>::Output
-                        where
-                            Self::Output: #styler<Output = Self::Output>
-                    }
+                quote! {
+                    (self, other: &impl #styler_index)
+                    -> <Self::Output as #styler>::Output
+                    where
+                        Self::Output: #styler<Output = Self::Output>
                 },
-                |name| quote! { fn #name(&mut self, other: &impl #styler_index) },
+                quote! { (&mut self, other: &impl #styler_index) },
             )
         };
 
         let to_style = StylerFn::new(
             doc!("Returns a `Style`."),
-            Str::new("to_style"),
-            quote! { fn to_style(&self) -> Style },
+            "to_style",
+            quote! { (&self) -> Style },
         );
 
         let (style, style_mut) = Self::new_tuple(
             doc!("Applies `styler`'s styles."),
             doc!("Applies `styler`'s styles, mutably."),
             "style",
-            |name| {
-                quote! {
-                    fn #name(self, styler: &impl #styler_index) -> <Self::Output as #styler>::Output
-                    where
-                        Self::Output: #styler<Output = Self::Output>
-                }
+            quote! {
+                (self, styler: &impl #styler_index)
+                -> <Self::Output as #styler>::Output
+                where
+                    Self::Output: #styler<Output = Self::Output>
             },
-            |name| quote! { fn #name(&mut self, styler: &impl #styler_index) },
+            quote! { (&mut self, styler: &impl #styler_index) },
         );
 
         let (dedup, dedup_mut) = Self::new_tuple(
             doc!("Dedups (`None`s if identicals) fields."),
             doc!("Dedups (`None`s if identicals) fields, mutably."),
             "dedup",
-            |name| {
-                quote! {
-                    fn #name(mut self, before: &impl #styler_index) -> Self
-                    where
-                        Self: #styler<Output = Self>
-                }
+            quote! {
+                (mut self, before: &impl #styler_index) -> Self
+                where
+                    Self: #styler<Output = Self>
             },
-            |name| quote! { fn #name(&mut self, before: &impl #styler_index) },
+            quote! { (&mut self, before: &impl #styler_index) },
         );
 
         let (reset, reset_mut) = Self::new_tuple(
             doc!("Resets (sets to reset value) fields which are `Some`."),
             doc!("Resets (sets to reset value) fields which are `Some`, mutably."),
             "reset",
-            |name| {
-                quote! {
-                    fn #name(mut self) -> Self
-                    where
-                        Self: #styler<Output = Self>
-                }
+            quote! {
+                (mut self) -> Self
+                where
+                    Self: #styler<Output = Self>
             },
-            |name| quote! { fn #name(&mut self) },
+            quote! { (&mut self) },
         );
 
         let (and, and_mut) = option("and");
@@ -134,25 +126,18 @@ impl Styler {
 
     pub fn op(&self, op: &str) -> (StylerFn, StylerFn) {
         let (styler_index, styler) = (&self.styler_index, &self.styler);
-        let name = Str::new(op);
-        let name_mut = Str::new(&format!("{}{}", op, StylerFn::MUT));
 
-        (
-            StylerFn {
-                doc: doc!("`Option::{}` fields.", op),
-                sign: quote! {
-                    fn #name(self, other: &impl #styler_index)
-                    -> <Self::Output as #styler>::Output
-                    where
-                        Self::Output: #styler<Output = Self::Output>
-                },
-                name,
+        StylerFn::new_tuple(
+            doc!("`Option::{}` fields.", op),
+            doc!("`Option::{}` fields, mutably.", op),
+            op,
+            quote! {
+                (self, other: &impl #styler_index)
+                -> <Self::Output as #styler>::Output
+                where
+                    Self::Output: #styler<Output = Self::Output>
             },
-            StylerFn {
-                doc:  doc!("`Option::{}` fields, mutably.", op),
-                sign: quote! { fn #name_mut(&mut self, other: &impl #styler_index) },
-                name: name_mut,
-            },
+            quote! { (&mut self, other: &impl #styler_index) },
         )
     }
 }

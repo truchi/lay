@@ -9,22 +9,21 @@ pub struct StylerFn {
 }
 
 impl StylerFn {
-    pub fn new(doc: Doc, name: Str, sign: TokenStream) -> Self {
+    pub fn new(doc: Doc, name: &str, sign: TokenStream) -> Self {
+        let name = Str::new(name);
+        let sign = quote! { fn #name #sign };
+
         Self { doc, name, sign }
     }
 
     pub fn new_tuple(
         doc: Doc,
         doc_mut: Doc,
-        name: String,
-        sign: impl Fn(&Str) -> TokenStream,
-        sign_mut: impl Fn(&Str) -> TokenStream,
+        name: &str,
+        sign: TokenStream,
+        sign_mut: TokenStream,
     ) -> (Self, Self) {
-        let name_mut = format!("{}{}", name, Self::MUT);
-        let name = Str::new(&name);
-        let name_mut = Str::new(&name_mut);
-        let sign = sign(&name);
-        let sign_mut = sign_mut(&name_mut);
+        let name_mut = &format!("{}{}", name, Self::MUT);
 
         (
             Self::new(doc, name, sign),
@@ -36,9 +35,9 @@ impl StylerFn {
         Self::new_tuple(
             doc!("Gets `Option<{}>`.", attr),
             doc!("Gets `&mut Option<{}>`.", attr),
-            format!("{}{}", Self::GET, attr.snake),
-            |name| quote! { fn #name(&self) -> Option<#attr> },
-            |name| quote! { fn #name(&mut self) -> &mut Option<#attr> },
+            &format!("{}{}", Self::GET, attr.snake),
+            quote! { (&self) -> Option<#attr> },
+            quote! { (&mut self) -> &mut Option<#attr> },
         )
     }
 
@@ -48,9 +47,9 @@ impl StylerFn {
         Self::new_tuple(
             doc!("Sets `Option<{}>`.", attr),
             doc!("Sets `Option<{}>`, mutably.", attr),
-            format!("{}{}", Self::SET, snake),
-            |name| quote! { fn #name(self, #snake: impl Into<Option<#attr>>) -> Self::Output },
-            |name| quote! { fn #name(&mut self, #snake: impl Into<Option<#attr>>) },
+            &format!("{}{}", Self::SET, snake),
+            quote! { (self, #snake: impl Into<Option<#attr>>) -> Self::Output },
+            quote! { (&mut self, #snake: impl Into<Option<#attr>>) },
         )
     }
 
@@ -60,9 +59,9 @@ impl StylerFn {
         Self::new_tuple(
             doc!("`None`s `Option<{}>`.", attr),
             doc!("`None`s `Option<{}>`, mutably.", attr),
-            format!("{}_{}", none, attr.snake),
-            |name| quote! { fn #name(self) -> Self::Output },
-            |name| quote! { fn #name(&mut self) },
+            &format!("{}_{}", none, attr.snake),
+            quote! { (self) -> Self::Output },
+            quote! { (&mut self) },
         )
     }
 
@@ -79,9 +78,9 @@ impl StylerFn {
         Self::new_tuple(
             doc!("Sets `Some({})`.", wrapped),
             doc!("Sets `Some({})`, mutably.", wrapped),
-            format!("{}{}{}", on, Self::SET, snake),
-            |name| quote! { fn #name(self, #args) -> Self::Output },
-            |name| quote! { fn #name(&mut self, #args) },
+            &format!("{}{}{}", on, Self::SET, snake),
+            quote! { (self, #args) -> Self::Output },
+            quote! { (&mut self, #args) },
         )
     }
 }
