@@ -80,7 +80,8 @@ impl StylerIndex for Underline {
 impl Styler for Underline {
     type Output = Style;
 
-    /// Returns a `Style` with `underline` (self) and `foreground`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and
+    /// `foreground`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
         Style {
             underline: Some(self),
@@ -89,7 +90,8 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline` (self) and `background`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and
+    /// `background`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
         Style {
             underline: Some(self),
@@ -98,7 +100,7 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline` (self) and `weight`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and `weight`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
         Style {
             underline: Some(self),
@@ -107,7 +109,7 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline` (self) and `slant`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and `slant`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
         Style {
             underline: Some(self),
@@ -116,7 +118,7 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline`.
+    /// Returns a [`Style`](crate::Style) with `underline`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
         Style {
             underline: underline.into(),
@@ -124,7 +126,7 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline` (self) and `strike`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and `strike`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
         Style {
             underline: Some(self),
@@ -133,7 +135,8 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline` (self) and `overline`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and
+    /// `overline`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
         Style {
             underline: Some(self),
@@ -142,7 +145,7 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline` (self) and `invert`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and `invert`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
         Style {
             underline: Some(self),
@@ -151,7 +154,7 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline` (self) and `blink`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and `blink`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
         Style {
             underline: Some(self),
@@ -160,7 +163,7 @@ impl Styler for Underline {
         }
     }
 
-    /// Returns a `Style` with `underline` (self) and `border`.
+    /// Returns a [`Style`](crate::Style) with `underline` (self) and `border`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
         Style {
             underline: Some(self),

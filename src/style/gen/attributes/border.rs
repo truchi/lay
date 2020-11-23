@@ -81,7 +81,7 @@ impl StylerIndex for Border {
 impl Styler for Border {
     type Output = Style;
 
-    /// Returns a `Style` with `border` (self) and `foreground`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `foreground`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -90,7 +90,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border` (self) and `background`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `background`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -99,7 +99,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border` (self) and `weight`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `weight`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -108,7 +108,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border` (self) and `slant`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `slant`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -117,7 +117,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border` (self) and `underline`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `underline`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -126,7 +126,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border` (self) and `strike`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `strike`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -135,7 +135,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border` (self) and `overline`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `overline`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -144,7 +144,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border` (self) and `invert`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `invert`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -153,7 +153,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border` (self) and `blink`.
+    /// Returns a [`Style`](crate::Style) with `border` (self) and `blink`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
         Style {
             border: Some(self),
@@ -162,7 +162,7 @@ impl Styler for Border {
         }
     }
 
-    /// Returns a `Style` with `border`.
+    /// Returns a [`Style`](crate::Style) with `border`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
         Style {
             border: border.into(),

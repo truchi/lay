@@ -81,7 +81,7 @@ impl StylerIndex for Weight {
 impl Styler for Weight {
     type Output = Style;
 
-    /// Returns a `Style` with `weight` (self) and `foreground`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `foreground`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
         Style {
             weight: Some(self),
@@ -90,7 +90,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight` (self) and `background`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `background`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
         Style {
             weight: Some(self),
@@ -99,7 +99,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight`.
+    /// Returns a [`Style`](crate::Style) with `weight`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
         Style {
             weight: weight.into(),
@@ -107,7 +107,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight` (self) and `slant`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `slant`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
         Style {
             weight: Some(self),
@@ -116,7 +116,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight` (self) and `underline`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `underline`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
         Style {
             weight: Some(self),
@@ -125,7 +125,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight` (self) and `strike`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `strike`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
         Style {
             weight: Some(self),
@@ -134,7 +134,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight` (self) and `overline`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `overline`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
         Style {
             weight: Some(self),
@@ -143,7 +143,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight` (self) and `invert`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `invert`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
         Style {
             weight: Some(self),
@@ -152,7 +152,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight` (self) and `blink`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `blink`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
         Style {
             weight: Some(self),
@@ -161,7 +161,7 @@ impl Styler for Weight {
         }
     }
 
-    /// Returns a `Style` with `weight` (self) and `border`.
+    /// Returns a [`Style`](crate::Style) with `weight` (self) and `border`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
         Style {
             weight: Some(self),

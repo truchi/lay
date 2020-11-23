@@ -7,10 +7,13 @@ impl Generation {
         let reset = &self.reset;
 
         let from_reset_doc = doc!(
-            "Converts `{}` to `crossterm::style::Attribute::Reset`.",
-            reset
+            "Converts [`{reset}`](crate::{reset}) to [`crossterm::style::Attribute::Reset`].",
+            reset = reset
         );
-        let from_color_doc = doc!("Converts `{}` to `crossterm::style::Color`.", color);
+        let from_color_doc = doc!(
+            "Converts [`{color}`](crate::{color}) to [`crossterm::style::Color`].",
+            color = color
+        );
 
         let from_color_for_color = self.color.variants.iter().map(|c| {
             let full = &c.full;
@@ -31,7 +34,10 @@ impl Generation {
 
         let from_attribute_for_attribute = self.attributes.iter().map(|attribute| {
             let snake = &attribute.snake;
-            let doc = doc!("Converts `{}` to `crossterm::style::Attribute`.", attribute,);
+            let doc = doc!(
+                "Converts [`{attribute}`](crate::{attribute}) to [`crossterm::style::Attribute`].",
+                attribute = attribute,
+            );
 
             // NOTE very dirty
             let variants = attribute.variants.iter().map(|variant| {
@@ -129,7 +135,10 @@ impl Generation {
 
     fn display_ground(&self, ground: &Attr) -> TokenStream {
         let set_color = quote::format_ident!("Set{}Color", &*ground.pascal);
-        let doc = doc!("`Display`s `{}` with `crossterm`.", ground);
+        let doc = doc!(
+            "`Display`s [`{ground}`](crate::{ground}) with [`crossterm`].",
+            ground = ground
+        );
 
         quote! {
             #doc
@@ -147,7 +156,10 @@ impl Generation {
     }
 
     fn display_attribute(&self, attribute: &Attr) -> TokenStream {
-        let doc = doc!("`Display`s `{}` with `crossterm`.", attribute);
+        let doc = doc!(
+            "`Display`s [`{attribute}`](crate::{attribute}) with [`crossterm`].",
+            attribute = attribute
+        );
 
         quote! {
             #doc
@@ -166,7 +178,10 @@ impl Generation {
 
     fn display_reset(&self) -> TokenStream {
         let reset = &self.reset;
-        let doc = doc!("`Display`s `{}` with `crossterm`.", reset);
+        let doc = doc!(
+            "`Display`s [`{reset}`](crate::{reset}) with [`crossterm`].",
+            reset = reset
+        );
 
         quote! {
             #doc

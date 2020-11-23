@@ -172,13 +172,13 @@ fn impl_styler(lay: &Lay, attribute: &Attr) -> TokenStream {
 
         let (doc, fields) = if attribute == setter {
             (
-                doc!("Returns a `Style` with `{}`.", snake),
+                doc!("Returns a [`Style`](crate::Style) with `{}`.", snake),
                 quote! { #snake: #snake.into(), },
             )
         } else {
             (
                 doc!(
-                    "Returns a `Style` with `{}` (self) and `{}`.",
+                    "Returns a [`Style`](crate::Style) with `{}` (self) and `{}`.",
                     attribute_snake,
                     snake
                 ),

@@ -81,7 +81,7 @@ impl StylerIndex for Blink {
 impl Styler for Blink {
     type Output = Style;
 
-    /// Returns a `Style` with `blink` (self) and `foreground`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `foreground`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
         Style {
             blink: Some(self),
@@ -90,7 +90,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink` (self) and `background`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `background`.
     fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
         Style {
             blink: Some(self),
@@ -99,7 +99,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink` (self) and `weight`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `weight`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
         Style {
             blink: Some(self),
@@ -108,7 +108,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink` (self) and `slant`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `slant`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
         Style {
             blink: Some(self),
@@ -117,7 +117,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink` (self) and `underline`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `underline`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
         Style {
             blink: Some(self),
@@ -126,7 +126,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink` (self) and `strike`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `strike`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
         Style {
             blink: Some(self),
@@ -135,7 +135,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink` (self) and `overline`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `overline`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
         Style {
             blink: Some(self),
@@ -144,7 +144,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink` (self) and `invert`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `invert`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
         Style {
             blink: Some(self),
@@ -153,7 +153,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink`.
+    /// Returns a [`Style`](crate::Style) with `blink`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
         Style {
             blink: blink.into(),
@@ -161,7 +161,7 @@ impl Styler for Blink {
         }
     }
 
-    /// Returns a `Style` with `blink` (self) and `border`.
+    /// Returns a [`Style`](crate::Style) with `blink` (self) and `border`.
     fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
         Style {
             blink: Some(self),
