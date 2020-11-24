@@ -19,7 +19,8 @@ cargo test --release --quiet
 
 pretty_print "Doc"
 cargo doc --release --quiet
-cp -r "$PWD/target/doc" "$PWD/docs/"
+cp -r "target/doc" "docs/"
+(cd docs && mv lay doc)
 echo "file:$PWD/target/doc/lay/index.html"
 echo "file:$PWD/docs/lay/index.html"
 
