@@ -41,12 +41,18 @@ impl Generation {
 
     pub fn impl_styler(&self, (ty, bounds, field): (&Str, &[TokenStream], &Str)) -> TokenStream {
         let styler = &self.styler.styler;
+        let styler_mut = &self.styler.styler_mut;
 
         let setters = self.all.iter().map(|attribute| {
+            use std::str::FromStr;
+
             let snake = &attribute.snake;
-            let set = &attribute.fn_set;
-            let full = &set.full;
-            quote! { #full { #styler::#set(self.#field, #snake); self } }
+            let set_mut = &attribute.fn_set_mut;
+            let full = &attribute.fn_set.full;
+            let full = full.to_string().replace("self", "mut self"); // Dirty!
+            let full = TokenStream::from_str(&full).unwrap();
+
+            quote! { #full { #styler_mut::#set_mut(&mut self.#field, #snake); self } }
         });
 
         quote! {
@@ -66,9 +72,9 @@ impl Generation {
 
         let setters = self.all.iter().map(|attribute| {
             let snake = &attribute.snake;
-            let set = &attribute.fn_set_mut;
-            let full = &set.full;
-            quote! { #full { #styler_mut::#set(&mut self.#field, #snake) } }
+            let set_mut = &attribute.fn_set_mut;
+            let full = &set_mut.full;
+            quote! { #full { #styler_mut::#set_mut(&mut self.#field, #snake) } }
         });
 
         quote! {
