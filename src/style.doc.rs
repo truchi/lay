@@ -217,17 +217,63 @@
 ///
 /// ## Styled
 ///
-/// TODO
+/// We are going back to the type world to close this tour of
+/// [`style`](crate::style) with [`Styled`](crate::Styled).
+/// [`Styled`](crate::Styled) associates `Display`able content to
+/// [`Style`](crate::Style)s, so it can be printed on its own.
+///
+/// ```
+/// # use lay::*;
+/// println!("{}", Styled::from("Wow!").red().on_blue().bold());
+/// ```
+/// $ `cargo run --quiet --example style07`
+///
+/// What is the point you ask? It only resets the attributes that were used:
+///
+/// ```
+/// # use lay::*;
+/// println!(
+///     "{}{}, still underlined.",
+///     Underlined,
+///     Styled::from("Red").red(),
+/// );
+/// ```
+/// $ `cargo run --quiet --example style08`
 ///
 /// Here is a more contrived example:
 ///
 /// ```
 /// # use lay::*;
-/// // TODO
-/// ```
-/// $ ...
+/// /// Makes a list
+/// fn list(title: &str, items: &[&str], selected: usize) -> String {
+///     let mut list = String::from(title) + ":\n";
 ///
-/// Oh, no! It does not work as expected... We have to dive into
+///     for (i, item) in items.iter().enumerate() {
+///         if i == selected {
+///             // Red is flashy, right?
+///             list = format!("{}‣ {}\n", list, Styled::from(item).red());
+///         } else {
+///             list = format!("{}• {}\n", list, Styled::from(item));
+///         }
+///     }
+///
+///     list
+/// }
+///
+/// // Print list
+/// println!(
+///     "{}",
+///     Styled::from(list("List", &vec!["Item", "Item", "Item"], 1))
+///         .red() // Red can be fancy too!
+///         .on_dark_yellow()
+///         .bold(),
+/// );
+///
+/// // Wait, what?
+/// ```
+/// $ `cargo run --quiet --example style09`
+///
+/// Oh, no! It does not work as expected... It is time to dive into
 /// [`layer`](crate::layer)s!
 pub mod style;
 pub use style::*;
