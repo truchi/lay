@@ -9,21 +9,18 @@ pretty_print() {
 }
 
 pretty_print "Generation"
-./gen --release
-
-pretty_print "Build"
-cargo build --release --quiet
+./gen
 
 pretty_print "Tests"
-cargo test --release --quiet
+cargo test --quiet
 
 pretty_print "Doc"
-cargo doc --release --quiet --no-deps
-cp -r "target/doc" "docs"
+cargo doc --quiet --no-deps
+cp -a target/doc/. docs/
 echo '<meta http-equiv=refresh content=0;url=lay/index.html>' > docs/index.html
 echo "file:$PWD/target/doc/lay/index.html"
 echo "file:$PWD/docs/lay/index.html"
 
 pretty_print "Generation doc"
-(cd generation && cargo doc --release --quiet)
+(cd generation && cargo doc --quiet)
 echo "file:$PWD/generation/target/doc/generation/index.html"
