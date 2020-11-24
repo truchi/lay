@@ -2,18 +2,23 @@ use crate::*;
 
 macro_rules! generate_doc {
     ($self:ident, $name:literal) => {
-        generate_doc($self, $name, include_str!($name));
+        generate_doc(
+            $self,
+            $name,
+            concat!($name, ".doc.rs"),
+            include_str!(concat!($name, ".doc.rs")),
+        );
     };
 }
 
 impl Generation {
     pub fn generate_docs(&self) {
-        generate_doc!(self, "style.doc.rs");
+        generate_doc!(self, "style");
     }
 }
 
-fn generate_doc(gen: &Generation, name: &str, doc: &str) {
-    write(&gen.src, name, doc);
+fn generate_doc(gen: &Generation, mod_name: &str, file_name: &str, doc: &str) {
+    write(&gen.src, file_name, doc);
 
     for (name, code) in get_code_blocks(&doc) {
         write(
@@ -22,10 +27,10 @@ fn generate_doc(gen: &Generation, name: &str, doc: &str) {
             format!(
                 "// 💡
                 // This example is generated from the documentation. Check it out:
-                // TODO link
+                // https://truchi.github.io/lay/lay/{}/
 
                 fn main() {{ {} }}",
-                code
+                mod_name, code
             ),
         );
     }

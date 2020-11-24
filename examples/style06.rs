@@ -5,7 +5,7 @@
 
 // 💡
 // This example is generated from the documentation. Check it out:
-// TODO link
+// https://truchi.github.io/lay/lay/style/
 
 fn main() {
     use lay::*;
