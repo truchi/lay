@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Canvas","A rectangle of `Cell`s."],["Fill","A rectangle filled by a unique `Cell`."],["Render","A `Display`able `Layer`."],["View","A rectangle `View` into a `Layer`."]],"trait":[["Layer","A trait for layers."],["LayerMut","A trait for mutable layers."]],"type":[["Cell","`Styled<char>`."]]});

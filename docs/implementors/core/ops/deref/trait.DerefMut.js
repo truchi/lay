@@ -1,5 +1,0 @@
-(function() {var implementors = {};
-implementors["lock_api"] = [{"text":"impl&lt;'a, R:&nbsp;RawMutex + 'a, T:&nbsp;?Sized + 'a&gt; DerefMut for MutexGuard&lt;'a, R, T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;'a, R:&nbsp;RawMutex + 'a, T:&nbsp;?Sized + 'a&gt; DerefMut for MappedMutexGuard&lt;'a, R, T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;'a, R:&nbsp;RawRwLock + 'a, T:&nbsp;?Sized + 'a&gt; DerefMut for RwLockWriteGuard&lt;'a, R, T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;'a, R:&nbsp;RawRwLock + 'a, T:&nbsp;?Sized + 'a&gt; DerefMut for MappedRwLockWriteGuard&lt;'a, R, T&gt;","synthetic":false,"types":[]}];
-implementors["scopeguard"] = [{"text":"impl&lt;T, F, S&gt; DerefMut for ScopeGuard&lt;T, F, S&gt; <span class=\"where fmt-newline\">where<br>&nbsp;&nbsp;&nbsp;&nbsp;F: FnOnce(T),<br>&nbsp;&nbsp;&nbsp;&nbsp;S: Strategy,&nbsp;</span>","synthetic":false,"types":[]}];
-implementors["smallvec"] = [{"text":"impl&lt;A:&nbsp;Array&gt; DerefMut for SmallVec&lt;A&gt;","synthetic":false,"types":[]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

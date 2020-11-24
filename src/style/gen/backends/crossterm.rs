@@ -12,18 +12,18 @@ use std::fmt::{Display, Error, Formatter};
 // ========================================================================== //
 // ========================================================================== //
 
-/// Converts [`Reset`](crate::Reset) to [`crossterm::style::Attribute::Reset`].
+/// Converts [`Reset`](crate::Reset) to `crossterm::style::Attribute::Reset`.
 impl From<Reset> for crossterm::style::Attribute {
     /// Converts [`Reset`](crate::Reset) to
-    /// [`crossterm::style::Attribute::Reset`].
+    /// `crossterm::style::Attribute::Reset`.
     fn from(_: Reset) -> Self {
         crossterm::style::Attribute::Reset
     }
 }
 
-/// Converts [`Color`](crate::Color) to [`crossterm::style::Color`].
+/// Converts [`Color`](crate::Color) to `crossterm::style::Color`.
 impl From<Color> for crossterm::style::Color {
-    /// Converts [`Color`](crate::Color) to [`crossterm::style::Color`].
+    /// Converts [`Color`](crate::Color) to `crossterm::style::Color`.
     fn from(color: Color) -> Self {
         match color {
             Color::White => Self::White,
@@ -49,9 +49,9 @@ impl From<Color> for crossterm::style::Color {
     }
 }
 
-/// Converts [`Weight`](crate::Weight) to [`crossterm::style::Attribute`].
+/// Converts [`Weight`](crate::Weight) to `crossterm::style::Attribute`.
 impl From<Weight> for crossterm::style::Attribute {
-    /// Converts [`Weight`](crate::Weight) to [`crossterm::style::Attribute`].
+    /// Converts [`Weight`](crate::Weight) to `crossterm::style::Attribute`.
     fn from(weight: Weight) -> Self {
         match weight {
             Weight::Bold => Self::Bold,
@@ -61,9 +61,9 @@ impl From<Weight> for crossterm::style::Attribute {
     }
 }
 
-/// Converts [`Slant`](crate::Slant) to [`crossterm::style::Attribute`].
+/// Converts [`Slant`](crate::Slant) to `crossterm::style::Attribute`.
 impl From<Slant> for crossterm::style::Attribute {
-    /// Converts [`Slant`](crate::Slant) to [`crossterm::style::Attribute`].
+    /// Converts [`Slant`](crate::Slant) to `crossterm::style::Attribute`.
     fn from(slant: Slant) -> Self {
         match slant {
             Slant::Italic => Self::Italic,
@@ -72,10 +72,10 @@ impl From<Slant> for crossterm::style::Attribute {
     }
 }
 
-/// Converts [`Underline`](crate::Underline) to [`crossterm::style::Attribute`].
+/// Converts [`Underline`](crate::Underline) to `crossterm::style::Attribute`.
 impl From<Underline> for crossterm::style::Attribute {
     /// Converts [`Underline`](crate::Underline) to
-    /// [`crossterm::style::Attribute`].
+    /// `crossterm::style::Attribute`.
     fn from(underline: Underline) -> Self {
         match underline {
             Underline::Underlined => Self::Underlined,
@@ -84,9 +84,9 @@ impl From<Underline> for crossterm::style::Attribute {
     }
 }
 
-/// Converts [`Strike`](crate::Strike) to [`crossterm::style::Attribute`].
+/// Converts [`Strike`](crate::Strike) to `crossterm::style::Attribute`.
 impl From<Strike> for crossterm::style::Attribute {
-    /// Converts [`Strike`](crate::Strike) to [`crossterm::style::Attribute`].
+    /// Converts [`Strike`](crate::Strike) to `crossterm::style::Attribute`.
     fn from(strike: Strike) -> Self {
         match strike {
             Strike::Striked => Self::CrossedOut,
@@ -95,10 +95,9 @@ impl From<Strike> for crossterm::style::Attribute {
     }
 }
 
-/// Converts [`Overline`](crate::Overline) to [`crossterm::style::Attribute`].
+/// Converts [`Overline`](crate::Overline) to `crossterm::style::Attribute`.
 impl From<Overline> for crossterm::style::Attribute {
-    /// Converts [`Overline`](crate::Overline) to
-    /// [`crossterm::style::Attribute`].
+    /// Converts [`Overline`](crate::Overline) to `crossterm::style::Attribute`.
     fn from(overline: Overline) -> Self {
         match overline {
             Overline::Overlined => Self::OverLined,
@@ -107,9 +106,9 @@ impl From<Overline> for crossterm::style::Attribute {
     }
 }
 
-/// Converts [`Invert`](crate::Invert) to [`crossterm::style::Attribute`].
+/// Converts [`Invert`](crate::Invert) to `crossterm::style::Attribute`.
 impl From<Invert> for crossterm::style::Attribute {
-    /// Converts [`Invert`](crate::Invert) to [`crossterm::style::Attribute`].
+    /// Converts [`Invert`](crate::Invert) to `crossterm::style::Attribute`.
     fn from(invert: Invert) -> Self {
         match invert {
             Invert::Inverted => Self::Reverse,
@@ -118,9 +117,9 @@ impl From<Invert> for crossterm::style::Attribute {
     }
 }
 
-/// Converts [`Blink`](crate::Blink) to [`crossterm::style::Attribute`].
+/// Converts [`Blink`](crate::Blink) to `crossterm::style::Attribute`.
 impl From<Blink> for crossterm::style::Attribute {
-    /// Converts [`Blink`](crate::Blink) to [`crossterm::style::Attribute`].
+    /// Converts [`Blink`](crate::Blink) to `crossterm::style::Attribute`.
     fn from(blink: Blink) -> Self {
         match blink {
             Blink::Slow => Self::SlowBlink,
@@ -130,9 +129,9 @@ impl From<Blink> for crossterm::style::Attribute {
     }
 }
 
-/// Converts [`Border`](crate::Border) to [`crossterm::style::Attribute`].
+/// Converts [`Border`](crate::Border) to `crossterm::style::Attribute`.
 impl From<Border> for crossterm::style::Attribute {
-    /// Converts [`Border`](crate::Border) to [`crossterm::style::Attribute`].
+    /// Converts [`Border`](crate::Border) to `crossterm::style::Attribute`.
     fn from(border: Border) -> Self {
         match border {
             Border::Circle => Self::Encircled,
@@ -148,89 +147,89 @@ impl From<Border> for crossterm::style::Attribute {
 // ========================================================================== //
 // ========================================================================== //
 
-/// `Display`s [`Reset`](crate::Reset) with [`crossterm`].
+/// `Display`s [`Reset`](crate::Reset) with `crossterm`.
 impl Display for Reset {
-    /// `Display`s [`Reset`](crate::Reset) with [`crossterm`].
+    /// `Display`s [`Reset`](crate::Reset) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
-/// `Display`s [`Foreground`](crate::Foreground) with [`crossterm`].
+/// `Display`s [`Foreground`](crate::Foreground) with `crossterm`.
 impl Display for Foreground {
-    /// `Display`s [`Foreground`](crate::Foreground) with [`crossterm`].
+    /// `Display`s [`Foreground`](crate::Foreground) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetForegroundColor(self.0.into()), f)
     }
 }
 
-/// `Display`s [`Background`](crate::Background) with [`crossterm`].
+/// `Display`s [`Background`](crate::Background) with `crossterm`.
 impl Display for Background {
-    /// `Display`s [`Background`](crate::Background) with [`crossterm`].
+    /// `Display`s [`Background`](crate::Background) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetBackgroundColor(self.0.into()), f)
     }
 }
 
-/// `Display`s [`Weight`](crate::Weight) with [`crossterm`].
+/// `Display`s [`Weight`](crate::Weight) with `crossterm`.
 impl Display for Weight {
-    /// `Display`s [`Weight`](crate::Weight) with [`crossterm`].
+    /// `Display`s [`Weight`](crate::Weight) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
-/// `Display`s [`Slant`](crate::Slant) with [`crossterm`].
+/// `Display`s [`Slant`](crate::Slant) with `crossterm`.
 impl Display for Slant {
-    /// `Display`s [`Slant`](crate::Slant) with [`crossterm`].
+    /// `Display`s [`Slant`](crate::Slant) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
-/// `Display`s [`Underline`](crate::Underline) with [`crossterm`].
+/// `Display`s [`Underline`](crate::Underline) with `crossterm`.
 impl Display for Underline {
-    /// `Display`s [`Underline`](crate::Underline) with [`crossterm`].
+    /// `Display`s [`Underline`](crate::Underline) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
-/// `Display`s [`Strike`](crate::Strike) with [`crossterm`].
+/// `Display`s [`Strike`](crate::Strike) with `crossterm`.
 impl Display for Strike {
-    /// `Display`s [`Strike`](crate::Strike) with [`crossterm`].
+    /// `Display`s [`Strike`](crate::Strike) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
-/// `Display`s [`Overline`](crate::Overline) with [`crossterm`].
+/// `Display`s [`Overline`](crate::Overline) with `crossterm`.
 impl Display for Overline {
-    /// `Display`s [`Overline`](crate::Overline) with [`crossterm`].
+    /// `Display`s [`Overline`](crate::Overline) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
-/// `Display`s [`Invert`](crate::Invert) with [`crossterm`].
+/// `Display`s [`Invert`](crate::Invert) with `crossterm`.
 impl Display for Invert {
-    /// `Display`s [`Invert`](crate::Invert) with [`crossterm`].
+    /// `Display`s [`Invert`](crate::Invert) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
-/// `Display`s [`Blink`](crate::Blink) with [`crossterm`].
+/// `Display`s [`Blink`](crate::Blink) with `crossterm`.
 impl Display for Blink {
-    /// `Display`s [`Blink`](crate::Blink) with [`crossterm`].
+    /// `Display`s [`Blink`](crate::Blink) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
 
-/// `Display`s [`Border`](crate::Border) with [`crossterm`].
+/// `Display`s [`Border`](crate::Border) with `crossterm`.
 impl Display for Border {
-    /// `Display`s [`Border`](crate::Border) with [`crossterm`].
+    /// `Display`s [`Border`](crate::Border) with `crossterm`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }

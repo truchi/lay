@@ -1,4 +1,0 @@
-(function() {var implementors = {};
-implementors["crossterm"] = [{"text":"impl Not for KeyModifiers","synthetic":false,"types":[]}];
-implementors["lay"] = [{"text":"impl Not for Style","synthetic":false,"types":[]},{"text":"impl&lt;'_&gt; Not for &amp;'_ mut Style","synthetic":false,"types":[]},{"text":"impl&lt;T:&nbsp;Display&gt; Not for Styled&lt;T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;T:&nbsp;Display, '_&gt; Not for &amp;'_ mut Styled&lt;T&gt;","synthetic":false,"types":[]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

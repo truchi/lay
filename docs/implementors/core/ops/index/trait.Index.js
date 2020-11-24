@@ -1,4 +1,0 @@
-(function() {var implementors = {};
-implementors["lay"] = [{"text":"impl Index&lt;(u16, u16)&gt; for Canvas","synthetic":false,"types":[]},{"text":"impl Index&lt;(u16, u16)&gt; for Cell","synthetic":false,"types":[]},{"text":"impl Index&lt;(u16, u16)&gt; for Fill","synthetic":false,"types":[]},{"text":"impl&lt;T:&nbsp;Layer + Index&lt;(u16, u16), Output = Cell&gt;&gt; Index&lt;(u16, u16)&gt; for Render&lt;T&gt;","synthetic":false,"types":[]},{"text":"impl&lt;T:&nbsp;Layer + Index&lt;(u16, u16), Output = Cell&gt;&gt; Index&lt;(u16, u16)&gt; for View&lt;T&gt;","synthetic":false,"types":[]}];
-implementors["smallvec"] = [{"text":"impl&lt;A:&nbsp;Array, I:&nbsp;SliceIndex&lt;[A::Item]&gt;&gt; Index&lt;I&gt; for SmallVec&lt;A&gt;","synthetic":false,"types":[]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

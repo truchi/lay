@@ -1,3 +1,0 @@
-(function() {var implementors = {};
-implementors["lay"] = [{"text":"impl&lt;Color:&nbsp;Into&lt;Option&lt;Foreground&gt;&gt;&gt; MulAssign&lt;Color&gt; for Style","synthetic":false,"types":[]},{"text":"impl&lt;T:&nbsp;Display, Color:&nbsp;Into&lt;Option&lt;Foreground&gt;&gt;&gt; MulAssign&lt;Color&gt; for Styled&lt;T&gt;","synthetic":false,"types":[]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
