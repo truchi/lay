@@ -7,7 +7,7 @@
 /// println!(
 ///     "{on_black}{green}{blink}{weight}# Styling utilities.{reset_blink}
 ///
-///     {blue}{slant}This module contains utilities to work with terminal CSIs and styled types.{reset}",
+/// {blue}{slant}This module contains utilities to work with terminal CSIs and styled types.{reset}",
 ///     on_black = Background(Rgb(0, 0, 0)),
 ///     green = Foreground(Green),
 ///     blue = Foreground(Blue),
