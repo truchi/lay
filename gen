@@ -1,5 +1,12 @@
 #!/bin/sh
 
-(cd generation && cargo run --quiet "$1")
-rustfmt src/**.rs
-rustfmt examples/**.rs
+if [ "$1" = "watch" ]; then
+  cargo watch      \
+    -w generation/ \
+    -s "clear; ./gen; cargo doc -q"
+else
+  (cd generation && cargo run --quiet "$1")
+  cargo check --quiet
+  rustfmt src/**.rs
+  rustfmt examples/**.rs
+fi
