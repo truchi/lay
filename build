@@ -19,7 +19,9 @@ cargo test --release --quiet
 
 pretty_print "Doc"
 cargo doc --release --quiet
+cp -r "$PWD/target/doc" "$PWD/docs/"
 echo "file:$PWD/target/doc/lay/index.html"
+echo "file:$PWD/docs/lay/index.html"
 
 pretty_print "Generation doc"
 (cd generation && cargo doc --release --quiet)

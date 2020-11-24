@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Background","`None`s `Background`."],["Blink","`None`s `Blink`."],["Border","`None`s `Border`."],["Foreground","`None`s `Foreground`."],["Invert","`None`s `Invert`."],["Overline","`None`s `Overline`."],["Slant","`None`s `Slant`."],["Strike","`None`s `Strike`."],["Underline","`None`s `Underline`."],["Weight","`None`s `Weight`."]]});

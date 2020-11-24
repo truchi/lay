@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["style","Styling utilities.This module contains utilities to work with terminal CSIs and styled types."]]});
