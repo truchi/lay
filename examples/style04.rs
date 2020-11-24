@@ -3,6 +3,10 @@
 // 🚧🚧🚧🚧🚧🚧🚧🚧           ⛔ DO NOT MODIFY! ⛔           🚧🚧🚧🚧🚧🚧🚧🚧 //
 ////////////////////////////////////////////////////////////////////////////////
 
+// 💡
+// This example is generated from the documentation. Check it out:
+// TODO link
+
 fn main() {
     use lay::*;
     println!("{}Printing with style.", Style {

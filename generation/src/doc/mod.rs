@@ -19,7 +19,14 @@ fn generate_doc(gen: &Generation, name: &str, doc: &str) {
         write(
             &gen.examples,
             &format!("{}.rs", name),
-            format!("fn main() {{ {} }}", code),
+            format!(
+                "// 💡
+                // This example is generated from the documentation. Check it out:
+                // TODO link
+
+                fn main() {{ {} }}",
+                code
+            ),
         );
     }
 }
