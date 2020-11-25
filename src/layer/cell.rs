@@ -40,6 +40,40 @@ impl Cell {
     }
 }
 
+// =========== //
+// Conversions //
+// =========== //
+
+/// Returns a new [`Cell`](crate::Cell).
+impl From<Styled<char>> for Cell {
+    /// Returns a new [`Cell`](crate::Cell).
+    fn from(styled: Styled<char>) -> Self {
+        Self::new(styled)
+    }
+}
+
+/// Returns a new [`Cell`](crate::Cell).
+impl From<Option<Styled<char>>> for Cell {
+    /// Returns a new [`Cell`](crate::Cell).
+    fn from(option: Option<Styled<char>>) -> Self {
+        match option {
+            Some(styled) => Self::new(styled),
+            None => Self::NONE,
+        }
+    }
+}
+
+/// Returns a new [`Cell`](crate::Cell).
+impl From<Option<Cell>> for Cell {
+    /// Returns a new [`Cell`](crate::Cell).
+    fn from(cell: Option<Cell>) -> Self {
+        match cell {
+            Some(cell) => cell,
+            None => Self::NONE,
+        }
+    }
+}
+
 // ============ //
 // Layer traits //
 // ============ //
