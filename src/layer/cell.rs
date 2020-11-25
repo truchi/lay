@@ -41,7 +41,9 @@ impl Cell {
     }
 }
 
+/// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`.
 impl Display for Cell {
+    /// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         match self {
             Self(Some(styled)) => Display::fmt(styled, f),
