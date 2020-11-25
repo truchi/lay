@@ -9,8 +9,10 @@ impl Cell {
     pub const NONE: Cell = Cell(None);
 
     /// Returns a new [`Cell`](crate::Cell).
+    ///
+    /// Panics in debug if `styled` contains a control `char`.
     pub fn new(styled: Styled<char>) -> Self {
-        debug_assert!(!styled.content.is_whitespace(), "Char is whitespace");
+        debug_assert!(!styled.content.is_control(), "Control char");
         Self(Some(styled))
     }
 
