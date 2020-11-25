@@ -59,9 +59,7 @@ impl Generation {
                 impl From<#attribute> for Style {
                     #doc
                     fn from(#snake: #attribute) -> Self {
-                        Self {
-                            #(#attributes,)*
-                        }
+                        Self { #(#attributes,)* }
                     }
                 }
                 #LINE_BREAK
@@ -105,21 +103,15 @@ impl Generation {
             ///
             /// `Default`s as an empty [`Style`](crate::Style) (all fields set to `None`).
             #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
-            pub struct Style {
-                #(#style,)*
-            }
+            pub struct Style { #(#style,)* }
             #LINE_BREAK
 
             impl Style {
                 /// A [`Style`](crate::Style) with fields set to `None`.
-                pub const NONE: Self = Self {
-                    #(#none,)*
-                };
+                pub const NONE: Self = Self { #(#none,)* };
 
                 /// A [`Style`](crate::Style) with fields set to their reset value.
-                pub const RESET: Self = Self {
-                    #(#reset,)*
-                };
+                pub const RESET: Self = Self { #(#reset,)* };
             }
             #LINE_BREAK
 
@@ -140,24 +132,16 @@ impl Generation {
             #comment_styler
             #LINE_BREAK
 
-            impl #styler_index for Style {
-                #(#impl_styler_index)*
-            }
+            impl #styler_index for Style { #(#impl_styler_index)* }
             #LINE_BREAK
 
-            impl #styler_index_mut for Style {
-                #(#impl_styler_index_mut)*
-            }
+            impl #styler_index_mut for Style { #(#impl_styler_index_mut)* }
             #LINE_BREAK
 
-            impl #styler for Style {
-                #(#impl_styler)*
-            }
+            impl #styler for Style { #(#impl_styler)* }
             #LINE_BREAK
 
-            impl #styler_mut for Style {
-                #(#impl_styler_mut)*
-            }
+            impl #styler_mut for Style { #(#impl_styler_mut)* }
             #LINE_BREAK
         }
     }
