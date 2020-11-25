@@ -46,12 +46,7 @@ impl Styler {
                 doc!("`Option::{}` fields.", op),
                 doc!("`Option::{}` fields, mutably.", op),
                 &op,
-                quote! {
-                    (self, other: &impl #styler_index)
-                    -> <Self::Output as #styler>::Output
-                    where
-                        Self::Output: #styler<Output = Self::Output>
-                },
+                quote! { (self, other: &impl #styler_index) -> Self },
                 quote! { (&mut self, other: &impl #styler_index) },
             )
         };
@@ -66,12 +61,7 @@ impl Styler {
             doc!("Applies `styler`'s styles."),
             doc!("Applies `styler`'s styles, mutably."),
             "style",
-            quote! {
-                (self, styler: &impl #styler_index)
-                -> <Self::Output as #styler>::Output
-                where
-                    Self::Output: #styler<Output = Self::Output>
-            },
+            quote! { (self, styler: &impl #styler_index) -> Self },
             quote! { (&mut self, styler: &impl #styler_index) },
         );
 
@@ -79,11 +69,7 @@ impl Styler {
             doc!("Dedups (`None`s if identicals) fields."),
             doc!("Dedups (`None`s if identicals) fields, mutably."),
             "dedup",
-            quote! {
-                (mut self, before: &impl #styler_index) -> Self
-                where
-                    Self: #styler<Output = Self>
-            },
+            quote! { (mut self, before: &impl #styler_index) -> Self },
             quote! { (&mut self, before: &impl #styler_index) },
         );
 
@@ -91,11 +77,7 @@ impl Styler {
             doc!("Resets (sets to reset value) fields which are `Some`."),
             doc!("Resets (sets to reset value) fields which are `Some`, mutably."),
             "reset",
-            quote! {
-                (mut self) -> Self
-                where
-                    Self: #styler<Output = Self>
-            },
+            quote! { (mut self) -> Self },
             quote! { (&mut self) },
         );
 
@@ -125,18 +107,13 @@ impl Styler {
     }
 
     pub fn op(&self, op: &str) -> (StylerFn, StylerFn) {
-        let (styler_index, styler) = (&self.styler_index, &self.styler);
+        let styler_index = &self.styler_index;
 
         StylerFn::new_tuple(
             doc!("`Option::{}` fields.", op),
             doc!("`Option::{}` fields, mutably.", op),
             op,
-            quote! {
-                (self, other: &impl #styler_index)
-                -> <Self::Output as #styler>::Output
-                where
-                    Self::Output: #styler<Output = Self::Output>
-            },
+            quote! { (self, other: &impl #styler_index) -> Self },
             quote! { (&mut self, other: &impl #styler_index) },
         )
     }

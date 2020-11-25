@@ -151,7 +151,6 @@ impl Generation {
             #LINE_BREAK
 
             impl #styler for Style {
-                type Output = Self;
                 #(#impl_styler)*
             }
             #LINE_BREAK

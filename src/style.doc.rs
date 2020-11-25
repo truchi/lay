@@ -210,11 +210,6 @@
 ///
 /// Find out some more provided methods on their own documentation!
 ///
-/// [`Styler`](crate::Styler)'s setters return the
-/// [`Output`](crate::Styler::Output) associated type so that this trait is not
-/// limited to the [`Style`](crate::Style) type. Actually, [`lay`](crate)'s
-/// types implement the `Styler*` traits anywhere applicable.
-///
 /// ## Styled
 ///
 /// We are going back to the type world to close this tour of

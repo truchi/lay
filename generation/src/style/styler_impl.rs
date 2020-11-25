@@ -57,8 +57,6 @@ impl Generation {
 
         quote! {
             impl<#(#bounds)*> #styler for #ty {
-                type Output = Self;
-
                 #(#setters)*
             }
         }

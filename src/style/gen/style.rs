@@ -409,10 +409,8 @@ impl StylerIndexMut for Style {
 }
 
 impl Styler for Style {
-    type Output = Self;
-
     /// Sets `Option<Foreground>`.
-    fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self::Output {
+    fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self {
         Style {
             foreground: foreground.into(),
             ..self
@@ -420,7 +418,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Background>`.
-    fn background(self, background: impl Into<Option<Background>>) -> Self::Output {
+    fn background(self, background: impl Into<Option<Background>>) -> Self {
         Style {
             background: background.into(),
             ..self
@@ -428,7 +426,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Weight>`.
-    fn weight(self, weight: impl Into<Option<Weight>>) -> Self::Output {
+    fn weight(self, weight: impl Into<Option<Weight>>) -> Self {
         Style {
             weight: weight.into(),
             ..self
@@ -436,7 +434,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Slant>`.
-    fn slant(self, slant: impl Into<Option<Slant>>) -> Self::Output {
+    fn slant(self, slant: impl Into<Option<Slant>>) -> Self {
         Style {
             slant: slant.into(),
             ..self
@@ -444,7 +442,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Underline>`.
-    fn underline(self, underline: impl Into<Option<Underline>>) -> Self::Output {
+    fn underline(self, underline: impl Into<Option<Underline>>) -> Self {
         Style {
             underline: underline.into(),
             ..self
@@ -452,7 +450,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Strike>`.
-    fn strike(self, strike: impl Into<Option<Strike>>) -> Self::Output {
+    fn strike(self, strike: impl Into<Option<Strike>>) -> Self {
         Style {
             strike: strike.into(),
             ..self
@@ -460,7 +458,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Overline>`.
-    fn overline(self, overline: impl Into<Option<Overline>>) -> Self::Output {
+    fn overline(self, overline: impl Into<Option<Overline>>) -> Self {
         Style {
             overline: overline.into(),
             ..self
@@ -468,7 +466,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Invert>`.
-    fn invert(self, invert: impl Into<Option<Invert>>) -> Self::Output {
+    fn invert(self, invert: impl Into<Option<Invert>>) -> Self {
         Style {
             invert: invert.into(),
             ..self
@@ -476,7 +474,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Blink>`.
-    fn blink(self, blink: impl Into<Option<Blink>>) -> Self::Output {
+    fn blink(self, blink: impl Into<Option<Blink>>) -> Self {
         Style {
             blink: blink.into(),
             ..self
@@ -484,7 +482,7 @@ impl Styler for Style {
     }
 
     /// Sets `Option<Border>`.
-    fn border(self, border: impl Into<Option<Border>>) -> Self::Output {
+    fn border(self, border: impl Into<Option<Border>>) -> Self {
         Style {
             border: border.into(),
             ..self

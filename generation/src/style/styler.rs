@@ -87,8 +87,6 @@ impl Generation {
 
                 /// `Option`al attributes setters.
                 pub trait #styler: #styler_index + Sized {
-                    /// The resulting type of the setters.
-                    type Output; #LINE_BREAK
                     #setters
                     #comment #LINE_BREAK
                     #style   #LINE_BREAK

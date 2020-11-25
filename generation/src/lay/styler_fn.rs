@@ -55,7 +55,7 @@ impl StylerFn {
             doc!("Sets `Option<{}>`.", attr),
             doc!("Sets `Option<{}>`, mutably.", attr),
             &format!("{}{}", Self::SET, snake),
-            quote! { (self, #snake: impl Into<Option<#attr>>) -> Self::Output },
+            quote! { (self, #snake: impl Into<Option<#attr>>) -> Self },
             quote! { (&mut self, #snake: impl Into<Option<#attr>>) },
         )
     }
@@ -67,7 +67,7 @@ impl StylerFn {
             doc!("`None`s `Option<{}>`.", attr),
             doc!("`None`s `Option<{}>`, mutably.", attr),
             &format!("{}_{}", none, attr.snake),
-            quote! { (self) -> Self::Output },
+            quote! { (self) -> Self },
             quote! { (&mut self) },
         )
     }
@@ -86,7 +86,7 @@ impl StylerFn {
             doc!("Sets `Some({})`.", wrapped),
             doc!("Sets `Some({})`, mutably.", wrapped),
             &format!("{}{}{}", on, Self::SET, snake),
-            quote! { (self, #args) -> Self::Output },
+            quote! { (self, #args) -> Self },
             quote! { (&mut self, #args) },
         )
     }
