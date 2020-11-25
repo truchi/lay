@@ -70,6 +70,10 @@ pub trait LayerMut: LayerIndex {
     }
 }
 
+// ======= //
+// Helpers //
+// ======= //
+
 fn merge<T, U, V>(mut layer: T, x: usize, y: usize, other: &U, merge: V) -> T
 where
     T: Layer,
@@ -105,5 +109,50 @@ where
             let other_cell = other.get_unchecked(row - width, col - height);
             layer.set_mut(row, col, merge(layer_cell, other_cell));
         }
+    }
+}
+
+// =============== //
+// Implementations //
+// =============== //
+
+macro_rules! refs {
+    ($Ref:ty, $Mut:ty) => { refs!(ref $Ref $Mut); refs!(mut $Mut); };
+    (ref $($T:ty)*) => {
+        $(impl<T: LayerIndex> LayerIndex for $T {
+            fn width(&self) -> usize { <T as LayerIndex>::width(self) }
+            fn height(&self) -> usize { <T as LayerIndex>::height(self) }
+            fn get_unchecked(&self, x: usize, y: usize) -> Cell {
+                <T as LayerIndex>::get_unchecked(self, x, y)
+            }
+        })*
+    };
+    (mut $T:ty) => {
+        impl<T: LayerIndexMut> LayerIndexMut for $T {
+            fn get_unchecked_mut(&mut self, x: usize, y: usize) -> &mut Cell {
+                <T as LayerIndexMut>::get_unchecked_mut(self, x, y)
+            }
+        }
+        impl<T: LayerMut> LayerMut for $T {
+            fn set_mut(&mut self, x: usize, y: usize, cell: Cell) {
+                <T as LayerMut>::set_mut(self, x, y, cell)
+            }
+        }
+    };
+}
+
+refs!(&T, &mut T);
+
+impl LayerIndex for str {
+    fn width(&self) -> usize {
+        self.len()
+    }
+
+    fn height(&self) -> usize {
+        1
+    }
+
+    fn get_unchecked(&self, x: usize, _: usize) -> Cell {
+        Cell::new(Styled::new(self.chars().nth(x).unwrap(), Style::NONE))
     }
 }

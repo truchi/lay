@@ -37,3 +37,39 @@ impl Cell {
         *self = below;
     }
 }
+
+// ============ //
+// Layer traits //
+// ============ //
+
+impl LayerIndex for Cell {
+    fn width(&self) -> usize {
+        1
+    }
+
+    fn height(&self) -> usize {
+        1
+    }
+
+    fn get_unchecked(&self, _: usize, _: usize) -> Cell {
+        *self
+    }
+}
+
+impl LayerIndexMut for Cell {
+    fn get_unchecked_mut(&mut self, _: usize, _: usize) -> &mut Cell {
+        self
+    }
+}
+
+impl Layer for Cell {
+    fn set(self, _: usize, _: usize, cell: Cell) -> Self {
+        cell
+    }
+}
+
+impl LayerMut for Cell {
+    fn set_mut(&mut self, _: usize, _: usize, cell: Cell) {
+        *self = cell;
+    }
+}
