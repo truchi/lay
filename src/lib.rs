@@ -6,3 +6,6 @@
 //! "graphics" to the terminal.
 
 include!("style.doc.rs");
+
+pub mod layer;
+pub use layer::*;
