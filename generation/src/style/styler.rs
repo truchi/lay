@@ -266,8 +266,11 @@ fn impl_reset(lay: &Lay) -> (TokenStream, TokenStream) {
         .map(|attr| (&attr.fn_get, &attr.fn_set, &attr.reset.wrapped))
         .map(|(get, set, reset)| {
             quote! {
-                if let Some(_) = self.#get() { self = self.#set(Some(#reset)); }
-                #LINE_BREAK
+                match self.#get() {
+                    Some(#reset) => {}
+                    Some(_) => self = self.#set(Some(#reset)),
+                    None => {}
+                } #LINE_BREAK
             }
         });
     let body_mut = lay
@@ -276,8 +279,11 @@ fn impl_reset(lay: &Lay) -> (TokenStream, TokenStream) {
         .map(|attr| (&attr.fn_get, &attr.fn_set_mut, &attr.reset.wrapped))
         .map(|(get, set_mut, reset)| {
             quote! {
-                if let Some(_) = self.#get() { self.#set_mut(Some(#reset)); }
-                #LINE_BREAK
+                match self.#get() {
+                    Some(#reset) => {}
+                    Some(_) => self.#set_mut(Some(#reset)),
+                    None => {}
+                } #LINE_BREAK
             }
         });
 

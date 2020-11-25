@@ -610,44 +610,64 @@ pub trait Styler: StylerIndex + Sized {
 
     /// Resets (sets to reset value) fields which are `Some`.
     fn reset(mut self) -> Self {
-        if let Some(_) = self.get_foreground() {
-            self = self.foreground(Some(Foreground(Color::ResetColor)));
+        match self.get_foreground() {
+            Some(Foreground(Color::ResetColor)) => {}
+            Some(_) => self = self.foreground(Some(Foreground(Color::ResetColor))),
+            None => {}
         }
 
-        if let Some(_) = self.get_background() {
-            self = self.background(Some(Background(Color::ResetColor)));
+        match self.get_background() {
+            Some(Background(Color::ResetColor)) => {}
+            Some(_) => self = self.background(Some(Background(Color::ResetColor))),
+            None => {}
         }
 
-        if let Some(_) = self.get_weight() {
-            self = self.weight(Some(Weight::ResetWeight));
+        match self.get_weight() {
+            Some(Weight::ResetWeight) => {}
+            Some(_) => self = self.weight(Some(Weight::ResetWeight)),
+            None => {}
         }
 
-        if let Some(_) = self.get_slant() {
-            self = self.slant(Some(Slant::ResetSlant));
+        match self.get_slant() {
+            Some(Slant::ResetSlant) => {}
+            Some(_) => self = self.slant(Some(Slant::ResetSlant)),
+            None => {}
         }
 
-        if let Some(_) = self.get_underline() {
-            self = self.underline(Some(Underline::ResetUnderline));
+        match self.get_underline() {
+            Some(Underline::ResetUnderline) => {}
+            Some(_) => self = self.underline(Some(Underline::ResetUnderline)),
+            None => {}
         }
 
-        if let Some(_) = self.get_strike() {
-            self = self.strike(Some(Strike::ResetStrike));
+        match self.get_strike() {
+            Some(Strike::ResetStrike) => {}
+            Some(_) => self = self.strike(Some(Strike::ResetStrike)),
+            None => {}
         }
 
-        if let Some(_) = self.get_overline() {
-            self = self.overline(Some(Overline::ResetOverline));
+        match self.get_overline() {
+            Some(Overline::ResetOverline) => {}
+            Some(_) => self = self.overline(Some(Overline::ResetOverline)),
+            None => {}
         }
 
-        if let Some(_) = self.get_invert() {
-            self = self.invert(Some(Invert::ResetInvert));
+        match self.get_invert() {
+            Some(Invert::ResetInvert) => {}
+            Some(_) => self = self.invert(Some(Invert::ResetInvert)),
+            None => {}
         }
 
-        if let Some(_) = self.get_blink() {
-            self = self.blink(Some(Blink::ResetBlink));
+        match self.get_blink() {
+            Some(Blink::ResetBlink) => {}
+            Some(_) => self = self.blink(Some(Blink::ResetBlink)),
+            None => {}
         }
 
-        if let Some(_) = self.get_border() {
-            self = self.border(Some(Border::ResetBorder));
+        match self.get_border() {
+            Some(Border::ResetBorder) => {}
+            Some(_) => self = self.border(Some(Border::ResetBorder)),
+            None => {}
         }
 
         self
