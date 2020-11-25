@@ -74,6 +74,7 @@ pub trait LayerMut: LayerIndex {
 // Helpers //
 // ======= //
 
+/// Merges `layer` and `other` according to `merge`.
 fn merge<T, U, V>(mut layer: T, x: usize, y: usize, other: &U, merge: V) -> T
 where
     T: Layer,
@@ -94,6 +95,7 @@ where
     layer
 }
 
+/// Merges `layer` and `other` according to `merge`, mutably.
 fn merge_mut<T, U, V>(layer: &mut T, x: usize, y: usize, other: &U, merge: V)
 where
     T: LayerMut + ?Sized,
