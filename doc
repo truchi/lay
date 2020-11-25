@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ "$1" = "watch" ]; then
+  cargo watch -s "clear; ./doc"
+else
+  cargo doc --quiet --no-deps
+  echo "file:$PWD/target/doc/lay/index.html"
+fi

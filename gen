@@ -6,7 +6,7 @@ if [ "$1" = "watch" ]; then
     -s "clear; ./gen; cargo doc --quiet --no-deps"
 else
   (cd generation && cargo run --quiet)
-  cargo check --quiet
   rustfmt src/**.rs
   rustfmt examples/**.rs
+  cargo check --quiet
 fi

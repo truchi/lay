@@ -9,18 +9,18 @@ pretty_print() {
 }
 
 pretty_print "Generation"
+rustfmt generation/**.rs
 ./gen
 
 pretty_print "Tests"
 cargo test --quiet
 
 pretty_print "Doc"
-cargo doc --quiet --no-deps
+./doc
 cp -a target/doc/. docs/
 echo '<meta http-equiv=refresh content=0;url=lay/index.html>' > docs/index.html
-echo "file:$PWD/target/doc/lay/index.html"
 echo "file:$PWD/docs/lay/index.html"
 
 pretty_print "Generation doc"
-(cd generation && cargo doc --quiet)
+(cd generation && cargo doc --quiet --no-deps)
 echo "file:$PWD/generation/target/doc/generation/index.html"
