@@ -38,6 +38,8 @@ impl<T: Display> From<T> for Styled<T> {
 
 impl<T: Display> Display for Styled<T> {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        write!(f, "{}{}{}", self.style, self.content, self.style.reset())
+        Style::fmt(&self.style, f)?;
+        T::fmt(&self.content, f)?;
+        Style::fmt(&self.style.reset(), f)
     }
 }

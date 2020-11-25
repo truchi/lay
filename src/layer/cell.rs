@@ -1,4 +1,5 @@
 use crate::*;
+use std::fmt::{Display, Error, Formatter};
 
 /// A terminal [`Cell`](crate::Cell).
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
@@ -37,6 +38,15 @@ impl Cell {
     pub fn below_mut(&mut self, mut below: Self) {
         below.above_mut(*self);
         *self = below;
+    }
+}
+
+impl Display for Cell {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        match self {
+            Self(Some(styled)) => Display::fmt(styled, f),
+            _ => Ok(()),
+        }
     }
 }
 
