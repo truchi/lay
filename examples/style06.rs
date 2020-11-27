@@ -17,6 +17,7 @@ fn main() {
          .no_slant()    // Nones an attribute
          .underlined()  // Sets a variant
          .reset_blink() // That's a variant as well
+         .blink(Reset)  // This will also reset
          .white()       // Sets a foreground color
          .on_dark_red() // Sets a background color
     );
@@ -28,6 +29,7 @@ fn main() {
     style.no_slant_mut(); //    Nones an attribute
     style.underlined_mut(); //  Sets a variant
     style.reset_blink_mut(); // That's a variant as well
+    style.blink_mut(Reset); //  This will also reset
     style.white_mut(); //       Sets a foreground color
     style.on_dark_red_mut(); // Sets a background color
 
