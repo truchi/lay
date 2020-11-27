@@ -2,21 +2,30 @@ use crate::*;
 use std::fmt::{Display, Error, Formatter};
 
 /// A terminal [`Cell`](crate::Cell).
+///
+/// Should not contain a control `char`. Contructors will panic in debug.
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
-pub struct Cell(pub Option<Styled<char>>);
+pub struct Cell(Option<Styled<char>>);
 
+/// ### Consts
 impl Cell {
     /// An empty terminal [`Cell`](crate::Cell).
     pub const NONE: Cell = Cell(None);
+}
 
+/// ### Constructors
+impl Cell {
     /// Returns a new [`Cell`](crate::Cell).
-    ///
-    /// Panics in debug if `styled` contains a control `char`.
-    pub fn new(styled: Styled<char>) -> Self {
+    pub fn from_styled<T: Into<Styled<char>>>(styled: T) -> Self {
+        let styled = styled.into();
         debug_assert!(!styled.content.is_control(), "Control char");
+
         Self(Some(styled))
     }
+}
 
+/// ### Methods
+impl Cell {
     /// Superimposes `above` above `self`.
     pub fn above(mut self, above: Self) -> Self {
         self.above_mut(above);
@@ -24,9 +33,9 @@ impl Cell {
     }
 
     /// Superimposes `below` below `self`.
-    pub fn below(self, mut below: Self) -> Self {
-        below.above_mut(self);
-        below
+    pub fn below(mut self, below: Self) -> Self {
+        self.below_mut(below);
+        self
     }
 
     /// Superimposes `above` above `self`, mutably.
@@ -41,9 +50,11 @@ impl Cell {
     }
 }
 
-/// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`.
+/// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`,
+/// nothing otherwise.
 impl Display for Cell {
-    /// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`.
+    /// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`,
+    /// nothing otherwise.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         match self {
             Self(Some(styled)) => Display::fmt(styled, f),
@@ -56,22 +67,9 @@ impl Display for Cell {
 // Conversions //
 // =========== //
 
-/// Returns a new [`Cell`](crate::Cell).
-impl From<Styled<char>> for Cell {
-    /// Returns a new [`Cell`](crate::Cell).
-    fn from(styled: Styled<char>) -> Self {
-        Self::new(styled)
-    }
-}
-
-/// Returns a new [`Cell`](crate::Cell).
-impl From<Option<Styled<char>>> for Cell {
-    /// Returns a new [`Cell`](crate::Cell).
-    fn from(option: Option<Styled<char>>) -> Self {
-        match option {
-            Some(styled) => Self::new(styled),
-            None => Self::NONE,
-        }
+impl<T: Into<Styled<char>>> From<T> for Cell {
+    fn from(styled: T) -> Self {
+        Self::from_styled(styled)
     }
 }
 
@@ -80,7 +78,7 @@ impl From<Option<Cell>> for Cell {
     /// Returns a new [`Cell`](crate::Cell).
     fn from(cell: Option<Cell>) -> Self {
         match cell {
-            Some(cell) => cell,
+            Some(cell) => cell.into(),
             None => Self::NONE,
         }
     }

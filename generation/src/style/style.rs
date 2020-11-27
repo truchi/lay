@@ -1,5 +1,7 @@
 use crate::*;
 
+// TODO Styler* provided method could be overrided with better impl
+
 impl Generation {
     pub fn style(&self) -> TokenStream {
         let Styler {

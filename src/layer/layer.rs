@@ -155,6 +155,6 @@ impl LayerIndex for str {
     }
 
     fn get_unchecked(&self, x: usize, _: usize) -> Cell {
-        Cell::new(Styled::new(self.chars().nth(x).unwrap(), Style::NONE))
+        self.chars().nth(x).unwrap().into()
     }
 }
