@@ -23,6 +23,7 @@ impl Generation {
     }
 
     pub fn ground(&self, ground: &Attr) -> TokenStream {
+        let ground_string = ground.to_string();
         let color = &self.color;
         let color_snake = &color.snake;
         let reset = &ground.reset.wrapped;
@@ -44,10 +45,11 @@ impl Generation {
 
         quote! {
             use crate::*;
+            use std::fmt::{Debug, Error, Formatter};
             #LINE_BREAK
 
             #decl_doc
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+            #[derive(Copy, Clone, Eq, PartialEq, Hash)]
             pub struct #ground(pub #color);
             #LINE_BREAK
 
@@ -56,6 +58,16 @@ impl Generation {
                 #default_doc
                 fn default() -> Self {
                     #reset
+                }
+            }
+            #LINE_BREAK
+
+            impl Debug for #ground {
+                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                    f.write_str(#ground_string)?;
+                    f.write_str("(")?;
+                    Debug::fmt(&self.0, f)?;
+                    f.write_str(")")
                 }
             }
             #LINE_BREAK

@@ -4,7 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
-use std::fmt::{Display, Error, Formatter};
+use std::fmt::{Debug, Display, Error, Formatter};
 
 /// [`Style`](crate::Style)s.
 ///
@@ -13,7 +13,7 @@ use std::fmt::{Display, Error, Formatter};
 /// `Display`s the corresponding CSIs to the terminal.
 ///
 /// `Default`s as an empty [`Style`](crate::Style) (all fields set to `None`).
-#[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Default)]
 pub struct Style {
     pub foreground: Option<Foreground>,
     pub background: Option<Background>,
@@ -99,6 +99,53 @@ impl Display for Style {
         }
 
         Ok(())
+    }
+}
+
+impl Debug for Style {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        let mut tuple = f.debug_tuple("Style");
+        if let Some(foreground) = self.get_foreground() {
+            tuple.field(&foreground);
+        }
+
+        if let Some(background) = self.get_background() {
+            tuple.field(&background);
+        }
+
+        if let Some(weight) = self.get_weight() {
+            tuple.field(&weight);
+        }
+
+        if let Some(slant) = self.get_slant() {
+            tuple.field(&slant);
+        }
+
+        if let Some(underline) = self.get_underline() {
+            tuple.field(&underline);
+        }
+
+        if let Some(strike) = self.get_strike() {
+            tuple.field(&strike);
+        }
+
+        if let Some(overline) = self.get_overline() {
+            tuple.field(&overline);
+        }
+
+        if let Some(invert) = self.get_invert() {
+            tuple.field(&invert);
+        }
+
+        if let Some(blink) = self.get_blink() {
+            tuple.field(&blink);
+        }
+
+        if let Some(border) = self.get_border() {
+            tuple.field(&border);
+        }
+
+        tuple.finish()
     }
 }
 

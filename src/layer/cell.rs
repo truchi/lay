@@ -1,10 +1,10 @@
 use crate::*;
-use std::fmt::{Display, Error, Formatter};
+use std::fmt::{Debug, Display, Error, Formatter};
 
 /// A terminal [`Cell`](crate::Cell).
 ///
 /// Must not contain a control `char`. Contructors will panic in debug.
-#[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Default)]
 pub struct Cell(Option<Styled<char>>);
 
 /// ### Consts
@@ -68,6 +68,19 @@ impl Display for Cell {
         match self {
             Self(Some(styled)) => Display::fmt(styled, f),
             _ => Ok(()),
+        }
+    }
+}
+
+impl Debug for Cell {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        match self {
+            Self(Some(styled)) => f
+                .debug_tuple("Cell")
+                .field(&styled.content)
+                .field(&styled.style)
+                .finish(),
+            _ => f.write_str("NONE"),
         }
     }
 }

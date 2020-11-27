@@ -4,6 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
+use std::fmt::{Debug, Error, Formatter};
 
 /// A [`Foreground`](crate::Foreground) [`Color`](crate::Color).
 ///
@@ -11,7 +12,7 @@ use crate::*;
 ///
 /// `Default`s to `Foreground(Color::ResetColor)`, user's default terminal's
 /// foreground color.
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash)]
 pub struct Foreground(pub Color);
 
 /// `Default`s to `Foreground(Color::ResetColor)`.
@@ -19,6 +20,15 @@ impl Default for Foreground {
     /// `Default`s to `Foreground(Color::ResetColor)`.
     fn default() -> Self {
         Foreground(Color::ResetColor)
+    }
+}
+
+impl Debug for Foreground {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        f.write_str("Foreground")?;
+        f.write_str("(")?;
+        Debug::fmt(&self.0, f)?;
+        f.write_str(")")
     }
 }
 

@@ -1,8 +1,8 @@
 use crate::*;
-use std::fmt::{Display, Error, Formatter};
+use std::fmt::{Debug, Display, Error, Formatter};
 
 /// `Display`able [`Style`](crate::Style)d content.
-#[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Default)]
 pub struct Styled<T: Display> {
     pub content: T,
     pub style:   Style,
@@ -55,9 +55,18 @@ impl<T: Display> Styled<T> {
 impl<T: Display> Display for Styled<T> {
     /// `Display`s the `content` with `style`s, then resets `style`s.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
-        Style::fmt(&self.style, f)?;
+        Display::fmt(&self.style, f)?;
         T::fmt(&self.content, f)?;
-        Style::fmt(&self.style.reset(), f)
+        Display::fmt(&self.style.reset(), f)
+    }
+}
+
+impl<T: Display + Debug> Debug for Styled<T> {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        f.debug_tuple("Styled")
+            .field(&self.content)
+            .field(&self.style)
+            .finish()
     }
 }
 

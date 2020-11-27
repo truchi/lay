@@ -35,9 +35,17 @@ impl Generation {
             let get = &attribute.fn_get;
 
             quote! {
-                if let Some(#snake) = self.#get() {
-                    Display::fmt(&#snake, f)?;
-                }
+                if let Some(#snake) = self.#get() { Display::fmt(&#snake, f)?; }
+                #LINE_BREAK
+            }
+        });
+
+        let debug = self.all.iter().map(|attribute| {
+            let snake = &attribute.snake;
+            let get = &attribute.fn_get;
+
+            quote! {
+                if let Some(#snake) = self.#get() { tuple.field(&#snake); }
                 #LINE_BREAK
             }
         });
@@ -94,7 +102,7 @@ impl Generation {
 
         quote! {
             use crate::*;
-            use std::fmt::{Display, Error, Formatter};
+            use std::fmt::{Debug, Display, Error, Formatter};
             #LINE_BREAK
 
             /// [`Style`](crate::Style)s.
@@ -104,7 +112,7 @@ impl Generation {
             /// `Display`s the corresponding CSIs to the terminal.
             ///
             /// `Default`s as an empty [`Style`](crate::Style) (all fields set to `None`).
-            #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
+            #[derive(Copy, Clone, Eq, PartialEq, Default)]
             pub struct Style { #(#style,)* }
             #LINE_BREAK
 
@@ -117,10 +125,21 @@ impl Generation {
             }
             #LINE_BREAK
 
+            /// `Display`s the corresponding CSIs to the terminal.
             impl Display for Style {
+                /// `Display`s the corresponding CSIs to the terminal.
                 fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
                     #(#display)*
                     Ok(())
+                }
+            }
+            #LINE_BREAK
+
+            impl Debug for Style {
+                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                    let mut tuple = f.debug_tuple("Style");
+                    #(#debug)*
+                    tuple.finish()
                 }
             }
             #LINE_BREAK
