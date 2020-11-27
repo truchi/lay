@@ -67,7 +67,7 @@ impl Generation {
             let snake = &attribute.snake;
             let set_mut = &attribute.fn_set_mut;
             let full = &set_mut.full;
-            quote! { #full { #styler_mut::#set_mut(&mut self.#field, #snake) } }
+            quote! { #full { #styler_mut::#set_mut(&mut self.#field, #snake); } }
         });
 
         quote! {

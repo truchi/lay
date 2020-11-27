@@ -122,51 +122,51 @@ impl Styler for Fill {
 impl StylerMut for Fill {
     /// Sets `Option<Foreground>`, mutably.
     fn foreground_mut(&mut self, foreground: impl Into<Option<Foreground>>) {
-        StylerMut::foreground_mut(&mut self.cell, foreground)
+        StylerMut::foreground_mut(&mut self.cell, foreground);
     }
 
     /// Sets `Option<Background>`, mutably.
     fn background_mut(&mut self, background: impl Into<Option<Background>>) {
-        StylerMut::background_mut(&mut self.cell, background)
+        StylerMut::background_mut(&mut self.cell, background);
     }
 
     /// Sets `Option<Weight>`, mutably.
     fn weight_mut(&mut self, weight: impl Into<Option<Weight>>) {
-        StylerMut::weight_mut(&mut self.cell, weight)
+        StylerMut::weight_mut(&mut self.cell, weight);
     }
 
     /// Sets `Option<Slant>`, mutably.
     fn slant_mut(&mut self, slant: impl Into<Option<Slant>>) {
-        StylerMut::slant_mut(&mut self.cell, slant)
+        StylerMut::slant_mut(&mut self.cell, slant);
     }
 
     /// Sets `Option<Underline>`, mutably.
     fn underline_mut(&mut self, underline: impl Into<Option<Underline>>) {
-        StylerMut::underline_mut(&mut self.cell, underline)
+        StylerMut::underline_mut(&mut self.cell, underline);
     }
 
     /// Sets `Option<Strike>`, mutably.
     fn strike_mut(&mut self, strike: impl Into<Option<Strike>>) {
-        StylerMut::strike_mut(&mut self.cell, strike)
+        StylerMut::strike_mut(&mut self.cell, strike);
     }
 
     /// Sets `Option<Overline>`, mutably.
     fn overline_mut(&mut self, overline: impl Into<Option<Overline>>) {
-        StylerMut::overline_mut(&mut self.cell, overline)
+        StylerMut::overline_mut(&mut self.cell, overline);
     }
 
     /// Sets `Option<Invert>`, mutably.
     fn invert_mut(&mut self, invert: impl Into<Option<Invert>>) {
-        StylerMut::invert_mut(&mut self.cell, invert)
+        StylerMut::invert_mut(&mut self.cell, invert);
     }
 
     /// Sets `Option<Blink>`, mutably.
     fn blink_mut(&mut self, blink: impl Into<Option<Blink>>) {
-        StylerMut::blink_mut(&mut self.cell, blink)
+        StylerMut::blink_mut(&mut self.cell, blink);
     }
 
     /// Sets `Option<Border>`, mutably.
     fn border_mut(&mut self, border: impl Into<Option<Border>>) {
-        StylerMut::border_mut(&mut self.cell, border)
+        StylerMut::border_mut(&mut self.cell, border);
     }
 }
