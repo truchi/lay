@@ -157,60 +157,70 @@ impl StylerMut for Cell {
     /// Sets `Option<Foreground>`, mutably.
     fn foreground_mut(&mut self, foreground: impl Into<Option<Foreground>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::foreground_mut(&mut styled, foreground));
+            .as_mut()
+            .map(|styled| StylerMut::foreground_mut(styled, foreground));
     }
 
     /// Sets `Option<Background>`, mutably.
     fn background_mut(&mut self, background: impl Into<Option<Background>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::background_mut(&mut styled, background));
+            .as_mut()
+            .map(|styled| StylerMut::background_mut(styled, background));
     }
 
     /// Sets `Option<Weight>`, mutably.
     fn weight_mut(&mut self, weight: impl Into<Option<Weight>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::weight_mut(&mut styled, weight));
+            .as_mut()
+            .map(|styled| StylerMut::weight_mut(styled, weight));
     }
 
     /// Sets `Option<Slant>`, mutably.
     fn slant_mut(&mut self, slant: impl Into<Option<Slant>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::slant_mut(&mut styled, slant));
+            .as_mut()
+            .map(|styled| StylerMut::slant_mut(styled, slant));
     }
 
     /// Sets `Option<Underline>`, mutably.
     fn underline_mut(&mut self, underline: impl Into<Option<Underline>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::underline_mut(&mut styled, underline));
+            .as_mut()
+            .map(|styled| StylerMut::underline_mut(styled, underline));
     }
 
     /// Sets `Option<Strike>`, mutably.
     fn strike_mut(&mut self, strike: impl Into<Option<Strike>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::strike_mut(&mut styled, strike));
+            .as_mut()
+            .map(|styled| StylerMut::strike_mut(styled, strike));
     }
 
     /// Sets `Option<Overline>`, mutably.
     fn overline_mut(&mut self, overline: impl Into<Option<Overline>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::overline_mut(&mut styled, overline));
+            .as_mut()
+            .map(|styled| StylerMut::overline_mut(styled, overline));
     }
 
     /// Sets `Option<Invert>`, mutably.
     fn invert_mut(&mut self, invert: impl Into<Option<Invert>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::invert_mut(&mut styled, invert));
+            .as_mut()
+            .map(|styled| StylerMut::invert_mut(styled, invert));
     }
 
     /// Sets `Option<Blink>`, mutably.
     fn blink_mut(&mut self, blink: impl Into<Option<Blink>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::blink_mut(&mut styled, blink));
+            .as_mut()
+            .map(|styled| StylerMut::blink_mut(styled, blink));
     }
 
     /// Sets `Option<Border>`, mutably.
     fn border_mut(&mut self, border: impl Into<Option<Border>>) {
         self.as_mut()
-            .map(|mut styled| StylerMut::border_mut(&mut styled, border));
+            .as_mut()
+            .map(|styled| StylerMut::border_mut(styled, border));
     }
 }
