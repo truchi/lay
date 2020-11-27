@@ -8,16 +8,21 @@ pub struct Fill {
     pub cell:   Cell,
 }
 
+/// ### Constructors
 impl Fill {
     /// Returns a new [`Fill`](crate::Fill).
-    pub fn new(width: usize, height: usize, cell: Cell) -> Self {
+    pub fn new<T: Into<Cell>>(width: usize, height: usize, cell: T) -> Self {
         Self {
             width,
             height,
-            cell,
+            cell: cell.into(),
         }
     }
 }
+
+// =========== //
+// Conversions //
+// =========== //
 
 /// Returns a new [`Fill`](crate::Fill).
 impl From<(usize, usize, Cell)> for Fill {

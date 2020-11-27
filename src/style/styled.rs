@@ -11,8 +11,11 @@ pub struct Styled<T: Display> {
 /// ### Constructors
 impl<T: Display> Styled<T> {
     /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
-    pub fn new(content: T, style: Style) -> Self {
-        Self { content, style }
+    pub fn new<U: Into<Style>>(content: T, style: U) -> Self {
+        Self {
+            content,
+            style: style.into(),
+        }
     }
 
     /// Retuns a new [`Styled`](crate::Styled) with `content` and
@@ -63,9 +66,9 @@ impl<T: Display> Display for Styled<T> {
 // =========== //
 
 /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
-impl<T: Display> From<(T, Style)> for Styled<T> {
+impl<T: Display, U: Into<Style>> From<(T, U)> for Styled<T> {
     /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
-    fn from((content, style): (T, Style)) -> Self {
+    fn from((content, style): (T, U)) -> Self {
         Self::new(content, style)
     }
 }
