@@ -1,5 +1,8 @@
 use crate::*;
-use std::fmt::{Display, Error, Formatter};
+use std::{
+    fmt::{Display, Error, Formatter},
+    ops::{Deref, DerefMut},
+};
 
 /// A terminal [`Cell`](crate::Cell).
 ///
@@ -16,11 +19,20 @@ impl Cell {
 /// ### Constructors
 impl Cell {
     /// Returns a new [`Cell`](crate::Cell).
-    pub fn from_styled<T: Into<Styled<char>>>(styled: T) -> Self {
-        let styled = styled.into();
-        debug_assert!(!styled.content.is_control(), "Control char");
+    pub fn new<T: Into<Styled<char>>>(option: Option<T>) -> Self {
+        match option {
+            Some(styled) => {
+                let styled = styled.into();
+                debug_assert!(!styled.content.is_control(), "Control char");
+                Self(Some(styled))
+            }
+            _ => Self::NONE,
+        }
+    }
 
-        Self(Some(styled))
+    /// Returns a new [`Cell`](crate::Cell).
+    pub fn from_styled<T: Into<Styled<char>>>(styled: T) -> Self {
+        Self(Some(styled.into()))
     }
 }
 
@@ -67,7 +79,17 @@ impl Display for Cell {
 // Conversions //
 // =========== //
 
+/// Returns a new [`Cell`](crate::Cell).
+impl<T: Into<Styled<char>>> From<Option<T>> for Cell {
+    /// Returns a new [`Cell`](crate::Cell).
+    fn from(option: Option<T>) -> Self {
+        Self::new(option)
+    }
+}
+
+/// Returns a new [`Cell`](crate::Cell).
 impl<T: Into<Styled<char>>> From<T> for Cell {
+    /// Returns a new [`Cell`](crate::Cell).
     fn from(styled: T) -> Self {
         Self::from_styled(styled)
     }
@@ -81,6 +103,24 @@ impl From<Option<Cell>> for Cell {
             Some(cell) => cell.into(),
             None => Self::NONE,
         }
+    }
+}
+
+// ====== //
+// Derefs //
+// ====== //
+
+impl Deref for Cell {
+    type Target = Option<Styled<char>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for Cell {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 

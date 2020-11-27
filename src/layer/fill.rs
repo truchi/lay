@@ -21,6 +21,7 @@ impl Fill {
 
 /// Returns a new [`Fill`](crate::Fill).
 impl From<(usize, usize, Cell)> for Fill {
+    /// Returns a new [`Fill`](crate::Fill).
     fn from((width, height, cell): (usize, usize, Cell)) -> Self {
         Self::new(width, height, cell)
     }
