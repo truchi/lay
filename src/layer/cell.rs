@@ -1,12 +1,9 @@
 use crate::*;
-use std::{
-    fmt::{Display, Error, Formatter},
-    ops::{Deref, DerefMut},
-};
+use std::fmt::{Display, Error, Formatter};
 
 /// A terminal [`Cell`](crate::Cell).
 ///
-/// Should not contain a control `char`. Contructors will panic in debug.
+/// Must not contain a control `char`. Contructors will panic in debug.
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub struct Cell(Option<Styled<char>>);
 
@@ -106,20 +103,14 @@ impl From<Option<Cell>> for Cell {
     }
 }
 
-// ====== //
-// Derefs //
-// ====== //
-
-impl Deref for Cell {
-    type Target = Option<Styled<char>>;
-
-    fn deref(&self) -> &Self::Target {
+impl AsRef<Option<Styled<char>>> for Cell {
+    fn as_ref(&self) -> &Option<Styled<char>> {
         &self.0
     }
 }
 
-impl DerefMut for Cell {
-    fn deref_mut(&mut self) -> &mut Self::Target {
+impl AsMut<Option<Styled<char>>> for Cell {
+    fn as_mut(&mut self) -> &mut Option<Styled<char>> {
         &mut self.0
     }
 }

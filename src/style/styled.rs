@@ -58,6 +58,10 @@ impl<T: Display> Display for Styled<T> {
     }
 }
 
+// =========== //
+// Conversions //
+// =========== //
+
 /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
 impl<T: Display> From<(T, Style)> for Styled<T> {
     /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
