@@ -133,33 +133,29 @@ impl AsMut<Option<Styled<char>>> for Cell {
 // ============ //
 
 impl LayerIndex for Cell {
-    fn width(&self) -> usize {
-        1
+    fn size(&self) -> Size {
+        (1, 1)
     }
 
-    fn height(&self) -> usize {
-        1
-    }
-
-    fn get_unchecked(&self, _: usize, _: usize) -> Cell {
+    fn get_unchecked(&self, _: Position) -> Cell {
         *self
     }
 }
 
 impl LayerIndexMut for Cell {
-    fn get_unchecked_mut(&mut self, _: usize, _: usize) -> &mut Cell {
+    fn get_unchecked_mut(&mut self, _: Position) -> &mut Cell {
         self
     }
 }
 
 impl Layer for Cell {
-    fn set(self, _: usize, _: usize, cell: Cell) -> Self {
+    fn set(self, _: Position, cell: Cell) -> Self {
         cell
     }
 }
 
 impl LayerMut for Cell {
-    fn set_mut(&mut self, _: usize, _: usize, cell: Cell) {
+    fn set_mut(&mut self, _: Position, cell: Cell) {
         *self = cell;
     }
 }

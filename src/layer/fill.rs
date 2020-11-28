@@ -3,18 +3,16 @@ use crate::*;
 /// A plain [`Fill`](crate::Fill).
 #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
 pub struct Fill {
-    pub width:  usize,
-    pub height: usize,
-    pub cell:   Cell,
+    pub size: Size,
+    pub cell: Cell,
 }
 
 /// ### Constructors
 impl Fill {
     /// Returns a new [`Fill`](crate::Fill).
-    pub fn new<T: Into<Cell>>(width: usize, height: usize, cell: T) -> Self {
+    pub fn new<T: Into<Cell>>(size: Size, cell: T) -> Self {
         Self {
-            width,
-            height,
+            size,
             cell: cell.into(),
         }
     }
@@ -25,10 +23,10 @@ impl Fill {
 // =========== //
 
 /// Returns a new [`Fill`](crate::Fill).
-impl From<(usize, usize, Cell)> for Fill {
+impl From<(Size, Cell)> for Fill {
     /// Returns a new [`Fill`](crate::Fill).
-    fn from((width, height, cell): (usize, usize, Cell)) -> Self {
-        Self::new(width, height, cell)
+    fn from((size, cell): (Size, Cell)) -> Self {
+        Self::new(size, cell)
     }
 }
 
@@ -37,15 +35,11 @@ impl From<(usize, usize, Cell)> for Fill {
 // ============ //
 
 impl LayerIndex for Fill {
-    fn width(&self) -> usize {
-        self.width
+    fn size(&self) -> Size {
+        self.size
     }
 
-    fn height(&self) -> usize {
-        self.height
-    }
-
-    fn get_unchecked(&self, _: usize, _: usize) -> Cell {
+    fn get_unchecked(&self, _: Position) -> Cell {
         self.cell
     }
 }
