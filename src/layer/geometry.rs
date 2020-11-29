@@ -228,6 +228,14 @@ macro_rules! wrapper {
                 }
             }
 
+            /// ### Methods
+            impl $Type {
+                /// Returns true if both fields are lower than those in `other`.
+                pub fn lt(&self, other: &Self) -> bool {
+                    self.$a < other.$a && self.$b < other.$b
+                }
+            }
+
             ops!($Type: $a $b);
             convert!($self: $Type, $a: $A, $b: $B);
         )*
@@ -273,6 +281,20 @@ mod tests {
             },
             "Size::new"
         );
+    }
+
+    #[test]
+    fn lt() {
+        macro_rules! lt {
+            ($($T:ident)*) => { $(
+                assert_eq!($T::from((1, 1)).lt(&$T::from((2, 2))), true);
+                assert_eq!($T::from((1, 2)).lt(&$T::from((2, 2))), false);
+                assert_eq!($T::from((2, 1)).lt(&$T::from((2, 2))), false);
+                assert_eq!($T::from((2, 2)).lt(&$T::from((2, 2))), false);
+            )* };
+        }
+
+        lt!(Position Size);
     }
 
     #[test]
