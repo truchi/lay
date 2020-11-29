@@ -58,15 +58,15 @@ impl Cell {
     }
 }
 
-/// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`,
-/// nothing otherwise.
+/// `Display`s the `char` if some,
+/// move the cursor to the right otherwise.
 impl Display for Cell {
     /// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`,
     /// nothing otherwise.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         match self {
             Self(Some(styled)) => Display::fmt(styled, f),
-            _ => Ok(()),
+            _ => Display::fmt(&Right(1), f),
         }
     }
 }
