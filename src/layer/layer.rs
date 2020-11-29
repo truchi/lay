@@ -10,7 +10,8 @@ pub trait LayerIndex {
 
     /// Gets the [`Cell`](crate::Cell) at position `(x, y)`,
     /// or `None` if out of bounds.
-    fn get(&self, (x, y): Position) -> Option<Cell> {
+    fn get(&self, position: Position) -> Option<Cell> {
+        let (x, y) = position;
         let (width, height) = self.size();
 
         if x < width && y < height {
@@ -28,7 +29,8 @@ pub trait LayerIndexMut: LayerIndex {
 
     /// Gets the [`Cell`](crate::Cell) at position `(x, y)`,
     /// or [`Cell::NONE`](crate::Cell::NONE) if out of bounds, mutably.
-    fn get_mut(&mut self, (x, y): Position) -> Option<&mut Cell> {
+    fn get_mut(&mut self, position: Position) -> Option<&mut Cell> {
+        let (x, y) = position;
         let (width, height) = self.size();
 
         if x < width && y < height {
