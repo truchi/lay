@@ -16,7 +16,7 @@ pretty_print "Tests"
 cargo test --quiet
 
 pretty_print "Doc"
-./doc
+cargo doc --quiet --no-deps
 cp -a target/doc/. docs/
 echo '<meta http-equiv=refresh content=0;url=lay/index.html>' > docs/index.html
 echo "file:$PWD/docs/lay/index.html"
