@@ -91,7 +91,6 @@ impl Generation {
 
         quote! {
             use crate::*;
-            use std::fmt::{Display, Error, Formatter};
             #LINE_BREAK
 
             #comment_conversions

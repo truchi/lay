@@ -1,7 +1,4 @@
-#![allow(unused)]
-
 use crate::*;
-use quote::{ToTokens, TokenStreamExt};
 
 macro_rules! idoc {
     ($($arg:tt)+) => { $crate::utils::Doc::inner(format!($($arg)+)) };

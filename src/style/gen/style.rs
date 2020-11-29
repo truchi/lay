@@ -4,7 +4,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
-use std::fmt::{Debug, Display, Error, Formatter};
 
 /// [`Style`](crate::Style)s.
 ///
@@ -56,7 +55,9 @@ impl Style {
     };
 }
 
+/// `Display`s the corresponding CSIs to the terminal.
 impl Display for Style {
+    /// `Display`s the corresponding CSIs to the terminal.
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         if let Some(foreground) = self.get_foreground() {
             Display::fmt(&foreground, f)?;

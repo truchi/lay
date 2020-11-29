@@ -4,7 +4,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
-use std::fmt::{Debug, Error, Formatter};
 
 /// A [`Background`](crate::Background) [`Color`](crate::Color).
 ///

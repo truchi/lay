@@ -1,5 +1,4 @@
 use crate::*;
-use std::fmt::{Debug, Display, Error, Formatter};
 
 #[derive(Clone, Default)]
 pub struct StylerFn {

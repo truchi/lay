@@ -45,7 +45,6 @@ impl Generation {
 
         quote! {
             use crate::*;
-            use std::fmt::{Debug, Error, Formatter};
             #LINE_BREAK
 
             #decl_doc

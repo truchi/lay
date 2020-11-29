@@ -6,17 +6,17 @@ macro_rules! derefs {
             $f:ident { $fmt:expr }
         }
     )*) => {$(
-        impl ::std::ops::Deref for $Struct {
+        impl Deref for $Struct {
             type Target = $Target;
             fn deref(&$self) -> &Self::Target { $deref }
         }
 
-        impl ::quote::ToTokens for $Struct {
-            fn to_tokens(&$self, $tokens: &mut ::proc_macro2::TokenStream) { $to_tokens }
+        impl ToTokens for $Struct {
+            fn to_tokens(&$self, $tokens: &mut TokenStream) { $to_tokens }
         }
 
-        impl ::std::fmt::Display for $Struct {
-            fn fmt(&$self, $f: &mut ::std::fmt::Formatter) -> Result<(), ::std::fmt::Error> { $fmt }
+        impl Display for $Struct {
+            fn fmt(&$self, $f: &mut Formatter) -> Result<(), Error> { $fmt }
         }
     )*};
 }

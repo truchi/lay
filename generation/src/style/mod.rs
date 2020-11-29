@@ -84,7 +84,6 @@ impl Generation {
         concat(&[
             quote! {
                 use crate::*;
-                use std::fmt::Display;
                 #LINE_BREAK
             },
             self.impl_styler_index(styled_impls),

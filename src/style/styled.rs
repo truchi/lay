@@ -1,5 +1,4 @@
 use crate::*;
-use std::fmt::{Debug, Display, Error, Formatter};
 
 /// `Display`able [`Style`](crate::Style)d content.
 #[derive(Copy, Clone, Eq, PartialEq, Default)]

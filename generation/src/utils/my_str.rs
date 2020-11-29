@@ -1,10 +1,4 @@
 use crate::*;
-use proc_macro2::{Delimiter, Group, TokenTree};
-use quote::TokenStreamExt;
-use std::{
-    fmt::{Debug, Display, Error, Formatter},
-    str::FromStr,
-};
 
 #[derive(Clone)]
 pub struct Str {

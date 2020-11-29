@@ -1,5 +1,4 @@
 use crate::*;
-use std::fmt::{Debug, Display, Error, Formatter};
 
 /// A terminal [`Cell`](crate::Cell).
 ///

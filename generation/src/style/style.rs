@@ -102,7 +102,6 @@ impl Generation {
 
         quote! {
             use crate::*;
-            use std::fmt::{Debug, Display, Error, Formatter};
             #LINE_BREAK
 
             /// [`Style`](crate::Style)s.

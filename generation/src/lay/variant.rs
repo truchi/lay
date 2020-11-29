@@ -1,5 +1,4 @@
 use crate::*;
-use std::fmt::Display;
 
 #[derive(Clone, Default, Debug)]
 pub struct Variant {

@@ -4,7 +4,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 use crate::*;
-use std::fmt::Display;
 
 impl<T: Display> StylerIndex for Styled<T> {
     /// Gets `Option<Foreground>`.

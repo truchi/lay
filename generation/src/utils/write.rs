@@ -1,9 +1,4 @@
 use crate::*;
-use std::{
-    fs::{create_dir_all, File},
-    io::Write,
-    path::Path,
-};
 
 pub const LINE_BREAK: &str = "__LINE_BREAK__";
 pub const DOUBLE_QUOTE: &str = "__DOUBLE_QUOTE__";
@@ -29,7 +24,7 @@ pub fn pre(tokens: impl ToString) -> String {
     let string = tokens
         .to_string()
         .replace(&format!(r#""{}""#, LINE_BREAK), "\n\n")
-        .replace(DOUBLE_QUOTE, r#"""#);
+        .replace(DOUBLE_QUOTE, r#"""#); // TODO remove?
 
     Doc::replace(string)
 }

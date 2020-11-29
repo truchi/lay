@@ -1,5 +1,4 @@
 use crate::*;
-use std::fmt::Display;
 
 #[derive(Clone, Eq, PartialEq, Debug)]
 pub enum AttrType {
