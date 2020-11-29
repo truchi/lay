@@ -2,6 +2,7 @@ mod canvas;
 mod cell;
 mod fill;
 mod gen;
+mod geometry;
 mod layer;
 mod view;
 
