@@ -6,16 +6,16 @@ pub trait LayerIndex {
     fn size(&self) -> Size;
 
     /// Gets the [`Cell`](crate::Cell) at `position`.
-    fn get_unchecked(&self, position: Position) -> Cell;
+    fn get_unchecked<T: Into<Position>>(&self, position: T) -> Cell;
 
     /// Gets the [`Cell`](crate::Cell) at position `(x, y)`,
     /// or `None` if out of bounds.
-    fn get(&self, position: Position) -> Option<Cell> {
-        let (x, y) = position;
-        let (width, height) = self.size();
+    fn get<T: Into<Position>>(&self, position: T) -> Option<Cell> {
+        let position = position.into();
+        let size = self.size();
 
-        if x < width && y < height {
-            Some(self.get_unchecked((x, y)))
+        if position.lt(size.into()) {
+            Some(self.get_unchecked(position))
         } else {
             None
         }

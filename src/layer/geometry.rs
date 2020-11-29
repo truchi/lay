@@ -243,6 +243,23 @@ macro_rules! wrapper {
     };
 }
 
+macro_rules! from {
+    ($(($self:ident: $T:ident) $($For:ident)*)*) => { $( $(
+        impl From<$T> for $For {
+            fn from($T($self): $T) -> Self {
+                Self($self)
+            }
+        }
+    )* )* };
+    ($(($a:ident $A:ident $b:ident $B:ident: $T:ident) $c:ident $C:ident $d:ident $D:ident: $For:ident)*) => { $(
+        impl From<$T> for $For {
+            fn from($T { $a: $A($a), $b: $B($b) }: $T) -> Self {
+                Self { $c: $C($a), $d: $D($b) }
+            }
+        }
+    )* };
+}
+
 wrapper!(
     /// An [`X`](crate::geometry::X) coordinate.
     x: X
@@ -259,6 +276,19 @@ wrapper!(
     position: Position { x: X, y: Y }
     /// A `(width, height)` [`Size`](crate::geometry::Size).
     size: Size { width: Width, height: Height }
+);
+
+from!(
+    (x: X) Y Width Height
+    (y: Y) X Width Height
+    (width: Width) X Y Height
+    (height: Height) X Y Width
+);
+
+from!(
+    (x X y Y: Position) width Width height Height: Size
+    (width Width height Height: Size) x X y Y: Position
+
 );
 
 #[cfg(test)]

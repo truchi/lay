@@ -133,7 +133,7 @@ impl AsMut<Option<Styled<char>>> for Cell {
 
 impl LayerIndex for Cell {
     fn size(&self) -> Size {
-        (1, 1)
+        (1, 1).into()
     }
 
     fn get_unchecked(&self, _: Position) -> Cell {
