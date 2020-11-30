@@ -39,7 +39,7 @@ macro_rules! centered_comment {
 pub const COMMENT_START: &str = "__COMMENT_START__";
 pub const COMMENT_END: &str = "__COMMENT_END__";
 
-#[derive(Clone, Debug)]
+#[derive(Clone, PartialEq, Debug)]
 pub enum Doc {
     Inner(Vec<String>),
     Outer(Vec<String>),

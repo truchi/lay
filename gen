@@ -3,7 +3,7 @@
 if [ "$1" = "watch" ]; then
   cargo watch      \
     -w generation/ \
-    -s "clear; ./gen; cargo doc --quiet --no-deps"
+    -s "clear; ./gen; ./doc"
 else
   (cd generation && cargo run --quiet)
   rustfmt src/**.rs

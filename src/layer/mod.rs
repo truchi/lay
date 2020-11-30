@@ -1,7 +1,7 @@
 // mod canvas;
 // mod cell;
 // mod fill;
-// mod gen;
+mod gen;
 // pub mod geometry;
 // mod layer;
 // mod view;

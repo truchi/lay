@@ -11,6 +11,7 @@ pub struct Lay {
     pub grounds:    Vec<Attr>,
     pub all:        Vec<Attr>,
     pub styler:     Styler,
+    pub geometry:   Geometry,
 }
 
 impl Lay {
@@ -53,6 +54,7 @@ impl Lay {
             grounds,
             all,
             styler,
+            geometry: Geometry::new(),
         }
     }
 }
