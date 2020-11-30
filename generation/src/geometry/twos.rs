@@ -1,7 +1,7 @@
 use crate::*;
 
 impl Generation {
-    pub fn geometry_2d(&self, t: &GeometryType, ops: &[(Ident, bool, bool)]) -> TokenStream {
+    pub fn geometry_twos(&self, t: &GeometryType, ops: &[(Ident, bool, bool)]) -> TokenStream {
         let doc = &t.doc;
         let fields = t
             .fields

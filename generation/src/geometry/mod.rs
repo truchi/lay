@@ -1,5 +1,5 @@
-mod one_d;
-mod two_d;
+mod ones;
+mod twos;
 
 use crate::*;
 
@@ -32,7 +32,7 @@ impl Generation {
             write(
                 dir,
                 &format!("{}.rs", one.snake),
-                self.geometry_1d(one, &ops),
+                self.geometry_ones(one, &ops),
             )
         }
 
@@ -40,7 +40,7 @@ impl Generation {
             write(
                 dir,
                 &format!("{}.rs", two.snake),
-                self.geometry_2d(two, &ops),
+                self.geometry_twos(two, &ops),
             )
         }
 

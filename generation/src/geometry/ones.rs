@@ -1,7 +1,7 @@
 use crate::*;
 
 impl Generation {
-    pub fn geometry_1d(&self, t: &GeometryType, ops: &[(Ident, bool, bool)]) -> TokenStream {
+    pub fn geometry_ones(&self, t: &GeometryType, ops: &[(Ident, bool, bool)]) -> TokenStream {
         let doc = &t.doc;
 
         let derefs_comment = centered_comment!(80, "Derefs");
