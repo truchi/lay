@@ -211,3 +211,25 @@ types!(
     /// A `(width, height)` [`Size`](crate::Size).
     size: Size { width: Width, height: Height }
 );
+
+/// Returns a new `(x, y)` [`Size`](crate::Size).
+impl From<Point> for Size {
+    /// Returns a new `(x, y)` [`Size`](crate::Size).
+    fn from(point: Point) -> Self {
+        Self {
+            width:  Width(point.x.0),
+            height: Height(point.y.0),
+        }
+    }
+}
+
+/// Returns a new `(width, height)` [`Point`](crate::Point).
+impl From<Size> for Point {
+    /// Returns a new `(width, height)` [`Point`](crate::Point).
+    fn from(size: Size) -> Self {
+        Self {
+            x: X(size.width.0),
+            y: Y(size.height.0),
+        }
+    }
+}
