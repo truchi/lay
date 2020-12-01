@@ -12,8 +12,6 @@ use std::ops::{
     BitOrAssign,
     BitXor,
     BitXorAssign,
-    Deref,
-    DerefMut,
     Div,
     DivAssign,
     Mul,
@@ -29,6 +27,7 @@ use std::ops::{
     SubAssign,
 };
 
+use crate::*;
 mod x;
 pub use x::*;
 
@@ -46,6 +45,3 @@ pub use position::*;
 
 mod size;
 pub use size::*;
-
-mod rect;
-pub use rect::*;

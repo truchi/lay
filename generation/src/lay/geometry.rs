@@ -2,15 +2,13 @@ use crate::*;
 
 #[derive(Clone, PartialEq, Debug)]
 pub struct GeometryType {
-    pub doc:    Doc,
     pub name:   Ident,
     pub fields: Vec<Ident>,
 }
 
 impl GeometryType {
-    pub fn new(doc: &str, name: &str, fields: &[&Ident]) -> Self {
+    pub fn new(name: &str, fields: &[&Ident]) -> Self {
         Self {
-            doc:    doc!("{}", doc),
             name:   Ident::new(&[name]),
             fields: fields.iter().map(|t| (*t).clone()).collect(),
         }
@@ -31,9 +29,7 @@ pub struct Geometry {
     pub height:   GeometryType,
     pub position: GeometryType,
     pub size:     GeometryType,
-    pub rect:     GeometryType,
-    pub ones:     Vec<GeometryType>,
-    pub twos:     Vec<GeometryType>,
+    pub all:      Vec<GeometryType>,
 }
 
 impl Geometry {
@@ -44,24 +40,22 @@ impl Geometry {
         };
         let usize = &[&usize];
 
-        let x = GeometryType::new("An [`X`](crate::X) coordinate.", "X", usize);
-        let y = GeometryType::new("An [`Y`](crate::Y) coordinate.", "Y", usize);
-        let width = GeometryType::new("A [`Width`](crate::Width) distance.", "Width", usize);
-        let height = GeometryType::new("An [`Height`](crate::Height) distance.", "Height", usize);
+        let x = GeometryType::new("X", usize);
+        let y = GeometryType::new("Y", usize);
+        let width = GeometryType::new("Width", usize);
+        let height = GeometryType::new("Height", usize);
 
-        let position =
-            GeometryType::new("A `(x, y)` [`Position`](crate::Position).", "Position", &[
-                &x, &y,
-            ]);
-        let size = GeometryType::new("A `(width, height)` [`Size`](crate::Size).", "Size", &[
-            &width, &height,
-        ]);
-        let rect = GeometryType::new("A `(position, size)` [`Size`](crate::Size).", "Rect", &[
-            &position, &size,
-        ]);
+        let position = GeometryType::new("Position", &[&x, &y]);
+        let size = GeometryType::new("Size", &[&width, &height]);
 
-        let ones = vec![x.clone(), y.clone(), width.clone(), height.clone()];
-        let twos = vec![position.clone(), size.clone()];
+        let all = vec![
+            x.clone(),
+            y.clone(),
+            width.clone(),
+            height.clone(),
+            position.clone(),
+            size.clone(),
+        ];
 
         Self {
             x,
@@ -70,27 +64,7 @@ impl Geometry {
             height,
             position,
             size,
-            rect,
-            ones,
-            twos,
+            all,
         }
-    }
-
-    pub fn rect_fields(&self) -> Vec<(&Ident, Vec<Ident>)> {
-        self.rect
-            .fields
-            .iter()
-            .map(|field| {
-                (
-                    field,
-                    self.twos
-                        .iter()
-                        .find(|two| two.snake == field.snake)
-                        .unwrap()
-                        .fields
-                        .clone(),
-                )
-            })
-            .collect()
     }
 }

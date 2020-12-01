@@ -9,8 +9,8 @@ use std::fmt::{Debug, Display, Error, Formatter};
 
 include!("style.doc.rs");
 
-pub mod layer;
-pub use layer::*;
+// pub mod layer;
+// pub use layer::*;
 
 pub mod geometry;
 pub use geometry::*;

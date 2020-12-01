@@ -1,7 +1,3 @@
-mod ones;
-mod rect;
-mod twos;
-
 use crate::*;
 
 impl Generation {
@@ -19,7 +15,6 @@ impl Generation {
             .map(|op| (Ident::new(&[op, "Assign"]), true, true));
 
         let mut ops = Vec::with_capacity(1 + len * 2);
-
         ops.push(unary);
 
         for _ in 0..len {
@@ -29,59 +24,46 @@ impl Generation {
             ops.push(op_mut);
         }
 
-        for one in &self.lay.geometry.ones {
-            write(
-                dir,
-                &format!("{}.rs", one.snake),
-                self.geometry_ones(one, &ops),
-            )
+        for t in &self.lay.geometry.all {
+            write(dir, &format!("{}.rs", t.snake), Self::ops(t, &ops))
         }
 
-        for two in &self.lay.geometry.twos {
-            write(
-                dir,
-                &format!("{}.rs", two.snake),
-                self.geometry_twos(two, &ops),
-            )
-        }
-
-        let rect = &self.lay.geometry.rect;
+        let imports = ops.iter().map(|(op, ..)| quote! { use std::ops::#op; });
         write(
             dir,
-            &format!("{}.rs", rect.snake),
-            self.geometry_rect(rect, &ops),
+            "mod.rs",
+            concat(&[quote! { #(#imports)* }, self.mod_geometry()]),
         );
-
-        // let imports = ops.iter().map(|(op, ..)| quote! { use std::ops::#op;
-        // }); write(
-        // dir,
-        // "mod.rs",
-        // concat(&[
-        // quote! {
-        // use std::ops::{Deref, DerefMut};
-        // #(#imports)*
-        // },
-        // self.mod_geometry(),
-        // ]),
-        // );
     }
 
     fn mod_geometry(&self) -> TokenStream {
-        let geometry = &self.lay.geometry;
+        let imports = &self
+            .lay
+            .geometry
+            .all
+            .iter()
+            .map(|t| &t.snake)
+            .map(|snake| {
+                quote! {
+                    mod #snake;
+                    pub use #snake::*;
+                    #LINE_BREAK
+                }
+            })
+            .collect::<Vec<_>>();
 
-        let types = [geometry.ones.clone(), geometry.twos.clone(), vec![geometry
-            .rect
-            .clone()]]
-        .concat();
-        let types = types.iter().map(|t| &t.snake).map(|snake| {
-            quote! {
-                mod #snake;
-                pub use #snake::*;
-                #LINE_BREAK
-            }
-        });
+        quote! { use crate::*; #(#imports)* }
+    }
 
-        quote! { #(#types)* }
+    fn ops(t: &GeometryType, ops: &[(Ident, bool, bool)]) -> TokenStream {
+        let ops = ops.iter().map(|op| Self::op(t, op));
+
+        quote! {
+            use super::*;
+            #LINE_BREAK
+
+            #(#ops)*
+        }
     }
 
     fn op(t: &GeometryType, (op, mutable, rhs): &(Ident, bool, bool)) -> TokenStream {
