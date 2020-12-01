@@ -1,7 +1,9 @@
 //! # Geometry utilities
 
 mod gen;
-pub use gen::*;
+mod rect;
+
+pub use rect::*;
 
 use std::{
     cmp::Ordering,
@@ -17,18 +19,29 @@ macro_rules! doc {
     (impl $doc:expr, $item:item) => { #[doc = $doc] $item };
 }
 
-macro_rules! wrapper {
+macro_rules! types {
+    // ======== //
+    // 1D types //
+    // ======== //
     ($(#[$doc:meta] $type:ident: $Type:ident)*) => {
         $(
             #[$doc]
             #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Default, Debug)]
             pub struct $Type(pub usize);
 
+            // ============== //
+            // Implementation //
+            // ============== //
+
             /// ### Consts
             impl $Type {
                 doc!("A [`" s!($Type) "`](crate::" s!($Type) ") of `0`.",
                 pub const ZERO: $Type = $Type(0););
             }
+
+            // ====== //
+            // Traits //
+            // ====== //
 
             /// `Deref`s to `usize`.
             impl Deref for $Type {
@@ -48,6 +61,10 @@ macro_rules! wrapper {
                 }
             }
 
+            // =========== //
+            // Conversions //
+            // =========== //
+
             doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `" s!($type) "`.",
             impl From<$Type> for usize {
                 doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `" s!($type) "`.",
@@ -65,11 +82,18 @@ macro_rules! wrapper {
             });
         )*
     };
+    // ======== //
+    // 2D types //
+    // ======== //
     ($(#[$doc:meta] $type:ident: $Type:ident { $a:ident: $A:ident, $b:ident: $B:ident })*) => {
         $(
             #[$doc]
             #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
             pub struct $Type { pub $a: $A, pub $b: $B }
+
+            // ============== //
+            // Implementation //
+            // ============== //
 
             /// ### Consts
             impl $Type {
@@ -79,23 +103,46 @@ macro_rules! wrapper {
 
             /// ### Constructors
             impl $Type {
+                doc!("Returns a new [`" s!($Type) "`](crate::" s!($Type) ").",
                 pub fn new($a: $A, $b: $B) -> Self {
                     Self { $a, $b }
-                }
+                });
             }
+
+            // ====== //
+            // Traits //
+            // ====== //
 
             /// Compares both fields simultaneously.
             impl PartialOrd for $Type {
                 /// Compares both fields simultaneously.
                 fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
                     match (self.$a.cmp(&other.$a), self.$b.cmp(&other.$b)) {
-                        (Ordering::Less, Ordering::Less) => Some(Ordering::Less),
-                        (Ordering::Equal, Ordering::Equal) => Some(Ordering::Equal),
-                        (Ordering::Greater, Ordering::Greater) => Some(Ordering::Greater),
+                        (a, b) if a == b => Some(a),
                         _ => None
                     }
                 }
             }
+
+            // =========== //
+            // Conversions //
+            // =========== //
+
+            doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s [`" s!($A) "`](crate::" s!($A) ").",
+            impl From<$Type> for $A {
+                doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s [`" s!($A) "`](crate::" s!($A) ").",
+                fn from($type: $Type) -> Self {
+                    $type.$a
+                });
+            });
+
+            doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s [`" s!($B) "`](crate::" s!($B) ").",
+            impl From<$Type> for $B {
+                doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s [`" s!($B) "`](crate::" s!($B) ").",
+                fn from($type: $Type) -> Self {
+                    $type.$b
+                });
+            });
 
             doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `(" s!($a) ", " s!($b) ")`.",
             impl From<$Type> for (usize, usize) {
@@ -116,6 +163,17 @@ macro_rules! wrapper {
                 });
             });
 
+            doc!("Returns a new `(" s!($a) ", " s!($b) ")` [`" s!($Type) "`](crate::" s!($Type) ").",
+            impl From<(usize, usize)> for $Type {
+                doc!("Returns a new `(" s!($a) ", " s!($b) ")` [`" s!($Type) "`](crate::" s!($Type) ").",
+                fn from(($a, $b): (usize, usize)) -> Self {
+                    Self {
+                        $a: $A($a),
+                        $b: $B($b),
+                    }
+                });
+            });
+
             doc!("Returns a new `(" s!($a) ", 0)` [`" s!($Type) "`](crate::" s!($Type) ").",
             impl From<$A> for $Type {
                 doc!("Returns a new `(" s!($a) ", 0)` [`" s!($Type) "`](crate::" s!($Type) ").",
@@ -131,44 +189,12 @@ macro_rules! wrapper {
                     Self { $a: $A::ZERO, $b }
                 });
             });
-
-            doc!("Returns a new `(" s!($a) ", " s!($b) ")` [`" s!($Type) "`](crate::" s!($Type) ").",
-            impl From<($A, $B)> for $Type {
-                doc!("Returns a new `(" s!($a) ", " s!($b) ")` [`" s!($Type) "`](crate::" s!($Type) ").",
-                fn from(($a, $b): ($A, $B)) -> Self {
-                    Self { $a, $b }
-                });
-            });
-
-            doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s [`" s!($A) "`](crate::" s!($A) ").",
-            impl From<$Type> for $A {
-                doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s [`" s!($A) "`](crate::" s!($A) ").",
-                fn from($type: $Type) -> Self {
-                    $type.$a
-                });
-            });
-
-            doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s [`" s!($B) "`](crate::" s!($B) ").",
-            impl From<$Type> for $B {
-                doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s [`" s!($B) "`](crate::" s!($B) ").",
-                fn from($type: $Type) -> Self {
-                    $type.$b
-                });
-            });
-
-            doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `(" s!($A) ", " s!($B) ")`.",
-            impl From<$Type> for ($A, $B) {
-                doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `(" s!($A) ", " s!($B) ")`.",
-                fn from($type: $Type) -> Self {
-                    ($type.$a, $type.$b)
-                });
-            });
         )*
 
     };
 }
 
-wrapper!(
+types!(
     /// An [`X`](crate::X) coordinate.
     x: X
     /// An [`Y`](crate::Y) coordinate.
@@ -179,7 +205,7 @@ wrapper!(
     height: Height
 );
 
-wrapper!(
+types!(
     /// A `(x, y)` [`Point`](crate::Point).
     point: Point { x: X, y: Y }
     /// A `(width, height)` [`Size`](crate::Size).
