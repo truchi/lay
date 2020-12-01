@@ -2,7 +2,7 @@ use crate::*;
 use std::cmp::Ordering;
 
 /// A `((x, y), (width, height))` [`Rect`](crate::Rect).
-#[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Default)]
 pub struct Rect {
     pub point: Point,
     pub size:  Size,
@@ -14,6 +14,11 @@ pub struct Rect {
 
 /// ### Consts
 impl Rect {
+    /// A [`Rect`](crate::Rect) of `((1, 1), (1, 1))`.
+    pub const ONE: Rect = Rect {
+        point: Point::ONE,
+        size:  Size::ONE,
+    };
     /// A [`Rect`](crate::Rect) of `((0, 0), (0, 0))`.
     pub const ZERO: Rect = Rect {
         point: Point::ZERO,
@@ -44,6 +49,12 @@ impl PartialOrd for Rect {
             (Some(point), Some(size)) if point == size => Some(point),
             _ => None,
         }
+    }
+}
+
+impl Debug for Rect {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        write!(f, "({:?}, {:?})", self.point, self.size)
     }
 }
 

@@ -136,25 +136,25 @@ impl LayerIndex for Cell {
         (1, 1).into()
     }
 
-    fn get_unchecked(&self, _: Position) -> Cell {
+    fn get_unchecked(&self, _: impl Into<Point>) -> Cell {
         *self
     }
 }
 
 impl LayerIndexMut for Cell {
-    fn get_unchecked_mut(&mut self, _: Position) -> &mut Cell {
+    fn get_unchecked_mut(&mut self, _: impl Into<Point>) -> &mut Cell {
         self
     }
 }
 
 impl Layer for Cell {
-    fn set(self, _: Position, cell: Cell) -> Self {
-        cell
+    fn set(self, _: impl Into<Point>, cell: impl Into<Cell>) -> Self {
+        cell.into()
     }
 }
 
 impl LayerMut for Cell {
-    fn set_mut(&mut self, _: Position, cell: Cell) {
-        *self = cell;
+    fn set_mut(&mut self, _: impl Into<Point>, cell: impl Into<Cell>) {
+        *self = cell.into();
     }
 }

@@ -10,15 +10,14 @@ pub struct Canvas {
 /// ### Constructors
 impl Canvas {
     /// Returns a new [`Canvas`](crate::Canvas).
-    pub fn new<T: Into<Cell>>((width, height): Size, cell: T) -> Self {
-        let len = width * height;
-        let mut cells = Vec::with_capacity(len);
-        cells.resize(len, cell.into());
+    pub fn new(size: impl Into<Size>, cell: impl Into<Cell>) -> Self {
+        let size = size.into();
+        let (width, height) = size.into();
 
-        Self {
-            size: (width, height),
-            cells,
-        }
+        let mut cells = Vec::with_capacity(width * height);
+        cells.resize(width * height, cell.into());
+
+        Self { size, cells }
     }
 }
 
@@ -43,30 +42,34 @@ impl LayerIndex for Canvas {
         self.size
     }
 
-    fn get_unchecked(&self, (x, y): Position) -> Cell {
-        let (width, _) = self.size;
+    fn get_unchecked(&self, point: impl Into<Point>) -> Cell {
+        let (x, y) = point.into().into();
+        let (width, _) = self.size.into();
+
         *self.cells.get(x + y * width).unwrap()
     }
 }
 
 impl LayerIndexMut for Canvas {
-    fn get_unchecked_mut(&mut self, (x, y): Position) -> &mut Cell {
-        let (width, _) = self.size;
+    fn get_unchecked_mut(&mut self, point: impl Into<Point>) -> &mut Cell {
+        let (x, y) = point.into().into();
+        let (width, _) = self.size.into();
+
         self.cells.get_mut(x + y * width).unwrap()
     }
 }
 
 impl Layer for Canvas {
-    fn set(mut self, position: Position, cell: Cell) -> Self {
-        LayerMut::set_mut(&mut self, position, cell);
+    fn set(mut self, point: impl Into<Point>, cell: impl Into<Cell>) -> Self {
+        LayerMut::set_mut(&mut self, point, cell);
         self
     }
 }
 
 impl LayerMut for Canvas {
-    fn set_mut(&mut self, position: Position, cell: Cell) {
-        if let Some(c) = LayerIndexMut::get_mut(self, position) {
-            *c = cell;
+    fn set_mut(&mut self, point: impl Into<Point>, cell: impl Into<Cell>) {
+        if let Some(c) = LayerIndexMut::get_mut(self, point) {
+            *c = cell.into();
         }
     }
 }

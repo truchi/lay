@@ -5,6 +5,7 @@ mod rect;
 
 pub use rect::*;
 
+use crate::*;
 use std::{
     cmp::Ordering,
     ops::{Deref, DerefMut},
@@ -26,7 +27,7 @@ macro_rules! types {
     ($(#[$doc:meta] $type:ident: $Type:ident)*) => {
         $(
             #[$doc]
-            #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Default, Debug)]
+            #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Default)]
             pub struct $Type(pub usize);
 
             // ============== //
@@ -37,6 +38,9 @@ macro_rules! types {
             impl $Type {
                 doc!("A [`" s!($Type) "`](crate::" s!($Type) ") of `0`.",
                 pub const ZERO: $Type = $Type(0););
+
+                doc!("A [`" s!($Type) "`](crate::" s!($Type) ") of `1`.",
+                pub const ONE: $Type = $Type(1););
             }
 
             // ====== //
@@ -58,6 +62,12 @@ macro_rules! types {
                 /// `DerefMut`s to `usize`.
                 fn deref_mut(&mut self) -> &mut usize {
                     &mut self.0
+                }
+            }
+
+            impl Debug for $Type {
+                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                    write!(f, "{:?}", self.0)
                 }
             }
 
@@ -88,7 +98,7 @@ macro_rules! types {
     ($(#[$doc:meta] $type:ident: $Type:ident { $a:ident: $A:ident, $b:ident: $B:ident })*) => {
         $(
             #[$doc]
-            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
+            #[derive(Copy, Clone, Eq, PartialEq, Hash, Default)]
             pub struct $Type { pub $a: $A, pub $b: $B }
 
             // ============== //
@@ -99,6 +109,9 @@ macro_rules! types {
             impl $Type {
                 doc!("A [`" s!($Type) "`](crate::" s!($Type) ") of `(0, 0)`.",
                 pub const ZERO: $Type = $Type { $a: $A::ZERO, $b: $B::ZERO };);
+
+                doc!("A [`" s!($Type) "`](crate::" s!($Type) ") of `(1, 1)`.",
+                pub const ONE: $Type = $Type { $a: $A::ONE, $b: $B::ONE };);
             }
 
             /// ### Constructors
@@ -121,6 +134,12 @@ macro_rules! types {
                         (a, b) if a == b => Some(a),
                         _ => None
                     }
+                }
+            }
+
+            impl Debug for $Type {
+                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                    write!(f, "({:?}, {:?})", self.$a, self.$b)
                 }
             }
 

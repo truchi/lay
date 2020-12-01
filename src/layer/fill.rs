@@ -10,9 +10,9 @@ pub struct Fill {
 /// ### Constructors
 impl Fill {
     /// Returns a new [`Fill`](crate::Fill).
-    pub fn new<T: Into<Cell>>(size: Size, cell: T) -> Self {
+    pub fn new(size: impl Into<Size>, cell: impl Into<Cell>) -> Self {
         Self {
-            size,
+            size: size.into(),
             cell: cell.into(),
         }
     }
@@ -39,7 +39,7 @@ impl LayerIndex for Fill {
         self.size
     }
 
-    fn get_unchecked(&self, _: Position) -> Cell {
+    fn get_unchecked(&self, _: impl Into<Point>) -> Cell {
         self.cell
     }
 }

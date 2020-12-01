@@ -82,8 +82,7 @@ where
     U: LayerIndex,
     V: Fn(Cell, Cell) -> Cell,
 {
-    let point = point.into();
-    let (x, y) = point.into();
+    let (x, y) = point.into().into();
     let (layer_width, layer_height) = layer.size().into();
     let (other_width, other_height) = other.size().into();
     let width = layer_width.min(x + other_width);
@@ -107,8 +106,7 @@ where
     U: LayerIndex,
     V: Fn(Cell, Cell) -> Cell,
 {
-    let point = point.into();
-    let (x, y) = point.into();
+    let (x, y) = point.into().into();
     let (layer_width, layer_height) = layer.size().into();
     let (other_width, other_height) = other.size().into();
     let width = layer_width.min(x + other_width);
@@ -131,21 +129,21 @@ macro_rules! refs {
     ($Ref:ty, $Mut:ty) => { refs!(ref $Ref $Mut); refs!(mut $Mut); };
     (ref $($T:ty)*) => {
         $(impl<T: LayerIndex> LayerIndex for $T {
-            fn size(&self) -> Size { LayerIndex::size(self) }
+            fn size(&self) -> Size { <T as LayerIndex>::size(self) }
             fn get_unchecked(&self, point: impl Into<Point>) -> Cell {
-                LayerIndex::get_unchecked(self, point)
+                <T as LayerIndex>::get_unchecked(self, point)
             }
         })*
     };
     (mut $T:ty) => {
         impl<T: LayerIndexMut> LayerIndexMut for $T {
             fn get_unchecked_mut(&mut self, point: impl Into<Point>) -> &mut Cell {
-                LayerIndexMut::get_unchecked_mut(self, point)
+                <T as LayerIndexMut>::get_unchecked_mut(self, point)
             }
         }
         impl<T: LayerMut> LayerMut for $T {
             fn set_mut(&mut self, point: impl Into<Point>, cell: impl Into<Cell>) {
-                LayerMut::set_mut(self, point, cell)
+                <T as LayerMut>::set_mut(self, point, cell)
             }
         }
     };
