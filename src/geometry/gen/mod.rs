@@ -40,8 +40,8 @@ pub use width::*;
 mod height;
 pub use height::*;
 
-mod position;
-pub use position::*;
+mod point;
+pub use point::*;
 
 mod size;
 pub use size::*;

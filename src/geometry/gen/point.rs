@@ -5,7 +5,7 @@
 
 use super::*;
 
-impl Not for Position {
+impl Not for Point {
     type Output = Self;
 
     fn not(self) -> Self {
@@ -16,7 +16,7 @@ impl Not for Position {
     }
 }
 
-impl Add for Position {
+impl Add for Point {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self {
@@ -27,14 +27,14 @@ impl Add for Position {
     }
 }
 
-impl AddAssign for Position {
+impl AddAssign for Point {
     fn add_assign(&mut self, rhs: Self) {
         self.x.add_assign(rhs.x);
         self.y.add_assign(rhs.y);
     }
 }
 
-impl Sub for Position {
+impl Sub for Point {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
@@ -45,14 +45,14 @@ impl Sub for Position {
     }
 }
 
-impl SubAssign for Position {
+impl SubAssign for Point {
     fn sub_assign(&mut self, rhs: Self) {
         self.x.sub_assign(rhs.x);
         self.y.sub_assign(rhs.y);
     }
 }
 
-impl Mul for Position {
+impl Mul for Point {
     type Output = Self;
 
     fn mul(self, rhs: Self) -> Self {
@@ -63,14 +63,14 @@ impl Mul for Position {
     }
 }
 
-impl MulAssign for Position {
+impl MulAssign for Point {
     fn mul_assign(&mut self, rhs: Self) {
         self.x.mul_assign(rhs.x);
         self.y.mul_assign(rhs.y);
     }
 }
 
-impl Div for Position {
+impl Div for Point {
     type Output = Self;
 
     fn div(self, rhs: Self) -> Self {
@@ -81,14 +81,14 @@ impl Div for Position {
     }
 }
 
-impl DivAssign for Position {
+impl DivAssign for Point {
     fn div_assign(&mut self, rhs: Self) {
         self.x.div_assign(rhs.x);
         self.y.div_assign(rhs.y);
     }
 }
 
-impl Rem for Position {
+impl Rem for Point {
     type Output = Self;
 
     fn rem(self, rhs: Self) -> Self {
@@ -99,14 +99,14 @@ impl Rem for Position {
     }
 }
 
-impl RemAssign for Position {
+impl RemAssign for Point {
     fn rem_assign(&mut self, rhs: Self) {
         self.x.rem_assign(rhs.x);
         self.y.rem_assign(rhs.y);
     }
 }
 
-impl Shl for Position {
+impl Shl for Point {
     type Output = Self;
 
     fn shl(self, rhs: Self) -> Self {
@@ -117,14 +117,14 @@ impl Shl for Position {
     }
 }
 
-impl ShlAssign for Position {
+impl ShlAssign for Point {
     fn shl_assign(&mut self, rhs: Self) {
         self.x.shl_assign(rhs.x);
         self.y.shl_assign(rhs.y);
     }
 }
 
-impl Shr for Position {
+impl Shr for Point {
     type Output = Self;
 
     fn shr(self, rhs: Self) -> Self {
@@ -135,14 +135,14 @@ impl Shr for Position {
     }
 }
 
-impl ShrAssign for Position {
+impl ShrAssign for Point {
     fn shr_assign(&mut self, rhs: Self) {
         self.x.shr_assign(rhs.x);
         self.y.shr_assign(rhs.y);
     }
 }
 
-impl BitAnd for Position {
+impl BitAnd for Point {
     type Output = Self;
 
     fn bitand(self, rhs: Self) -> Self {
@@ -153,14 +153,14 @@ impl BitAnd for Position {
     }
 }
 
-impl BitAndAssign for Position {
+impl BitAndAssign for Point {
     fn bitand_assign(&mut self, rhs: Self) {
         self.x.bitand_assign(rhs.x);
         self.y.bitand_assign(rhs.y);
     }
 }
 
-impl BitOr for Position {
+impl BitOr for Point {
     type Output = Self;
 
     fn bitor(self, rhs: Self) -> Self {
@@ -171,14 +171,14 @@ impl BitOr for Position {
     }
 }
 
-impl BitOrAssign for Position {
+impl BitOrAssign for Point {
     fn bitor_assign(&mut self, rhs: Self) {
         self.x.bitor_assign(rhs.x);
         self.y.bitor_assign(rhs.y);
     }
 }
 
-impl BitXor for Position {
+impl BitXor for Point {
     type Output = Self;
 
     fn bitxor(self, rhs: Self) -> Self {
@@ -189,7 +189,7 @@ impl BitXor for Position {
     }
 }
 
-impl BitXorAssign for Position {
+impl BitXorAssign for Point {
     fn bitxor_assign(&mut self, rhs: Self) {
         self.x.bitxor_assign(rhs.x);
         self.y.bitxor_assign(rhs.y);

@@ -23,13 +23,13 @@ derefs!(self GeometryType {
 
 #[derive(Clone, Debug)]
 pub struct Geometry {
-    pub x:        GeometryType,
-    pub y:        GeometryType,
-    pub width:    GeometryType,
-    pub height:   GeometryType,
-    pub position: GeometryType,
-    pub size:     GeometryType,
-    pub all:      Vec<GeometryType>,
+    pub x:      GeometryType,
+    pub y:      GeometryType,
+    pub width:  GeometryType,
+    pub height: GeometryType,
+    pub point:  GeometryType,
+    pub size:   GeometryType,
+    pub all:    Vec<GeometryType>,
 }
 
 impl Geometry {
@@ -45,7 +45,7 @@ impl Geometry {
         let width = GeometryType::new("Width", usize);
         let height = GeometryType::new("Height", usize);
 
-        let position = GeometryType::new("Position", &[&x, &y]);
+        let point = GeometryType::new("Point", &[&x, &y]);
         let size = GeometryType::new("Size", &[&width, &height]);
 
         let all = vec![
@@ -53,7 +53,7 @@ impl Geometry {
             y.clone(),
             width.clone(),
             height.clone(),
-            position.clone(),
+            point.clone(),
             size.clone(),
         ];
 
@@ -62,7 +62,7 @@ impl Geometry {
             y,
             width,
             height,
-            position,
+            point,
             size,
             all,
         }

@@ -180,8 +180,8 @@ wrapper!(
 );
 
 wrapper!(
-    /// A `(x, y)` [`Position`](crate::Position).
-    position: Position { x: X, y: Y }
+    /// A `(x, y)` [`Point`](crate::Point).
+    point: Point { x: X, y: Y }
     /// A `(width, height)` [`Size`](crate::Size).
     size: Size { width: Width, height: Height }
 );
