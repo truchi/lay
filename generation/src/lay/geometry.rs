@@ -28,6 +28,7 @@ pub struct Geometry {
     pub width:  GeometryType,
     pub height: GeometryType,
     pub point:  GeometryType,
+    pub rect:   GeometryType,
     pub size:   GeometryType,
     pub all:    Vec<GeometryType>,
 }
@@ -48,6 +49,8 @@ impl Geometry {
         let point = GeometryType::new("Point", &[&x, &y]);
         let size = GeometryType::new("Size", &[&width, &height]);
 
+        let rect = GeometryType::new("Rect", &[&point, &size]);
+
         let all = vec![
             x.clone(),
             y.clone(),
@@ -55,6 +58,7 @@ impl Geometry {
             height.clone(),
             point.clone(),
             size.clone(),
+            rect.clone(),
         ];
 
         Self {
@@ -64,6 +68,7 @@ impl Geometry {
             height,
             point,
             size,
+            rect,
             all,
         }
     }

@@ -4,8 +4,8 @@ use std::cmp::Ordering;
 /// A `((x, y), (width, height))` [`Rect`](crate::Rect).
 #[derive(Copy, Clone, Eq, PartialEq, Hash, Default, Debug)]
 pub struct Rect {
-    point: Point,
-    size:  Size,
+    pub point: Point,
+    pub size:  Size,
 }
 
 // ============== //

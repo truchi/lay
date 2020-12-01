@@ -45,3 +45,6 @@ pub use point::*;
 
 mod size;
 pub use size::*;
+
+mod rect;
+pub use rect::*;
