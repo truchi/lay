@@ -3,10 +3,11 @@
 if [ "$1" = "watch" ]; then
   cargo watch      \
     -w generation/ \
-    -s "clear; ./gen; ./doc"
+    -s "clear; ./gen"
 else
   (cd generation && cargo run --quiet)
   rustfmt src/**.rs
   rustfmt examples/**.rs
   cargo check --quiet
+  ./doc
 fi
