@@ -1,4 +1,5 @@
 mod ones;
+mod rect;
 mod twos;
 
 use crate::*;
@@ -44,24 +45,34 @@ impl Generation {
             )
         }
 
-        let imports = ops.iter().map(|(op, ..)| quote! { use std::ops::#op; });
+        let rect = &self.lay.geometry.rect;
         write(
             dir,
-            "mod.rs",
-            concat(&[
-                quote! {
-                    use std::ops::{Deref, DerefMut};
-                    #(#imports)*
-                },
-                self.mod_geometry(),
-            ]),
+            &format!("{}.rs", rect.snake),
+            self.geometry_rect(rect, &ops),
         );
+
+        // let imports = ops.iter().map(|(op, ..)| quote! { use std::ops::#op;
+        // }); write(
+        // dir,
+        // "mod.rs",
+        // concat(&[
+        // quote! {
+        // use std::ops::{Deref, DerefMut};
+        // #(#imports)*
+        // },
+        // self.mod_geometry(),
+        // ]),
+        // );
     }
 
     fn mod_geometry(&self) -> TokenStream {
         let geometry = &self.lay.geometry;
 
-        let types = [geometry.ones.clone(), geometry.twos.clone()].concat();
+        let types = [geometry.ones.clone(), geometry.twos.clone(), vec![geometry
+            .rect
+            .clone()]]
+        .concat();
         let types = types.iter().map(|t| &t.snake).map(|snake| {
             quote! {
                 mod #snake;
@@ -70,10 +81,7 @@ impl Generation {
             }
         });
 
-        quote! {
-            #(#types)*
-            // #rect
-        }
+        quote! { #(#types)* }
     }
 
     fn op(t: &GeometryType, (op, mutable, rhs): &(Ident, bool, bool)) -> TokenStream {

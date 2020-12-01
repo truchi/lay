@@ -42,26 +42,26 @@ impl From<Height> for usize {
 }
 
 impl From<usize> for Height {
-    fn from(usize: usize) -> Self {
-        Self(usize)
+    fn from(height: usize) -> Self {
+        Self(height)
     }
 }
 
 impl From<X> for Height {
-    fn from(x: X) -> Self {
-        Self(x.0)
+    fn from(X(height): X) -> Self {
+        Self(height)
     }
 }
 
 impl From<Y> for Height {
-    fn from(y: Y) -> Self {
-        Self(y.0)
+    fn from(Y(height): Y) -> Self {
+        Self(height)
     }
 }
 
 impl From<Width> for Height {
-    fn from(width: Width) -> Self {
-        Self(width.0)
+    fn from(Width(height): Width) -> Self {
+        Self(height)
     }
 }
 

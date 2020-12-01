@@ -46,3 +46,6 @@ pub use position::*;
 
 mod size;
 pub use size::*;
+
+mod rect;
+pub use rect::*;

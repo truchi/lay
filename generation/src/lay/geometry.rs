@@ -75,4 +75,22 @@ impl Geometry {
             twos,
         }
     }
+
+    pub fn rect_fields(&self) -> Vec<(&Ident, Vec<Ident>)> {
+        self.rect
+            .fields
+            .iter()
+            .map(|field| {
+                (
+                    field,
+                    self.twos
+                        .iter()
+                        .find(|two| two.snake == field.snake)
+                        .unwrap()
+                        .fields
+                        .clone(),
+                )
+            })
+            .collect()
+    }
 }

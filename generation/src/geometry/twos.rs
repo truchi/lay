@@ -37,28 +37,28 @@ impl Generation {
 fn from_to_usize(t: &GeometryType) -> TokenStream {
     let snake = &t.snake;
 
+    let from_t = t
+        .fields
+        .iter()
+        .map(|field| &field.snake)
+        .map(|fsnake| quote! { #snake.#fsnake.0, });
+
     let from_usize = t
         .fields
         .iter()
         .map(|field| (&field.snake, &field.pascal))
         .map(|(snake, pascal)| quote! { #snake: #pascal(usize), });
 
-    let from_tuple_args = t
-        .fields
-        .iter()
-        .map(|field| &field.snake)
-        .map(|snake| quote! { #snake, });
     let from_tuple = t
         .fields
         .iter()
         .map(|field| (&field.snake, &field.pascal))
         .map(|(snake, pascal)| quote! { #snake: #pascal(#snake), });
-
-    let from_t = t
+    let from_tuple_args = t
         .fields
         .iter()
         .map(|field| &field.snake)
-        .map(|fsnake| quote! { #snake.#fsnake.0, });
+        .map(|snake| quote! { #snake, });
 
     quote! {
         impl From<#t> for (usize, usize) {
