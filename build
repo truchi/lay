@@ -1,26 +1,48 @@
 #!/bin/sh
 
-pretty_print() {
-  TEXT=$1
-  BLUE='\033[0;34m'
-  NC='\033[0m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+NC='\033[0m'
 
-  echo "$BLUE>> $TEXT$NC"
+pretty_warn() {
+  echo "$RED>> $1$NC"
 }
 
+pretty_print() {
+  echo "$BLUE>> $1$NC"
+}
+
+sep() {
+  echo "$1=====================================================$NC"
+}
+
+sep "$RED"
+pretty_warn "Before building, remove:"
+pretty_warn "$PWD/docs"
+pretty_warn "$PWD/target/doc"
+sep "$RED"
+
+sep "$BLUE"
 pretty_print "Generation"
-rustfmt generation/**.rs
+sep "$BLUE"
+rustfmt +nightly generation/**.rs
 ./gen
 
+sep "$BLUE"
 pretty_print "Tests"
-cargo test --quiet
+sep "$BLUE"
+cargo +stable test --quiet
 
+sep "$BLUE"
 pretty_print "Doc"
-cargo doc --quiet --no-deps
+sep "$BLUE"
+cargo +stable doc --quiet --no-deps
 cp -a target/doc/. docs/
 echo '<meta http-equiv=refresh content=0;url=lay/index.html>' > docs/index.html
 echo "file:$PWD/docs/lay/index.html"
 
+sep "$BLUE"
 pretty_print "Generation doc"
-(cd generation && cargo doc --quiet --no-deps)
+sep "$BLUE"
+(cd generation && cargo +stable doc --quiet --no-deps)
 echo "file:$PWD/generation/target/doc/generation/index.html"

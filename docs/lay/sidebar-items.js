@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["style","Styling utilities.This module contains utilities to work with terminal CSIs and styled types."]]});
+initSidebarItems({"mod":[["geometry","Geometry utilities"],["layer",""],["style","Styling utilities.This module contains utilities to work with terminal CSIs and styled types."]]});

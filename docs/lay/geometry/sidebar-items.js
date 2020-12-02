@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Height","An `Height` distance."],["Point","A `(x, y)` `Point`."],["Rect","A `((x, y), (width, height))` `Rect`."],["Size","A `(width, height)` `Size`."],["Width","A `Width` distance."],["X","An `X` coordinate."],["Y","An `Y` coordinate."]]});

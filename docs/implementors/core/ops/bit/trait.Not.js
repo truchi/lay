@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["lay"] = [{"text":"impl Not for X","synthetic":false,"types":[]},{"text":"impl Not for Y","synthetic":false,"types":[]},{"text":"impl Not for Width","synthetic":false,"types":[]},{"text":"impl Not for Height","synthetic":false,"types":[]},{"text":"impl Not for Point","synthetic":false,"types":[]},{"text":"impl Not for Size","synthetic":false,"types":[]},{"text":"impl Not for Rect","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

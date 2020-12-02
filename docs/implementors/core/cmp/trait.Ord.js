@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["lay"] = [{"text":"impl Ord for X","synthetic":false,"types":[]},{"text":"impl Ord for Y","synthetic":false,"types":[]},{"text":"impl Ord for Width","synthetic":false,"types":[]},{"text":"impl Ord for Height","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
