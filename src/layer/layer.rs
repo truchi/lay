@@ -19,6 +19,36 @@ pub trait LayerIndex {
             None
         }
     }
+
+    fn fmt(&self, w: &mut impl Write, point: impl Into<Point>) -> io::Result<()> {
+        let (x, y) = point.into().into();
+        let (width, height) = self.size().into();
+        let mut carry = Style::NONE;
+
+        for row in 0..height {
+            write!(w, "{}", To(x, y + row))?;
+            carry = fmt_row(self, w, width, row, carry)?;
+        }
+
+        Ok(())
+    }
+
+    fn fmt_at_cursor(&self, w: &mut impl Write) -> io::Result<()> {
+        let (width, height) = self.size().into();
+
+        if height == 0 {
+            return Ok(());
+        }
+
+        let mut carry = Style::NONE;
+        for row in 0..height - 1 {
+            carry = fmt_row(self, w, width, row, carry)?;
+            write!(w, "\n")?;
+        }
+        fmt_row(self, w, width, height - 1, carry)?;
+
+        Ok(())
+    }
 }
 
 /// [`Cell`](crate::Cell) getter, mutably.
@@ -74,6 +104,29 @@ pub trait LayerMut: LayerIndex {
 // ======= //
 // Helpers //
 // ======= //
+
+fn fmt_row<T>(
+    layer: &T,
+    w: &mut impl Write,
+    width: u16,
+    row: u16,
+    mut carry: Style,
+) -> io::Result<Style>
+where
+    T: LayerIndex + ?Sized,
+{
+    for col in 0..width {
+        match layer.get_unchecked((col, row)) {
+            Cell(Some(Styled { content, style })) => {
+                carry = style.dedup(&carry);
+                write!(w, "{}{}", carry, content)?;
+            }
+            _ => write!(w, "{}", Right(1))?,
+        }
+    }
+
+    Ok(carry)
+}
 
 /// Merges `layer` and `other` according to `merge`.
 fn merge<T, U, V>(mut layer: T, point: Point, other: &U, merge: V) -> T

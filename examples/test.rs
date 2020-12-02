@@ -13,6 +13,11 @@ fn main() {
     let fill = Fill::new((2, 20), ('a', style));
     println!("{:#?}", fill);
 
+    let stdout = &mut std::io::stdout();
+    fill.fmt(stdout, (10, 0));
+    fill.fmt_at_cursor(stdout);
+    println!();
+
     // println!("12345");
     // println!("🚧aa");
     // println!("🚧{}aa", LEFT);
