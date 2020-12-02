@@ -2,9 +2,9 @@ use crate::*;
 
 /// A terminal [`Cell`](crate::Cell).
 ///
-/// Must not contain a control `char`. Contructors will panic in debug.
+/// Should only contain a graphical `char`.
 #[derive(Copy, Clone, Eq, PartialEq, Default)]
-pub struct Cell(Option<Styled<char>>);
+pub struct Cell(pub Option<Styled<char>>);
 
 /// ### Consts
 impl Cell {
@@ -17,11 +17,7 @@ impl Cell {
     /// Returns a new [`Cell`](crate::Cell).
     pub fn new(option: Option<impl Into<Styled<char>>>) -> Self {
         match option {
-            Some(styled) => {
-                let styled = styled.into();
-                debug_assert!(!styled.content.is_control(), "Control char");
-                Self(Some(styled))
-            }
+            Some(styled) => Self::from_styled(styled),
             _ => Self::NONE,
         }
     }
