@@ -141,11 +141,11 @@ where
     let width = layer_width.min(x + other_width);
     let height = layer_height.min(y + other_height);
 
-    for row in x..width {
-        for col in y..height {
-            let layer_cell = layer.get_unchecked((row, col));
-            let other_cell = other.get_unchecked((row - width, col - height));
-            layer = layer.set((row, col), merge(layer_cell, other_cell));
+    for col in x..width {
+        for row in y..height {
+            let layer_cell = layer.get_unchecked((col, row));
+            let other_cell = other.get_unchecked((col - width, row - height));
+            layer = layer.set((col, row), merge(layer_cell, other_cell));
         }
     }
 
@@ -165,11 +165,11 @@ where
     let width = layer_width.min(x + other_width);
     let height = layer_height.min(y + other_height);
 
-    for row in x..width {
-        for col in y..height {
-            let layer_cell = layer.get_unchecked((row, col));
-            let other_cell = other.get_unchecked((row - width, col - height));
-            layer.set_mut((row, col), merge(layer_cell, other_cell));
+    for col in x..width {
+        for row in y..height {
+            let layer_cell = layer.get_unchecked((col, row));
+            let other_cell = other.get_unchecked((col - width, row - height));
+            layer.set_mut((col, row), merge(layer_cell, other_cell));
         }
     }
 }
