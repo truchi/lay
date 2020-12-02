@@ -63,7 +63,7 @@ impl Cell {
 impl Display for Cell {
     /// `Display`s the [`Cell`](crate::Cell) if it has `Some(styled)`,
     /// nothing otherwise.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
             Self(Some(styled)) => Display::fmt(styled, f),
             _ => Display::fmt(&Right(1), f),
@@ -72,7 +72,7 @@ impl Display for Cell {
 }
 
 impl Debug for Cell {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         match self {
             Self(Some(styled)) => f
                 .debug_tuple("Cell")

@@ -62,7 +62,7 @@ impl Generation {
             #LINE_BREAK
 
             impl Debug for #ground {
-                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                fn fmt(&self, f: &mut Formatter) -> fmt::Result {
                     f.write_str(#ground_string)?;
                     f.write_str("(")?;
                     Debug::fmt(&self.0, f)?;

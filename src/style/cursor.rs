@@ -19,28 +19,28 @@ mod crossterm_backend {
     use crate::*;
 
     impl Display for To {
-        fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        fn fmt(&self, f: &mut Formatter) -> fmt::Result {
             let To(x, y) = *self;
             Display::fmt(&crossterm::cursor::MoveTo(x, y), f)
         }
     }
 
     impl Display for Right {
-        fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        fn fmt(&self, f: &mut Formatter) -> fmt::Result {
             let Right(cols) = *self;
             Display::fmt(&crossterm::cursor::MoveRight(cols), f)
         }
     }
 
     impl Display for Left {
-        fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        fn fmt(&self, f: &mut Formatter) -> fmt::Result {
             let Left(cols) = *self;
             Display::fmt(&crossterm::cursor::MoveLeft(cols), f)
         }
     }
 
     impl Display for Down {
-        fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        fn fmt(&self, f: &mut Formatter) -> fmt::Result {
             let Down(rows) = *self;
             Display::fmt(&crossterm::cursor::MoveDown(rows), f)
         }

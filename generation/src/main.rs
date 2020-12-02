@@ -11,7 +11,7 @@ use lay::*;
 use proc_macro2::{Delimiter, Group, TokenStream, TokenTree};
 use quote::{quote, ToTokens, TokenStreamExt};
 use std::{
-    fmt::{Debug, Display, Error, Formatter},
+    fmt::{self, Debug, Display, Formatter},
     fs::{create_dir_all, File},
     io::Write,
     ops::Deref,

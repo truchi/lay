@@ -66,7 +66,7 @@ macro_rules! types {
             }
 
             impl Debug for $Type {
-                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                fn fmt(&self, f: &mut Formatter) -> fmt::Result {
                     write!(f, "{:?}", self.0)
                 }
             }
@@ -138,7 +138,7 @@ macro_rules! types {
             }
 
             impl Debug for $Type {
-                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                fn fmt(&self, f: &mut Formatter) -> fmt::Result {
                     write!(f, "({:?}, {:?})", self.$a, self.$b)
                 }
             }

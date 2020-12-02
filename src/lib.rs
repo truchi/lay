@@ -5,7 +5,7 @@
 //! This crate defines **styling** and **layering** utilities to print
 //! "graphics" to the terminal.
 
-use std::fmt::{Debug, Display, Error, Formatter};
+use std::fmt::{self, Debug, Display, Formatter};
 
 include!("style.doc.rs");
 

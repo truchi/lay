@@ -58,7 +58,7 @@ impl Style {
 /// `Display`s the corresponding CSIs to the terminal.
 impl Display for Style {
     /// `Display`s the corresponding CSIs to the terminal.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         if let Some(foreground) = self.get_foreground() {
             Display::fmt(&foreground, f)?;
         }
@@ -104,7 +104,7 @@ impl Display for Style {
 }
 
 impl Debug for Style {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         let mut tuple = f.debug_tuple("Style");
         if let Some(foreground) = self.get_foreground() {
             tuple.field(&foreground);

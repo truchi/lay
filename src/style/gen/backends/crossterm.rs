@@ -149,7 +149,7 @@ impl From<Border> for crossterm::style::Attribute {
 /// `Display`s [`Reset`](crate::Reset) with `crossterm`.
 impl Display for Reset {
     /// `Display`s [`Reset`](crate::Reset) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
@@ -157,7 +157,7 @@ impl Display for Reset {
 /// `Display`s [`Foreground`](crate::Foreground) with `crossterm`.
 impl Display for Foreground {
     /// `Display`s [`Foreground`](crate::Foreground) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetForegroundColor(self.0.into()), f)
     }
 }
@@ -165,7 +165,7 @@ impl Display for Foreground {
 /// `Display`s [`Background`](crate::Background) with `crossterm`.
 impl Display for Background {
     /// `Display`s [`Background`](crate::Background) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetBackgroundColor(self.0.into()), f)
     }
 }
@@ -173,7 +173,7 @@ impl Display for Background {
 /// `Display`s [`Weight`](crate::Weight) with `crossterm`.
 impl Display for Weight {
     /// `Display`s [`Weight`](crate::Weight) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
@@ -181,7 +181,7 @@ impl Display for Weight {
 /// `Display`s [`Slant`](crate::Slant) with `crossterm`.
 impl Display for Slant {
     /// `Display`s [`Slant`](crate::Slant) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
@@ -189,7 +189,7 @@ impl Display for Slant {
 /// `Display`s [`Underline`](crate::Underline) with `crossterm`.
 impl Display for Underline {
     /// `Display`s [`Underline`](crate::Underline) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
@@ -197,7 +197,7 @@ impl Display for Underline {
 /// `Display`s [`Strike`](crate::Strike) with `crossterm`.
 impl Display for Strike {
     /// `Display`s [`Strike`](crate::Strike) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
@@ -205,7 +205,7 @@ impl Display for Strike {
 /// `Display`s [`Overline`](crate::Overline) with `crossterm`.
 impl Display for Overline {
     /// `Display`s [`Overline`](crate::Overline) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
@@ -213,7 +213,7 @@ impl Display for Overline {
 /// `Display`s [`Invert`](crate::Invert) with `crossterm`.
 impl Display for Invert {
     /// `Display`s [`Invert`](crate::Invert) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
@@ -221,7 +221,7 @@ impl Display for Invert {
 /// `Display`s [`Blink`](crate::Blink) with `crossterm`.
 impl Display for Blink {
     /// `Display`s [`Blink`](crate::Blink) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }
@@ -229,7 +229,7 @@ impl Display for Blink {
 /// `Display`s [`Border`](crate::Border) with `crossterm`.
 impl Display for Border {
     /// `Display`s [`Border`](crate::Border) with `crossterm`.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&crossterm::style::SetAttribute((*self).into()), f)
     }
 }

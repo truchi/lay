@@ -143,7 +143,7 @@ impl Generation {
             #doc
             impl Display for #ground {
                 #doc
-                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                fn fmt(&self, f: &mut Formatter) -> fmt::Result {
                     Display::fmt(
                         &crossterm::style::#set_color(self.0.into()),
                         f,
@@ -164,7 +164,7 @@ impl Generation {
             #doc
             impl Display for #attribute {
                 #doc
-                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                fn fmt(&self, f: &mut Formatter) -> fmt::Result {
                     Display::fmt(
                         &crossterm::style::SetAttribute((*self).into()),
                         f,
@@ -186,7 +186,7 @@ impl Generation {
             #doc
             impl Display for #reset {
                 #doc
-                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                fn fmt(&self, f: &mut Formatter) -> fmt::Result {
                     Display::fmt(
                         &crossterm::style::SetAttribute((*self).into()),
                         f,

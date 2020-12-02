@@ -75,7 +75,7 @@ impl PartialOrd for Rect {
 }
 
 impl Debug for Rect {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(f, "({:?}, {:?})", self.point, self.size)
     }
 }

@@ -23,7 +23,7 @@ impl Default for Foreground {
 }
 
 impl Debug for Foreground {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         f.write_str("Foreground")?;
         f.write_str("(")?;
         Debug::fmt(&self.0, f)?;

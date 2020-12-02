@@ -127,7 +127,7 @@ impl Generation {
             /// `Display`s the corresponding CSIs to the terminal.
             impl Display for Style {
                 /// `Display`s the corresponding CSIs to the terminal.
-                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                fn fmt(&self, f: &mut Formatter) -> fmt::Result {
                     #(#display)*
                     Ok(())
                 }
@@ -135,7 +135,7 @@ impl Generation {
             #LINE_BREAK
 
             impl Debug for Style {
-                fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+                fn fmt(&self, f: &mut Formatter) -> fmt::Result {
                     let mut tuple = f.debug_tuple("Style");
                     #(#debug)*
                     tuple.finish()

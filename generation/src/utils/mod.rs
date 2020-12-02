@@ -16,7 +16,7 @@ macro_rules! derefs {
         }
 
         impl Display for $Struct {
-            fn fmt(&$self, $f: &mut Formatter) -> Result<(), Error> { $fmt }
+            fn fmt(&$self, $f: &mut Formatter) -> fmt::Result { $fmt }
         }
     )*};
 }

@@ -98,7 +98,7 @@ derefs!(self StylerFn {
 });
 
 impl Debug for StylerFn {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(f, "{}", self.sign.to_string())
     }
 }

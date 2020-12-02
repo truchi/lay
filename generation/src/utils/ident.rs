@@ -36,7 +36,7 @@ impl Ident {
 }
 
 impl Debug for Ident {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(f, "({:#?}, {:#?})", self.pascal, self.snake)
     }
 }

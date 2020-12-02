@@ -53,7 +53,7 @@ impl<T: Display> Styled<T> {
 /// `Display`s the `content` with `style`s, then resets `style`s.
 impl<T: Display> Display for Styled<T> {
     /// `Display`s the `content` with `style`s, then resets `style`s.
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         Display::fmt(&self.style, f)?;
         T::fmt(&self.content, f)?;
         Display::fmt(&self.style.reset(), f)
@@ -61,7 +61,7 @@ impl<T: Display> Display for Styled<T> {
 }
 
 impl<T: Display + Debug> Debug for Styled<T> {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         f.debug_tuple("Styled")
             .field(&self.content)
             .field(&self.style)

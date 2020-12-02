@@ -37,7 +37,7 @@ impl Default for Str {
 }
 
 impl Debug for Str {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(f, "\"{}\"", self.string)
     }
 }
