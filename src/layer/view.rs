@@ -58,7 +58,7 @@ impl<T: LayerIndex> View<T> {
     /// Sets [`Rect`](crate::Rect), mutably.
     /// Returns the actual, bound checked [`Rect`](crate::Rect).
     pub fn rect_mut(&mut self, rect: impl Into<Rect>) -> Rect {
-        self.rect = rect.into().bound(self.layer.size());
+        self.rect = rect.into().crop(self.layer.size());
         self.rect
     }
 

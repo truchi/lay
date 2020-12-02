@@ -36,22 +36,13 @@ impl Rect {
 
 /// ### Methods
 impl Rect {
-    /// Clamps `self` into `((0, 0), max)`.
-    pub fn bound(self, max: Size) -> Self {
-        let ((x, y), (width, height)) = self.into();
-        let (max_width, max_height) = max.into();
-
-        let x = x.min(max_width);
-        let y = y.min(max_height);
-        let width = (width + x).min(max_width) - x;
-        let height = (height + y).min(max_height) - y;
+    /// Crops `self`'s `size` in `[0, to - point]`.
+    pub fn crop(self, to: Size) -> Self {
+        let Rect { point, size } = self;
 
         Self {
-            point: Point { x: X(x), y: Y(y) },
-            size:  Size {
-                width:  Width(width),
-                height: Height(height),
-            },
+            point,
+            size: size.clamp_into(point.into(), to),
         }
     }
 }

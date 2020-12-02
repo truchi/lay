@@ -61,7 +61,7 @@ pub trait LayerIndexMut: LayerIndex {
     fn get_mut(&mut self, point: impl Into<Point>) -> Option<&mut Cell> {
         let point = point.into();
 
-        if point.lt(&Point::from(self.size())) {
+        if point.lt(&self.size().into()) {
             Some(self.get_unchecked_mut(point))
         } else {
             None

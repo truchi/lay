@@ -43,6 +43,18 @@ macro_rules! types {
                 pub const ONE: $Type = $Type(1););
             }
 
+            /// ### Methods
+            impl $Type {
+                /// Clamps `self` within `[0, to - from]`.
+                pub fn clamp_into(self, from: Self, to: Self) -> Self {
+                    if to <= from {
+                        Self::ZERO
+                    } else {
+                        self.min(to - from)
+                    }
+                }
+            }
+
             // ====== //
             // Traits //
             // ====== //
@@ -120,6 +132,17 @@ macro_rules! types {
                 pub fn new($a: $A, $b: $B) -> Self {
                     Self { $a, $b }
                 });
+            }
+
+            /// ### Methods
+            impl $Type {
+                /// Clamps into field by field.
+                pub fn clamp_into(self, from: Self, to: Self) -> Self {
+                    Self {
+                        $a: self.$a.clamp_into(from.$a, to.$a),
+                        $b: self.$b.clamp_into(from.$b, to.$b),
+                    }
+                }
             }
 
             // ====== //
@@ -231,24 +254,48 @@ types!(
     size: Size { width: Width, height: Height }
 );
 
-/// Returns a new `(x, y)` [`Size`](crate::Size).
-impl From<Point> for Size {
-    /// Returns a new `(x, y)` [`Size`](crate::Size).
-    fn from(point: Point) -> Self {
-        Self {
-            width:  Width(point.x.0),
-            height: Height(point.y.0),
-        }
-    }
+macro_rules! xfrom {
+    ($($type1:ident: $Type1:ident <-> $type2:ident: $Type2:ident)*) => { $(
+        xfrom!($type1: $Type1 -> $Type2);
+        xfrom!($type2: $Type2 -> $Type1);
+    )* };
+    ($type1:ident: $Type1:ident -> $Type2:ident) => {
+        doc!("Returns a new [`" s!($Type2) "`](crate::" s!($Type2) ").",
+        impl From<$Type1> for $Type2 {
+            doc!("Returns a new [`" s!($Type2) "`](crate::" s!($Type2) ").",
+            fn from($type1: $Type1) -> Self {
+                Self($type1.0)
+            });
+        });
+    };
+    ($(
+        $type1:ident: $Type1:ident { $a1:ident: $A1:ident, $b1:ident: $B1:ident } <->
+        $type2:ident: $Type2:ident { $a2:ident: $A2:ident, $b2:ident: $B2:ident }
+    )*) => { $(
+        xfrom!($type1: $Type1 { $a1, $b1 } -> $Type2 { $a2: $A2, $b2: $B2 });
+        xfrom!($type2: $Type2 { $a2, $b2 } -> $Type1 { $a1: $A1, $b1: $B1 });
+    )* };
+    (
+        $type1:ident: $Type1:ident { $a1:ident, $b1:ident } ->
+        $Type2:ident { $a2:ident: $A2:ident, $b2:ident: $B2:ident }
+    ) => {
+        doc!("Returns `" s!($type1) "` as a new [`" s!($Type2) "`](crate::" s!($Type2) ").",
+        impl From<$Type1> for $Type2 {
+            doc!("Returns `" s!($type1) "` as a new [`" s!($Type2) "`](crate::" s!($Type2) ").",
+            fn from($type1: $Type1) -> Self {
+                Self {
+                    $a2: $A2($type1.$a1.0),
+                    $b2: $B2($type1.$b1.0),
+                }
+            });
+        });
+    };
+
 }
 
-/// Returns a new `(width, height)` [`Point`](crate::Point).
-impl From<Size> for Point {
-    /// Returns a new `(width, height)` [`Point`](crate::Point).
-    fn from(size: Size) -> Self {
-        Self {
-            x: X(size.width.0),
-            y: Y(size.height.0),
-        }
-    }
-}
+xfrom!(
+    x: X <-> width: Width
+    y: Y <-> height: Height
+);
+
+xfrom!(point: Point { x: X, y: Y } <-> size: Size { width: Width, height: Height });
