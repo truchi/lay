@@ -28,7 +28,7 @@ macro_rules! types {
         $(
             #[$doc]
             #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Default)]
-            pub struct $Type(pub usize);
+            pub struct $Type(pub u16);
 
             // ============== //
             // Implementation //
@@ -47,20 +47,20 @@ macro_rules! types {
             // Traits //
             // ====== //
 
-            /// `Deref`s to `usize`.
+            /// `Deref`s to `u16`.
             impl Deref for $Type {
-                type Target = usize;
+                type Target = u16;
 
-                /// `Deref`s to `usize`.
-                fn deref(&self) -> &usize {
+                /// `Deref`s to `u16`.
+                fn deref(&self) -> &u16 {
                     &self.0
                 }
             }
 
-            /// `DerefMut`s to `usize`.
+            /// `DerefMut`s to `u16`.
             impl DerefMut for $Type {
-                /// `DerefMut`s to `usize`.
-                fn deref_mut(&mut self) -> &mut usize {
+                /// `DerefMut`s to `u16`.
+                fn deref_mut(&mut self) -> &mut u16 {
                     &mut self.0
                 }
             }
@@ -76,7 +76,7 @@ macro_rules! types {
             // =========== //
 
             doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `" s!($type) "`.",
-            impl From<$Type> for usize {
+            impl From<$Type> for u16 {
                 doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `" s!($type) "`.",
                 fn from($type: $Type) -> Self {
                     $type.0
@@ -84,9 +84,9 @@ macro_rules! types {
             });
 
             doc!("Returns a new `" s!($type) "` [`" s!($Type) "`](crate::" s!($Type) ").",
-            impl From<usize> for $Type {
+            impl From<u16> for $Type {
                 doc!("Returns a new `" s!($type) "` [`" s!($Type) "`](crate::" s!($Type) ").",
-                fn from($type: usize) -> Self {
+                fn from($type: u16) -> Self {
                     Self($type)
                 });
             });
@@ -164,7 +164,7 @@ macro_rules! types {
             });
 
             doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `(" s!($a) ", " s!($b) ")`.",
-            impl From<$Type> for (usize, usize) {
+            impl From<$Type> for (u16, u16) {
                 doc!("Returns the [`" s!($Type) "`](crate::" s!($Type) ")'s as `(" s!($a) ", " s!($b) ")`.",
                 fn from($type: $Type) -> Self {
                     ($type.$a.0, $type.$b.0)
@@ -172,9 +172,9 @@ macro_rules! types {
             });
 
             doc!("Returns a new `(value, value)` [`" s!($Type) "`](crate::" s!($Type) ").",
-            impl From<usize> for $Type {
+            impl From<u16> for $Type {
                 doc!("Returns a new `(value, value)` [`" s!($Type) "`](crate::" s!($Type) ").",
-                fn from(value: usize) -> Self {
+                fn from(value: u16) -> Self {
                     Self {
                         $a: $A(value),
                         $b: $B(value),
@@ -183,9 +183,9 @@ macro_rules! types {
             });
 
             doc!("Returns a new `(" s!($a) ", " s!($b) ")` [`" s!($Type) "`](crate::" s!($Type) ").",
-            impl From<(usize, usize)> for $Type {
+            impl From<(u16, u16)> for $Type {
                 doc!("Returns a new `(" s!($a) ", " s!($b) ")` [`" s!($Type) "`](crate::" s!($Type) ").",
-                fn from(($a, $b): (usize, usize)) -> Self {
+                fn from(($a, $b): (u16, u16)) -> Self {
                     Self {
                         $a: $A($a),
                         $b: $B($b),

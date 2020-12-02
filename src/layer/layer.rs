@@ -154,12 +154,12 @@ refs!(&T, &mut T);
 impl LayerIndex for str {
     fn size(&self) -> Size {
         Size {
-            width:  Width(self.len()),
+            width:  Width(self.len() as u16),
             height: Height(1),
         }
     }
 
     fn get_unchecked(&self, point: impl Into<Point>) -> Cell {
-        self.chars().nth(point.into().x.0).unwrap().into()
+        self.chars().nth(point.into().x.0 as usize).unwrap().into()
     }
 }

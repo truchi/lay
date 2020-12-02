@@ -101,7 +101,7 @@ impl From<Rect> for Size {
 }
 
 /// Returns the [`Rect`](crate::Rect)'s as `((x, y), (width, height))`.
-impl From<Rect> for ((usize, usize), (usize, usize)) {
+impl From<Rect> for ((u16, u16), (u16, u16)) {
     /// Returns the [`Rect`](crate::Rect)'s as `((x, y), (width, height))`.
     fn from(rect: Rect) -> Self {
         (
@@ -112,7 +112,7 @@ impl From<Rect> for ((usize, usize), (usize, usize)) {
 }
 
 /// Returns the [`Rect`](crate::Rect)'s as `(x, y, width, height)`.
-impl From<Rect> for (usize, usize, usize, usize) {
+impl From<Rect> for (u16, u16, u16, u16) {
     /// Returns the [`Rect`](crate::Rect)'s as `(x, y, width, height)`.
     fn from(rect: Rect) -> Self {
         (
@@ -125,9 +125,9 @@ impl From<Rect> for (usize, usize, usize, usize) {
 }
 
 /// Returns a new `((value, value), (value, value))` [`Rect`](crate::Rect).
-impl From<usize> for Rect {
+impl From<u16> for Rect {
     /// Returns a new `((value, value), (value, value))` [`Rect`](crate::Rect).
-    fn from(value: usize) -> Self {
+    fn from(value: u16) -> Self {
         Self {
             point: Point {
                 x: X(value),
@@ -142,9 +142,9 @@ impl From<usize> for Rect {
 }
 
 /// Returns a new `((point, point), (size, size))` [`Rect`](crate::Rect).
-impl From<(usize, usize)> for Rect {
+impl From<(u16, u16)> for Rect {
     /// Returns a new `((point, point), (size, size))` [`Rect`](crate::Rect).
-    fn from((point, size): (usize, usize)) -> Self {
+    fn from((point, size): (u16, u16)) -> Self {
         Self {
             point: Point {
                 x: X(point),
@@ -159,9 +159,9 @@ impl From<(usize, usize)> for Rect {
 }
 
 /// Returns a new `((x, y), (width, height))` [`Rect`](crate::Rect).
-impl From<((usize, usize), (usize, usize))> for Rect {
+impl From<((u16, u16), (u16, u16))> for Rect {
     /// Returns a new `((x, y), (width, height))` [`Rect`](crate::Rect).
-    fn from(((x, y), (width, height)): ((usize, usize), (usize, usize))) -> Self {
+    fn from(((x, y), (width, height)): ((u16, u16), (u16, u16))) -> Self {
         Self {
             point: Point { x: X(x), y: Y(y) },
             size:  Size {
@@ -173,9 +173,9 @@ impl From<((usize, usize), (usize, usize))> for Rect {
 }
 
 /// Returns a new `((x, y), (width, height))` [`Rect`](crate::Rect).
-impl From<(usize, usize, usize, usize)> for Rect {
+impl From<(u16, u16, u16, u16)> for Rect {
     /// Returns a new `((x, y), (width, height))` [`Rect`](crate::Rect).
-    fn from((x, y, width, height): (usize, usize, usize, usize)) -> Self {
+    fn from((x, y, width, height): (u16, u16, u16, u16)) -> Self {
         Self {
             point: Point { x: X(x), y: Y(y) },
             size:  Size {

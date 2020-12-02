@@ -13,6 +13,7 @@ impl Canvas {
     pub fn new(size: impl Into<Size>, cell: impl Into<Cell>) -> Self {
         let size = size.into();
         let (width, height) = size.into();
+        let (width, height): (usize, usize) = (width.into(), height.into());
 
         let mut cells = Vec::with_capacity(width * height);
         cells.resize(width * height, cell.into());
@@ -46,7 +47,10 @@ impl LayerIndex for Canvas {
         let (x, y) = point.into().into();
         let (width, _) = self.size.into();
 
-        *self.cells.get(x + y * width).unwrap()
+        *self
+            .cells
+            .get(x as usize + y as usize * width as usize)
+            .unwrap()
     }
 }
 
@@ -55,7 +59,9 @@ impl LayerIndexMut for Canvas {
         let (x, y) = point.into().into();
         let (width, _) = self.size.into();
 
-        self.cells.get_mut(x + y * width).unwrap()
+        self.cells
+            .get_mut(x as usize + y as usize * width as usize)
+            .unwrap()
     }
 }
 
