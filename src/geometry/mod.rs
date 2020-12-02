@@ -22,7 +22,7 @@ macro_rules! doc {
 
 macro_rules! types {
     // ======== //
-    // 1D types //
+    // 0D types //
     // ======== //
     ($(#[$doc:meta] $type:ident: $Type:ident)*) => {
         $(
@@ -93,7 +93,7 @@ macro_rules! types {
         )*
     };
     // ======== //
-    // 2D types //
+    // 1D types //
     // ======== //
     ($(#[$doc:meta] $type:ident: $Type:ident { $a:ident: $A:ident, $b:ident: $B:ident })*) => {
         $(
