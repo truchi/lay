@@ -10,7 +10,7 @@ pub struct Styled<T: Display> {
 /// ### Constructors
 impl<T: Display> Styled<T> {
     /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
-    pub fn new<U: Into<Style>>(content: T, style: U) -> Self {
+    pub fn new(content: T, style: impl Into<Style>) -> Self {
         Self {
             content,
             style: style.into(),

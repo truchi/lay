@@ -15,7 +15,7 @@ impl Cell {
 /// ### Constructors
 impl Cell {
     /// Returns a new [`Cell`](crate::Cell).
-    pub fn new<T: Into<Styled<char>>>(option: Option<T>) -> Self {
+    pub fn new(option: Option<impl Into<Styled<char>>>) -> Self {
         match option {
             Some(styled) => {
                 let styled = styled.into();
@@ -27,7 +27,7 @@ impl Cell {
     }
 
     /// Returns a new [`Cell`](crate::Cell).
-    pub fn from_styled<T: Into<Styled<char>>>(styled: T) -> Self {
+    pub fn from_styled(styled: impl Into<Styled<char>>) -> Self {
         Self(Some(styled.into()))
     }
 }

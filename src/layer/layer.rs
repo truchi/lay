@@ -46,12 +46,12 @@ pub trait Layer: LayerIndex + Sized {
 
     /// Superimposes `above` above `self`.
     fn above(self, point: impl Into<Point>, above: &impl LayerIndex) -> Self {
-        merge(self, point, above, Cell::above)
+        merge(self, point.into(), above, Cell::above)
     }
 
     /// Superimposes `below` below `self`.
-    fn below(self, positon: impl Into<Point>, below: &impl LayerIndex) -> Self {
-        merge(self, positon, below, Cell::below)
+    fn below(self, point: impl Into<Point>, below: &impl LayerIndex) -> Self {
+        merge(self, point.into(), below, Cell::below)
     }
 }
 
@@ -62,12 +62,12 @@ pub trait LayerMut: LayerIndex {
 
     /// Superimposes `above` above `self`, mutably.
     fn above_mut(&mut self, point: impl Into<Point>, above: &impl LayerIndex) {
-        merge_mut(self, point, above, Cell::above)
+        merge_mut(self, point.into(), above, Cell::above)
     }
 
     /// Superimposes `below` below `self`, mutably.
     fn below_mut(&mut self, point: impl Into<Point>, below: &impl LayerIndex) {
-        merge_mut(self, point, below, Cell::below)
+        merge_mut(self, point.into(), below, Cell::below)
     }
 }
 
@@ -76,13 +76,13 @@ pub trait LayerMut: LayerIndex {
 // ======= //
 
 /// Merges `layer` and `other` according to `merge`.
-fn merge<T, U, V>(mut layer: T, point: impl Into<Point>, other: &U, merge: V) -> T
+fn merge<T, U, V>(mut layer: T, point: Point, other: &U, merge: V) -> T
 where
     T: Layer,
     U: LayerIndex,
     V: Fn(Cell, Cell) -> Cell,
 {
-    let (x, y) = point.into().into();
+    let (x, y) = point.into();
     let (layer_width, layer_height) = layer.size().into();
     let (other_width, other_height) = other.size().into();
     let width = layer_width.min(x + other_width);
@@ -100,13 +100,13 @@ where
 }
 
 /// Merges `layer` and `other` according to `merge`, mutably.
-fn merge_mut<T, U, V>(layer: &mut T, point: impl Into<Point>, other: &U, merge: V)
+fn merge_mut<T, U, V>(layer: &mut T, point: Point, other: &U, merge: V)
 where
     T: LayerMut + ?Sized,
     U: LayerIndex,
     V: Fn(Cell, Cell) -> Cell,
 {
-    let (x, y) = point.into().into();
+    let (x, y) = point.into();
     let (layer_width, layer_height) = layer.size().into();
     let (other_width, other_height) = other.size().into();
     let width = layer_width.min(x + other_width);

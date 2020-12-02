@@ -26,9 +26,9 @@ impl Canvas {
 // =========== //
 
 /// Returns a new [`Canvas`](crate::Canvas).
-impl<T: Into<Cell>> From<(Size, T)> for Canvas {
+impl<T: Into<Size>, U: Into<Cell>> From<(T, U)> for Canvas {
     /// Returns a new [`Canvas`](crate::Canvas).
-    fn from((size, cell): (Size, T)) -> Self {
+    fn from((size, cell): (T, U)) -> Self {
         Self::new(size, cell)
     }
 }

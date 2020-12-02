@@ -23,9 +23,9 @@ impl Fill {
 // =========== //
 
 /// Returns a new [`Fill`](crate::Fill).
-impl From<(Size, Cell)> for Fill {
+impl<T: Into<Size>, U: Into<Cell>> From<(T, U)> for Fill {
     /// Returns a new [`Fill`](crate::Fill).
-    fn from((size, cell): (Size, Cell)) -> Self {
+    fn from((size, cell): (T, U)) -> Self {
         Self::new(size, cell)
     }
 }
