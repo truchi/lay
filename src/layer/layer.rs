@@ -243,14 +243,16 @@ macro_rules! merge {
             $(let mut $layer2 = $layer;)?
             let (width, height) = $layer.size().into();
 
-            for x in 0..width {
-                for y in 0..height {
-                    let layer_cell = $layer.get_unchecked((x, y));
+            if height != 0 {
+                for x in 0..width {
+                    for y in 0..height {
+                        let layer_cell = $layer.get_unchecked((x, y));
 
-                    $($get_left_side)* = other.$get((x, y)) $($get_right_side)*
-                    {
-                        let cell = merge(layer_cell, $other_cell);
-                        $($layer2 =)? $layer.$set((x, y), cell);
+                        $($get_left_side)* = other.$get((x, y)) $($get_right_side)*
+                        {
+                            let cell = merge(layer_cell, $other_cell);
+                            $($layer2 =)? $layer.$set((x, y), cell);
+                        }
                     }
                 }
             }
