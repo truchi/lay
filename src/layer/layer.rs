@@ -94,6 +94,17 @@ pub trait Layer: LayerIndex + Sized {
     fn below(self, point: impl Into<Point>, below: &impl LayerIndex) -> Self {
         merge(self, point.into(), below, Cell::below)
     }
+
+    /// Fills this [`Layer`](crate::Layer) with `cell`.
+    fn fill(self, cell: impl Into<Cell>) -> Self {
+        fill(self, cell.into())
+    }
+
+    /// Clears this [`Layer`](crate::Layer) with
+    /// [`Cell::NONE`](crate::Cell::NONE).
+    fn clear(self) -> Self {
+        self.fill(Cell::NONE)
+    }
 }
 
 /// [`Cell`](crate::Cell) setter, mutably.
@@ -109,6 +120,17 @@ pub trait LayerMut: LayerIndex {
     /// Superimposes `below` below `self`, mutably.
     fn below_mut(&mut self, point: impl Into<Point>, below: &impl LayerIndex) {
         merge_mut(self, point.into(), below, Cell::below)
+    }
+
+    /// Fills this [`Layer`](crate::Layer) with `cell`, mutably.
+    fn fill_mut(&mut self, cell: impl Into<Cell>) {
+        fill_mut(self, cell.into())
+    }
+
+    /// Clears this [`Layer`](crate::Layer) with
+    /// [`Cell::NONE`](crate::Cell::NONE), mutably.
+    fn clear_mut(&mut self) {
+        self.fill_mut(Cell::NONE)
     }
 }
 
@@ -184,6 +206,40 @@ where
             let layer_cell = layer.get_unchecked((col, row));
             let other_cell = other.get_unchecked((col - width, row - height));
             layer.set_mut((col, row), merge(layer_cell, other_cell));
+        }
+    }
+}
+
+/// Fills this [`Layer`](crate::Layer) with `cell`.
+fn fill<T>(mut layer: T, cell: Cell) -> T
+where
+    T: Layer,
+{
+    let (width, height) = layer.size().into();
+
+    if width != 0 {
+        for row in 0..height {
+            for col in 0..width {
+                layer = layer.set((col, row), cell);
+            }
+        }
+    }
+
+    layer
+}
+
+/// Fills this [`Layer`](crate::Layer) with `cell`, matably.
+fn fill_mut<T>(layer: &mut T, cell: Cell)
+where
+    T: LayerMut + ?Sized,
+{
+    let (width, height) = layer.size().into();
+
+    if width != 0 {
+        for row in 0..height {
+            for col in 0..width {
+                layer.set_mut((col, row), cell);
+            }
         }
     }
 }
