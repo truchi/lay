@@ -20,32 +20,43 @@ pub trait LayerIndex {
         }
     }
 
+    /// Writes this [`Layer`](crate::Layer) into `w` at cursor position `point`.
+    ///
+    /// Does not create new lines, make sure there is enough room available on
+    /// the screen to display properly.
+    ///
+    /// Leaves cursor at last row, last column. Minimal CSIs.
     fn fmt(&self, w: &mut impl Write, point: impl Into<Point>) -> io::Result<()> {
         let (x, y) = point.into().into();
         let (width, height) = self.size().into();
-        let mut carry = Style::NONE;
 
-        for row in 0..height {
-            write!(w, "{}", To(x, y + row))?;
-            carry = fmt_row(self, w, width, row, carry)?;
+        if width != 0 {
+            let mut carry = Style::NONE;
+            for row in 0..height {
+                write!(w, "{}", To(x, y + row))?;
+                carry = fmt_row(self, w, width, row, carry)?;
+            }
         }
 
         Ok(())
     }
 
+    /// Writes this [`Layer`](crate::Layer) into `w` at current cursor position.
+    ///
+    /// Creates new lines, make sure the induced scrolling is under control.
+    ///
+    /// Leaves cursor at last row, last column. Minimal CSIs.
     fn fmt_at_cursor(&self, w: &mut impl Write) -> io::Result<()> {
         let (width, height) = self.size().into();
 
-        if height == 0 {
-            return Ok(());
+        if width != 0 && height != 0 {
+            let mut carry = Style::NONE;
+            for row in 0..height - 1 {
+                carry = fmt_row(self, w, width, row, carry)?;
+                write!(w, "\n")?;
+            }
+            fmt_row(self, w, width, height - 1, carry)?;
         }
-
-        let mut carry = Style::NONE;
-        for row in 0..height - 1 {
-            carry = fmt_row(self, w, width, row, carry)?;
-            write!(w, "\n")?;
-        }
-        fmt_row(self, w, width, height - 1, carry)?;
 
         Ok(())
     }
@@ -105,6 +116,9 @@ pub trait LayerMut: LayerIndex {
 // Helpers //
 // ======= //
 
+/// Writes this [`Layer`](crate::Layer)'s `row` into `w`.
+///
+/// Carries on the printed [`Style`](crate::Style).
 fn fmt_row<T>(
     layer: &T,
     w: &mut impl Write,
