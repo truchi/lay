@@ -85,28 +85,40 @@ pub trait Layer: LayerIndex + Sized {
     /// Sets the [`Cell`](crate::Cell) at `point`.
     fn set(self, point: impl Into<Point>, cell: impl Into<Cell>) -> Self;
 
+    /// Merges `self` and `other` with the `merge` function.
+    ///
+    /// Assumes `other` is contained in `self`. May panic otherwise.
+    fn merge_unchecked(self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) -> Self {
+        merger_unchecked(self, other, merge)
+    }
+
+    /// Merges `self` and `other` with the `merge` function.
+    fn merge(self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) -> Self {
+        merger(self, other, merge)
+    }
+
     /// Superimposes `above` above `self`.
     ///
     /// Assumes `above` is contained in `self`. May panic otherwise.
     fn above_unchecked(self, above: &impl LayerIndex) -> Self {
-        merge_above_unchecked(self, above)
+        merger_unchecked(self, above, Cell::above)
     }
 
     /// Superimposes `above` above `self`.
     fn above(self, above: &impl LayerIndex) -> Self {
-        merge_above(self, above)
+        merger(self, above, Cell::above)
     }
 
     /// Superimposes `below` below `self`.
     ///
     /// Assumes `below` is contained in `self`. May panic otherwise.
     fn below_unchecked(self, below: &impl LayerIndex) -> Self {
-        merge_below_unchecked(self, below)
+        merger_unchecked(self, below, Cell::below)
     }
 
     /// Superimposes `below` below `self`.
     fn below(self, below: &impl LayerIndex) -> Self {
-        merge_below(self, below)
+        merger(self, below, Cell::below)
     }
 
     /// Fills this [`Layer`](crate::Layer) with `cell`.
@@ -126,28 +138,40 @@ pub trait LayerMut: LayerIndex {
     /// Sets the [`Cell`](crate::Cell) at `point`, mutably.
     fn set_mut(&mut self, point: impl Into<Point>, cell: impl Into<Cell>);
 
+    /// Merges `self` and `other` with the `merge` function, mutably.
+    ///
+    /// Assumes `other` is contained in `self`. May panic otherwise.
+    fn merge_unchecked_mut(&mut self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) {
+        merger_unchecked_mut(self, other, merge)
+    }
+
+    /// Merges `self` and `other` with the `merge` function, mutably.
+    fn merge_mut(&mut self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) {
+        merger_mut(self, other, merge)
+    }
+
     /// Superimposes `above` above `self`, mutably.
     ///
     /// Assumes `above` is contained in `self`. May panic otherwise.
     fn above_unchecked_mut(&mut self, above: &impl LayerIndex) {
-        merge_above_unchecked_mut(self, above)
+        merger_unchecked_mut(self, above, Cell::above)
     }
 
     /// Superimposes `above` above `self`, mutably.
     fn above_mut(&mut self, above: &impl LayerIndex) {
-        merge_above_mut(self, above)
+        merger_mut(self, above, Cell::above)
     }
 
     /// Superimposes `below` below `self`, mutably.
     ///
     /// Assumes `below` is contained in `self`. May panic otherwise.
     fn below_unchecked_mut(&mut self, below: &impl LayerIndex) {
-        merge_below_unchecked_mut(self, below)
+        merger_unchecked_mut(self, below, Cell::below)
     }
 
     /// Superimposes `below` below `self`, mutably.
     fn below_mut(&mut self, below: &impl LayerIndex) {
-        merge_below_mut(self, below)
+        merger_mut(self, below, Cell::below)
     }
 
     /// Fills this [`Layer`](crate::Layer) with `cell`, mutably.
@@ -193,15 +217,15 @@ where
 }
 
 macro_rules! merge {
-    ($merge:ident: $fn:ident $fn_mut:ident $fn_un:ident $fn_un_mut:ident) => {
-        merge!(l o $merge
+    ($fn:ident $fn_mut:ident $fn_un:ident $fn_un_mut:ident) => {
+        merge!(impl l o
             fn $fn       (l:     (Layer))        -> T { (if let Some(o)) get () set }
             fn $fn_mut   ( : mut (LayerMut + ?Sized)) { (if let Some(o)) get () set_mut }
             fn $fn_un    (l:     (Layer))        -> T { (let o) get_unchecked (;) set }
             fn $fn_un_mut( : mut (LayerMut + ?Sized)) { (let o) get_unchecked (;) set_mut }
         );
     };
-    ($layer:ident $other_cell:ident $merge:ident $(
+    (impl $layer:ident $other_cell:ident $(
         fn $fn:ident($($layer2:ident)?: $($mut:ident)? ($($T:tt)*))
         $(-> $ret:ident)? {
             ($($get_left_side:tt)*)
@@ -210,10 +234,11 @@ macro_rules! merge {
             $set:ident
         }
     )* ) => { $(
-        /// Merges `layer` and `other`.
-        fn $fn<T>($layer: $(&$mut)? T, other: &impl LayerIndex) $(-> $ret)?
+        /// Merges `layer` and `other` with the `merge` function.
+        fn $fn<T, U>($layer: $(&$mut)? T, other: &impl LayerIndex, merge: U) $(-> $ret)?
         where
             T: $($T)*,
+            U: Fn(Cell, Cell) -> Cell
         {
             $(let mut $layer2 = $layer;)?
             let (width, height) = $layer.size().into();
@@ -224,7 +249,7 @@ macro_rules! merge {
 
                     $($get_left_side)* = other.$get((x, y)) $($get_right_side)*
                     {
-                        let cell = layer_cell.$merge($other_cell);
+                        let cell = merge(layer_cell, $other_cell);
                         $($layer2 =)? $layer.$set((x, y), cell);
                     }
                 }
@@ -235,8 +260,7 @@ macro_rules! merge {
     )* };
 }
 
-merge!(above: merge_above merge_above_mut merge_above_unchecked merge_above_unchecked_mut);
-merge!(below: merge_below merge_below_mut merge_below_unchecked merge_below_unchecked_mut);
+merge!(merger merger_mut merger_unchecked merger_unchecked_mut);
 
 /// Fills this [`Layer`](crate::Layer) with `cell`.
 fn fill<T>(mut layer: T, cell: Cell) -> T
