@@ -280,7 +280,7 @@ where
     layer
 }
 
-/// Fills this [`Layer`](crate::Layer) with `cell`, matably.
+/// Fills this [`Layer`](crate::Layer) with `cell`, mutably.
 fn fill_mut<T>(layer: &mut T, cell: Cell)
 where
     T: LayerMut + ?Sized,
