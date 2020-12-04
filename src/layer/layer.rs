@@ -84,11 +84,11 @@ pub trait Layer: LayerIndex + Sized {
         self
     }
 
-    /// Merges `self` and `other` with the `merger` function.
+    /// Merges `self` and `other` with the `merge` function.
     ///
     /// Redirects to [`Layer::merge_mut`](crate::Layer::merge_mut).
-    fn merge(mut self, other: &impl LayerIndex, merger: impl Fn(Cell, Cell) -> Cell) -> Self {
-        self.merge_mut(other, merger);
+    fn merge(mut self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) -> Self {
+        self.merge_mut(other, merge);
         self
     }
 
@@ -131,9 +131,9 @@ pub trait Layer: LayerIndex + Sized {
     /// Sets the [`Cell`](crate::Cell) at `point`, mutably.
     fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>);
 
-    /// Merges `self` and `other` with the `merger` function, mutably.
-    fn merge_mut(&mut self, other: &impl LayerIndex, merger: impl Fn(Cell, Cell) -> Cell) {
-        merge_mut(self, other, merger);
+    /// Merges `self` and `other` with the `merge` function, mutably.
+    fn merge_mut(&mut self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) {
+        merge_mut(self, other, merge);
     }
 
     /// Superimposes `above` above `self`, mutably.
