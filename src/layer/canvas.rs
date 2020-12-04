@@ -47,10 +47,10 @@ impl LayerIndex for Canvas {
         let (x, y) = point.as_coord();
         let (width, _) = self.size;
 
-        *self
-            .cells
-            .get(x as usize + y as usize * width as usize)
-            .unwrap()
+        match self.cells.get(x as usize + y as usize * width as usize) {
+            Some(cell) => *cell,
+            _ => Cell::NONE,
+        }
     }
 }
 
@@ -61,7 +61,7 @@ impl LayerIndexMut for Canvas {
 
         self.cells
             .get_mut(x as usize + y as usize * width as usize)
-            .unwrap()
+            .expect("Out of bounds access")
     }
 }
 

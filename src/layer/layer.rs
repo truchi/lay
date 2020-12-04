@@ -266,7 +266,10 @@ impl LayerIndex for str {
     }
 
     fn get_unchecked(&self, point: impl AsCoord) -> Cell {
-        self.chars().nth(point.x() as usize).unwrap().into()
+        match self.chars().nth(point.x() as usize) {
+            Some(char) => char.into(),
+            _ => Cell::NONE,
+        }
     }
 }
 
