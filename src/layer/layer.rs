@@ -269,3 +269,13 @@ impl LayerIndex for str {
         self.chars().nth(point.x() as usize).unwrap().into()
     }
 }
+
+impl<T: AsRef<str> + Display> LayerIndex for Styled<T> {
+    fn size(&self) -> Coord {
+        LayerIndex::size(self.content.as_ref())
+    }
+
+    fn get_unchecked(&self, point: impl AsCoord) -> Cell {
+        LayerIndex::get_unchecked(self.content.as_ref(), point)
+    }
+}
