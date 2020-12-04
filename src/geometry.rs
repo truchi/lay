@@ -34,10 +34,31 @@ pub trait AsCoord: Sized {
         (self.x() + other.x(), self.y() + other.y())
     }
 
-    /// Lower than comparison on both fields.
+    /// Subs (saturating) two [`Coord`](crate::Coord) together.
+    #[inline(always)]
+    fn sub(&self, other: impl AsCoord) -> Coord {
+        (
+            self.x().saturating_sub(other.x()),
+            self.y().saturating_sub(other.y()),
+        )
+    }
+
+    /// Lower than comparison on each fields.
     #[inline(always)]
     fn lt(&self, other: impl AsCoord) -> bool {
         self.x() < other.x() && self.y() < other.y()
+    }
+
+    /// Returns the minimum on each fields.
+    #[inline(always)]
+    fn min(&self, other: impl AsCoord) -> Coord {
+        (self.x().min(other.x()), self.y().min(other.y()))
+    }
+
+    /// Returns the maximun on each fields.
+    #[inline(always)]
+    fn max(&self, other: impl AsCoord) -> Coord {
+        (self.x().max(other.x()), self.y().max(other.y()))
     }
 }
 
