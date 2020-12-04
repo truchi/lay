@@ -7,7 +7,8 @@ edition = "2018"
 [features]
 default = ["full", "backend-crossterm"]
 backend-crossterm = ["crossterm"]
-full = []
+full = ["layer"]
+layer = []
 
 [dependencies]
 crossterm = { version = "0.17", optional = true }
