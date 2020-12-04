@@ -66,13 +66,6 @@ impl LayerIndexMut for Canvas {
 }
 
 impl Layer for Canvas {
-    fn set(mut self, point: impl AsCoord, cell: impl Into<Cell>) -> Self {
-        LayerMut::set_mut(&mut self, point, cell);
-        self
-    }
-}
-
-impl LayerMut for Canvas {
     fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>) {
         if let Some(c) = LayerIndexMut::get_mut(self, point) {
             *c = cell.into();

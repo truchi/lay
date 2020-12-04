@@ -144,12 +144,6 @@ impl LayerIndexMut for Cell {
 }
 
 impl Layer for Cell {
-    fn set(self, _: impl AsCoord, cell: impl Into<Cell>) -> Self {
-        cell.into()
-    }
-}
-
-impl LayerMut for Cell {
     fn set_mut(&mut self, _: impl AsCoord, cell: impl Into<Cell>) {
         *self = cell.into();
     }

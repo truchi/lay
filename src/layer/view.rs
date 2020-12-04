@@ -117,14 +117,7 @@ impl<T: LayerIndexMut> LayerIndexMut for View<T> {
 }
 
 impl<T: Layer> Layer for View<T> {
-    fn set(mut self, point: impl AsCoord, cell: impl Into<Cell>) -> Self {
-        self.layer = <T as Layer>::set(self.layer, self.rect.point().add(point), cell);
-        self
-    }
-}
-
-impl<T: LayerMut> LayerMut for View<T> {
     fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>) {
-        <T as LayerMut>::set_mut(&mut self.layer, self.rect.point().add(point), cell);
+        <T as Layer>::set_mut(&mut self.layer, self.rect.point().add(point), cell);
     }
 }

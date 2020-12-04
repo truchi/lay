@@ -79,64 +79,90 @@ pub trait LayerIndexMut: LayerIndex {
 /// [`Cell`](crate::Cell) setter.
 pub trait Layer: LayerIndex + Sized {
     /// Sets the [`Cell`](crate::Cell) at `point`.
-    fn set(self, point: impl AsCoord, cell: impl Into<Cell>) -> Self;
+    fn set(mut self, point: impl AsCoord, cell: impl Into<Cell>) -> Self {
+        self.set_mut(point, cell);
+        self
+    }
 
     /// Merges `self` and `other` with the `merger` function.
-    fn merge(self, other: &impl LayerIndex, merger: impl Fn(Cell, Cell) -> Cell) -> Self {
-        merge(self, other, merger)
+    ///
+    /// Redirects to [`Layer::merge_mut`](crate::Layer::merge_mut).
+    fn merge(mut self, other: &impl LayerIndex, merger: impl Fn(Cell, Cell) -> Cell) -> Self {
+        self.merge_mut(other, merger);
+        self
     }
 
     /// Superimposes `above` above `self`.
+    ///
+    /// Calls [`Layer::merge`](crate::Layer::merge) with
+    /// [`Cell::above`](crate::Cell::above).
     fn above(self, above: &impl LayerIndex) -> Self {
-        merge(self, above, Cell::above)
+        self.merge(above, Cell::above)
     }
 
     /// Superimposes `below` below `self`.
+    ///
+    /// Calls [`Layer::merge`](crate::Layer::merge) with
+    /// [`Cell::below`](crate::Cell::below).
     fn below(self, below: &impl LayerIndex) -> Self {
-        merge(self, below, Cell::below)
+        self.merge(below, Cell::below)
     }
 
     /// Fills this [`Layer`](crate::Layer) with `cell`.
-    fn fill(self, cell: impl Into<Cell>) -> Self {
-        fill(self, cell.into())
+    ///
+    /// Redirects to [`Layer::fill_mut`](crate::Layer::fill_mut).
+    fn fill(mut self, cell: impl Into<Cell>) -> Self {
+        self.fill_mut(cell.into());
+        self
     }
 
-    /// Clears this [`Layer`](crate::Layer) with
+    /// Clears this [`Layer`](crate::Layer).
+    ///
+    /// Calls [`Layer::fill`](crate::Layer::fill) with
     /// [`Cell::NONE`](crate::Cell::NONE).
     fn clear(self) -> Self {
         self.fill(Cell::NONE)
     }
-}
 
-/// [`Cell`](crate::Cell) setter, mutably.
-pub trait LayerMut: LayerIndex {
+    // -------
+    // Mutable
+    // -------
+
     /// Sets the [`Cell`](crate::Cell) at `point`, mutably.
     fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>);
 
     /// Merges `self` and `other` with the `merger` function, mutably.
     fn merge_mut(&mut self, other: &impl LayerIndex, merger: impl Fn(Cell, Cell) -> Cell) {
-        merge_mut(self, other, merger)
+        merge_mut(self, other, merger);
     }
 
     /// Superimposes `above` above `self`, mutably.
+    ///
+    /// Calls [`Layer::merge_mut`](crate::Layer::merge_mut) with
+    /// [`Cell::above`](crate::Cell::above).
     fn above_mut(&mut self, above: &impl LayerIndex) {
-        merge_mut(self, above, Cell::above)
+        self.merge_mut(above, Cell::above);
     }
 
     /// Superimposes `below` below `self`, mutably.
+    ///
+    /// Calls [`Layer::merge_mut`](crate::Layer::merge_mut) with
+    /// [`Cell::below`](crate::Cell::below).
     fn below_mut(&mut self, below: &impl LayerIndex) {
-        merge_mut(self, below, Cell::below)
+        self.merge_mut(below, Cell::below);
     }
 
     /// Fills this [`Layer`](crate::Layer) with `cell`, mutably.
     fn fill_mut(&mut self, cell: impl Into<Cell>) {
-        fill_mut(self, cell.into())
+        fill_mut(self, cell.into());
     }
 
-    /// Clears this [`Layer`](crate::Layer) with
-    /// [`Cell::NONE`](crate::Cell::NONE), mutably.
+    /// Clears this [`Layer`](crate::Layer), mutably.
+    ///
+    /// Calls [`Layer::fill_mut`](crate::Layer::fill_mut) with
+    /// [`Cell::NONE`](crate::Cell::NONE).
     fn clear_mut(&mut self) {
-        self.fill_mut(Cell::NONE)
+        self.fill_mut(Cell::NONE);
     }
 }
 
@@ -170,71 +196,28 @@ where
     Ok(carry)
 }
 
-macro_rules! merge {
-    ($fn:ident $fn_mut:ident) => {
-        merge!(impl layer
-            fn $fn       (layer:     (Layer))             -> T { set }
-            fn $fn_mut   (     : mut (LayerMut + ?Sized))      { set_mut }
-        );
-    };
-    (impl $layer:ident $(
-        fn $fn:ident($($layer2:ident)?: $($mut:ident)? ($($T:tt)*))
-        $(-> $ret:ident)? { $set:ident }
-    )* ) => { $(
-        /// Merges `layer` and `other` with the `merge` function.
-        fn $fn<T, U>($layer: $(&$mut)? T, other: &impl LayerIndex, merge: U) $(-> $ret)?
-        where
-            T: $($T)*,
-            U: Fn(Cell, Cell) -> Cell
-        {
-            $(let mut $layer2 = $layer;)?
-            let (width, height) = $layer.size();
-            let (other_width, other_height) = other.size();
-            let height = height.min(other_height);
-
-            if height != 0 {
-                let width = width.min(other_width);
-
-                for x in 0..width {
-                    for y in 0..height {
-                        let layer_cell = $layer.get_unchecked((x, y));
-                        let other_cell = other.get_unchecked((x, y));
-                        let cell = merge(layer_cell, other_cell);
-                        $($layer2 =)? $layer.$set((x, y), cell);
-                    }
-                }
-            }
-
-            $($layer2)?
-        }
-    )* };
-}
-
-merge!(merge merge_mut);
-
-/// Fills this [`Layer`](crate::Layer) with `cell`.
-fn fill<T>(mut layer: T, cell: Cell) -> T
-where
-    T: Layer,
-{
+/// Merges `layer` and `other` with the `merge` function, mutably.
+fn merge_mut(layer: &mut impl Layer, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) {
     let (width, height) = layer.size();
+    let (other_width, other_height) = other.size();
+    let height = height.min(other_height);
 
-    if width != 0 {
-        for row in 0..height {
-            for col in 0..width {
-                layer = layer.set((col, row), cell);
+    if height != 0 {
+        let width = width.min(other_width);
+
+        for x in 0..width {
+            for y in 0..height {
+                let layer_cell = layer.get_unchecked((x, y));
+                let other_cell = other.get_unchecked((x, y));
+                let cell = merge(layer_cell, other_cell);
+                layer.set_mut((x, y), cell);
             }
         }
     }
-
-    layer
 }
 
 /// Fills this [`Layer`](crate::Layer) with `cell`, mutably.
-fn fill_mut<T>(layer: &mut T, cell: Cell)
-where
-    T: LayerMut + ?Sized,
-{
+fn fill_mut(layer: &mut impl Layer, cell: Cell) {
     let (width, height) = layer.size();
 
     if width != 0 {
@@ -266,14 +249,15 @@ macro_rules! refs {
                 <T as LayerIndexMut>::get_unchecked_mut(self, point)
             }
         }
-        impl<T: LayerMut> LayerMut for $T {
+        impl<T: Layer> Layer for $T {
             fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>) {
-                <T as LayerMut>::set_mut(self, point, cell)
+                <T as Layer>::set_mut(self, point, cell)
             }
         }
     };
 }
 
+// TODO is this really doing something?
 refs!(&T, &mut T);
 
 impl LayerIndex for str {
