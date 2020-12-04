@@ -9,7 +9,7 @@ pub struct Canvas {
 
 /// ### Constructors
 impl Canvas {
-    /// Returns a new [`Canvas`](crate::Canvas).
+    /// Returns a new [`Canvas`](crate::Canvas) of `cell`s.
     pub fn new(size: impl AsCoord, cell: impl Into<Cell>) -> Self {
         let size = size.as_coord();
         let (width, height) = size;
@@ -20,15 +20,21 @@ impl Canvas {
 
         Self { size, cells }
     }
+
+    /// Returns a new [`Canvas`](crate::Canvas) of
+    /// [`Cell::NONE`](crate::Cell::NONE).
+    pub fn with_default(size: impl AsCoord) -> Self {
+        Self::new(size, Cell::NONE)
+    }
 }
 
 // =========== //
 // Conversions //
 // =========== //
 
-/// Returns a new [`Canvas`](crate::Canvas).
+/// Returns a new [`Canvas`](crate::Canvas) of `cell`s.
 impl<T: AsCoord, U: Into<Cell>> From<(T, U)> for Canvas {
-    /// Returns a new [`Canvas`](crate::Canvas).
+    /// Returns a new [`Canvas`](crate::Canvas) of `cell`s.
     fn from((size, cell): (T, U)) -> Self {
         Self::new(size, cell)
     }
