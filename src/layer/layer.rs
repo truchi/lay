@@ -81,19 +81,19 @@ pub trait Layer: LayerIndex + Sized {
     /// Sets the [`Cell`](crate::Cell) at `point`.
     fn set(self, point: impl AsCoord, cell: impl Into<Cell>) -> Self;
 
-    /// Merges `self` and `other` with the `merge` function.
-    fn merge(self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) -> Self {
-        merger(self, other, merge)
+    /// Merges `self` and `other` with the `merger` function.
+    fn merge(self, other: &impl LayerIndex, merger: impl Fn(Cell, Cell) -> Cell) -> Self {
+        merge(self, other, merger)
     }
 
     /// Superimposes `above` above `self`.
     fn above(self, above: &impl LayerIndex) -> Self {
-        merger(self, above, Cell::above)
+        merge(self, above, Cell::above)
     }
 
     /// Superimposes `below` below `self`.
     fn below(self, below: &impl LayerIndex) -> Self {
-        merger(self, below, Cell::below)
+        merge(self, below, Cell::below)
     }
 
     /// Fills this [`Layer`](crate::Layer) with `cell`.
@@ -113,19 +113,19 @@ pub trait LayerMut: LayerIndex {
     /// Sets the [`Cell`](crate::Cell) at `point`, mutably.
     fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>);
 
-    /// Merges `self` and `other` with the `merge` function, mutably.
-    fn merge_mut(&mut self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) {
-        merger_mut(self, other, merge)
+    /// Merges `self` and `other` with the `merger` function, mutably.
+    fn merge_mut(&mut self, other: &impl LayerIndex, merger: impl Fn(Cell, Cell) -> Cell) {
+        merge_mut(self, other, merger)
     }
 
     /// Superimposes `above` above `self`, mutably.
     fn above_mut(&mut self, above: &impl LayerIndex) {
-        merger_mut(self, above, Cell::above)
+        merge_mut(self, above, Cell::above)
     }
 
     /// Superimposes `below` below `self`, mutably.
     fn below_mut(&mut self, below: &impl LayerIndex) {
-        merger_mut(self, below, Cell::below)
+        merge_mut(self, below, Cell::below)
     }
 
     /// Fills this [`Layer`](crate::Layer) with `cell`, mutably.
@@ -210,7 +210,7 @@ macro_rules! merge {
     )* };
 }
 
-merge!(merger merger_mut);
+merge!(merge merge_mut);
 
 /// Fills this [`Layer`](crate::Layer) with `cell`.
 fn fill<T>(mut layer: T, cell: Cell) -> T
