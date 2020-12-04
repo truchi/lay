@@ -273,7 +273,7 @@ impl LayerIndex for str {
     }
 }
 
-impl<T: AsRef<str> + Display> LayerIndex for Styled<T> {
+impl<T: AsRef<str>> LayerIndex for Styled<T> {
     fn size(&self) -> Coord {
         LayerIndex::size(self.content.as_ref())
     }

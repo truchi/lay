@@ -77,7 +77,7 @@ impl Generation {
     pub fn styled_impls(&self) -> TokenStream {
         let styled_impls = (
             &Str::new("Styled<T>"),
-            &[quote! { T: Display }][..],
+            &[quote! { T }][..],
             &Str::new("style"),
         );
 

@@ -5,7 +5,7 @@
 
 use crate::*;
 
-impl<T: Display> StylerIndex for Styled<T> {
+impl<T> StylerIndex for Styled<T> {
     /// Gets `Option<Foreground>`.
     fn get_foreground(&self) -> Option<Foreground> {
         StylerIndex::get_foreground(&self.style)
@@ -57,7 +57,7 @@ impl<T: Display> StylerIndex for Styled<T> {
     }
 }
 
-impl<T: Display> StylerIndexMut for Styled<T> {
+impl<T> StylerIndexMut for Styled<T> {
     /// Gets `&mut Option<Foreground>`.
     fn get_foreground_mut(&mut self) -> &mut Option<Foreground> {
         StylerIndexMut::get_foreground_mut(&mut self.style)
@@ -109,7 +109,7 @@ impl<T: Display> StylerIndexMut for Styled<T> {
     }
 }
 
-impl<T: Display> Styler for Styled<T> {
+impl<T> Styler for Styled<T> {
     /// Sets `Option<Foreground>`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self {
         Styler::foreground(self.style, foreground);
@@ -171,7 +171,7 @@ impl<T: Display> Styler for Styled<T> {
     }
 }
 
-impl<T: Display> StylerMut for Styled<T> {
+impl<T> StylerMut for Styled<T> {
     /// Sets `Option<Foreground>`, mutably.
     fn foreground_mut(&mut self, foreground: impl Into<Option<Foreground>>) {
         StylerMut::foreground_mut(&mut self.style, foreground);

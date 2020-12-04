@@ -2,13 +2,13 @@ use crate::*;
 
 /// `Display`able [`Style`](crate::Style)d content.
 #[derive(Copy, Clone, Eq, PartialEq, Default)]
-pub struct Styled<T: Display> {
+pub struct Styled<T> {
     pub content: T,
     pub style:   Style,
 }
 
 /// ### Constructors
-impl<T: Display> Styled<T> {
+impl<T> Styled<T> {
     /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
     pub fn new(content: T, style: impl Into<Style>) -> Self {
         Self {
@@ -37,7 +37,7 @@ impl<T: Display> Styled<T> {
 }
 
 /// ### Methods
-impl<T: Display> Styled<T> {
+impl<T> Styled<T> {
     /// Sets `content`.
     pub fn content(mut self, content: T) -> Self {
         self.content_mut(content);
@@ -60,7 +60,7 @@ impl<T: Display> Display for Styled<T> {
     }
 }
 
-impl<T: Display + Debug> Debug for Styled<T> {
+impl<T: Debug> Debug for Styled<T> {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         f.debug_tuple("Styled")
             .field(&self.content)
@@ -74,7 +74,7 @@ impl<T: Display + Debug> Debug for Styled<T> {
 // =========== //
 
 /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
-impl<T: Display, U: Into<Style>> From<(T, U)> for Styled<T> {
+impl<T, U: Into<Style>> From<(T, U)> for Styled<T> {
     /// Retuns a new [`Styled`](crate::Styled) with `content` and `style`.
     fn from((content, style): (T, U)) -> Self {
         Self::new(content, style)
@@ -83,7 +83,7 @@ impl<T: Display, U: Into<Style>> From<(T, U)> for Styled<T> {
 
 /// Retuns a new [`Styled`](crate::Styled) with `content` and
 /// [`Style::NONE`](crate::Style::NONE).
-impl<T: Display> From<T> for Styled<T> {
+impl<T> From<T> for Styled<T> {
     /// Retuns a new [`Styled`](crate::Styled) with `content` and
     /// [`Style::NONE`](crate::Style::NONE).
     fn from(content: T) -> Self {
@@ -93,7 +93,7 @@ impl<T: Display> From<T> for Styled<T> {
 
 /// Retuns a new [`Styled`](crate::Styled) with `content` and
 /// [`Style::RESET`](crate::Style::RESET).
-impl<T: Display> From<(T, Reset)> for Styled<T> {
+impl<T> From<(T, Reset)> for Styled<T> {
     /// Retuns a new [`Styled`](crate::Styled) with `content` and
     /// [`Style::RESET`](crate::Style::RESET).
     fn from((content, _): (T, Reset)) -> Self {
