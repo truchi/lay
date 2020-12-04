@@ -1,5 +1,22 @@
 use crate::*;
 
+macro_rules! write_row {
+    ($w:ident, $layer:ident, $row:expr, $width:expr, $carry:ident) => {{
+        let row = $row;
+        let width = $width;
+        for col in 0..width {
+            match $layer.get_unchecked((col, row)) {
+                Cell(Some(Styled { content, style })) => {
+                    $carry = style.dedup(&$carry);
+                    write!($w, "{}{}", $carry, content)?;
+                }
+                _ => write!($w, "{}", Right(1))?,
+            }
+        }
+        $carry
+    }};
+}
+
 /// [`Cell`](crate::Cell) getter.
 pub trait LayerIndex {
     /// Returns the size of the `layer`.
@@ -32,7 +49,7 @@ pub trait LayerIndex {
             let mut carry = Style::NONE;
             for row in 0..height {
                 write!(w, "{}", To(x, y + row))?;
-                carry = fmt_row(self, w, width, row, carry)?;
+                carry = write_row!(w, self, row, width, carry);
             }
         }
 
@@ -44,16 +61,17 @@ pub trait LayerIndex {
     /// Creates new lines, make sure the induced scrolling is under control.
     ///
     /// Leaves cursor at last row, last column. Minimal CSIs.
-    fn fmt_at_cursor(&self, w: &mut impl Write) -> io::Result<()> {
+    fn fmt_at_cursor(&self, f: &mut Formatter) -> fmt::Result {
         let (width, height) = self.size();
 
         if width != 0 && height != 0 {
             let mut carry = Style::NONE;
             for row in 0..height - 1 {
-                carry = fmt_row(self, w, width, row, carry)?;
-                write!(w, "\n")?;
+                carry = write_row!(f, self, row, width, carry);
+                write!(f, "\n")?;
             }
-            fmt_row(self, w, width, height - 1, carry)?;
+            carry = write_row!(f, self, height - 1, width, carry);
+            write!(f, "{}", carry.reset())?;
         }
 
         Ok(())
@@ -169,32 +187,6 @@ pub trait Layer: LayerIndex + Sized {
 // ======= //
 // Helpers //
 // ======= //
-
-/// Writes this [`Layer`](crate::Layer)'s `row` into `w`.
-///
-/// Carries on the printed [`Style`](crate::Style).
-fn fmt_row<T>(
-    layer: &T,
-    w: &mut impl Write,
-    width: u16,
-    row: u16,
-    mut carry: Style,
-) -> io::Result<Style>
-where
-    T: LayerIndex + ?Sized,
-{
-    for col in 0..width {
-        match layer.get_unchecked((col, row)) {
-            Cell(Some(Styled { content, style })) => {
-                carry = style.dedup(&carry);
-                write!(w, "{}{}", carry, content)?;
-            }
-            _ => write!(w, "{}", Right(1))?,
-        }
-    }
-
-    Ok(carry)
-}
 
 /// Merges `layer` and `other` with the `merge` function, mutably.
 fn merge_mut(layer: &mut impl Layer, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) {
