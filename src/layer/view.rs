@@ -11,10 +11,10 @@ pub struct View<T: LayerIndex> {
 /// ### Constructors
 impl<T: LayerIndex> View<T> {
     /// Returns a new [`View`](crate::View).
-    pub fn new(layer: T, rect: impl Into<Rect>) -> Self {
+    pub fn new(layer: T, rect: impl AsRect) -> Self {
         Self {
             layer,
-            rect: Rect::ZERO,
+            rect: RECT_ZERO,
         }
         .rect(rect)
     }
@@ -38,40 +38,40 @@ impl<T: LayerIndex> View<T> {
     }
 
     /// Sets [`Rect`](crate::Rect).
-    pub fn rect(mut self, rect: impl Into<Rect>) -> Self {
+    pub fn rect(mut self, rect: impl AsRect) -> Self {
         self.rect_mut(rect);
         self
     }
 
     /// Sets [`Rect`](crate::Rect)'s `origin`.
-    pub fn origin(mut self, origin: impl Into<Point>) -> Self {
+    pub fn origin(mut self, origin: impl AsCoord) -> Self {
         self.origin_mut(origin);
         self
     }
 
     /// Sets [`Rect`](crate::Rect)'s `size`.
-    pub fn size(mut self, size: impl Into<Size>) -> Self {
+    pub fn size(mut self, size: impl AsCoord) -> Self {
         self.size_mut(size);
         self
     }
 
     /// Sets [`Rect`](crate::Rect), mutably.
     /// Returns the actual, bound checked [`Rect`](crate::Rect).
-    pub fn rect_mut(&mut self, rect: impl Into<Rect>) -> Rect {
-        self.rect = rect.into().crop(self.layer.size());
+    pub fn rect_mut(&mut self, rect: impl AsRect) -> Rect {
+        self.rect = rect.crop(self.layer.size());
         self.rect
     }
 
     /// Sets [`Rect`](crate::Rect)'s `origin`, mutably.
     /// Returns the actual, bound checked [`Rect`](crate::Rect).
-    pub fn origin_mut(&mut self, origin: impl Into<Point>) -> Rect {
-        self.rect_mut(Rect::from((origin.into(), self.rect.size)))
+    pub fn origin_mut(&mut self, origin: impl AsCoord) -> Rect {
+        self.rect_mut((origin, self.rect.size()))
     }
 
     /// Sets [`Rect`](crate::Rect)'s `size`, mutably.
     /// Returns the actual, bound checked [`Rect`](crate::Rect).
-    pub fn size_mut(&mut self, size: impl Into<Size>) -> Rect {
-        self.rect_mut(Rect::from((self.rect.point, size.into())))
+    pub fn size_mut(&mut self, size: impl AsCoord) -> Rect {
+        self.rect_mut((self.rect.point(), size))
     }
 }
 
@@ -89,7 +89,7 @@ impl<T: LayerIndex> From<T> for View<T> {
 }
 
 /// Returns a new [`View`](crate::View).
-impl<T: LayerIndex, U: Into<Rect>> From<(T, U)> for View<T> {
+impl<T: LayerIndex, U: AsRect> From<(T, U)> for View<T> {
     /// Returns a new [`View`](crate::View).
     fn from((layer, rect): (T, U)) -> Self {
         Self::new(layer, rect)
@@ -101,30 +101,30 @@ impl<T: LayerIndex, U: Into<Rect>> From<(T, U)> for View<T> {
 // ============ //
 
 impl<T: LayerIndex> LayerIndex for View<T> {
-    fn size(&self) -> Size {
-        self.rect.size
+    fn size(&self) -> Coord {
+        self.rect.size()
     }
 
-    fn get_unchecked(&self, point: impl Into<Point>) -> Cell {
-        <T as LayerIndex>::get_unchecked(&self.layer, self.rect.point + point.into())
+    fn get_unchecked(&self, point: impl AsCoord) -> Cell {
+        <T as LayerIndex>::get_unchecked(&self.layer, self.rect.point().add(point))
     }
 }
 
 impl<T: LayerIndexMut> LayerIndexMut for View<T> {
-    fn get_unchecked_mut(&mut self, point: impl Into<Point>) -> &mut Cell {
-        <T as LayerIndexMut>::get_unchecked_mut(&mut self.layer, self.rect.point + point.into())
+    fn get_unchecked_mut(&mut self, point: impl AsCoord) -> &mut Cell {
+        <T as LayerIndexMut>::get_unchecked_mut(&mut self.layer, self.rect.point().add(point))
     }
 }
 
 impl<T: Layer> Layer for View<T> {
-    fn set(mut self, point: impl Into<Point>, cell: impl Into<Cell>) -> Self {
-        self.layer = <T as Layer>::set(self.layer, self.rect.point + point.into(), cell);
+    fn set(mut self, point: impl AsCoord, cell: impl Into<Cell>) -> Self {
+        self.layer = <T as Layer>::set(self.layer, self.rect.point().add(point), cell);
         self
     }
 }
 
 impl<T: LayerMut> LayerMut for View<T> {
-    fn set_mut(&mut self, point: impl Into<Point>, cell: impl Into<Cell>) {
-        <T as LayerMut>::set_mut(&mut self.layer, self.rect.point + point.into(), cell);
+    fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>) {
+        <T as LayerMut>::set_mut(&mut self.layer, self.rect.point().add(point), cell);
     }
 }

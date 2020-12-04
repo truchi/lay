@@ -3,7 +3,6 @@ mod utils;
 mod lay;
 
 mod doc;
-mod geometry;
 mod layer;
 mod style;
 
@@ -86,7 +85,6 @@ struct Generation {
     src:      PathBuf,
     style:    PathBuf,
     layer:    PathBuf,
-    geometry: PathBuf,
 }
 
 impl Deref for Generation {
@@ -104,12 +102,10 @@ fn main() {
     let mut examples = root.to_path_buf();
     let mut style = root.to_path_buf();
     let mut layer = root.to_path_buf();
-    let mut geometry = root.to_path_buf();
     src.push("src/");
     examples.push("examples/");
     style.push("src/style/gen/");
     layer.push("src/layer/gen/");
-    geometry.push("src/geometry/gen/");
 
     let gen = Generation {
         lay: Lay::new(),
@@ -118,12 +114,10 @@ fn main() {
         src,
         style,
         layer,
-        geometry,
     };
 
     gen.generate_style();
     gen.generate_layer();
-    gen.generate_geometry();
     gen.generate_docs();
 }
 

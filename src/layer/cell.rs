@@ -128,29 +128,29 @@ impl AsMut<Option<Styled<char>>> for Cell {
 // ============ //
 
 impl LayerIndex for Cell {
-    fn size(&self) -> Size {
-        (1, 1).into()
+    fn size(&self) -> Coord {
+        (1, 1)
     }
 
-    fn get_unchecked(&self, _: impl Into<Point>) -> Cell {
+    fn get_unchecked(&self, _: impl AsCoord) -> Cell {
         *self
     }
 }
 
 impl LayerIndexMut for Cell {
-    fn get_unchecked_mut(&mut self, _: impl Into<Point>) -> &mut Cell {
+    fn get_unchecked_mut(&mut self, _: impl AsCoord) -> &mut Cell {
         self
     }
 }
 
 impl Layer for Cell {
-    fn set(self, _: impl Into<Point>, cell: impl Into<Cell>) -> Self {
+    fn set(self, _: impl AsCoord, cell: impl Into<Cell>) -> Self {
         cell.into()
     }
 }
 
 impl LayerMut for Cell {
-    fn set_mut(&mut self, _: impl Into<Point>, cell: impl Into<Cell>) {
+    fn set_mut(&mut self, _: impl AsCoord, cell: impl Into<Cell>) {
         *self = cell.into();
     }
 }

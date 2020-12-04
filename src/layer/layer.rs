@@ -2,18 +2,16 @@ use crate::*;
 
 /// [`Cell`](crate::Cell) getter.
 pub trait LayerIndex {
-    /// Returns the [`Size`](crate::Size) of the `layer`.
-    fn size(&self) -> Size;
+    /// Returns the size of the `layer`.
+    fn size(&self) -> Coord;
 
     /// Gets the [`Cell`](crate::Cell) at `point`.
-    fn get_unchecked(&self, point: impl Into<Point>) -> Cell;
+    fn get_unchecked(&self, point: impl AsCoord) -> Cell;
 
     /// Gets the [`Cell`](crate::Cell) at point `(x, y)`,
     /// or `None` if out of bounds.
-    fn get(&self, point: impl Into<Point>) -> Option<Cell> {
-        let point = point.into();
-
-        if point.lt(&Point::from(self.size())) {
+    fn get(&self, point: impl AsCoord) -> Option<Cell> {
+        if point.lt(self.size()) {
             Some(self.get_unchecked(point))
         } else {
             None
@@ -26,9 +24,9 @@ pub trait LayerIndex {
     /// the screen to display properly.
     ///
     /// Leaves cursor at last row, last column. Minimal CSIs.
-    fn fmt(&self, w: &mut impl Write, point: impl Into<Point>) -> io::Result<()> {
-        let (x, y) = point.into().into();
-        let (width, height) = self.size().into();
+    fn fmt(&self, w: &mut impl Write, point: impl AsCoord) -> io::Result<()> {
+        let (x, y) = point.as_coord();
+        let (width, height) = self.size();
 
         if width != 0 {
             let mut carry = Style::NONE;
@@ -47,7 +45,7 @@ pub trait LayerIndex {
     ///
     /// Leaves cursor at last row, last column. Minimal CSIs.
     fn fmt_at_cursor(&self, w: &mut impl Write) -> io::Result<()> {
-        let (width, height) = self.size().into();
+        let (width, height) = self.size();
 
         if width != 0 && height != 0 {
             let mut carry = Style::NONE;
@@ -65,14 +63,12 @@ pub trait LayerIndex {
 /// [`Cell`](crate::Cell) getter, mutably.
 pub trait LayerIndexMut: LayerIndex {
     /// Gets the [`Cell`](crate::Cell) at `point`, mutably.
-    fn get_unchecked_mut(&mut self, point: impl Into<Point>) -> &mut Cell;
+    fn get_unchecked_mut(&mut self, point: impl AsCoord) -> &mut Cell;
 
     /// Gets the [`Cell`](crate::Cell) at point `(x, y)`,
     /// or [`Cell::NONE`](crate::Cell::NONE) if out of bounds, mutably.
-    fn get_mut(&mut self, point: impl Into<Point>) -> Option<&mut Cell> {
-        let point = point.into();
-
-        if point.lt(&self.size().into()) {
+    fn get_mut(&mut self, point: impl AsCoord) -> Option<&mut Cell> {
+        if point.lt(self.size()) {
             Some(self.get_unchecked_mut(point))
         } else {
             None
@@ -83,7 +79,7 @@ pub trait LayerIndexMut: LayerIndex {
 /// [`Cell`](crate::Cell) setter.
 pub trait Layer: LayerIndex + Sized {
     /// Sets the [`Cell`](crate::Cell) at `point`.
-    fn set(self, point: impl Into<Point>, cell: impl Into<Cell>) -> Self;
+    fn set(self, point: impl AsCoord, cell: impl Into<Cell>) -> Self;
 
     /// Merges `self` and `other` with the `merge` function.
     fn merge(self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) -> Self {
@@ -115,7 +111,7 @@ pub trait Layer: LayerIndex + Sized {
 /// [`Cell`](crate::Cell) setter, mutably.
 pub trait LayerMut: LayerIndex {
     /// Sets the [`Cell`](crate::Cell) at `point`, mutably.
-    fn set_mut(&mut self, point: impl Into<Point>, cell: impl Into<Cell>);
+    fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>);
 
     /// Merges `self` and `other` with the `merge` function, mutably.
     fn merge_mut(&mut self, other: &impl LayerIndex, merge: impl Fn(Cell, Cell) -> Cell) {
@@ -192,8 +188,8 @@ macro_rules! merge {
             U: Fn(Cell, Cell) -> Cell
         {
             $(let mut $layer2 = $layer;)?
-            let (width, height) = $layer.size().into();
-            let (other_width, other_height) = other.size().into();
+            let (width, height) = $layer.size();
+            let (other_width, other_height) = other.size();
             let height = height.min(other_height);
 
             if height != 0 {
@@ -221,7 +217,7 @@ fn fill<T>(mut layer: T, cell: Cell) -> T
 where
     T: Layer,
 {
-    let (width, height) = layer.size().into();
+    let (width, height) = layer.size();
 
     if width != 0 {
         for row in 0..height {
@@ -239,7 +235,7 @@ fn fill_mut<T>(layer: &mut T, cell: Cell)
 where
     T: LayerMut + ?Sized,
 {
-    let (width, height) = layer.size().into();
+    let (width, height) = layer.size();
 
     if width != 0 {
         for row in 0..height {
@@ -258,20 +254,20 @@ macro_rules! refs {
     ($Ref:ty, $Mut:ty) => { refs!(ref $Ref $Mut); refs!(mut $Mut); };
     (ref $($T:ty)*) => {
         $(impl<T: LayerIndex> LayerIndex for $T {
-            fn size(&self) -> Size { <T as LayerIndex>::size(self) }
-            fn get_unchecked(&self, point: impl Into<Point>) -> Cell {
+            fn size(&self) -> Coord { <T as LayerIndex>::size(self) }
+            fn get_unchecked(&self, point: impl AsCoord) -> Cell {
                 <T as LayerIndex>::get_unchecked(self, point)
             }
         })*
     };
     (mut $T:ty) => {
         impl<T: LayerIndexMut> LayerIndexMut for $T {
-            fn get_unchecked_mut(&mut self, point: impl Into<Point>) -> &mut Cell {
+            fn get_unchecked_mut(&mut self, point: impl AsCoord) -> &mut Cell {
                 <T as LayerIndexMut>::get_unchecked_mut(self, point)
             }
         }
         impl<T: LayerMut> LayerMut for $T {
-            fn set_mut(&mut self, point: impl Into<Point>, cell: impl Into<Cell>) {
+            fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>) {
                 <T as LayerMut>::set_mut(self, point, cell)
             }
         }
@@ -281,14 +277,11 @@ macro_rules! refs {
 refs!(&T, &mut T);
 
 impl LayerIndex for str {
-    fn size(&self) -> Size {
-        Size {
-            width:  Width(self.len() as u16),
-            height: Height(1),
-        }
+    fn size(&self) -> Coord {
+        (self.len() as u16, 1)
     }
 
-    fn get_unchecked(&self, point: impl Into<Point>) -> Cell {
-        self.chars().nth(point.into().x.0 as usize).unwrap().into()
+    fn get_unchecked(&self, point: impl AsCoord) -> Cell {
+        self.chars().nth(point.x() as usize).unwrap().into()
     }
 }

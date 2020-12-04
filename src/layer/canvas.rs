@@ -3,16 +3,16 @@ use crate::*;
 /// A [`Canvas`](crate::Canvas).
 #[derive(Clone, Eq, PartialEq, Default, Debug)]
 pub struct Canvas {
-    size:  Size,
+    size:  Coord,
     cells: Vec<Cell>,
 }
 
 /// ### Constructors
 impl Canvas {
     /// Returns a new [`Canvas`](crate::Canvas).
-    pub fn new(size: impl Into<Size>, cell: impl Into<Cell>) -> Self {
-        let size = size.into();
-        let (width, height) = size.into();
+    pub fn new(size: impl AsCoord, cell: impl Into<Cell>) -> Self {
+        let size = size.as_coord();
+        let (width, height) = size;
         let (width, height): (usize, usize) = (width.into(), height.into());
 
         let mut cells = Vec::with_capacity(width * height);
@@ -27,7 +27,7 @@ impl Canvas {
 // =========== //
 
 /// Returns a new [`Canvas`](crate::Canvas).
-impl<T: Into<Size>, U: Into<Cell>> From<(T, U)> for Canvas {
+impl<T: AsCoord, U: Into<Cell>> From<(T, U)> for Canvas {
     /// Returns a new [`Canvas`](crate::Canvas).
     fn from((size, cell): (T, U)) -> Self {
         Self::new(size, cell)
@@ -39,13 +39,13 @@ impl<T: Into<Size>, U: Into<Cell>> From<(T, U)> for Canvas {
 // ============ //
 
 impl LayerIndex for Canvas {
-    fn size(&self) -> Size {
+    fn size(&self) -> Coord {
         self.size
     }
 
-    fn get_unchecked(&self, point: impl Into<Point>) -> Cell {
-        let (x, y) = point.into().into();
-        let (width, _) = self.size.into();
+    fn get_unchecked(&self, point: impl AsCoord) -> Cell {
+        let (x, y) = point.as_coord();
+        let (width, _) = self.size;
 
         *self
             .cells
@@ -55,9 +55,9 @@ impl LayerIndex for Canvas {
 }
 
 impl LayerIndexMut for Canvas {
-    fn get_unchecked_mut(&mut self, point: impl Into<Point>) -> &mut Cell {
-        let (x, y) = point.into().into();
-        let (width, _) = self.size.into();
+    fn get_unchecked_mut(&mut self, point: impl AsCoord) -> &mut Cell {
+        let (x, y) = point.as_coord();
+        let (width, _) = self.size;
 
         self.cells
             .get_mut(x as usize + y as usize * width as usize)
@@ -66,14 +66,14 @@ impl LayerIndexMut for Canvas {
 }
 
 impl Layer for Canvas {
-    fn set(mut self, point: impl Into<Point>, cell: impl Into<Cell>) -> Self {
+    fn set(mut self, point: impl AsCoord, cell: impl Into<Cell>) -> Self {
         LayerMut::set_mut(&mut self, point, cell);
         self
     }
 }
 
 impl LayerMut for Canvas {
-    fn set_mut(&mut self, point: impl Into<Point>, cell: impl Into<Cell>) {
+    fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>) {
         if let Some(c) = LayerIndexMut::get_mut(self, point) {
             *c = cell.into();
         }
