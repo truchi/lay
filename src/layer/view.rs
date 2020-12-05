@@ -75,6 +75,14 @@ impl<T: LayerIndex> View<T> {
     }
 }
 
+/// `Display`s the [`View`](crate::View).
+impl<T: LayerIndex> Display for View<T> {
+    /// `Display`s the [`View`](crate::View).
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        self.fmt_at_cursor(f)
+    }
+}
+
 // =========== //
 // Conversions //
 // =========== //

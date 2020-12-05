@@ -28,6 +28,14 @@ impl Canvas {
     }
 }
 
+/// `Display`s the [`Canvas`](crate::Canvas).
+impl Display for Canvas {
+    /// `Display`s the [`Canvas`](crate::Canvas).
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        self.fmt_at_cursor(f)
+    }
+}
+
 // =========== //
 // Conversions //
 // =========== //

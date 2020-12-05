@@ -18,6 +18,14 @@ impl Fill {
     }
 }
 
+/// `Display`s the [`Fill`](crate::Fill).
+impl Display for Fill {
+    /// `Display`s the [`Fill`](crate::Fill).
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        self.fmt_at_cursor(f)
+    }
+}
+
 // =========== //
 // Conversions //
 // =========== //
