@@ -67,6 +67,10 @@ pub trait AsCoord: Sized {
 // Implementations //
 // =============== //
 
+/// ```
+/// # use lay::*;
+/// assert!(10.as_coord() == (10, 10));
+/// ```
 impl AsCoord for u16 {
     #[inline(always)]
     fn x(&self) -> u16 {
@@ -79,6 +83,10 @@ impl AsCoord for u16 {
     }
 }
 
+/// ```
+/// # use lay::*;
+/// assert!((3, 4).as_coord() == (3, 4));
+/// ```
 impl AsCoord for Coord {
     #[inline(always)]
     fn x(&self) -> u16 {

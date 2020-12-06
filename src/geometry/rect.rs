@@ -63,6 +63,10 @@ pub trait AsRect: Sized {
 // Implementations //
 // =============== //
 
+/// ```
+/// # use lay::*;
+/// assert!(10.as_rect() == ((10, 10), (10, 10)));
+/// ```
 impl AsRect for u16 {
     #[inline(always)]
     fn point(&self) -> Coord {
@@ -75,6 +79,13 @@ impl AsRect for u16 {
     }
 }
 
+/// ```
+/// # use lay::*;
+/// assert!((1, 2).as_rect() == ((1, 1), (2, 2)));
+/// assert!((1, (2, 3)).as_rect() == ((1, 1), (2, 3)));
+/// assert!(((1, 2), 3).as_rect() == ((1, 2), (3, 3)));
+/// assert!(((1, 2), (3, 4)).as_rect() == ((1, 2), (3, 4)));
+/// ```
 impl<T: AsCoord, U: AsCoord> AsRect for (T, U) {
     #[inline(always)]
     fn point(&self) -> Coord {
@@ -87,6 +98,10 @@ impl<T: AsCoord, U: AsCoord> AsRect for (T, U) {
     }
 }
 
+/// ```
+/// # use lay::*;
+/// assert!((1, 2, 3, 4).as_rect() == ((1, 2), (3, 4)));
+/// ```
 impl AsRect for (u16, u16, u16, u16) {
     #[inline(always)]
     fn point(&self) -> Coord {
