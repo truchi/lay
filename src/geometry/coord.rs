@@ -52,6 +52,15 @@ pub trait AsCoord: Sized {
     fn max(&self, other: impl AsCoord) -> Coord {
         (self.x().max(other.x()), self.y().max(other.y()))
     }
+
+    //   #[inline(always)]
+    //   fn transform(&self, transform: impl Transform) -> Rect {
+    //       let point = self.min(transform.point());
+    //       let size = coord_clamp_into(&point, &transform.resize(self.as_coord()),
+    // self);
+    //
+    //       (point, size)
+    //   }
 }
 
 // =============== //
@@ -78,6 +87,54 @@ impl AsCoord for Coord {
 
     #[inline(always)]
     fn y(&self) -> u16 {
-        self.0
+        self.1
+    }
+}
+
+// ======= //
+// Helpers //
+// ======= //
+
+/// Gives `size` satisfying `point + size <= max_size`.
+#[inline(always)]
+fn _clamp_into(point: u16, size: u16, max_size: u16) -> u16 {
+    if point + size <= max_size {
+        size
+    } else {
+        max_size.saturating_sub(point)
+    }
+}
+
+/// `clamp_into` on both fields.
+#[inline(always)]
+fn _coord_clamp_into(point: &impl AsCoord, size: &impl AsCoord, max_size: &impl AsCoord) -> Coord {
+    (
+        _clamp_into(point.x(), size.x(), max_size.x()),
+        _clamp_into(point.y(), size.y(), max_size.y()),
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn clamp_into() {
+        let fun = super::clamp_into;
+
+        // point > max_size
+        assert_eq!(fun(0, 0, 0), 0, "clamp_into(0, 0, 0)");
+        assert_eq!(fun(27, 8, 0), 0, "super::clamp_into(27, 8, 0)");
+
+        // point == max_size
+        assert_eq!(fun(32, 0, 32), 0, "clamp_into(32, 0, 32)");
+        assert_eq!(fun(32, 10, 32), 0, "clamp_into(32, 10, 32)");
+
+        // point < max_size
+        assert_eq!(fun(18, 0, 20), 0, "clamp_into(18, 0, 20)");
+        assert_eq!(fun(18, 1, 20), 1, "clamp_into(18, 1, 20)");
+        assert_eq!(fun(18, 2, 20), 2, "clamp_into(18, 2, 20)");
+        assert_eq!(fun(18, 3, 20), 2, "clamp_into(18, 3, 20)");
     }
 }
