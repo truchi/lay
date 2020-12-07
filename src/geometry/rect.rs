@@ -44,7 +44,7 @@ pub trait AsRect: Sized {
         (self.point(), self.size())
     }
 
-    // TODO remove
+    // TODO remove, replace calls with Transform::transform
     /// Crops a [`Rect`](crate::Rect)'s `size` so that `rect` does not have
     /// surface beyond `to`.
     #[inline(always)]
