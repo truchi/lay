@@ -10,7 +10,9 @@ use std::{
     io::{self, Write},
 };
 
-include!("style.doc.rs");
+// include!("style.doc.rs");
+pub mod style;
+pub use style::*;
 
 #[cfg(feature = "layer")]
 pub mod layer;

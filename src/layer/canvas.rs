@@ -1,4 +1,5 @@
 use crate::*;
+use std::{iter::Copied, slice::Iter};
 
 /// A [`Canvas`](crate::Canvas).
 #[derive(Clone, Eq, PartialEq, Default, Debug)]
@@ -26,6 +27,37 @@ impl Canvas {
     pub fn with_default(size: impl AsCoord) -> Self {
         Self::new(size, Cell::NONE)
     }
+
+    /// Returns a slice of the [`Cell`](crate::Cell)s of row `row` from
+    /// column `col` with length `len`.
+    ///
+    /// ### Safety
+    ///
+    /// Callers MUST ensure:
+    /// - `row < height`
+    /// - `col < width`
+    /// - `col + len <= width`
+    ///
+    /// where `(width, height)` being the `size` of the
+    /// [`Canvas`](crate::Canvas).
+    unsafe fn get_row_unchecked(&self, row: u16, col: u16, len: u16) -> &[Cell] {
+        let (row, col, len) = (row as usize, col as usize, len as usize);
+        let (width, height) = AsCoord::as_usize(&self.size);
+
+        debug_assert!(row < height);
+        debug_assert!(col < width);
+        debug_assert!(col + len <= width);
+
+        let rows = row * width;
+        let start = rows + col;
+        let end = start + len;
+
+        let size = self.cells.len();
+        debug_assert!(start < size);
+        debug_assert!(end <= size);
+
+        self.cells.get_unchecked(start..end)
+    }
 }
 
 /// `Display`s the [`Canvas`](crate::Canvas).
@@ -51,6 +83,14 @@ impl<T: AsCoord, U: Into<Cell>> From<(T, U)> for Canvas {
 // ============ //
 // Layer traits //
 // ============ //
+
+impl<'a> LayerIter<'a> for Canvas {
+    type Row = Copied<Iter<'a, Cell>>;
+
+    unsafe fn row_unchecked(&'a self, row: u16, col: u16, len: u16) -> Self::Row {
+        self.get_row_unchecked(row, col, len).iter().copied()
+    }
+}
 
 impl LayerIndex for Canvas {
     fn size(&self) -> Coord {

@@ -44,6 +44,15 @@ pub trait AsRect: Sized {
         (self.point(), self.size())
     }
 
+    /// Converts to `((usize, usize), (usize, usize))`.
+    #[inline(always)]
+    fn as_usize(&self) -> ((usize, usize), (usize, usize)) {
+        (
+            AsCoord::as_usize(&self.point()),
+            AsCoord::as_usize(&self.size()),
+        )
+    }
+
     // TODO remove, replace calls with Transform::transform
     /// Crops a [`Rect`](crate::Rect)'s `size` so that `rect` does not have
     /// surface beyond `to`.

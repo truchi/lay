@@ -20,6 +20,12 @@ pub trait AsCoord: Sized {
         (self.x(), self.y())
     }
 
+    /// Converts to `(usize, usize)`.
+    #[inline(always)]
+    fn as_usize(&self) -> (usize, usize) {
+        (self.x() as usize, self.y() as usize)
+    }
+
     /// Adds two [`Coord`](crate::Coord) together.
     #[inline(always)]
     fn add(&self, other: impl AsCoord) -> Coord {
