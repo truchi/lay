@@ -28,4 +28,25 @@ fn main() {
     // unsafe {
     // println!("{:#?}", canvas.get_unchecked(1100));
     // }
+
+    let mut canvas = Canvas::with_cells((3, 2), vec![
+        'a'.into(),
+        'b'.into(),
+        'c'.into(),
+        '1'.into(),
+        '2'.into(),
+        '3'.into(),
+    ])
+    .unwrap();
+
+    for cell in canvas.cells_mut(0, 0, 3, 2) {
+        dbg!(&cell);
+        *cell = Cell::from('Z');
+    }
+    dbg!(&canvas);
+
+    // println!("Second row");
+    // for cell in canvas.row_mut(1, 0, 3) {
+    // dbg!(cell);
+    // }
 }
