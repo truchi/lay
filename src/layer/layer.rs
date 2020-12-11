@@ -17,114 +17,24 @@ macro_rules! write_row {
     }};
 }
 
-pub type Cells<'a, T> = std::iter::Flatten<Rows<'a, T>>;
-
 pub trait LayerIter<'a>: LayerIndex {
     type Row: Iterator<Item = Cell>;
+    type Rows: Iterator<Item = Self::Row>;
+    type Cells: Iterator<Item = Cell>;
 
     /// Returns an `Iterator` over the [`Cell`](crate::Cell)s of row `row` from
     /// column `col` with length `len`.
-    ///
-    /// ### Safety
-    ///
-    /// Callers MUST ensure:
-    /// - `row < height`
-    /// - `col < width`
-    /// - `col + len <= width`
-    ///
-    /// where `(width, height)` being the
-    /// [`LayerIndex::size`](crate::LayerIndex::size) of `self`.
-    unsafe fn row_unchecked(&'a self, row: u16, col: u16, len: u16) -> Self::Row;
-
-    /// Returns an `Iterator` over the [`Cell`](crate::Cell)s of row `row` from
-    /// column `col` with length `len`.
-    fn row(&'a self, row: u16, col: u16, len: u16) -> Self::Row {
-        let (width, height) = self.size();
-
-        if width == 0 || height == 0 || row >= height || col >= width || len == 0 {
-            // SAFETY:
-            // Self::row_unchecked MUST be safe for 0, 0, 0
-            unsafe { self.row_unchecked(0, 0, 0) }
-        } else {
-            let len = len.min(width - col);
-
-            // SAFETY:
-            // - (col, row) < size
-            // - col + len <= width
-            unsafe { self.row_unchecked(row, col, len) }
-        }
-    }
+    fn row(&'a self, row: u16, col: u16, len: u16) -> Self::Row;
 
     /// Returns an `Iterator` of [`Self::Row`](crate::LayerIter::Row)s
     /// from row `row` with length `height` Y-wise, from column `col` with
     /// length `width` X-wise.
-    fn rows(&'a self, col: u16, row: u16, width: u16, height: u16) -> Rows<'a, Self> {
-        Rows::new(self, col, row, width, height)
-    }
+    fn rows(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Rows;
 
     /// Returns an `Iterator` of [`Cell`](crate::Cell)s from row `row` with
     /// length `height` Y-wise, from column `col` with length `width` X-wise.
-    fn cells(&'a self, col: u16, row: u16, width: u16, height: u16) -> Cells<'a, Self> {
-        self.rows(col, row, width, height).flatten()
-    }
+    fn cells(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Cells;
 }
-
-pub trait LayerIterMut<'a>: LayerIndex {
-    type RowMut: Iterator<Item = &'a mut Cell>;
-
-    /// Returns an `Iterator` over the [`Cell`](crate::Cell)s of row `row` from
-    /// column `col` with length `len`.
-    ///
-    /// ### Safety
-    ///
-    /// Callers MUST ensure:
-    /// - `row < height`
-    /// - `col < width`
-    /// - `col + len <= width`
-    ///
-    /// where `(width, height)` being the
-    /// [`LayerIndex::size`](crate::LayerIndex::size) of `self`.
-    unsafe fn row_unchecked_mut(&'a mut self, row: u16, col: u16, len: u16) -> Self::RowMut;
-
-    /// Returns an `Iterator` over the [`Cell`](crate::Cell)s of row `row` from
-    /// column `col` with length `len`.
-    fn row_mut(&'a mut self, row: u16, col: u16, len: u16) -> Self::RowMut {
-        let (width, height) = self.size();
-
-        if width == 0 || height == 0 || row >= height || col >= width || len == 0 {
-            // SAFETY:
-            // Self::row_unchecked MUST be safe for 0, 0, 0
-            unsafe { self.row_unchecked_mut(0, 0, 0) }
-        } else {
-            let len = len.min(width - col);
-
-            // SAFETY:
-            // - (col, row) < size
-            // - col + len <= width
-            unsafe { self.row_unchecked_mut(row, col, len) }
-        }
-    }
-
-    //  /// Returns an `Iterator` of [`Self::Row`](crate::LayerIter::Row)s
-    //  /// from row `row` with length `height` Y-wise, from column `col` with
-    //  /// length `width` X-wise.
-    //  fn rows_mut(&'a mut self, col: u16, row: u16, width: u16, height: u16) ->
-    // Rows<&'a mut Self> {      Rows::new(self, col, row, width, height)
-    //  }
-    //
-    //  /// Returns an `Iterator` of [`Cell`](crate::Cell)s from row `row` with
-    //  /// length `height` Y-wise, from column `col` with length `width` X-wise.
-    //  fn cells_mut(&'a mut self, col: u16, row: u16, width: u16, height: u16) ->
-    // Cells<&'a mut Self> {      self.rows_mut(col, row, width,
-    // height).flatten()  }
-}
-
-// =========================================================================================
-// =========================================================================================
-// =========================================================================================
-// =========================================================================================
-// =========================================================================================
-// =========================================================================================
 
 /// [`Cell`](crate::Cell) getter.
 pub trait LayerIndex {
