@@ -17,25 +17,6 @@ macro_rules! write_row {
     }};
 }
 
-pub trait LayerIter<'a>: LayerIndex {
-    type Row: Iterator<Item = Cell>;
-    type Rows: Iterator<Item = Self::Row>;
-    type Cells: Iterator<Item = Cell>;
-
-    /// Returns an `Iterator` over the [`Cell`](crate::Cell)s of row `row` from
-    /// column `col` with length `len`.
-    fn row(&'a self, row: u16, col: u16, len: u16) -> Self::Row;
-
-    /// Returns an `Iterator` of [`Self::Row`](crate::LayerIter::Row)s
-    /// from row `row` with length `height` Y-wise, from column `col` with
-    /// length `width` X-wise.
-    fn rows(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Rows;
-
-    /// Returns an `Iterator` of [`Cell`](crate::Cell)s from row `row` with
-    /// length `height` Y-wise, from column `col` with length `width` X-wise.
-    fn cells(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Cells;
-}
-
 /// [`Cell`](crate::Cell) getter.
 pub trait LayerIndex {
     /// Returns the size of the `layer`.
