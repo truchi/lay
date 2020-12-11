@@ -87,7 +87,7 @@ transform!(self [
     /// ```
     (u16, u16) =>
         (size) {
-            let point = self.0.min(size);
+            let point = self.0.min(size); // FIXME size - 1?
             let size = clamp_into(point, self.1, size);
 
             (point, size)
