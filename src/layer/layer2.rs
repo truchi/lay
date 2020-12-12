@@ -1,6 +1,6 @@
 use crate::*;
 use std::{
-    iter::{once, Map, Once, Skip, Take},
+    iter::{once, repeat, Map, Once, Repeat, Skip, Take, Zip},
     str::Chars,
 };
 
@@ -91,6 +91,10 @@ pub trait LayerMut2<'a>: LayerSize {
     }
 }
 
+// =============== //
+// Implementations //
+// =============== //
+
 impl LayerSize for str {
     fn size(&self) -> Coord {
         (self.len() as u16, 1)
@@ -121,6 +125,37 @@ impl<'a> Layer2<'a> for str {
     }
 }
 
+impl<T: AsRef<str>> LayerSize for Styled<T> {
+    fn size(&self) -> Coord {
+        LayerSize::size(self.content.as_ref())
+    }
+}
+
+impl<'a, T: 'a + AsRef<str>> Layer2<'a> for Styled<T> {
+    type Cells = Map<Zip<Take<Skip<Chars<'a>>>, Repeat<Style>>, fn((char, Style)) -> Cell>;
+    type Row = Map<Zip<Take<Skip<Chars<'a>>>, Repeat<Style>>, fn((char, Style)) -> Cell>;
+    type Rows = Map<Once<(&'a Self, u16, u16, u16)>, fn((&'a Self, u16, u16, u16)) -> Self::Row>;
+
+    fn cropped_row(&'a self, row: u16, col: u16, len: u16) -> Self::Row {
+        let str = if row == 0 { self.content.as_ref() } else { "" };
+
+        str.chars()
+            .skip(col as usize)
+            .take(len as usize)
+            .zip(repeat(self.style))
+            .map(|(char, style)| (char, style).into())
+    }
+
+    fn cropped_rows(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Rows {
+        once((self, row, col, width))
+            .map(|(str, row, col, width)| Layer2::cropped_row(str, row, col, width))
+    }
+
+    fn cropped_cells(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Cells {
+        Layer2::cropped_row(self, row, col, width)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -131,8 +166,12 @@ mod tests {
         let str = "0123456789";
 
         fn to_string(it: impl Iterator<Item = Cell>) -> String {
-            it.map(|cell| cell.0.expect("Cell to be Some").content)
-                .collect::<String>()
+            it.map(|cell| {
+                let styled = cell.0.expect("Cell to be Some");
+                assert_eq!(styled.style, Style::NONE);
+                styled.content
+            })
+            .collect::<String>()
         }
 
         assert_eq!(LayerSize::size(str), (10, 1), "Size is (len, 1)");
@@ -144,5 +183,43 @@ mod tests {
         assert_eq!(to_string(Layer2::cropped_row(str, 0, 0, 10)), str);
         assert_eq!(to_string(Layer2::cropped_row(str, 0, 3, 2)), &str[3..5]);
         assert_eq!(to_string(Layer2::cropped_row(str, 0, 3, 20)), &str[3..]);
+    }
+
+    #[test]
+    fn styled() {
+        let str = "0123456789";
+        let style = Style::NONE.blue().on_red().fast().reset_underline();
+        let styled = Styled {
+            content: str,
+            style,
+        };
+
+        fn to_string(it: impl Iterator<Item = Cell>, style: Style) -> String {
+            it.map(|cell| {
+                let styled = cell.0.expect("Cell to be Some");
+                assert_eq!(styled.style, style);
+                styled.content
+            })
+            .collect::<String>()
+        }
+
+        assert_eq!(LayerSize::size(&styled), (10, 1), "Size is (len, 1)");
+        assert_eq!(
+            Layer2::cropped_row(&styled, 1, 0, 10).count(),
+            0,
+            "Nothing in row 1+"
+        );
+        assert_eq!(
+            to_string(Layer2::cropped_row(&styled, 0, 0, 10), style),
+            str
+        );
+        assert_eq!(
+            to_string(Layer2::cropped_row(&styled, 0, 3, 2), style),
+            &str[3..5]
+        );
+        assert_eq!(
+            to_string(Layer2::cropped_row(&styled, 0, 3, 20), style),
+            &str[3..]
+        );
     }
 }
