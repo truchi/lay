@@ -1,4 +1,8 @@
 use crate::*;
+use std::{
+    iter::{once, Map, Once, Skip, Take},
+    str::Chars,
+};
 
 pub trait LayerSize {
     fn size(&self) -> Coord;
@@ -84,5 +88,61 @@ pub trait LayerMut2<'a>: LayerSize {
         for self_cell in self.cells_mut() {
             *self_cell = cell
         }
+    }
+}
+
+impl LayerSize for str {
+    fn size(&self) -> Coord {
+        (self.len() as u16, 1)
+    }
+}
+
+impl<'a> Layer2<'a> for str {
+    type Cells = Self::Row;
+    type Row = Map<Take<Skip<Chars<'a>>>, fn(char) -> Cell>;
+    type Rows = Map<Once<(&'a str, u16, u16, u16)>, fn((&'a str, u16, u16, u16)) -> Self::Row>;
+
+    fn cropped_row(&'a self, row: u16, col: u16, len: u16) -> Self::Row {
+        let str = if row == 0 { self } else { "" };
+
+        str.chars()
+            .skip(col as usize)
+            .take(len as usize)
+            .map(|char| char.into())
+    }
+
+    fn cropped_rows(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Rows {
+        once((self, row, col, width))
+            .map(|(str, row, col, width)| Layer2::cropped_row(str, row, col, width))
+    }
+
+    fn cropped_cells(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Cells {
+        Layer2::cropped_row(self, row, col, width)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use pretty_assertions::assert_eq;
+
+    #[test]
+    fn str() {
+        let str = "0123456789";
+
+        fn to_string(it: impl Iterator<Item = Cell>) -> String {
+            it.map(|cell| cell.0.expect("Cell to be Some").content)
+                .collect::<String>()
+        }
+
+        assert_eq!(LayerSize::size(str), (10, 1), "Size is (len, 1)");
+        assert_eq!(
+            Layer2::cropped_row(str, 1, 0, 10).count(),
+            0,
+            "Nothing in row 1+"
+        );
+        assert_eq!(to_string(Layer2::cropped_row(str, 0, 0, 10)), str);
+        assert_eq!(to_string(Layer2::cropped_row(str, 0, 3, 2)), &str[3..5]);
+        assert_eq!(to_string(Layer2::cropped_row(str, 0, 3, 20)), &str[3..]);
     }
 }
