@@ -115,11 +115,13 @@ impl<'a> Layer2<'a> for str {
             .map(|char| char.into())
     }
 
+    // TODO height == 0
     fn cropped_rows(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Rows {
         once((self, row, col, width))
             .map(|(str, row, col, width)| Layer2::cropped_row(str, row, col, width))
     }
 
+    // TODO height == 0
     fn cropped_cells(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Cells {
         Layer2::cropped_row(self, row, col, width)
     }
@@ -146,11 +148,13 @@ impl<'a, T: 'a + AsRef<str>> Layer2<'a> for Styled<T> {
             .map(|(char, style)| (char, style).into())
     }
 
+    // TODO height == 0
     fn cropped_rows(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Rows {
         once((self, row, col, width))
             .map(|(str, row, col, width)| Layer2::cropped_row(str, row, col, width))
     }
 
+    // TODO height == 0
     fn cropped_cells(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Cells {
         Layer2::cropped_row(self, row, col, width)
     }
