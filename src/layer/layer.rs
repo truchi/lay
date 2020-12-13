@@ -8,7 +8,7 @@ pub trait LayerSize {
     fn size(&self) -> Coord;
 }
 
-pub trait Layer2<'a>: LayerSize {
+pub trait Layer<'a>: LayerSize {
     type Row: Iterator<Item = Cell>;
     type Rows: Iterator<Item = Self::Row>;
     type Cells: Iterator<Item = Cell>;
@@ -95,7 +95,7 @@ pub trait LayerMut2<'a>: LayerSize {
         self_row: u16,
         self_width: u16,
         self_height: u16,
-        other: &'b impl Layer2<'b>,
+        other: &'b impl Layer<'b>,
         other_col: u16,
         other_row: u16,
         other_width: u16,
@@ -128,7 +128,7 @@ impl LayerSize for str {
     }
 }
 
-impl<'a> Layer2<'a> for str {
+impl<'a> Layer<'a> for str {
     type Cells = Self::Row;
     type Row = Map<Take<Skip<Chars<'a>>>, fn(char) -> Cell>;
     type Rows = Map<Once<(&'a str, u16, u16, u16)>, fn((&'a str, u16, u16, u16)) -> Self::Row>;
@@ -145,12 +145,12 @@ impl<'a> Layer2<'a> for str {
     // TODO height == 0
     fn cropped_rows(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Rows {
         once((self, row, col, width))
-            .map(|(str, row, col, width)| Layer2::cropped_row(str, row, col, width))
+            .map(|(str, row, col, width)| Layer::cropped_row(str, row, col, width))
     }
 
     // TODO height == 0
     fn cropped_cells(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Cells {
-        Layer2::cropped_row(self, row, col, width)
+        Layer::cropped_row(self, row, col, width)
     }
 }
 
@@ -160,7 +160,7 @@ impl<T: AsRef<str>> LayerSize for Styled<T> {
     }
 }
 
-impl<'a, T: 'a + AsRef<str>> Layer2<'a> for Styled<T> {
+impl<'a, T: 'a + AsRef<str>> Layer<'a> for Styled<T> {
     type Cells = Map<Zip<Take<Skip<Chars<'a>>>, Repeat<Style>>, fn((char, Style)) -> Cell>;
     type Row = Map<Zip<Take<Skip<Chars<'a>>>, Repeat<Style>>, fn((char, Style)) -> Cell>;
     type Rows = Map<Once<(&'a Self, u16, u16, u16)>, fn((&'a Self, u16, u16, u16)) -> Self::Row>;
@@ -178,12 +178,12 @@ impl<'a, T: 'a + AsRef<str>> Layer2<'a> for Styled<T> {
     // TODO height == 0
     fn cropped_rows(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Rows {
         once((self, row, col, width))
-            .map(|(str, row, col, width)| Layer2::cropped_row(str, row, col, width))
+            .map(|(str, row, col, width)| Layer::cropped_row(str, row, col, width))
     }
 
     // TODO height == 0
     fn cropped_cells(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Cells {
-        Layer2::cropped_row(self, row, col, width)
+        Layer::cropped_row(self, row, col, width)
     }
 }
 
@@ -207,13 +207,13 @@ mod tests {
 
         assert_eq!(LayerSize::size(str), (10, 1), "Size is (len, 1)");
         assert_eq!(
-            Layer2::cropped_row(str, 1, 0, 10).count(),
+            Layer::cropped_row(str, 1, 0, 10).count(),
             0,
             "Nothing in row 1+"
         );
-        assert_eq!(to_string(Layer2::cropped_row(str, 0, 0, 10)), str);
-        assert_eq!(to_string(Layer2::cropped_row(str, 0, 3, 2)), &str[3..5]);
-        assert_eq!(to_string(Layer2::cropped_row(str, 0, 3, 20)), &str[3..]);
+        assert_eq!(to_string(Layer::cropped_row(str, 0, 0, 10)), str);
+        assert_eq!(to_string(Layer::cropped_row(str, 0, 3, 2)), &str[3..5]);
+        assert_eq!(to_string(Layer::cropped_row(str, 0, 3, 20)), &str[3..]);
     }
 
     #[test]
@@ -236,20 +236,17 @@ mod tests {
 
         assert_eq!(LayerSize::size(&styled), (10, 1), "Size is (len, 1)");
         assert_eq!(
-            Layer2::cropped_row(&styled, 1, 0, 10).count(),
+            Layer::cropped_row(&styled, 1, 0, 10).count(),
             0,
             "Nothing in row 1+"
         );
+        assert_eq!(to_string(Layer::cropped_row(&styled, 0, 0, 10), style), str);
         assert_eq!(
-            to_string(Layer2::cropped_row(&styled, 0, 0, 10), style),
-            str
-        );
-        assert_eq!(
-            to_string(Layer2::cropped_row(&styled, 0, 3, 2), style),
+            to_string(Layer::cropped_row(&styled, 0, 3, 2), style),
             &str[3..5]
         );
         assert_eq!(
-            to_string(Layer2::cropped_row(&styled, 0, 3, 20), style),
+            to_string(Layer::cropped_row(&styled, 0, 3, 20), style),
             &str[3..]
         );
     }

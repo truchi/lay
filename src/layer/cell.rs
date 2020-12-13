@@ -121,7 +121,7 @@ impl LayerSize for Cell {
     }
 }
 
-impl<'a> Layer2<'a> for Cell {
+impl<'a> Layer<'a> for Cell {
     type Cells = Take<Skip<Once<Cell>>>;
     type Row = Take<Skip<Once<Cell>>>;
     type Rows = Map<Take<Skip<Once<(Cell, u16, u16)>>>, fn((Cell, u16, u16)) -> Self::Row>;
@@ -136,7 +136,7 @@ impl<'a> Layer2<'a> for Cell {
         once((*self, col, width))
             .skip(row as usize)
             .take(height as usize)
-            .map(|(cell, col, width)| Layer2::cropped_row(&cell, 0, col, width))
+            .map(|(cell, col, width)| Layer::cropped_row(&cell, 0, col, width))
     }
 
     fn cropped_cells(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Cells {
