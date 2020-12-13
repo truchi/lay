@@ -59,7 +59,7 @@ pub trait Layer<'a>: LayerSize {
     }
 }
 
-pub trait LayerMut2<'a>: LayerSize {
+pub trait LayerMut<'a>: LayerSize {
     type RowMut: Iterator<Item = &'a mut Cell>;
     type RowsMut: Iterator<Item = Self::RowMut>;
     type CellsMut: Iterator<Item = &'a mut Cell>;

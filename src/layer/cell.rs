@@ -146,7 +146,7 @@ impl<'a> Layer<'a> for Cell {
     }
 }
 
-impl<'a> LayerMut2<'a> for Cell {
+impl<'a> LayerMut<'a> for Cell {
     type CellsMut = Take<Skip<Once<&'a mut Cell>>>;
     type RowMut = Take<Skip<Once<&'a mut Cell>>>;
     type RowsMut = Map<
@@ -170,7 +170,7 @@ impl<'a> LayerMut2<'a> for Cell {
         once((self, col, width))
             .skip(row as usize)
             .take(height as usize)
-            .map(|(cell, col, width)| LayerMut2::cropped_row_mut(cell, 0, col, width))
+            .map(|(cell, col, width)| LayerMut::cropped_row_mut(cell, 0, col, width))
     }
 
     fn cropped_cells_mut(
