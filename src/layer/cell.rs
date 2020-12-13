@@ -1,4 +1,5 @@
 use crate::*;
+use std::iter::{once, Map, Once, Skip, Take};
 
 /// A terminal [`Cell`](crate::Cell).
 ///
@@ -51,19 +52,6 @@ impl Cell {
     pub fn below_mut(&mut self, mut below: Self) {
         below.above_mut(*self);
         *self = below;
-    }
-}
-
-/// `Display`s the [`Styled`] if some,
-/// move the cursor to the right otherwise.
-impl Display for Cell {
-    /// `Display`s the [`Styled`] if some,
-    /// move the cursor to the right otherwise.
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        match self {
-            Self(Some(styled)) => Display::fmt(styled, f),
-            _ => Display::fmt(&Right(1), f),
-        }
     }
 }
 
@@ -133,8 +121,6 @@ impl LayerSize for Cell {
     }
 }
 
-use std::iter::{once, Map, Once, Skip, Take};
-
 impl<'a> Layer2<'a> for Cell {
     type Cells = Take<Skip<Once<Cell>>>;
     type Row = Take<Skip<Once<Cell>>>;
@@ -197,27 +183,5 @@ impl<'a> LayerMut2<'a> for Cell {
         once(self)
             .skip(row as usize + col as usize)
             .take(width as usize * height as usize)
-    }
-}
-
-impl LayerIndex for Cell {
-    fn size(&self) -> Coord {
-        (1, 1)
-    }
-
-    fn get_unchecked(&self, _: impl AsCoord) -> Cell {
-        *self
-    }
-}
-
-impl LayerIndexMut for Cell {
-    fn get_unchecked_mut(&mut self, _: impl AsCoord) -> &mut Cell {
-        self
-    }
-}
-
-impl Layer for Cell {
-    fn set_mut(&mut self, _: impl AsCoord, cell: impl Into<Cell>) {
-        *self = cell.into();
     }
 }

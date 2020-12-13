@@ -47,6 +47,12 @@ impl Fill {
     }
 }
 
+impl LayerSize for Fill {
+    fn size(&self) -> Coord {
+        self.size
+    }
+}
+
 pub struct FillRowsIter {
     cell:    Cell,
     width:   u16,
@@ -101,14 +107,6 @@ impl Iterator for FillRowsIter {
     }
 }
 
-/// `Display`s the [`Fill`](crate::Fill).
-impl Display for Fill {
-    /// `Display`s the [`Fill`](crate::Fill).
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        self.fmt_at_cursor(f)
-    }
-}
-
 // =========== //
 // Conversions //
 // =========== //
@@ -118,19 +116,5 @@ impl<T: AsCoord, U: Into<Cell>> From<(T, U)> for Fill {
     /// Returns a new [`Fill`](crate::Fill).
     fn from((size, cell): (T, U)) -> Self {
         Self::new(size, cell)
-    }
-}
-
-// ============ //
-// Layer traits //
-// ============ //
-
-impl LayerIndex for Fill {
-    fn size(&self) -> Coord {
-        self.size
-    }
-
-    fn get_unchecked(&self, _: impl AsCoord) -> Cell {
-        self.cell
     }
 }

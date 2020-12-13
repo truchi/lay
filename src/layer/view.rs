@@ -1,3 +1,4 @@
+/*
 use crate::*;
 
 /// A [`Rect`](crate::Rect) [`View`](crate::View) into a
@@ -103,29 +104,4 @@ impl<T: LayerIndex, U: AsRect> From<(T, U)> for View<T> {
         Self::new(layer, rect)
     }
 }
-
-// ============ //
-// Layer traits //
-// ============ //
-
-impl<T: LayerIndex> LayerIndex for View<T> {
-    fn size(&self) -> Coord {
-        self.rect.size()
-    }
-
-    fn get_unchecked(&self, point: impl AsCoord) -> Cell {
-        <T as LayerIndex>::get_unchecked(&self.layer, self.rect.point().add(point))
-    }
-}
-
-impl<T: LayerIndexMut> LayerIndexMut for View<T> {
-    fn get_unchecked_mut(&mut self, point: impl AsCoord) -> &mut Cell {
-        <T as LayerIndexMut>::get_unchecked_mut(&mut self.layer, self.rect.point().add(point))
-    }
-}
-
-impl<T: Layer> Layer for View<T> {
-    fn set_mut(&mut self, point: impl AsCoord, cell: impl Into<Cell>) {
-        <T as Layer>::set_mut(&mut self.layer, self.rect.point().add(point), cell);
-    }
-}
+*/
