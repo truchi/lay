@@ -1,16 +1,15 @@
-/*
 use crate::*;
 
 /// A [`Rect`](crate::Rect) [`View`](crate::View) into a
 /// [`Layer`](crate::Layer).
 #[derive(Copy, Clone, Eq, PartialEq, PartialOrd, Hash, Default, Debug)]
-pub struct View<T: LayerIndex> {
+pub struct View<T> {
     layer: T,
     rect:  Rect,
 }
 
 /// ### Constructors
-impl<T: LayerIndex> View<T> {
+impl<T: LayerSize> View<T> {
     /// Returns a new [`View`](crate::View).
     pub fn new(layer: T, rect: impl AsRect) -> Self {
         Self {
@@ -22,7 +21,7 @@ impl<T: LayerIndex> View<T> {
 }
 
 /// ### Methods
-impl<T: LayerIndex> View<T> {
+impl<T: LayerSize> View<T> {
     /// Returns this [`View`](crate::View)'s `layer`.
     pub fn into_layer(self) -> T {
         self.layer
@@ -76,20 +75,12 @@ impl<T: LayerIndex> View<T> {
     }
 }
 
-/// `Display`s the [`View`](crate::View).
-impl<T: LayerIndex> Display for View<T> {
-    /// `Display`s the [`View`](crate::View).
-    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        self.fmt_at_cursor(f)
-    }
-}
-
 // =========== //
 // Conversions //
 // =========== //
 
 /// Returns a new [`View`](crate::View) at full size.
-impl<T: LayerIndex> From<T> for View<T> {
+impl<T: LayerSize> From<T> for View<T> {
     /// Returns a new [`View`](crate::View) at full size.
     fn from(layer: T) -> Self {
         let size = layer.size();
@@ -98,10 +89,9 @@ impl<T: LayerIndex> From<T> for View<T> {
 }
 
 /// Returns a new [`View`](crate::View).
-impl<T: LayerIndex, U: AsRect> From<(T, U)> for View<T> {
+impl<T: LayerSize, U: AsRect> From<(T, U)> for View<T> {
     /// Returns a new [`View`](crate::View).
     fn from((layer, rect): (T, U)) -> Self {
         Self::new(layer, rect)
     }
 }
-*/
