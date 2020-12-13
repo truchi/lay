@@ -30,6 +30,33 @@ pub trait Layer2<'a>: LayerSize {
         let (width, height) = self.size();
         self.cropped_cells(0, 0, width, height)
     }
+
+    /// Writes this [`Layer`](crate::Layer) into `w` at cursor position `point`.
+    ///
+    /// Does not create new lines, make sure there is enough room available on
+    /// the screen to display properly.
+    ///
+    /// Leaves cursor at last row, last column. Minimal CSIs.
+    fn fmt(&'a self, w: &mut impl Write, point: impl AsCoord) -> io::Result<()> {
+        let (x, y) = point.as_coord();
+        let mut carry = Style::NONE;
+
+        for (row, cells) in self.rows().enumerate() {
+            write!(w, "{}", To(x, y + row as u16))?;
+
+            for cell in cells {
+                match cell {
+                    Cell(Some(Styled { content, style })) => {
+                        carry = style.dedup(&carry);
+                        write!(w, "{}{}", carry, content)?;
+                    }
+                    _ => write!(w, "{}", Right(1))?,
+                }
+            }
+        }
+
+        Ok(())
+    }
 }
 
 pub trait LayerMut2<'a>: LayerSize {
