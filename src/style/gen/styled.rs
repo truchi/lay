@@ -112,62 +112,72 @@ impl<T> StylerIndexMut for Styled<T> {
 impl<T> Styler for Styled<T> {
     /// Sets `Option<Foreground>`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self {
-        Styler::foreground(self.style, foreground);
-        self
+        let mut out = self;
+        out.style = Styler::foreground(out.style, foreground);
+        out
     }
 
     /// Sets `Option<Background>`.
     fn background(self, background: impl Into<Option<Background>>) -> Self {
-        Styler::background(self.style, background);
-        self
+        let mut out = self;
+        out.style = Styler::background(out.style, background);
+        out
     }
 
     /// Sets `Option<Weight>`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self {
-        Styler::weight(self.style, weight);
-        self
+        let mut out = self;
+        out.style = Styler::weight(out.style, weight);
+        out
     }
 
     /// Sets `Option<Slant>`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self {
-        Styler::slant(self.style, slant);
-        self
+        let mut out = self;
+        out.style = Styler::slant(out.style, slant);
+        out
     }
 
     /// Sets `Option<Underline>`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self {
-        Styler::underline(self.style, underline);
-        self
+        let mut out = self;
+        out.style = Styler::underline(out.style, underline);
+        out
     }
 
     /// Sets `Option<Strike>`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self {
-        Styler::strike(self.style, strike);
-        self
+        let mut out = self;
+        out.style = Styler::strike(out.style, strike);
+        out
     }
 
     /// Sets `Option<Overline>`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self {
-        Styler::overline(self.style, overline);
-        self
+        let mut out = self;
+        out.style = Styler::overline(out.style, overline);
+        out
     }
 
     /// Sets `Option<Invert>`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self {
-        Styler::invert(self.style, invert);
-        self
+        let mut out = self;
+        out.style = Styler::invert(out.style, invert);
+        out
     }
 
     /// Sets `Option<Blink>`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self {
-        Styler::blink(self.style, blink);
-        self
+        let mut out = self;
+        out.style = Styler::blink(out.style, blink);
+        out
     }
 
     /// Sets `Option<Border>`.
     fn border(self, border: impl Into<Option<Border>>) -> Self {
-        Styler::border(self.style, border);
-        self
+        let mut out = self;
+        out.style = Styler::border(out.style, border);
+        out
     }
 }
 

@@ -47,7 +47,11 @@ impl Generation {
             let set = &attribute.fn_set;
             let full = &attribute.fn_set.full;
 
-            quote! { #full { #styler::#set(self.#field, #snake); self } }
+            quote! { #full {
+                let mut out = self;
+                out.#field = #styler::#set(out.#field, #snake);
+                out
+            } }
         });
 
         quote! {
