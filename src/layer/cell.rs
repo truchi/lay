@@ -53,6 +53,22 @@ impl Cell {
         below.above_mut(*self);
         *self = below;
     }
+
+    pub fn get_damage(self, previous: Cell) -> Cell {
+        if let Some(previous) = previous.0 {
+            if let Some(current) = self.0 {
+                if previous.content == current.content {
+                    Self::NONE
+                } else {
+                    self
+                }
+            } else {
+                self
+            }
+        } else {
+            self
+        }
+    }
 }
 
 impl Debug for Cell {
@@ -89,6 +105,7 @@ impl<T: Into<Styled<char>>> From<T> for Cell {
 }
 
 /// Returns a new [`Cell`](crate::Cell).
+// TODO useless now
 impl From<Option<Cell>> for Cell {
     /// Returns a new [`Cell`](crate::Cell).
     fn from(cell: Option<Cell>) -> Self {
@@ -183,5 +200,71 @@ impl<'a> LayerMut<'a> for Cell {
         once(self)
             .skip(row as usize + col as usize)
             .take(width as usize * height as usize)
+    }
+}
+
+// ================================ //
+
+#[derive(Copy, Clone, Eq, PartialEq, Default)]
+pub struct DamagedCell {
+    pub current: Cell,
+    previous:    Cell,
+}
+
+impl DamagedCell {
+    pub fn new(current: impl Into<Cell>) -> Self {
+        Self {
+            current:  current.into(),
+            previous: Cell::NONE,
+        }
+    }
+}
+
+impl<T: Into<Cell>> From<T> for DamagedCell {
+    fn from(current: T) -> Self {
+        Self::new(current)
+    }
+}
+
+// ================================ //
+
+pub trait DamageCell {
+    fn get_cell(&self) -> Cell;
+    fn get_damage(&self) -> Cell;
+
+    fn save_mut(&mut self);
+
+    fn save(mut self) -> Self
+    where
+        Self: Sized,
+    {
+        self.save_mut();
+        self
+    }
+}
+
+impl DamageCell for Cell {
+    fn get_cell(&self) -> Self {
+        *self
+    }
+
+    fn get_damage(&self) -> Self {
+        *self
+    }
+
+    fn save_mut(&mut self) {}
+}
+
+impl DamageCell for DamagedCell {
+    fn get_cell(&self) -> Cell {
+        self.current
+    }
+
+    fn get_damage(&self) -> Cell {
+        self.current.get_damage(self.previous)
+    }
+
+    fn save_mut(&mut self) {
+        self.previous = self.current;
     }
 }
