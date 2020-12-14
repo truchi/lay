@@ -1,6 +1,6 @@
 use crate::*;
 use std::{
-    iter::{once, repeat, Flatten, Map, Once, Repeat, Skip, Take, Zip},
+    iter::{repeat, Flatten, Map, Repeat, Skip, Take, Zip},
     str::Chars,
 };
 
@@ -122,7 +122,7 @@ pub trait LayerMut<'a>: LayerSize {
 // Iterator helpers //
 // ================ //
 
-pub struct Rows<'a, T> {
+pub struct Rows<'a, T: ?Sized> {
     layer: &'a T,
     col:   u16,
     width: u16,
@@ -130,7 +130,7 @@ pub struct Rows<'a, T> {
     end:   u16,
 }
 
-impl<'a, T: LayerSize> Rows<'a, T> {
+impl<'a, T: LayerSize + ?Sized> Rows<'a, T> {
     pub fn new(layer: &'a T, col: u16, row: u16, width: u16, height: u16) -> Self {
         // layer.cropped_row will handle X-axis bound checks
         // we handle Y-axis bound checks here to avoid empty rows
@@ -148,7 +148,7 @@ impl<'a, T: LayerSize> Rows<'a, T> {
     }
 }
 
-impl<'a, T: Layer<'a>> Iterator for Rows<'a, T> {
+impl<'a, T: Layer<'a> + ?Sized> Iterator for Rows<'a, T> {
     type Item = T::Row;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -195,9 +195,10 @@ impl LayerSize for str {
 impl<'a> Layer<'a> for str {
     type Cells = Self::Row;
     type Row = Map<Take<Skip<Chars<'a>>>, fn(char) -> Cell>;
-    type Rows = Map<Once<(&'a str, u16, u16, u16)>, fn((&'a str, u16, u16, u16)) -> Self::Row>;
+    type Rows = Rows<'a, Self>;
 
     fn cropped_row(&'a self, row: u16, col: u16, len: u16) -> Self::Row {
+        // Row should be empty when row != 0
         let str = if row == 0 { self } else { "" };
 
         str.chars()
@@ -206,15 +207,14 @@ impl<'a> Layer<'a> for str {
             .map(|char| char.into())
     }
 
-    // TODO height == 0
-    fn cropped_rows(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Rows {
-        once((self, row, col, width))
-            .map(|(str, row, col, width)| Layer::cropped_row(str, row, col, width))
+    fn cropped_rows(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Rows {
+        // Let's use the Rows helper to handle Y-axis gracefully
+        Rows::new(self, col, row, width, height)
     }
 
-    // TODO height == 0
-    fn cropped_cells(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Cells {
-        Layer::cropped_row(self, row, col, width)
+    fn cropped_cells(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Cells {
+        // Cells should be empty when requested height is 0
+        Layer::cropped_row(self, row, col, if height == 0 { 0 } else { width })
     }
 }
 
@@ -225,29 +225,25 @@ impl<T: AsRef<str>> LayerSize for Styled<T> {
 }
 
 impl<'a, T: 'a + AsRef<str>> Layer<'a> for Styled<T> {
-    type Cells = Map<Zip<Take<Skip<Chars<'a>>>, Repeat<Style>>, fn((char, Style)) -> Cell>;
-    type Row = Map<Zip<Take<Skip<Chars<'a>>>, Repeat<Style>>, fn((char, Style)) -> Cell>;
-    type Rows = Map<Once<(&'a Self, u16, u16, u16)>, fn((&'a Self, u16, u16, u16)) -> Self::Row>;
+    type Cells = Self::Row;
+    type Row = Map<Zip<<str as Layer<'a>>::Row, Repeat<Style>>, fn((Cell, Style)) -> Cell>;
+    type Rows = Rows<'a, Self>;
 
     fn cropped_row(&'a self, row: u16, col: u16, len: u16) -> Self::Row {
-        let str = if row == 0 { self.content.as_ref() } else { "" };
-
-        str.chars()
-            .skip(col as usize)
-            .take(len as usize)
+        // Reusing Layer for str
+        Layer::cropped_row(self.content.as_ref(), row, col, len)
             .zip(repeat(self.style))
-            .map(|(char, style)| (char, style).into())
+            .map(|(cell, style)| cell.style(&style))
     }
 
-    // TODO height == 0
-    fn cropped_rows(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Rows {
-        once((self, row, col, width))
-            .map(|(str, row, col, width)| Layer::cropped_row(str, row, col, width))
+    fn cropped_rows(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Rows {
+        // Let's use the Rows helper to handle Y-axis gracefully
+        Rows::new(self, col, row, width, height)
     }
 
-    // TODO height == 0
-    fn cropped_cells(&'a self, col: u16, row: u16, width: u16, _: u16) -> Self::Cells {
-        Layer::cropped_row(self, row, col, width)
+    fn cropped_cells(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Cells {
+        // Cells should be empty when requested height is 0
+        Layer::cropped_row(self, row, col, if height == 0 { 0 } else { width })
     }
 }
 

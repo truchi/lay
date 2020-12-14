@@ -60,62 +60,72 @@ impl StylerIndex for Fill {
 impl Styler for Fill {
     /// Sets `Option<Foreground>`.
     fn foreground(self, foreground: impl Into<Option<Foreground>>) -> Self {
-        Styler::foreground(self.cell, foreground);
-        self
+        let mut out = self;
+        out.cell = Styler::foreground(out.cell, foreground);
+        out
     }
 
     /// Sets `Option<Background>`.
     fn background(self, background: impl Into<Option<Background>>) -> Self {
-        Styler::background(self.cell, background);
-        self
+        let mut out = self;
+        out.cell = Styler::background(out.cell, background);
+        out
     }
 
     /// Sets `Option<Weight>`.
     fn weight(self, weight: impl Into<Option<Weight>>) -> Self {
-        Styler::weight(self.cell, weight);
-        self
+        let mut out = self;
+        out.cell = Styler::weight(out.cell, weight);
+        out
     }
 
     /// Sets `Option<Slant>`.
     fn slant(self, slant: impl Into<Option<Slant>>) -> Self {
-        Styler::slant(self.cell, slant);
-        self
+        let mut out = self;
+        out.cell = Styler::slant(out.cell, slant);
+        out
     }
 
     /// Sets `Option<Underline>`.
     fn underline(self, underline: impl Into<Option<Underline>>) -> Self {
-        Styler::underline(self.cell, underline);
-        self
+        let mut out = self;
+        out.cell = Styler::underline(out.cell, underline);
+        out
     }
 
     /// Sets `Option<Strike>`.
     fn strike(self, strike: impl Into<Option<Strike>>) -> Self {
-        Styler::strike(self.cell, strike);
-        self
+        let mut out = self;
+        out.cell = Styler::strike(out.cell, strike);
+        out
     }
 
     /// Sets `Option<Overline>`.
     fn overline(self, overline: impl Into<Option<Overline>>) -> Self {
-        Styler::overline(self.cell, overline);
-        self
+        let mut out = self;
+        out.cell = Styler::overline(out.cell, overline);
+        out
     }
 
     /// Sets `Option<Invert>`.
     fn invert(self, invert: impl Into<Option<Invert>>) -> Self {
-        Styler::invert(self.cell, invert);
-        self
+        let mut out = self;
+        out.cell = Styler::invert(out.cell, invert);
+        out
     }
 
     /// Sets `Option<Blink>`.
     fn blink(self, blink: impl Into<Option<Blink>>) -> Self {
-        Styler::blink(self.cell, blink);
-        self
+        let mut out = self;
+        out.cell = Styler::blink(out.cell, blink);
+        out
     }
 
     /// Sets `Option<Border>`.
     fn border(self, border: impl Into<Option<Border>>) -> Self {
-        Styler::border(self.cell, border);
-        self
+        let mut out = self;
+        out.cell = Styler::border(out.cell, border);
+        out
     }
 }
 
