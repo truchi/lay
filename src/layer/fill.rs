@@ -53,6 +53,24 @@ impl LayerSize for Fill {
     }
 }
 
+impl<'a> Layer<'a> for Fill {
+    type Cells = Cells<'a, Self>;
+    type Row = FillRowIter;
+    type Rows = Rows<'a, Self>;
+
+    fn cropped_row(&'a self, row: u16, col: u16, len: u16) -> Self::Row {
+        self.row(row, col, len)
+    }
+
+    fn cropped_rows(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Rows {
+        Rows::new(self, col, row, width, height)
+    }
+
+    fn cropped_cells(&'a self, col: u16, row: u16, width: u16, height: u16) -> Self::Cells {
+        Cells::new(self, col, row, width, height)
+    }
+}
+
 pub struct FillRowsIter {
     cell:    Cell,
     width:   u16,
