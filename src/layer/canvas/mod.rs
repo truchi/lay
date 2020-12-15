@@ -7,15 +7,6 @@ pub use rows::*;
 pub use rows_mut::*;
 
 use crate::*;
-use std::{
-    iter::{Copied, Flatten},
-    slice::{Iter, IterMut},
-};
-
-pub type CanvasRow<'a> = Copied<Iter<'a, Cell>>;
-pub type CanvasRowMut<'a> = IterMut<'a, Cell>;
-pub type CanvasCells<'a> = Flatten<CanvasRows<'a>>;
-pub type CanvasCellsMut<'a> = Flatten<CanvasRowsMut<'a>>;
 
 /// A [`Canvas`](crate::Canvas).
 #[derive(Clone, Eq, PartialEq, Default, Debug)]
@@ -52,63 +43,6 @@ impl Canvas {
         }
 
         Some(Self { size, cells })
-    }
-}
-
-/// ### Methods
-impl Canvas {
-    pub fn size(&self) -> Coord {
-        self.size
-    }
-
-    pub fn row(&self, row: u16, col: u16, len: u16) -> CanvasRow {
-        let (width, height) = self.size;
-
-        if width == 0 || height == 0 || row >= height || col >= width || len == 0 {
-            // SAFETY:
-            // Self::get_row_unchecked is safe for 0, 0, 0
-            unsafe { self.row_unchecked(0, 0, 0) }
-        } else {
-            let len = len.min(width - col);
-
-            // SAFETY:
-            // - (col, row) < size
-            // - col + len <= width
-            unsafe { self.row_unchecked(row, col, len) }
-        }
-    }
-
-    pub fn row_mut(&mut self, row: u16, col: u16, len: u16) -> CanvasRowMut {
-        let (width, height) = self.size;
-
-        if width == 0 || height == 0 || row >= height || col >= width || len == 0 {
-            // SAFETY:
-            // Self::get_row_unchecked is safe for 0, 0, 0
-            unsafe { self.row_unchecked_mut(0, 0, 0) }
-        } else {
-            let len = len.min(width - col);
-
-            // SAFETY:
-            // - (col, row) < size
-            // - col + len <= width
-            unsafe { self.row_unchecked_mut(row, col, len) }
-        }
-    }
-
-    pub fn rows(&self, col: u16, row: u16, width: u16, height: u16) -> CanvasRows {
-        CanvasRows::new(self, col, row, width, height)
-    }
-
-    pub fn rows_mut(&mut self, col: u16, row: u16, width: u16, height: u16) -> CanvasRowsMut {
-        CanvasRowsMut::new(self, col, row, width, height)
-    }
-
-    pub fn cells(&self, col: u16, row: u16, width: u16, height: u16) -> CanvasCells {
-        self.rows(col, row, width, height).flatten()
-    }
-
-    pub fn cells_mut(&mut self, col: u16, row: u16, width: u16, height: u16) -> CanvasCellsMut {
-        self.rows_mut(col, row, width, height).flatten()
     }
 }
 
