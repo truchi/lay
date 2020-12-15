@@ -84,32 +84,4 @@ pub trait LayerMut<'a>: LayerSize {
         let (width, height) = self.size();
         self.cropped_cells_mut(0, 0, width, height)
     }
-
-    fn merge_mut<'b>(
-        &'a mut self,
-        self_col: u16,
-        self_row: u16,
-        self_width: u16,
-        self_height: u16,
-        other: &'b impl Layer<'b>,
-        other_col: u16,
-        other_row: u16,
-        other_width: u16,
-        other_height: u16,
-        merge: impl Fn(Cell, Cell) -> Cell,
-    ) {
-        let (width, height) = (self_width, self_height).min((other_width, other_height));
-        let self_cells = self.cropped_cells_mut(self_col, self_row, width, height);
-        let other_cells = other.cropped_cells(other_col, other_row, width, height);
-
-        for (self_cell, other_cell) in self_cells.zip(other_cells) {
-            *self_cell = merge(*self_cell, other_cell);
-        }
-    }
-
-    fn fill_mut(&'a mut self, cell: Cell) {
-        for self_cell in self.cells_mut() {
-            *self_cell = cell
-        }
-    }
 }

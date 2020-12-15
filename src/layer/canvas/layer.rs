@@ -73,6 +73,6 @@ impl<'a> LayerMut<'a> for Canvas {
     }
 
     fn cropped_cells_mut(&mut self, col: u16, row: u16, width: u16, height: u16) -> CanvasCellsMut {
-        self.rows_mut(col, row, width, height).flatten()
+        self.cropped_rows_mut(col, row, width, height).flatten()
     }
 }
