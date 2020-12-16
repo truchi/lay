@@ -87,6 +87,36 @@ impl Canvas {
         self.get_row_unchecked_mut(row, col, len).iter_mut()
     }
 
+    unsafe fn get_cell_unchecked(&self, row: u16, col: u16) -> Cell {
+        let (row, col) = (row as usize, col as usize);
+        let (width, height) = AsCoord::as_usize(&self.size);
+
+        debug_assert!(row < height);
+        debug_assert!(col < width);
+
+        let rows = row * width;
+        let i = rows + col;
+
+        debug_assert!(i < self.cells.len());
+
+        *self.cells.get_unchecked(i)
+    }
+
+    unsafe fn get_cell_unchecked_mut(&mut self, row: u16, col: u16) -> &mut Cell {
+        let (row, col) = (row as usize, col as usize);
+        let (width, height) = AsCoord::as_usize(&self.size);
+
+        debug_assert!(row < height);
+        debug_assert!(col < width);
+
+        let rows = row * width;
+        let i = rows + col;
+
+        debug_assert!(i < self.cells.len());
+
+        self.cells.get_unchecked_mut(i)
+    }
+
     /// Returns a slice of the [`Cell`](crate::Cell)s of row `row` from
     /// column `col` with length `len`.
     ///
