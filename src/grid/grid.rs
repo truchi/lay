@@ -48,7 +48,7 @@ impl<T, U: AsRef<[T]>> Grid<T, U> {
     }
 
     // pub fn cell(&self, point: Point<usize>) -> &T {
-    // ()
+    // let point =
     // }
 }
 

@@ -6,12 +6,10 @@ macro_rules! doc {
     (impl $doc:expr, $item:item) => { #[doc = $doc] $item };
 }
 
-mod coord;
+mod coords;
 mod grid;
 mod number;
-mod size;
 
-pub use coord::*;
+pub use coords::*;
 pub use grid::*;
 pub use number::*;
-pub use size::*;
