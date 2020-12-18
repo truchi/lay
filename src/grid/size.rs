@@ -44,6 +44,27 @@ macro_rules! coords {
             }
         }
 
+        impl<T: Clamp> Clamp for $Type<T> {
+            fn clamp_min(self, min: Self) -> Self {
+                $Type {
+                    $x: self.$x.clamp_min(min.$x),
+                    $y: self.$y.clamp_min(min.$y),
+                }
+            }
+            fn clamp_max(self, max: Self) -> Self {
+                $Type {
+                    $x: self.$x.clamp_max(max.$x),
+                    $y: self.$y.clamp_max(max.$y),
+                }
+            }
+            fn clamp(self, a: Self, b: Self) -> Self {
+                $Type {
+                    $x: self.$x.clamp(a.$x, b.$x),
+                    $y: self.$y.clamp(a.$y, b.$y),
+                }
+            }
+        }
+
         impl<T: Clone> Coord<T> for $Type<T> {
             type Checked = $Type<Option<T>>;
         }

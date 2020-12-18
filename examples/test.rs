@@ -28,4 +28,13 @@ fn main() {
     // unsafe {
     // println!("{:#?}", canvas.get_unchecked(1100));
     // }
+
+    dbg!(1.0 < f32::NAN);
+    dbg!(1.0 > f32::NAN);
+    dbg!(f32::NAN < 1.0);
+    dbg!(f32::NAN > 1.0);
+    dbg!(f32::NAN < f32::NAN);
+    dbg!(f32::NAN > f32::NAN);
+    // dbg!(f32::max(1.0, f32::NAN));
+    // dbg!(Clamp::clamp_min(1.0, f32::NAN));
 }
