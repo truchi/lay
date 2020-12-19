@@ -1,4 +1,5 @@
-#![warn(missing_docs)]
+// #![warn(missing_docs)]
+// #![allow(unused)]
 
 #[allow(unused)]
 macro_rules! doc {
@@ -8,8 +9,10 @@ macro_rules! doc {
 
 mod coords;
 mod grid;
+// mod index;
 mod number;
 
 pub use coords::*;
 pub use grid::*;
+// pub use index::*;
 pub use number::*;

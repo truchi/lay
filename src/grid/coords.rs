@@ -1,8 +1,11 @@
 use super::*;
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use std::{
+    cmp::Ordering,
+    ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
+};
 
 macro_rules! coords {
-    ($($(#[$TMeta:meta])* $type:ident: $Type:ident $(#[$XMeta:meta])* $x:ident $(#[$YMeta:meta])* $y:ident)*) => { $(
+    ($($(#[$TMeta:meta])* $type:ident: $Type:ident ($as:ident $As:ident $a:ident $b:ident) $(#[$XMeta:meta])* $x:ident $(#[$YMeta:meta])* $y:ident)*) => { $(
         $(#[$TMeta])*
         #[derive(Copy, Clone, Eq, PartialEq, Default, Debug)]
         pub struct $Type<T> {
@@ -15,13 +18,20 @@ macro_rules! coords {
         /// ### Convertions
         impl<T> $Type<T> {
             /// Converts to another unit.
-            pub fn to<U>(&self) -> $Type<U>
+            pub fn to<U>(self) -> $Type<U>
             where
-                T: Into<U> + Clone,
+                T: Into<U>,
             {
-                let ($x, $y) = self.clone().into();
-                $Type { $x: $x.into(), $y: $y.into() }
+                $Type { $x: self.$x.into(), $y: self.$y.into() }
             }
+
+            doc!("Converts to [`" stringify!($As) "`](crate::" stringify!($As) ").",
+            pub fn $as<U>(self) -> $As<U>
+            where
+                T: Into<U>,
+            {
+                $As { $a: self.$x.into(), $b: self.$y.into() }
+            });
         }
 
         impl<T: Clone> From<T> for $Type<T> {
@@ -45,6 +55,14 @@ macro_rules! coords {
             }
         }
 
+        impl<T: Zero> Zero for $Type<T> {
+            const ZERO: Self = $Type { $x: T::ZERO, $y: T::ZERO };
+        }
+
+        impl<T: One> One for $Type<T> {
+            const ONE: Self = $Type { $x: T::ONE, $y: T::ONE };
+        }
+
         impl<T: Clamp> Clamp for $Type<T> {
             fn clamp_min(self, min: Self) -> Self {
                 $Type {
@@ -62,6 +80,15 @@ macro_rules! coords {
                 $Type {
                     $x: self.$x.clamp(a.$x, b.$x),
                     $y: self.$y.clamp(a.$y, b.$y),
+                }
+            }
+        }
+
+        impl<T: PartialOrd> PartialOrd for $Type<T> {
+            fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+                match (self.$x.partial_cmp(&other.$x), self.$y.partial_cmp(&other.$y)) {
+                    (Some(self_ord), Some(other_ord)) if self_ord == other_ord => Some(self_ord),
+                    _ => None,
                 }
             }
         }
@@ -145,13 +172,13 @@ macro_rules! coords {
 
 coords!(
     /// A `x`, `y` [`Point`](crate::Point).
-    point: Point
+    point: Point (as_size Size width height)
         /// X axis `x` component.
         x
         /// Y axis `y` component.
         y
     /// A `width`, `height` [`Size`](crate::Size).
-    size: Size
+    size: Size (as_point Point x y)
         /// X axis `width` component.
         width
         /// Y axis `height` component.

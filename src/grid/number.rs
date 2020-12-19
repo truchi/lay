@@ -79,3 +79,29 @@ macro_rules! clamp {
 
 clamp!(int u8 i8 u16 i16 u32 i32 u128 i128 usize isize);
 clamp!(float f32 f64);
+
+/// [`Zero`](crate::Zero).
+pub trait Zero {
+    /// [`Zero::ZERO`](crate::Zero::ZERO).
+    const ZERO: Self;
+}
+
+/// [`One`](crate::One).
+pub trait One {
+    /// [`One::ONE`](crate::One::ONE).
+    const ONE: Self;
+}
+
+macro_rules! zero_one {
+    (int $($T:ty)*) => { $(
+        impl Zero for $T { const ZERO: Self = 0; }
+        impl One  for $T { const ONE : Self = 1; }
+    )* };
+    (float $($T:ty)*) => { $(
+        impl Zero for $T { const ZERO: Self = 0.; }
+        impl One  for $T { const ONE : Self = 1.; }
+    )* };
+}
+
+zero_one!(int u8 i8 u16 i16 u32 i32 u128 i128 usize isize);
+zero_one!(float f32 f64);
