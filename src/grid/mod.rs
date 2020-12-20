@@ -1,4 +1,4 @@
-// #![warn(missing_docs)]
+#![warn(missing_docs)]
 // #![allow(unused)]
 
 #[allow(unused)]
@@ -7,12 +7,15 @@ macro_rules! doc {
     (impl $doc:expr, $item:item) => { #[doc = $doc] $item };
 }
 
-mod coords;
+#[allow(unused)]
+macro_rules! s { ($($tt:tt)*) => { stringify!($($tt)*) }; }
+
+mod geo;
 mod grid;
 mod index;
-mod number;
+mod num;
 
-pub use coords::*;
+pub use geo::*;
 pub use grid::*;
 pub use index::*;
-pub use number::*;
+pub use num::*;
