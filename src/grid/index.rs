@@ -1,92 +1,70 @@
 use super::*;
+use std::ops::{Bound, Range, RangeBounds};
 
-const POINT_ERROR: &str = "Point outside the grid";
-const INDEX_ERROR: &str = "Index out of bounds";
+// ========= //
+// CellIndex //
+// ========= //
 
 pub trait CellIndex {
-    /// Returns the cell or `None` if `point < size`.
-    fn get<Cell>(self, grid: GridSlice<Cell>) -> Option<&Cell>;
-
-    /// Returns the cell without any bound checks.
-    ///
-    /// ### Safety
-    ///
-    /// The following **MUST** hold:  
-    /// - `y * width + x < cells.len()` (panics in debug)
-    ///
-    /// This can be guaranteed with:  
-    /// - `point < size` (panics in debug)
-    /// - (`size.area <= cells.len`, guaranteed by [`Grid`](crate::Grid)
-    ///   constructors)
-    unsafe fn get_unchecked<Cell>(self, grid: GridSlice<Cell>) -> &Cell;
-
-    /// Returns the cell or panics if `point < size`.
-    fn index<Cell>(self, grid: GridSlice<Cell>) -> &Cell;
+    fn index(self, size: Size<usize>) -> Point<usize>;
 }
 
 impl CellIndex for Point<usize> {
-    fn get<Cell>(self, grid: GridSlice<Cell>) -> Option<&Cell> {
-        let size = grid.size();
-
-        if self < size.as_point() {
-            // SAFETY: point < size
-            Some(unsafe { CellIndex::get_unchecked(self, grid) })
-        } else {
-            None
-        }
-    }
-
-    unsafe fn get_unchecked<Cell>(self, grid: GridSlice<Cell>) -> &Cell {
-        let size = grid.size();
-        debug_assert!(self < size.as_point(), POINT_ERROR);
-
-        let index = self.y * size.width + self.x;
-        let cells = grid.get_cells();
-
-        debug_assert!(index < cells.len(), INDEX_ERROR);
-        cells.get_unchecked(index)
-    }
-
-    fn index<Cell>(self, grid: GridSlice<Cell>) -> &Cell {
-        CellIndex::get(self, grid).expect(POINT_ERROR)
+    fn index(self, _: Size<usize>) -> Point<usize> {
+        self.into()
     }
 }
 
-pub trait SafeCellIndex {
-    /// Returns the cell or `None` if `point < size`.
-    fn get<Cell>(self, grid: GridSlice<Cell>) -> Option<&Cell>;
-
-    /// Returns the cell without size checks.
-    ///
-    /// Still checks for `[T]` bounds with panicking.
-    fn get_unchecked<Cell>(self, grid: GridSlice<Cell>) -> &Cell;
-
-    /// Returns the cell or panics if `point < size`.
-    fn index<Cell>(self, grid: GridSlice<Cell>) -> &Cell;
+impl<F: Fn(Size<usize>) -> Point<usize>> CellIndex for F {
+    fn index(self, size: Size<usize>) -> Point<usize> {
+        self(size)
+    }
 }
 
-impl SafeCellIndex for Point<usize> {
-    fn get<Cell>(self, grid: GridSlice<Cell>) -> Option<&Cell> {
-        let size = grid.size();
+// ======== //
+// RowIndex //
+// ======== //
 
-        if self < size.as_point() {
-            Some(SafeCellIndex::get_unchecked(self, grid))
-        } else {
-            None
-        }
+pub trait RowIndex {
+    fn index(self, size: Size<usize>) -> (usize, Range<usize>);
+}
+
+impl RowIndex for usize {
+    fn index(self, size: Size<usize>) -> (usize, Range<usize>) {
+        (self, Range {
+            start: 0,
+            end:   size.width,
+        })
     }
+}
 
-    fn get_unchecked<Cell>(self, grid: GridSlice<Cell>) -> &Cell {
-        let size = grid.size();
-        debug_assert!(self < size.as_point(), POINT_ERROR);
-
-        let index = self.y * size.width + self.x;
-        let cells = grid.get_cells();
-
-        cells.get(index).expect(INDEX_ERROR)
+impl<T: RangeBounds<usize>> RowIndex for (usize, T) {
+    fn index(self, size: Size<usize>) -> (usize, Range<usize>) {
+        (self.0, bound_range_end(self.1, size.width))
     }
+}
 
-    fn index<Cell>(self, grid: GridSlice<Cell>) -> &Cell {
-        CellIndex::get(self, grid).expect(INDEX_ERROR)
+// ViewIndex
+
+pub trait ViewIndex {
+    fn index(self, size: Size<usize>) -> (Point<usize>, Size<usize>);
+}
+
+// Into<Rect>
+// Fn(Size) -> Into<Rect>
+// (RowIndex, ColIndex)
+
+fn bound_range_end(range: impl RangeBounds<usize>, end_bound: usize) -> Range<usize> {
+    Range {
+        start: match range.start_bound() {
+            Bound::Included(start) => *start,
+            Bound::Excluded(start) => *start + 1,
+            Bound::Unbounded => 0,
+        },
+        end:   match range.end_bound() {
+            Bound::Included(end) => *end + 1,
+            Bound::Excluded(end) => *end,
+            Bound::Unbounded => end_bound,
+        },
     }
 }

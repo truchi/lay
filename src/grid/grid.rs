@@ -5,23 +5,19 @@ pub enum RowMajor {}
 pub enum ColumnMajor {}
 
 impl RowMajor {
-    pub fn index<P: Into<Point<usize>>, S: Into<Size<usize>>>(point: P, size: S) -> Option<usize> {
-        let point = point.into();
-        let size = size.into();
+    pub fn cell_index<C: CellIndex>(size: Size<usize>, cell_index: C) -> Option<usize> {
+        let point = cell_index.index(size);
 
         if point < size.as_point() {
-            Some(Self::index_unchecked(point, size))
+            Some(Self::cell_index_unchecked(size, point))
         } else {
             None
         }
     }
 
-    pub fn index_unchecked<P: Into<Point<usize>>, S: Into<Size<usize>>>(
-        point: P,
-        size: S,
-    ) -> usize {
-        let (x, y) = point.into().into();
-        let (width, _) = size.into().into();
+    pub fn cell_index_unchecked<C: CellIndex>(size: Size<usize>, cell_index: C) -> usize {
+        let (x, y) = cell_index.index(size).into();
+        let (width, _) = size.into();
 
         y * width + x
     }

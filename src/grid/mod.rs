@@ -9,10 +9,10 @@ macro_rules! doc {
 
 mod coords;
 mod grid;
-// mod index;
+mod index;
 mod number;
 
 pub use coords::*;
 pub use grid::*;
-// pub use index::*;
+pub use index::*;
 pub use number::*;
