@@ -1,4 +1,4 @@
-#![warn(missing_docs)]
+// #![warn(missing_docs)]
 // #![allow(unused)]
 
 #[allow(unused)]
@@ -12,10 +12,14 @@ macro_rules! s { ($($tt:tt)*) => { stringify!($($tt)*) }; }
 
 mod geo;
 mod grid;
-mod index;
+mod helpers;
+mod majors;
 mod num;
+mod traits;
 
 pub use geo::*;
 pub use grid::*;
-pub use index::*;
+pub use helpers::*;
+pub use majors::*;
 pub use num::*;
+pub use traits::*;

@@ -1,37 +1,7 @@
 use super::*;
 use std::{convert::TryFrom, marker::PhantomData};
 
-pub enum RowMajor {}
-pub enum ColumnMajor {}
-
-impl RowMajor {
-    pub fn cell_index<C: CellIndex>(size: Size<usize>, cell_index: C) -> Option<usize> {
-        let point = cell_index.index(size);
-
-        if point < size.as_point() {
-            Some(Self::cell_index_unchecked(size, point))
-        } else {
-            None
-        }
-    }
-
-    pub fn cell_index_unchecked<C: CellIndex>(size: Size<usize>, cell_index: C) -> usize {
-        let (x, y) = cell_index.index(size).into();
-        let (width, _) = size.into();
-
-        y * width + x
-    }
-}
-
-/// Error type for [`Grid`](crate::Grid) constructors.
-#[derive(Copy, Clone, Debug)]
-pub enum GridError<T> {
-    /// `width * height > usize::MAX`.
-    Overflow(Size<usize>, T),
-    /// `width * height != len`.
-    Mismatch(Size<usize>, T),
-}
-
+/*
 pub(crate) type GridSlice<'a, Cell> = Grid<(), Cell, &'a [Cell]>;
 pub(crate) type GridSliceMut<'a, Cell> = Grid<(), Cell, &'a mut [Cell]>;
 
@@ -63,6 +33,16 @@ impl<'a, Major, Cell, Collection: AsMut<[Cell]>> From<&'a mut Grid<Major, Cell, 
             phantom: PhantomData,
         }
     }
+}
+*/
+
+/// Error type for [`Grid`](crate::Grid) constructors.
+#[derive(Copy, Clone, Debug)]
+pub enum GridError<T> {
+    /// `width * height > usize::MAX`.
+    Overflow(Size<usize>, T),
+    /// `width * height != len`.
+    Mismatch(Size<usize>, T),
 }
 
 /// 2D [`Grid`](crate::Grid).
@@ -141,52 +121,17 @@ impl<Major, Cell, Collection: AsMut<[Cell]>> AsMut<[Cell]> for Grid<Major, Cell,
 // ========================================== //
 // ========================================== //
 
-pub trait GridSize {
-    fn size(&self) -> Size<usize>;
-}
-
-pub trait GridCell {
-    type Cell;
-    fn cell<P: Into<Point<usize>>>(&self, point: P) -> Option<&Self::Cell>;
-}
-
-// ========================================== //
-// ========================================== //
-// ========================================== //
-// ========================================== //
-
-impl<Major, Cell, Collection: AsRef<[Cell]>> GridSize for Grid<Major, Cell, Collection> {
-    fn size(&self) -> Size<usize> {
-        self.size
-    }
-}
-
-impl<Cell, Collection: AsRef<[Cell]>> GridCell for Grid<RowMajor, Cell, Collection> {
-    type Cell = Cell;
-
-    fn cell<P: Into<Point<usize>>>(&self, point: P) -> Option<&Cell> {
-        // index.get(self.into())
-        todo!()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::*;
-    use pretty_assertions::assert_eq;
-
-    #[test]
-    fn cell() {
-        let grid = vec![
-            1, 2, 3, //
-            4, 5, 6, //
-            7, 8, 9, //
-        ];
-        let grid = Grid::<(), _, _>::new(3, grid).unwrap();
-
-        assert_eq!(grid.cell(Point::from(0)), Some(&1));
-        assert_eq!(grid.cell(Point::from(1)), Some(&5));
-        assert_eq!(grid.cell(Point::from(2)), Some(&9));
-        assert_eq!(grid.cell(Point::from(3)), None);
-    }
-}
+// impl<Major, Cell, Collection: AsRef<[Cell]>> IGrid for Grid<Major, Cell,
+// Collection> { type Cell = Cell;
+//
+// fn size(&self) -> Size<usize> {
+// self.size
+// }
+//
+// fn cell(&self, point: Point<usize>) -> Option<&Cell> {
+// let index = RowMajor::cell(self.size, point)?;
+//
+// TODO unsafe
+// self.cells.as_ref().get(index)
+// }
+// }

@@ -202,3 +202,24 @@ impl<W, H> Size<W, H> {
         width.checked_mul(height)
     }
 }
+
+// /// ### Range
+// impl<T> Size<T> {
+//     pub fn checked_range(&self, range: impl RangeBounds<T>) ->
+// Option<Range<T>>     where
+//         T: Zero + One + CheckedAdd<Output = T>,
+//     {
+//         let start = match range.start_bound() {
+//             Bound::Included(start) => *start.clamp_max(self.width),
+//             Bound::Excluded(start) => start.checked_add(T::ONE)?,
+//             Bound::Unbounded => T::ZERO,
+//         };
+//         let end = match range.end_bound() {
+//             Bound::Included(end) => end.checked_add(T::ONE)?,
+//             Bound::Excluded(end) => *end,
+//             Bound::Unbounded => self.width,
+//         };
+//
+//         None
+//     }
+// }
